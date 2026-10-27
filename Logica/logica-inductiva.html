@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="generator" content="Generado con asistencia de IA (Claude) - revisar por el responsable antes de su uso">
+<title>Lógica inductiva</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<!-- Artefacto generado con asistencia de IA (Claude Sonnet 5.5). Requiere revision del desarrollador responsable. Contenido basado en las diapositivas de Lógica Inductiva y Programación Lógica Inductiva de 1-logicaRec.tex (02MIAR, VIU). Datos: solo ejemplos ficticios o de dominio publico. -->
+<style>
+  :root{
+    --bg:#0B1220; --panel:#121B2E; --panel-2:#17233A; --line:#26324A; --text:#E7ECF5; --muted:#8B96AD;
+    --viu:#E55015; --viu-dim:#4A2212;
+    --cyan:#5EEAD4; --cyan-dim:#1F4A45;
+    --pink:#F472B6; --pink-dim:#452236;
+    --radius:14px;
+    --font-head:'Space Grotesk','Segoe UI',sans-serif; --font-body:'IBM Plex Sans','Segoe UI',sans-serif; --font-mono:'IBM Plex Mono','Consolas',monospace;
+    padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+  }
+  *{box-sizing:border-box;}
+  html,body{height:100%;}
+  body{ margin:0; background:var(--bg); color:var(--text); font-family:var(--font-body); min-height:100%; display:flex; flex-direction:column; overflow-x:hidden; }
+  ::selection{ background:var(--viu-dim); color:var(--viu); }
+
+  header{ padding:18px clamp(16px,4vw,40px) 10px; display:flex; flex-direction:column; gap:14px; flex:0 0 auto; }
+  .headline-row{ display:flex; align-items:baseline; justify-content:space-between; gap:16px; flex-wrap:wrap; }
+  h1{ font-family:var(--font-head); font-weight:600; font-size:clamp(20px,2.6vw,28px); margin:0; letter-spacing:-0.01em; }
+  h1 span{ color:var(--viu); }
+  .net-tag{ font-family:var(--font-mono); font-size:12.5px; color:var(--muted); }
+  .trail{ display:flex; gap:4px; overflow-x:auto; padding-bottom:4px; scrollbar-width:thin; }
+  .trail::-webkit-scrollbar{height:5px;} .trail::-webkit-scrollbar-thumb{background:var(--line); border-radius:4px;}
+  .trail button{ flex:0 0 auto; background:var(--panel); border:1px solid var(--line); color:var(--muted); font-family:var(--font-mono); font-size:11.5px; padding:7px 11px; border-radius:999px; cursor:pointer; white-space:nowrap; transition:border-color .15s,color .15s,background .15s; }
+  .trail button:hover{ border-color:#3a4a6b; color:var(--text); }
+  .trail button.active{ background:var(--viu-dim); border-color:var(--viu); color:var(--viu); }
+
+  main{ flex:1 0 auto; display:flex; align-items:stretch; justify-content:center; padding:6px clamp(16px,4vw,40px) 10px; }
+  .card{ width:100%; max-width:1040px; background:var(--panel); border:1px solid var(--line); border-radius:var(--radius); padding:clamp(18px,3vw,30px); display:flex; flex-direction:column; gap:16px; }
+  .step-meta{ display:flex; justify-content:space-between; align-items:flex-start; gap:20px; flex-wrap:wrap; }
+  .step-count{ font-family:var(--font-mono); font-size:12.5px; color:var(--viu); margin:0 0 4px; }
+  .step-title{ font-family:var(--font-head); font-weight:600; font-size:clamp(18px,2.4vw,24px); margin:0; }
+  .step-desc{ color:var(--muted); font-size:14.5px; line-height:1.6; max-width:70ch; margin:6px 0 0; }
+  .shape-chip{ font-family:var(--font-mono); font-size:13px; background:var(--panel-2); border:1px solid var(--line); padding:9px 14px; border-radius:10px; color:var(--text); }
+  .shape-chip b{ color:var(--viu); font-weight:600; }
+  #stage{ display:flex; flex-direction:column; align-items:center; gap:16px; padding:6px 2px; }
+  #stage > *{ width:100%; }
+
+  footer{ flex:0 0 auto; display:flex; justify-content:center; gap:14px; flex-wrap:wrap; padding:4px clamp(16px,4vw,40px) calc(18px + env(safe-area-inset-bottom,0px)); }
+  .nav-btn{ font-family:var(--font-body); font-weight:500; font-size:14.5px; background:var(--panel); border:1px solid var(--line); color:var(--text); padding:11px 22px; border-radius:10px; cursor:pointer; transition:border-color .15s,transform .1s; }
+  .nav-btn:hover{ border-color:var(--viu); } .nav-btn:active{ transform:scale(.97); }
+  .nav-btn:disabled{ opacity:.35; cursor:default; } .nav-btn:disabled:hover{ border-color:var(--line); }
+  .nav-btn.primary{ background:var(--viu-dim); border-color:var(--viu); color:var(--viu); }
+
+  .viz-row{ display:flex; align-items:flex-start; justify-content:center; gap:clamp(18px,3vw,36px); flex-wrap:wrap; width:100%; }
+  .viz-col{ display:flex; flex-direction:column; align-items:center; gap:10px; flex:1 1 280px; min-width:0; }
+  .viz-label{ font-family:var(--font-mono); font-size:12px; color:var(--muted); text-align:center; line-height:1.4; }
+  .viz-label b{ color:var(--text); font-weight:600; }
+
+  .formula{ font-family:var(--font-mono); font-size:13.5px; background:var(--panel-2); border:1px solid var(--line); border-radius:10px; padding:12px 16px; min-height:44px; display:block; text-align:center; color:var(--text); max-width:720px; margin:0 auto; line-height:1.7; }
+  .formula b{ color:var(--cyan); } .formula .ok{ color:var(--viu); font-weight:600; } .formula .no{ color:var(--pink); font-weight:600; }
+  .formula.win{ border-color:var(--viu); }
+  .pad-note{ font-size:13px; color:var(--muted); text-align:center; max-width:74ch; margin:0 auto; line-height:1.6; }
+  .pad-note b{ color:var(--text); font-weight:600; }
+  .bio-text{ max-width:74ch; margin:0 auto; }
+  .bio-text p{ font-size:13.8px; line-height:1.65; color:var(--text); margin:0 0 10px; }
+  .bio-text b{ color:var(--viu); font-weight:600; } .bio-text i{ color:var(--cyan); font-style:normal; }
+
+  .qgrid{ display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:10px; }
+  .qcard{ background:var(--panel-2); border:1px solid var(--line); border-radius:12px; padding:14px 16px; cursor:pointer; transition:border-color .15s; }
+  .qcard:hover{ border-color:var(--viu); }
+  .qcard .n{ font-family:var(--font-mono); font-size:11.5px; color:var(--viu); }
+  .qcard h3{ font-family:var(--font-head); font-size:15px; margin:4px 0 6px; font-weight:600; }
+  .qcard p{ margin:0; font-size:12.5px; color:var(--muted); line-height:1.5; }
+
+  .btn-row{ display:flex; gap:8px; justify-content:center; flex-wrap:wrap; }
+  .toggle-btn{ font-family:var(--font-mono); font-size:11.5px; background:var(--panel-2); border:1px solid var(--line); color:var(--muted); padding:8px 13px; border-radius:999px; cursor:pointer; transition:all .15s; }
+  .toggle-btn:hover{ color:var(--text); border-color:#3a4a6b; }
+  .toggle-btn.active{ background:var(--viu-dim); border-color:var(--viu); color:var(--viu); }
+  .toggle-btn.good{ background:var(--viu-dim); border-color:var(--viu); color:var(--viu); }
+  .toggle-btn.bad{ background:var(--pink-dim); border-color:var(--pink); color:var(--pink); }
+
+  /* interruptor de valor de verdad */
+  .tg{ font-family:var(--font-mono); font-size:13px; background:var(--panel-2); border:1px solid var(--line); color:var(--muted); padding:10px 16px; border-radius:12px; cursor:pointer; transition:all .15s; text-align:left; min-width:150px; }
+  .tg b{ display:block; font-size:17px; color:var(--text); font-weight:600; }
+  .tg small{ display:block; font-size:11px; margin-top:2px; }
+  .tg.on{ background:var(--viu-dim); border-color:var(--viu); color:var(--viu); } .tg.on b{ color:var(--viu); }
+  .tg.off{ border-color:#3a4a6b; }
+  .tg:hover{ border-color:var(--viu); }
+
+  .tv{ display:inline-block; min-width:22px; padding:1px 6px; border-radius:6px; font-family:var(--font-mono); font-weight:600; font-size:12.5px; }
+  .tv.v1{ background:var(--viu-dim); color:var(--viu); } .tv.v0{ background:var(--pink-dim); color:var(--pink); }
+
+  .stats{ display:flex; gap:10px; flex-wrap:wrap; justify-content:center; }
+  .stat{ background:var(--panel-2); border:1px solid var(--line); border-radius:10px; padding:8px 14px; text-align:center; min-width:120px; }
+  .stat .l{ font-family:var(--font-mono); font-size:10.5px; color:var(--muted); display:block; margin-bottom:3px; }
+  .stat .v{ font-family:var(--font-mono); font-size:15px; font-weight:600; color:var(--text); }
+  .stat.c1 .v{ color:var(--viu); } .stat.c2 .v{ color:var(--cyan); } .stat.c3 .v{ color:var(--pink); }
+  .panel-title{ font-family:var(--font-head); font-weight:600; font-size:13.5px; color:var(--text); text-align:center; margin:0 0 2px; }
+  .panel-title.c1{ color:var(--viu); } .panel-title.c2{ color:var(--cyan); } .panel-title.c3{ color:var(--pink); }
+
+  pre.code{ margin:0; background:#0E1626; border:1px solid var(--line); border-radius:10px; padding:12px 14px; font-family:var(--font-mono); font-size:12.3px; line-height:1.6; color:var(--text); overflow-x:auto; text-align:left; }
+  pre.code .cm{ color:#6b7a99; } pre.code .kw{ color:var(--pink); }
+
+  table.dt{ border-collapse:collapse; font-family:var(--font-mono); font-size:12.5px; margin:0 auto; }
+  table.dt th,table.dt td{ border:1px solid var(--line); padding:6px 11px; text-align:center; }
+  table.dt th{ background:var(--panel-2); color:var(--muted); font-weight:500; }
+  table.dt th.res{ background:var(--viu-dim); color:var(--viu); }
+  table.dt tr.hl td{ background:rgba(94,234,212,.12); }
+  table.dt tr.hl td:first-child{ box-shadow:inset 3px 0 0 var(--cyan); }
+  table.dt tr.bad td{ background:rgba(244,114,182,.14); }
+  table.dt tr.pick{ cursor:pointer; } table.dt tr.pick:hover td{ background:rgba(255,255,255,.04); }
+  .tbl-wrap{ overflow-x:auto; max-width:100%; }
+
+  /* filas de preguntas (sorter) */
+  .qrow{ background:var(--panel-2); border:1px solid var(--line); border-radius:12px; padding:12px 14px; display:flex; gap:12px; align-items:center; justify-content:space-between; flex-wrap:wrap; }
+  .qrow .tx{ flex:1 1 280px; font-size:14px; line-height:1.5; }
+  .qrow .opts{ display:flex; gap:6px; flex-wrap:wrap; }
+  .qrow .fb{ flex:1 1 100%; font-size:12.5px; color:var(--muted); line-height:1.5; }
+  .qrow .fb b.ok{ color:var(--viu); } .qrow .fb b.no{ color:var(--pink); }
+  .qrow.done{ border-color:#3a4a6b; }
+
+  select{ font-family:var(--font-mono); font-size:13px; background:var(--panel-2); color:var(--text); border:1px solid var(--line); border-radius:8px; padding:8px 10px; max-width:100%; }
+  select:focus,button:focus-visible{ outline:2px solid var(--cyan); outline-offset:1px; }
+
+  .cards6{ display:grid; grid-template-columns:repeat(auto-fit,minmax(230px,1fr)); gap:10px; width:100%; }
+  .ccard{ background:var(--panel-2); border:1px solid var(--line); border-radius:12px; padding:12px 14px; display:flex; flex-direction:column; gap:6px; }
+  .ccard .sym{ font-family:var(--font-mono); font-size:22px; color:var(--viu); font-weight:600; }
+  .ccard .nm{ font-family:var(--font-head); font-weight:600; font-size:14px; }
+  .ccard .rd{ font-size:12.5px; color:var(--muted); line-height:1.5; }
+  .ccard .sent{ font-size:13px; line-height:1.5; color:var(--text); border-top:1px dashed var(--line); padding-top:6px; }
+
+  .strip{ display:flex; flex-direction:column; gap:4px; align-items:center; overflow-x:auto; max-width:100%; }
+  .srow{ display:flex; gap:3px; align-items:center; }
+  .slab{ flex:0 0 150px; font-family:var(--font-mono); font-size:11px; color:var(--muted); text-align:right; padding-right:8px; }
+  .srow > div{ flex:0 0 40px; width:40px; text-align:center; font-family:var(--font-mono); font-size:12px; padding:4px 0; border-radius:6px; background:var(--panel-2); border:1px solid var(--line); }
+  .srow > div.v1{ background:var(--viu-dim); border-color:var(--viu); color:var(--viu); }
+  .srow > div.v0{ background:var(--pink-dim); border-color:var(--pink); color:var(--pink); }
+  .srow > div.h{ background:transparent; border-color:transparent; color:var(--muted); }
+
+  .flow{ display:flex; flex-wrap:wrap; gap:8px; align-items:center; justify-content:center; }
+  .fnode{ background:var(--panel-2); border:1px solid var(--line); border-radius:10px; padding:8px 12px; font-family:var(--font-mono); font-size:12px; cursor:pointer; transition:border-color .15s; }
+  .fnode:hover{ border-color:var(--viu); } .fnode small{ display:block; color:var(--muted); font-size:10.5px; }
+  .farrow{ color:var(--muted); }
+
+  svg text{ font-family:var(--font-mono); }
+  @media (max-width:640px){ .viz-row{ gap:16px; } table.dt th,table.dt td{ padding:5px 7px; } }
+  @media (prefers-reduced-motion:reduce){ *{ transition:none !important; } }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="headline-row">
+    <h1>Lógica inductiva: <span>reglas</span> que se aprenden de los casos</h1>
+    <span class="net-tag">02MIAR · Matemáticas para la IA · Sesión 3</span>
+  </div>
+  <div class="trail" id="trail"></div>
+</header>
+
+<main>
+  <div class="card">
+    <div class="step-meta">
+      <div>
+        <p class="step-count" id="stepCount"></p>
+        <h2 class="step-title" id="stepTitle"></h2>
+        <p class="step-desc" id="stepDesc"></p>
+      </div>
+      <div class="shape-chip" id="shapeChip"></div>
+    </div>
+    <div id="stage"></div>
+  </div>
+</main>
+
+<footer>
+  <button class="nav-btn" id="prevBtn">← Anterior</button>
+  <button class="nav-btn primary" id="nextBtn">Siguiente →</button>
+</footer>
+
+<script>
+/* =========================================================
+   Utilidades
+========================================================= */
+const $ = s => document.querySelector(s);
+let timers = [];
+function clearTimers(){ timers.forEach(t => clearInterval(t)); timers = []; }
+function el(tag, cls, html){ const e = document.createElement(tag); if(cls) e.className = cls; if(html != null) e.innerHTML = html; return e; }
+const V = x => x ? 1 : 0;
+const vtag = x => `<span class="tv v${V(x)}">${V(x)}</span>`;
+const lower1 = s => s.charAt(0).toLowerCase() + s.slice(1);
+
+function py(code){
+  return code.replace(/&/g, '&amp;').replace(/</g, '&lt;').split('\n').map(l => {
+    const k = l.indexOf('#'); let body = l, cm = '';
+    if(k >= 0){ body = l.slice(0, k); cm = '<span class="cm">' + l.slice(k) + '</span>'; }
+    body = body.replace(/\b(import|from|as|print|def|return|not|and|or|for|in)\b/g, '<span class="kw">$1</span>');
+    return body + cm;
+  }).join('\n');
+}
+function codeBox(code){ const p = el('pre', 'code'); p.innerHTML = py(code); return p; }
+
+/* ---------- lógica: todas las combinaciones, en el orden de las diapositivas (1,1 / 1,0 / 0,1 / 0,0) ---------- */
+function combos(vars){
+  const n = vars.length, out = [];
+  for(let i = 0; i < (1 << n); i++){ const e = {}; vars.forEach((v, k) => e[v] = !((i >> (n-1-k)) & 1)); out.push(e); }
+  return out;
+}
+const sameEnv = (a, b) => Object.keys(a).every(k => a[k] === b[k]);
+const OPS = {
+  and: { sym:'∧', f:(p, q) => p && q },
+  or:  { sym:'∨', f:(p, q) => p || q },
+  xor: { sym:'⊻', f:(p, q) => p !== q },
+  imp: { sym:'→', f:(p, q) => !p || q },
+  iff: { sym:'↔', f:(p, q) => p === q }
+};
+function classify(f, vars){
+  const vals = combos(vars).map(f);
+  return vals.every(Boolean) ? 'T' : (vals.every(v => !v) ? 'C' : 'K');
+}
+const CLS = { T:'Tautología', C:'Contradicción', K:'Contingencia' };
+
+/* tabla de verdad viva: highlight de la fila actual; clic en fila = elegir esos valores */
+function makeTable(vars, cols, onPick, rowClass){
+  const wrap = el('div', 'tbl-wrap'), t = el('table', 'dt'); wrap.appendChild(t);
+  const head = el('tr'); const ths = [];
+  vars.forEach(v => head.appendChild(el('th', null, v)));
+  cols.forEach(c => { const th = el('th', c.res === false ? '' : 'res', c.h); ths.push(th); head.appendChild(th); });
+  t.appendChild(head);
+  const rows = combos(vars).map(env => {
+    const tr = el('tr', onPick ? 'pick' : ''); tr._env = env;
+    vars.forEach(v => tr.appendChild(el('td', null, vtag(env[v]))));
+    cols.forEach(c => tr.appendChild(el('td', null, vtag(c.f(env)))));
+    if(rowClass){ const rc = rowClass(env); if(rc) tr.classList.add(rc); }
+    if(onPick) tr.addEventListener('click', () => onPick(env));
+    t.appendChild(tr); return tr;
+  });
+  return { el: wrap, setHead:(i, txt) => { ths[i].innerHTML = txt; }, set: env => rows.forEach(r => r.classList.toggle('hl', !!env && sameEnv(r._env, env))) };
+}
+
+/* interruptor 1/0 */
+function toggleBtn(name, init, cb, subs){
+  let val = init; const b = el('button', 'tg'); b.type = 'button';
+  function draw(){
+    b.className = 'tg ' + (val ? 'on' : 'off');
+    b.innerHTML = `<b>${name} = ${V(val)}</b><small>${val ? (subs ? subs[0] : 'verdadera') : (subs ? subs[1] : 'falsa')}</small>`;
+    b.setAttribute('aria-pressed', val); b.setAttribute('aria-label', `${name} vale ${V(val)}`);
+  }
+  b.addEventListener('click', () => { val = !val; draw(); cb(val); });
+  draw();
+  return { el:b, get:() => val, set:v => { val = v; draw(); } };
+}
+
+/* ---------- circuitos (analogía física) ---------- */
+function circuit(mode, p, q){
+  const on = '#E55015', off = '#3a4a6b';
+  const w = (x1, y1, x2, y2, lit) => `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${lit ? on : off}" stroke-width="3.5" stroke-linecap="round"/>`;
+  const dotc = (x, y, lit) => `<circle cx="${x}" cy="${y}" r="3.6" fill="${lit ? on : off}"/>`;
+  const sw = (x, y, closed, lit, lab) => w(x, y, closed ? x+60 : x+54, closed ? y : y-26, closed && lit) + dotc(x, y, lit) + dotc(x+60, y, closed && lit) +
+    `<text x="${x+30}" y="${y+22}" text-anchor="middle" font-size="12" fill="#8B96AD">${lab}=${V(closed)}</text>`;
+  const lamp = (cx, cy, lit) => `<circle cx="${cx}" cy="${cy}" r="17" fill="${lit ? on : '#17233A'}" stroke="${lit ? '#ffb08a' : off}" stroke-width="2.5"/>` +
+    (lit ? [0,45,90,135,180,225,270,315].map(a => { const r = a*Math.PI/180; return `<line x1="${cx+23*Math.cos(r)}" y1="${cy+23*Math.sin(r)}" x2="${cx+31*Math.cos(r)}" y2="${cy+31*Math.sin(r)}" stroke="${on}" stroke-width="2.5" stroke-linecap="round"/>`; }).join('') : '') +
+    `<line x1="${cx-9}" y1="${cy-9}" x2="${cx+9}" y2="${cy+9}" stroke="${lit ? '#fff' : off}" stroke-width="2"/><line x1="${cx+9}" y1="${cy-9}" x2="${cx-9}" y2="${cy+9}" stroke="${lit ? '#fff' : off}" stroke-width="2"/>`;
+  const batt = (x, y1, y2) => `<line x1="${x-9}" y1="${y1}" x2="${x+9}" y2="${y1}" stroke="#E7ECF5" stroke-width="3"/><line x1="${x-5}" y1="${y1+8}" x2="${x+5}" y2="${y1+8}" stroke="#E7ECF5" stroke-width="3"/>`;
+  let s = '', lit = false;
+  if(mode === 'and'){
+    lit = p && q;
+    s += w(24,60,96,60,true) + sw(96,60,p,true,'p') + w(156,60,228,60,p) + sw(228,60,q,p,'q') + w(288,60,352,60,lit) + lamp(372,60,lit);
+    s += w(372,77,372,108,lit) + w(372,108,24,108,lit) + w(24,108,24,72,lit) + batt(24,60);
+  } else if(mode === 'or'){
+    lit = p || q;
+    s += w(24,70,96,70,true) + w(96,40,96,100,true) + w(96,40,150,40,true) + sw(150,40,p,true,'p') + w(210,40,300,40,p) +
+         w(96,100,150,100,true) + sw(150,100,q,true,'q') + w(210,100,300,100,q) + w(300,40,300,100,lit) + w(300,70,355,70,lit) + lamp(372,70,lit);
+    s += w(372,87,372,128,lit) + w(372,128,24,128,lit) + w(24,128,24,82,lit) + batt(24,70);
+  } else {
+    lit = p !== q;
+    const pt = [140,40], pb = [140,100], qt = [280,40], qb = [280,100];
+    s += w(24,70,110,70,true) + dotc(110,70,true) + dotc(310,70,lit) + w(310,70,355,70,lit) + lamp(372,70,lit);
+    s += w(110,70,140,p ? 40 : 100,true);
+    s += w(140,40,280,100,p) + w(140,100,280,40,!p);
+    s += w(310,70,280,q ? 40 : 100,lit);
+    s += [pt,pb,qt,qb].map(c => dotc(c[0], c[1], false)).join('');
+    s += `<text x="110" y="124" text-anchor="middle" font-size="12" fill="#8B96AD">p=${V(p)}</text><text x="310" y="124" text-anchor="middle" font-size="12" fill="#8B96AD">q=${V(q)}</text>`;
+    s += w(372,87,372,138,lit) + w(372,138,24,138,lit) + w(24,138,24,82,lit) + batt(24,70);
+  }
+  return `<svg viewBox="0 0 420 ${mode === 'xor' ? 150 : 140}" width="100%" style="max-width:420px" role="img" aria-label="Circuito con lámpara ${lit ? 'encendida' : 'apagada'}">${s}</svg>`;
+}
+
+
+function tfQuiz(items){
+  const box = el('div', 'viz-col'); box.style.width = '100%';
+  items.forEach(it => {
+    const row = el('div', 'qrow'); const tx = el('div', 'tx', it.q); const opts = el('div', 'opts'); const fb = el('div', 'fb');
+    [['Verdadero (1)', true], ['Falso (0)', false]].forEach(([lab, val]) => {
+      const b = el('button', 'toggle-btn', lab); b.type = 'button';
+      b.addEventListener('click', () => {
+        const ok = val === it.ans;
+        opts.querySelectorAll('button').forEach(x => x.classList.remove('good', 'bad'));
+        b.classList.add(ok ? 'good' : 'bad');
+        fb.innerHTML = (ok ? '<b class="ok">✔ Correcto.</b> ' : '<b class="no">✘ Casi.</b> ') + it.why;
+        row.classList.add('done');
+      });
+      opts.appendChild(b);
+    });
+    row.append(tx, opts, fb); box.appendChild(row);
+  });
+  return box;
+}
+
+/* clasificador por filas */
+function sortRows(items, options){
+  const box = el('div', 'viz-col'); box.style.width = '100%'; box.style.alignItems = 'stretch';
+  const stats = el('div', 'stats'); const sOk = el('div', 'stat c1', '<span class="l">acertadas</span><span class="v">0</span>'), sTot = el('div', 'stat', `<span class="l">total</span><span class="v">${items.length}</span>`);
+  stats.append(sOk, sTot); box.appendChild(stats);
+  const answered = new Set(); let good = 0;
+  items.forEach((it, idx) => {
+    const row = el('div', 'qrow'); const tx = el('div', 'tx', it.t); const opts = el('div', 'opts'); const fb = el('div', 'fb');
+    options.forEach(o => {
+      const b = el('button', 'toggle-btn', o.label); b.type = 'button';
+      b.addEventListener('click', () => {
+        const ok = o.k === it.a;
+        if(ok && !answered.has(idx)){ answered.add(idx); good++; sOk.querySelector('.v').textContent = good; }
+        opts.querySelectorAll('button').forEach(x => x.classList.remove('good', 'bad'));
+        b.classList.add(ok ? 'good' : 'bad');
+        fb.innerHTML = (ok ? '<b class="ok">✔ </b>' : '<b class="no">✘ Prueba otra vez. </b>') + (ok ? it.why : (it.hint || 'Piensa qué se puede afirmar de ella.'));
+        row.classList.toggle('done', ok);
+      });
+      opts.appendChild(b);
+    });
+    row.append(tx, opts, fb); box.appendChild(row);
+  });
+  return box;
+}
+
+const steps = [];
+function goStep(i){ goTo(i); }
+function qcards(list){
+  const g = el('div', 'qgrid');
+  list.forEach(([n, h, p, to]) => { const c = el('div', 'qcard', `<div class="n">${n}</div><h3>${h}</h3><p>${p}</p>`); c.tabIndex = 0; c.addEventListener('click', () => goStep(to)); c.addEventListener('keydown', e => { if(e.key === 'Enter') goStep(to); }); g.appendChild(c); });
+  return g;
+}
+
+const every = (ms, fn) => { const id = setInterval(fn, ms); timers.push(id); return id; };
+const chipBtn = (label, on, cb) => { const b = el('button', 'toggle-btn' + (on ? ' active' : ''), label); b.type = 'button'; b.addEventListener('click', () => cb(b)); return b; };
+const setStr = a => a.length ? '{' + a.join(', ') + '}' : '∅';
+
+const QUESTIONS = [
+  ['PREGUNTA 1', '¿En qué se diferencia deducir de inducir?', 'Una conclusión segura frente a una conclusión probable.', 1],
+  ['PREGUNTA 2', '¿Cómo se convierte una frase en una regla?', 'De «el coche rojo ganará» a Atributo=Valor ∧ … → Resultado.', 2],
+  ['PREGUNTA 3', '¿Cómo se aprende una regla a partir de ejemplos?', 'Elegir qué atributo separa mejor los casos y fiarse con prudencia.', 5]
+];
+const DED = ['Baja', 'Media', 'Alta'], DIF = ['Baja', 'Media', 'Alta'], TIPO = ['Test', 'General'];
+/* árbol de decisiones de la clase */
+const verdict = (d, f, t) => d === 'Alta' ? true : (d === 'Baja' ? false : (f === 'Baja' ? true : (f === 'Media' ? t === 'Test' : false)));
+const ALLC = DED.flatMap(d => DIF.flatMap(f => TIPO.map(t => ({ d, f, t, y:verdict(d, f, t) }))));
+/* las 3 reglas escritas en la clase */
+const CLASS_RULES = [
+  { n:'R1', txt:'Si Dedicación = Alta → Aprobar', m:c => c.d === 'Alta', y:true },
+  { n:'R2', txt:'Si Dedicación = Media ∧ Dificultad = Media ∧ Tipo = Test → Aprobar', m:c => c.d === 'Media' && c.f === 'Media' && c.t === 'Test', y:true },
+  { n:'R3', txt:'Si Dedicación = Media ∧ Dificultad = Alta → No aprobar', m:c => c.d === 'Media' && c.f === 'Alta', y:false }
+];
+const TREE_RULES = [
+  { n:'T1', txt:'Dedicación = Alta → Aprobado', m:c => c.d === 'Alta', y:true },
+  { n:'T2', txt:'Dedicación = Media ∧ Dificultad = Baja → Aprobado', m:c => c.d === 'Media' && c.f === 'Baja', y:true },
+  { n:'T3', txt:'Dedicación = Media ∧ Dificultad = Media ∧ Tipo = Test → Aprobado', m:c => c.d === 'Media' && c.f === 'Media' && c.t === 'Test', y:true },
+  { n:'T4', txt:'Dedicación = Media ∧ Dificultad = Media ∧ Tipo = General → Suspenso', m:c => c.d === 'Media' && c.f === 'Media' && c.t === 'General', y:false },
+  { n:'T5', txt:'Dedicación = Media ∧ Dificultad = Alta → Suspenso', m:c => c.d === 'Media' && c.f === 'Alta', y:false },
+  { n:'T6', txt:'Dedicación = Baja → Suspenso', m:c => c.d === 'Baja', y:false }
+];
+const ent = (a, s) => { const n = a + s; if(!n) return 0; const p = a / n, q = s / n; return -(p ? p * Math.log2(p) : 0) - (q ? q * Math.log2(q) : 0); };
+const sel = (opts, init, cb) => { const s = el('select'); opts.forEach(o => s.appendChild(el('option', null, o)).value = o); s.value = init; s.addEventListener('change', () => cb(s.value)); return s; };
+
+/* ---------- PASO 0 ---------- */
+steps.push({
+  name:'Antes de empezar: ¿se puede estar seguro de una regla?', short:'0 Contexto', shape:null,
+  desc:'La lógica que ya conoces <b>deduce</b>: de premisas ciertas saca conclusiones que no pueden fallar. La <b>lógica inductiva</b> hace lo contrario: parte de casos concretos y <b>generaliza</b> una regla que es útil, pero <b>sin garantía</b>. Es la base de cómo aprende un modelo de IA.',
+  render(stage){
+    const t = el('div', 'bio-text');
+    t.innerHTML = `<p><b>La idea de fondo.</b> Si en todos los videojuegos con orcos que has jugado llevabas espada, concluyes «con orcos siempre llevo espada». Va <i>de lo particular a lo general</i>. Puede ser verdad… hasta que juegues uno donde el héroe lleve arco.</p>
+    <p><b>Analogía.</b> Un detective y un científico. El detective deduce (si las pistas son ciertas, el culpable está seguro). El científico induce: tras muchas observaciones propone una ley, y está dispuesto a corregirla.</p>
+    <p><b>Programación lógica inductiva (ILP).</b> Unir ese aprendizaje con la lógica: a partir de ejemplos, producir <i>reglas formales</i> del tipo «Si A y B entonces C» que un programa pueda aplicar y explicar.</p>`;
+    stage.appendChild(t);
+    const flow = el('div', 'flow');
+    [['Deducir vs inducir', 'seguro o probable', 1], ['De frase a regla', 'Atributo = Valor', 2], ['Reglas del examen', 'cobertura', 3], ['Árbol de decisión', 'seguir el camino', 4], ['Aprender reglas', 'desde ejemplos', 5]].forEach(([n, s, to], i, a) => {
+      const f = el('div', 'fnode', `${n}<small>${s}</small>`); f.tabIndex = 0; f.addEventListener('click', () => goStep(to)); f.addEventListener('keydown', e => { if(e.key === 'Enter') goStep(to); });
+      flow.appendChild(f); if(i < a.length-1) flow.appendChild(el('span', 'farrow', '→'));
+    });
+    stage.appendChild(flow);
+    stage.appendChild(el('p', 'pad-note', 'Haz clic en cualquier cuadro o pregunta para saltar a ese paso. También funcionan las flechas ← → del teclado.'));
+    stage.appendChild(qcards(QUESTIONS));
+  }
+});
+
+/* ---------- PASO 1: deducir vs inducir ---------- */
+steps.push({
+  name:'Deducir o inducir: ¿conclusión segura o probable?', short:'1 Deducir/Inducir', shape:'particular → general',
+  desc:'En un razonamiento <b>deductivo</b> la conclusión es necesaria si las premisas son ciertas. En uno <b>inductivo</b> la conclusión va más allá de lo observado y <b>puede fallar</b>. Clasifica los razonamientos y luego juega la serie de videojuegos con orcos.',
+  render(stage){
+    stage.appendChild(sortRows([
+      { t:'Todos los humanos son mortales. Sócrates es humano. Luego Sócrates es mortal.', a:'D', why:'Si las premisas son ciertas, la conclusión no puede fallar.', hint:'¿Puede ser falsa la conclusión con premisas ciertas?' },
+      { t:'Todos los cisnes que he visto son blancos; luego todos los cisnes son blancos.', a:'I', why:'Generaliza desde lo observado. Un cisne negro la rompe (y los hay).', hint:'¿Hablo de todos los cisnes a partir de unos pocos?' },
+      { t:'Si x > 4 entonces x > 3. Aquí x = 5. Luego x > 3.', a:'D', why:'Es una implicación aplicada a un caso: conclusión segura.' },
+      { t:'Cada vez que pulsé el botón sonó la alarma; por tanto sonará la próxima vez.', a:'I', why:'Predice el futuro a partir del pasado: probable, no seguro.' },
+      { t:'En todos los videojuegos con orcos que he jugado llevaba espada; luego en todos los videojuegos con orcos el personaje llevará espada.', a:'I', why:'El ejemplo de la clase: va de lo particular a lo general, sin garantía.' }
+    ], [{ k:'D', label:'Deductivo' }, { k:'I', label:'Inductivo' }]));
+    stage.appendChild(el('div', 'panel-title c1', 'Juega la serie: hipótesis «con orcos, siempre espada»'));
+    const GAMES = ['Orcos del bosque', 'La fortaleza orca', 'Clan de los colmillos', 'Orcos y mazmorras', 'Guerra de las cavernas', 'El último orco', 'Reino de ceniza', 'Horda negra', 'Cazador de orcos', 'Valle de huesos'];
+    const SW = [true, true, true, true, true, true, true, true, false, true];
+    let n = 0; const list = el('div', 'btn-row'), out = el('div', 'formula'), nb = el('button', 'toggle-btn', '▶ Jugar el siguiente juego'), rs = el('button', 'toggle-btn', 'Reiniciar');
+    nb.type = 'button'; rs.type = 'button'; const br = el('div', 'btn-row'); br.append(nb, rs);
+    function upd(){
+      list.innerHTML = ''; GAMES.slice(0, n).forEach((g, i) => { const c = el('span', 'tv v' + V(SW[i]), `${g}: ${SW[i] ? 'espada' : 'arco'}`); c.style.margin = '2px'; list.appendChild(c); });
+      const brk = SW.slice(0, n).some(v => !v), ok = SW.slice(0, n).filter(Boolean).length;
+      out.innerHTML = n === 0 ? 'Aún no has jugado ninguno. Pulsa «jugar».' : (brk ? `<span class="no">Hipótesis refutada:</span> ${GAMES[SW.indexOf(false)]} tiene orcos y el héroe lleva <b>arco</b>. Tras ${ok} casos a favor, <b>un solo caso en contra</b> hunde la regla.` : `<span class="ok">${n} de ${n} juegos con orcos: espada.</span> La hipótesis «siempre espada» está <b>corroborada</b>… pero <b>no demostrada</b>. ¿Y el siguiente?`);
+      out.classList.toggle('win', !brk && n > 0); nb.disabled = n >= GAMES.length; nb.style.opacity = nb.disabled ? .4 : 1;
+    }
+    nb.addEventListener('click', () => { if(n < GAMES.length){ n++; upd(); } }); rs.addEventListener('click', () => { n = 0; upd(); });
+    stage.append(br, list, out);
+    stage.appendChild(el('p', 'pad-note', '<b>Idea:</b> la inducción es útil porque permite aprender y predecir, pero sus conclusiones son <b>hipótesis</b>. Por eso un modelo de IA se evalúa con casos nuevos que no ha visto.'));
+    upd();
+  }
+});
+
+/* ---------- PASO 2: de la frase a la regla ---------- */
+steps.push({
+  name:'De la frase natural a una regla formal', short:'2 Frase → regla', shape:'A ∧ B → C',
+  desc:'Para que un programa razone, «el coche rojo ganará la carrera» debe pasar a forma <b>Atributo = Valor</b>. Una situación es una <b>conjunción de pares atributo-valor</b>: (Dedicación = Media ∧ Dificultad = Media ∧ Tipo = Test). Elige los valores y mira la fórmula y las reglas que la cubren.',
+  render(stage){
+    let d = 'Media', f = 'Media', t = 'Test'; const out = el('div', 'formula'), rules = el('div');
+    const row = el('div', 'btn-row'); row.append(el('span', 'viz-label', 'Dedicación'), sel(DED, d, v => { d = v; upd(); }), el('span', 'viz-label', 'Dificultad'), sel(DIF, f, v => { f = v; upd(); }), el('span', 'viz-label', 'Tipo'), sel(TIPO, t, v => { t = v; upd(); }));
+    function upd(){
+      const c = { d, f, t };
+      out.innerHTML = `<b>Situación:</b> (Dedicación = ${d} ∧ Dificultad = ${f} ∧ Tipo = ${t})<br>En forma de regla: <b>Si Dedicación=${d} ∧ Dificultad=${f} ∧ Tipo=${t} → ¿Aprobar examen?</b>`;
+      const hit = CLASS_RULES.filter(r => r.m(c));
+      rules.innerHTML = '<div class="panel-title c2">Reglas escritas en la clase que cubren este caso</div>' + (hit.length ? hit.map(r => `<div class="qrow" style="margin:4px 0"><div class="tx"><b>${r.n}</b>: ${r.txt}</div><div>${vtag(r.y)}</div></div>`).join('') : '<div class="formula"><span class="no">Ninguna de las 3 reglas cubre este caso.</span> Aquí hace falta aprender más reglas (siguiente paso).</div>');
+    }
+    stage.append(el('div', 'panel-title c1', 'Describe a un estudiante'), row, out, rules);
+    stage.appendChild(el('div', 'panel-title c3', 'Traducción de la frase de la clase'));
+    stage.appendChild(el('div', 'formula', '«El coche rojo ganará la carrera» → <b>A</b>: el coche es rojo · <b>B</b>: gana la carrera → <b>A → B</b><br>Hecho así, se puede <i>comprobar</i> con datos y combinar con otras reglas.'));
+    stage.appendChild(el('p', 'pad-note', 'Fíjate en que cada ∧ añade una condición: cuantas más condiciones, <b>más específica</b> es la regla y menos casos cubre.'));
+    upd();
+  }
+});
+
+/* ---------- PASO 3: cobertura ---------- */
+steps.push({
+  name:'Las reglas del examen: ¿cubren todos los casos?', short:'3 Cobertura', shape:'3 reglas · 18 situaciones',
+  desc:'Con 3 niveles de dedicación, 3 de dificultad y 2 tipos hay <b>18 situaciones</b>. Las tres reglas de la clase no cubren todas. Compara con el <b>conjunto completo de 6 reglas</b> que sale del árbol de decisiones: la página cuenta cuántas situaciones deja sin regla cada conjunto.',
+  render(stage){
+    let mode = 'class'; const bar = el('div', 'btn-row'), out = el('div', 'formula'), tbl = el('div', 'tbl-wrap');
+    function upd(){
+      bar.querySelectorAll('button').forEach((b, i) => b.classList.toggle('active', (i === 0) === (mode === 'class')));
+      const R = mode === 'class' ? CLASS_RULES : TREE_RULES; let cov = 0, ok = 0, conflict = 0;
+      const t = el('table', 'dt'); t.innerHTML = '<tr><th>Dedicación</th><th>Dificultad</th><th>Tipo</th><th>Regla</th><th>Predice</th><th>Real</th></tr>';
+      ALLC.forEach(c => { const hit = R.filter(r => r.m(c)); const pred = hit.length ? hit[0].y : null; if(hit.length) cov++; if(hit.length && pred === c.y) ok++; if(new Set(hit.map(h => h.y)).size > 1) conflict++;
+        t.appendChild(el('tr', pred === null ? 'bad' : '', `<td>${c.d}</td><td>${c.f}</td><td>${c.t}</td><td>${hit.map(h => h.n).join(', ') || '—'}</td><td>${pred === null ? '<span class="no">sin regla</span>' : vtag(pred)}</td><td>${vtag(c.y)}</td>`)); });
+      tbl.innerHTML = ''; tbl.appendChild(t);
+      out.innerHTML = `<b>${mode === 'class' ? 'Reglas de la clase (3)' : 'Reglas del árbol (6)'}</b><br>Casos cubiertos: <b>${cov} de 18</b> · aciertos entre los cubiertos: <b>${ok}</b>${cov - ok ? ` · fallos: <span class="no">${cov - ok}</span>` : ''}<br>${cov === 18 ? '<span class="ok">Cada situación tiene exactamente una regla que decide.</span>' : `<span class="no">${18 - cov} situaciones quedan sin regla</span> (en rosa en la tabla).`}`;
+      out.classList.toggle('win', cov === 18);
+    }
+    bar.append(chipBtn('Reglas escritas en la clase (3)', false, () => { mode = 'class'; upd(); }), chipBtn('Reglas completas del árbol (6)', false, () => { mode = 'tree'; upd(); }));
+    stage.append(bar, out, tbl);
+    stage.appendChild(el('p', 'pad-note', '<b>Idea:</b> un buen conjunto de reglas debe <b>cubrir</b> los casos y no <b>contradecirse</b>. Más reglas cubren más, pero cada una debe tener sentido.'));
+    upd();
+  }
+});
+
+/* ---------- PASO 4: árbol ---------- */
+steps.push({
+  name:'Árbol de decisiones: seguir el camino de un caso', short:'4 Árbol', shape:'raíz → hojas',
+  desc:'El mismo conocimiento se puede dibujar como un <b>árbol</b>: se pregunta un atributo por nivel y cada hoja es un resultado. Elige los valores de un estudiante y mira cómo la página <b>ilumina el camino</b> desde la raíz hasta el veredicto.',
+  render(stage){
+    let d = 'Media', f = 'Media', t = 'General'; const out = el('div', 'formula'), box = el('div');
+    const row = el('div', 'btn-row'); row.append(el('span', 'viz-label', 'Dedicación'), sel(DED, d, v => { d = v; upd(); }), el('span', 'viz-label', 'Dificultad'), sel(DIF, f, v => { f = v; upd(); }), el('span', 'viz-label', 'Tipo'), sel(TIPO, t, v => { t = v; upd(); }));
+    function node(label, on, leaf, yes){ return `<div style="margin:2px 0;padding:5px 10px;border-radius:8px;border:1px solid ${on ? 'var(--viu)' : 'var(--line)'};background:${on ? 'var(--viu-dim)' : 'var(--panel-2)'};color:${leaf ? (yes ? 'var(--cyan)' : 'var(--pink)') : (on ? 'var(--viu)' : 'var(--text)')};font-family:var(--font-mono);font-size:12px;display:inline-block">${label}</div>`; }
+    function upd(){
+      const c = { d, f, t }, res = verdict(d, f, t); let h = '';
+      DED.slice().reverse().forEach(a => { const onA = c.d === a; h += `<div style="margin-left:0">${node('Dedicación = ' + a, onA)}</div>`;
+        if(a === 'Alta') h += `<div style="margin-left:28px">${node('→ Aprobado', onA, true, true)}</div>`;
+        else if(a === 'Baja') h += `<div style="margin-left:28px">${node('→ Suspenso', onA, true, false)}</div>`;
+        else { DIF.forEach(b => { const onB = onA && c.f === b; h += `<div style="margin-left:28px">${node('Dificultad = ' + b, onB)}</div>`;
+          if(b === 'Baja') h += `<div style="margin-left:56px">${node('→ Aprobado', onB, true, true)}</div>`;
+          else if(b === 'Alta') h += `<div style="margin-left:56px">${node('→ Suspenso', onB, true, false)}</div>`;
+          else TIPO.forEach(g => { const onT = onB && c.t === g; h += `<div style="margin-left:56px">${node('Tipo = ' + g, onT)}</div><div style="margin-left:84px">${node(g === 'Test' ? '→ Aprobado' : '→ Suspenso', onT, true, g === 'Test')}</div>`; }); }); } });
+      box.innerHTML = `<div style="max-width:420px;margin:0 auto;text-align:left">${h}</div>`;
+      out.innerHTML = `Situación: (${d}, ${f}, ${t}) → camino iluminado → <span class="${res ? 'ok' : 'no'}">${res ? 'Aprobado' : 'Suspenso'}</span><br>Regla: ${TREE_RULES.find(r => r.m(c)).txt}`; out.classList.toggle('win', res);
+    }
+    stage.append(row, box, out);
+    stage.appendChild(el('p', 'pad-note', 'Lectura: se empieza por <b>Dedicación</b>. Alta → aprobado; Baja → suspenso. Solo con Media hay que mirar la <b>Dificultad</b>, y solo si es Media importa el <b>Tipo</b>. Cada camino raíz→hoja es una regla.'));
+    upd();
+  }
+});
+
+/* ---------- PASO 5: aprender de ejemplos ---------- */
+steps.push({
+  name:'Aprender una regla a partir de ejemplos', short:'5 Aprender', shape:'ganancia de información',
+  desc:'Esta es la inducción en acción: partimos de <b>casos observados</b> (los 18 estudiantes) y buscamos qué atributo <b>separa mejor</b> los aprobados de los suspensos. La página calcula la <b>ganancia de información</b> de cada atributo; añade un caso excepcional y comprueba que la regla ya no es 100 % fiable.',
+  render(stage){
+    let exc = false; const out = el('div', 'formula'), bars = el('div'), rule = el('div', 'formula');
+    const ex = chipBtn('Añadir un estudiante excepcional: Dedicación Alta pero suspenso', false, b => { exc = !exc; b.classList.toggle('active', exc); upd(); });
+    function upd(){
+      const data = ALLC.map(c => ({ ...c })); if(exc) data.push({ d:'Alta', f:'Alta', t:'General', y:false });
+      const a = data.filter(c => c.y).length, s = data.length - a, H = ent(a, s);
+      const ATTR = [['Dedicación', 'd', DED], ['Dificultad', 'f', DIF], ['Tipo', 't', TIPO]];
+      const gains = ATTR.map(([nm, k, vals]) => { let rem = 0; vals.forEach(v => { const sub = data.filter(c => c[k] === v), sa = sub.filter(c => c.y).length; rem += sub.length / data.length * ent(sa, sub.length - sa); }); return { nm, g:H - rem }; });
+      const best = gains.reduce((m, x) => x.g > m.g ? x : m), mx = Math.max(...gains.map(g => g.g)) || 1;
+      bars.innerHTML = gains.map(g => `<div class="lrow" style="grid-template-columns:104px 1fr 64px"><span class="nm">${g.nm}</span><div class="trk" style="height:16px;position:relative;background:var(--panel-2);border-radius:4px;border:1px solid var(--line)"><div style="position:absolute;top:1px;bottom:1px;left:1px;width:${(g.g / mx * 100).toFixed(0)}%;background:${g === best ? 'var(--viu)' : 'var(--cyan)'};border-radius:3px"></div></div><span class="v" style="text-align:right;color:var(--muted)">${g.g.toFixed(3)}</span></div>`).join('');
+      out.innerHTML = `Muestra: <b>${data.length}</b> estudiantes (${a} aprobados, ${s} suspensos) · entropía inicial H = ${H.toFixed(3)}<br>Mejor primera pregunta: <b>${best.nm}</b> (ganancia ${best.g.toFixed(3)})`;
+      const alta = data.filter(c => c.d === 'Alta'), okA = alta.filter(c => c.y).length;
+      rule.innerHTML = `Regla inducida: <b>Si Dedicación = Alta → Aprobado</b><br>Casos con Dedicación Alta: ${alta.length} · aprobados: ${okA} · fiabilidad: <b>${(okA / alta.length * 100).toFixed(0)} %</b> ${okA === alta.length ? '<span class="ok">(sin excepciones… en los datos vistos)</span>' : '<span class="no">(¡una excepción y ya no es del 100 %!)</span>'}`;
+      rule.classList.toggle('win', okA === alta.length);
+    }
+    stage.append(el('div', 'panel-title c1', 'Ganancia de información de cada atributo (más largo = separa mejor)'), bars, out, el('div', 'btn-row'), rule);
+    stage.lastChild.previousSibling.appendChild(ex);
+    stage.appendChild(el('p', 'pad-note', '<b>Por qué importa:</b> así elige la raíz un algoritmo de aprendizaje de árboles (ID3; C4.5 usa una variante, la razón de ganancia). Y recuerda: la regla se induce de casos <b>vistos</b>; si aparece uno distinto, hay que revisarla. La inducción nunca ofrece certeza.'));
+    upd();
+  }
+});
+
+/* ---------- PASO 6: resumen ---------- */
+steps.push({
+  name:'Resumen y código', short:'6 Resumen', shape:null,
+  desc:'Las reglas aprendidas son código: una condición y un resultado. Las cifras de abajo las calcula la página con las mismas reglas.',
+  render(stage){
+    const T = el('div', 'tbl-wrap'); T.innerHTML = `<table class="dt"><tr><th></th><th>Deducción</th><th>Inducción</th></tr><tr><td>Va de</td><td>de premisas a una conclusión que se sigue necesariamente</td><td>de casos observados a una conclusión que los amplía (generalización o predicción)</td></tr><tr><td>Conclusión</td><td>necesaria</td><td>probable</td></tr><tr><td>Ejemplo</td><td>«Si x>4 entonces x>3; x = 5; luego x>3»</td><td>«con orcos siempre espada»</td></tr><tr><td>En IA</td><td>razonamiento con reglas</td><td>aprendizaje desde datos</td></tr></table>`; stage.appendChild(T);
+    stage.appendChild(el('div', 'panel-title c1', 'En Python: las reglas del árbol'));
+    stage.appendChild(codeBox(`def aprueba(dedicacion, dificultad, tipo):
+    if dedicacion == "Alta":
+        return True
+    if dedicacion == "Baja":
+        return False
+    # dedicación Media
+    if dificultad == "Baja":
+        return True
+    if dificultad == "Media":
+        return tipo == "Test"
+    return False                 # dificultad Alta
+
+print(aprueba("Alta", "Alta", "General"))
+print(aprueba("Media", "Media", "Test"))
+print(aprueba("Media", "Media", "General"))`));
+    stage.appendChild(el('div', 'viz-label', 'Salida del programa (calculada aquí con las mismas reglas):'));
+    stage.appendChild(codeBox([verdict('Alta', 'Alta', 'General'), verdict('Media', 'Media', 'Test'), verdict('Media', 'Media', 'General')].map(b => b ? 'True' : 'False').join('\n')));
+    stage.appendChild(el('div', 'panel-title c3', 'Errores frecuentes'));
+    const errs = el('div', 'bio-text'); errs.innerHTML = `<p><b>1.</b> Tratar una regla inducida como una ley: es una hipótesis que hay que contrastar con casos nuevos.</p>
+      <p><b>2.</b> Generalizar con pocos casos: ocho juegos con espada no demuestran nada sobre el noveno.</p>
+      <p><b>3.</b> Olvidar los casos sin regla: un sistema útil debe decidir <i>algo</i> en todas las situaciones.</p>
+      <p><b>4.</b> Confundir correlación con causa: que dos atributos vayan juntos en los datos no significa que uno cause el otro.</p>`;
+    stage.appendChild(errs); stage.appendChild(qcards(QUESTIONS));
+  }
+});
+
+/* =========================================================
+   Motor de navegación (idéntico en todas las actividades)
+========================================================= */
+let current = 0;
+function renderTrail(){
+  const tr = $('#trail'); tr.innerHTML = '';
+  steps.forEach((s, i) => { const b = el('button', null, s.short); b.type = 'button'; b.addEventListener('click', () => goTo(i)); tr.appendChild(b); });
+}
+function goTo(i){
+  current = i;
+  clearTimers();
+  const s = steps[current];
+  $('#stepCount').textContent = current === 0 ? 'Introducción' : `Paso ${current} de ${steps.length - 1}`;
+  $('#stepTitle').textContent = s.name;
+  $('#stepDesc').innerHTML = s.desc;
+  const chip = $('#shapeChip');
+  if(s.shape){ chip.style.display = ''; chip.innerHTML = `<b>${s.shape}</b>`; } else chip.style.display = 'none';
+  const stage = $('#stage'); stage.innerHTML = '';
+  s.render(stage);
+  const btns = document.querySelectorAll('.trail button');
+  btns.forEach((b, idx) => b.classList.toggle('active', idx === current));
+  if(btns[current]) btns[current].scrollIntoView({ block:'nearest', inline:'center' });
+  $('#prevBtn').disabled = current === 0;
+  $('#nextBtn').textContent = current === steps.length - 1 ? 'Volver al inicio ↺' : 'Siguiente →';
+  window.scrollTo(0, 0);
+}
+$('#prevBtn').addEventListener('click', () => { if(current > 0) goTo(current - 1); });
+$('#nextBtn').addEventListener('click', () => goTo(current === steps.length - 1 ? 0 : current + 1));
+document.addEventListener('keydown', e => {
+  if(e.target && (e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT')) return;
+  if(e.key === 'ArrowRight') $('#nextBtn').click();
+  if(e.key === 'ArrowLeft') $('#prevBtn').click();
+});
+renderTrail(); goTo(0);
+</script>
+</body>
+</html>

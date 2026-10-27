@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="generator" content="Generado con asistencia de IA (Claude) - revisar por el responsable antes de su uso">
+<title>Puertas lógicas y circuitos</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<!-- Artefacto generado con asistencia de IA (Claude Sonnet 5.5). Requiere revision del desarrollador responsable. Contenido basado en las diapositivas de Puertas lógicas y Circuitos lógicos de 1-logicaRec.tex (02MIAR, VIU). Datos: solo ejemplos ficticios o de dominio publico. -->
+<style>
+  :root{
+    --bg:#0B1220; --panel:#121B2E; --panel-2:#17233A; --line:#26324A; --text:#E7ECF5; --muted:#8B96AD;
+    --viu:#E55015; --viu-dim:#4A2212;
+    --cyan:#5EEAD4; --cyan-dim:#1F4A45;
+    --pink:#F472B6; --pink-dim:#452236;
+    --radius:14px;
+    --font-head:'Space Grotesk','Segoe UI',sans-serif; --font-body:'IBM Plex Sans','Segoe UI',sans-serif; --font-mono:'IBM Plex Mono','Consolas',monospace;
+    padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+  }
+  *{box-sizing:border-box;}
+  html,body{height:100%;}
+  body{ margin:0; background:var(--bg); color:var(--text); font-family:var(--font-body); min-height:100%; display:flex; flex-direction:column; overflow-x:hidden; }
+  ::selection{ background:var(--viu-dim); color:var(--viu); }
+
+  header{ padding:18px clamp(16px,4vw,40px) 10px; display:flex; flex-direction:column; gap:14px; flex:0 0 auto; }
+  .headline-row{ display:flex; align-items:baseline; justify-content:space-between; gap:16px; flex-wrap:wrap; }
+  h1{ font-family:var(--font-head); font-weight:600; font-size:clamp(20px,2.6vw,28px); margin:0; letter-spacing:-0.01em; }
+  h1 span{ color:var(--viu); }
+  .net-tag{ font-family:var(--font-mono); font-size:12.5px; color:var(--muted); }
+  .trail{ display:flex; gap:4px; overflow-x:auto; padding-bottom:4px; scrollbar-width:thin; }
+  .trail::-webkit-scrollbar{height:5px;} .trail::-webkit-scrollbar-thumb{background:var(--line); border-radius:4px;}
+  .trail button{ flex:0 0 auto; background:var(--panel); border:1px solid var(--line); color:var(--muted); font-family:var(--font-mono); font-size:11.5px; padding:7px 11px; border-radius:999px; cursor:pointer; white-space:nowrap; transition:border-color .15s,color .15s,background .15s; }
+  .trail button:hover{ border-color:#3a4a6b; color:var(--text); }
+  .trail button.active{ background:var(--viu-dim); border-color:var(--viu); color:var(--viu); }
+
+  main{ flex:1 0 auto; display:flex; align-items:stretch; justify-content:center; padding:6px clamp(16px,4vw,40px) 10px; }
+  .card{ width:100%; max-width:1040px; background:var(--panel); border:1px solid var(--line); border-radius:var(--radius); padding:clamp(18px,3vw,30px); display:flex; flex-direction:column; gap:16px; }
+  .step-meta{ display:flex; justify-content:space-between; align-items:flex-start; gap:20px; flex-wrap:wrap; }
+  .step-count{ font-family:var(--font-mono); font-size:12.5px; color:var(--viu); margin:0 0 4px; }
+  .step-title{ font-family:var(--font-head); font-weight:600; font-size:clamp(18px,2.4vw,24px); margin:0; }
+  .step-desc{ color:var(--muted); font-size:14.5px; line-height:1.6; max-width:70ch; margin:6px 0 0; }
+  .shape-chip{ font-family:var(--font-mono); font-size:13px; background:var(--panel-2); border:1px solid var(--line); padding:9px 14px; border-radius:10px; color:var(--text); }
+  .shape-chip b{ color:var(--viu); font-weight:600; }
+  #stage{ display:flex; flex-direction:column; align-items:center; gap:16px; padding:6px 2px; }
+  #stage > *{ width:100%; }
+
+  footer{ flex:0 0 auto; display:flex; justify-content:center; gap:14px; flex-wrap:wrap; padding:4px clamp(16px,4vw,40px) calc(18px + env(safe-area-inset-bottom,0px)); }
+  .nav-btn{ font-family:var(--font-body); font-weight:500; font-size:14.5px; background:var(--panel); border:1px solid var(--line); color:var(--text); padding:11px 22px; border-radius:10px; cursor:pointer; transition:border-color .15s,transform .1s; }
+  .nav-btn:hover{ border-color:var(--viu); } .nav-btn:active{ transform:scale(.97); }
+  .nav-btn:disabled{ opacity:.35; cursor:default; } .nav-btn:disabled:hover{ border-color:var(--line); }
+  .nav-btn.primary{ background:var(--viu-dim); border-color:var(--viu); color:var(--viu); }
+
+  .viz-row{ display:flex; align-items:flex-start; justify-content:center; gap:clamp(18px,3vw,36px); flex-wrap:wrap; width:100%; }
+  .viz-col{ display:flex; flex-direction:column; align-items:center; gap:10px; flex:1 1 280px; min-width:0; }
+  .viz-label{ font-family:var(--font-mono); font-size:12px; color:var(--muted); text-align:center; line-height:1.4; }
+  .viz-label b{ color:var(--text); font-weight:600; }
+
+  .formula{ font-family:var(--font-mono); font-size:13.5px; background:var(--panel-2); border:1px solid var(--line); border-radius:10px; padding:12px 16px; min-height:44px; display:block; text-align:center; color:var(--text); max-width:720px; margin:0 auto; line-height:1.7; }
+  .formula b{ color:var(--cyan); } .formula .ok{ color:var(--viu); font-weight:600; } .formula .no{ color:var(--pink); font-weight:600; }
+  .formula.win{ border-color:var(--viu); }
+  .pad-note{ font-size:13px; color:var(--muted); text-align:center; max-width:74ch; margin:0 auto; line-height:1.6; }
+  .pad-note b{ color:var(--text); font-weight:600; }
+  .bio-text{ max-width:74ch; margin:0 auto; }
+  .bio-text p{ font-size:13.8px; line-height:1.65; color:var(--text); margin:0 0 10px; }
+  .bio-text b{ color:var(--viu); font-weight:600; } .bio-text i{ color:var(--cyan); font-style:normal; }
+
+  .qgrid{ display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:10px; }
+  .qcard{ background:var(--panel-2); border:1px solid var(--line); border-radius:12px; padding:14px 16px; cursor:pointer; transition:border-color .15s; }
+  .qcard:hover{ border-color:var(--viu); }
+  .qcard .n{ font-family:var(--font-mono); font-size:11.5px; color:var(--viu); }
+  .qcard h3{ font-family:var(--font-head); font-size:15px; margin:4px 0 6px; font-weight:600; }
+  .qcard p{ margin:0; font-size:12.5px; color:var(--muted); line-height:1.5; }
+
+  .btn-row{ display:flex; gap:8px; justify-content:center; flex-wrap:wrap; }
+  .toggle-btn{ font-family:var(--font-mono); font-size:11.5px; background:var(--panel-2); border:1px solid var(--line); color:var(--muted); padding:8px 13px; border-radius:999px; cursor:pointer; transition:all .15s; }
+  .toggle-btn:hover{ color:var(--text); border-color:#3a4a6b; }
+  .toggle-btn.active{ background:var(--viu-dim); border-color:var(--viu); color:var(--viu); }
+  .toggle-btn.good{ background:var(--viu-dim); border-color:var(--viu); color:var(--viu); }
+  .toggle-btn.bad{ background:var(--pink-dim); border-color:var(--pink); color:var(--pink); }
+
+  /* interruptor de valor de verdad */
+  .tg{ font-family:var(--font-mono); font-size:13px; background:var(--panel-2); border:1px solid var(--line); color:var(--muted); padding:10px 16px; border-radius:12px; cursor:pointer; transition:all .15s; text-align:left; min-width:150px; }
+  .tg b{ display:block; font-size:17px; color:var(--text); font-weight:600; }
+  .tg small{ display:block; font-size:11px; margin-top:2px; }
+  .tg.on{ background:var(--viu-dim); border-color:var(--viu); color:var(--viu); } .tg.on b{ color:var(--viu); }
+  .tg.off{ border-color:#3a4a6b; }
+  .tg:hover{ border-color:var(--viu); }
+
+  .tv{ display:inline-block; min-width:22px; padding:1px 6px; border-radius:6px; font-family:var(--font-mono); font-weight:600; font-size:12.5px; }
+  .tv.v1{ background:var(--viu-dim); color:var(--viu); } .tv.v0{ background:var(--pink-dim); color:var(--pink); }
+
+  .stats{ display:flex; gap:10px; flex-wrap:wrap; justify-content:center; }
+  .stat{ background:var(--panel-2); border:1px solid var(--line); border-radius:10px; padding:8px 14px; text-align:center; min-width:120px; }
+  .stat .l{ font-family:var(--font-mono); font-size:10.5px; color:var(--muted); display:block; margin-bottom:3px; }
+  .stat .v{ font-family:var(--font-mono); font-size:15px; font-weight:600; color:var(--text); }
+  .stat.c1 .v{ color:var(--viu); } .stat.c2 .v{ color:var(--cyan); } .stat.c3 .v{ color:var(--pink); }
+  .panel-title{ font-family:var(--font-head); font-weight:600; font-size:13.5px; color:var(--text); text-align:center; margin:0 0 2px; }
+  .panel-title.c1{ color:var(--viu); } .panel-title.c2{ color:var(--cyan); } .panel-title.c3{ color:var(--pink); }
+
+  pre.code{ margin:0; background:#0E1626; border:1px solid var(--line); border-radius:10px; padding:12px 14px; font-family:var(--font-mono); font-size:12.3px; line-height:1.6; color:var(--text); overflow-x:auto; text-align:left; }
+  pre.code .cm{ color:#6b7a99; } pre.code .kw{ color:var(--pink); }
+
+  table.dt{ border-collapse:collapse; font-family:var(--font-mono); font-size:12.5px; margin:0 auto; }
+  table.dt th,table.dt td{ border:1px solid var(--line); padding:6px 11px; text-align:center; }
+  table.dt th{ background:var(--panel-2); color:var(--muted); font-weight:500; }
+  table.dt th.res{ background:var(--viu-dim); color:var(--viu); }
+  table.dt tr.hl td{ background:rgba(94,234,212,.12); }
+  table.dt tr.hl td:first-child{ box-shadow:inset 3px 0 0 var(--cyan); }
+  table.dt tr.bad td{ background:rgba(244,114,182,.14); }
+  table.dt tr.pick{ cursor:pointer; } table.dt tr.pick:hover td{ background:rgba(255,255,255,.04); }
+  .tbl-wrap{ overflow-x:auto; max-width:100%; }
+
+  /* filas de preguntas (sorter) */
+  .qrow{ background:var(--panel-2); border:1px solid var(--line); border-radius:12px; padding:12px 14px; display:flex; gap:12px; align-items:center; justify-content:space-between; flex-wrap:wrap; }
+  .qrow .tx{ flex:1 1 280px; font-size:14px; line-height:1.5; }
+  .qrow .opts{ display:flex; gap:6px; flex-wrap:wrap; }
+  .qrow .fb{ flex:1 1 100%; font-size:12.5px; color:var(--muted); line-height:1.5; }
+  .qrow .fb b.ok{ color:var(--viu); } .qrow .fb b.no{ color:var(--pink); }
+  .qrow.done{ border-color:#3a4a6b; }
+
+  select{ font-family:var(--font-mono); font-size:13px; background:var(--panel-2); color:var(--text); border:1px solid var(--line); border-radius:8px; padding:8px 10px; max-width:100%; }
+  select:focus,button:focus-visible{ outline:2px solid var(--cyan); outline-offset:1px; }
+
+  .cards6{ display:grid; grid-template-columns:repeat(auto-fit,minmax(230px,1fr)); gap:10px; width:100%; }
+  .ccard{ background:var(--panel-2); border:1px solid var(--line); border-radius:12px; padding:12px 14px; display:flex; flex-direction:column; gap:6px; }
+  .ccard .sym{ font-family:var(--font-mono); font-size:22px; color:var(--viu); font-weight:600; }
+  .ccard .nm{ font-family:var(--font-head); font-weight:600; font-size:14px; }
+  .ccard .rd{ font-size:12.5px; color:var(--muted); line-height:1.5; }
+  .ccard .sent{ font-size:13px; line-height:1.5; color:var(--text); border-top:1px dashed var(--line); padding-top:6px; }
+
+  .strip{ display:flex; flex-direction:column; gap:4px; align-items:center; overflow-x:auto; max-width:100%; }
+  .srow{ display:flex; gap:3px; align-items:center; }
+  .slab{ flex:0 0 150px; font-family:var(--font-mono); font-size:11px; color:var(--muted); text-align:right; padding-right:8px; }
+  .srow > div{ flex:0 0 40px; width:40px; text-align:center; font-family:var(--font-mono); font-size:12px; padding:4px 0; border-radius:6px; background:var(--panel-2); border:1px solid var(--line); }
+  .srow > div.v1{ background:var(--viu-dim); border-color:var(--viu); color:var(--viu); }
+  .srow > div.v0{ background:var(--pink-dim); border-color:var(--pink); color:var(--pink); }
+  .srow > div.h{ background:transparent; border-color:transparent; color:var(--muted); }
+
+  .flow{ display:flex; flex-wrap:wrap; gap:8px; align-items:center; justify-content:center; }
+  .fnode{ background:var(--panel-2); border:1px solid var(--line); border-radius:10px; padding:8px 12px; font-family:var(--font-mono); font-size:12px; cursor:pointer; transition:border-color .15s; }
+  .fnode:hover{ border-color:var(--viu); } .fnode small{ display:block; color:var(--muted); font-size:10.5px; }
+  .farrow{ color:var(--muted); }
+
+  svg text{ font-family:var(--font-mono); }
+  @media (max-width:640px){ .viz-row{ gap:16px; } table.dt th,table.dt td{ padding:5px 7px; } }
+  @media (prefers-reduced-motion:reduce){ *{ transition:none !important; } }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="headline-row">
+    <h1>Puertas lógicas: <span>cables</span> que calculan</h1>
+    <span class="net-tag">02MIAR · Matemáticas para la IA · Sesión 2</span>
+  </div>
+  <div class="trail" id="trail"></div>
+</header>
+
+<main>
+  <div class="card">
+    <div class="step-meta">
+      <div>
+        <p class="step-count" id="stepCount"></p>
+        <h2 class="step-title" id="stepTitle"></h2>
+        <p class="step-desc" id="stepDesc"></p>
+      </div>
+      <div class="shape-chip" id="shapeChip"></div>
+    </div>
+    <div id="stage"></div>
+  </div>
+</main>
+
+<footer>
+  <button class="nav-btn" id="prevBtn">← Anterior</button>
+  <button class="nav-btn primary" id="nextBtn">Siguiente →</button>
+</footer>
+
+<script>
+/* =========================================================
+   Utilidades
+========================================================= */
+const $ = s => document.querySelector(s);
+let timers = [];
+function clearTimers(){ timers.forEach(t => clearInterval(t)); timers = []; }
+function el(tag, cls, html){ const e = document.createElement(tag); if(cls) e.className = cls; if(html != null) e.innerHTML = html; return e; }
+const V = x => x ? 1 : 0;
+const vtag = x => `<span class="tv v${V(x)}">${V(x)}</span>`;
+const lower1 = s => s.charAt(0).toLowerCase() + s.slice(1);
+
+function py(code){
+  return code.replace(/&/g, '&amp;').replace(/</g, '&lt;').split('\n').map(l => {
+    const k = l.indexOf('#'); let body = l, cm = '';
+    if(k >= 0){ body = l.slice(0, k); cm = '<span class="cm">' + l.slice(k) + '</span>'; }
+    body = body.replace(/\b(import|from|as|print|def|return|not|and|or|for|in)\b/g, '<span class="kw">$1</span>');
+    return body + cm;
+  }).join('\n');
+}
+function codeBox(code){ const p = el('pre', 'code'); p.innerHTML = py(code); return p; }
+
+/* ---------- lógica: todas las combinaciones, en el orden de las diapositivas (1,1 / 1,0 / 0,1 / 0,0) ---------- */
+function combos(vars){
+  const n = vars.length, out = [];
+  for(let i = 0; i < (1 << n); i++){ const e = {}; vars.forEach((v, k) => e[v] = !((i >> (n-1-k)) & 1)); out.push(e); }
+  return out;
+}
+const sameEnv = (a, b) => Object.keys(a).every(k => a[k] === b[k]);
+const OPS = {
+  and: { sym:'∧', f:(p, q) => p && q },
+  or:  { sym:'∨', f:(p, q) => p || q },
+  xor: { sym:'⊻', f:(p, q) => p !== q },
+  imp: { sym:'→', f:(p, q) => !p || q },
+  iff: { sym:'↔', f:(p, q) => p === q }
+};
+function classify(f, vars){
+  const vals = combos(vars).map(f);
+  return vals.every(Boolean) ? 'T' : (vals.every(v => !v) ? 'C' : 'K');
+}
+const CLS = { T:'Tautología', C:'Contradicción', K:'Contingencia' };
+
+/* tabla de verdad viva: highlight de la fila actual; clic en fila = elegir esos valores */
+function makeTable(vars, cols, onPick, rowClass){
+  const wrap = el('div', 'tbl-wrap'), t = el('table', 'dt'); wrap.appendChild(t);
+  const head = el('tr'); const ths = [];
+  vars.forEach(v => head.appendChild(el('th', null, v)));
+  cols.forEach(c => { const th = el('th', c.res === false ? '' : 'res', c.h); ths.push(th); head.appendChild(th); });
+  t.appendChild(head);
+  const rows = combos(vars).map(env => {
+    const tr = el('tr', onPick ? 'pick' : ''); tr._env = env;
+    vars.forEach(v => tr.appendChild(el('td', null, vtag(env[v]))));
+    cols.forEach(c => tr.appendChild(el('td', null, vtag(c.f(env)))));
+    if(rowClass){ const rc = rowClass(env); if(rc) tr.classList.add(rc); }
+    if(onPick) tr.addEventListener('click', () => onPick(env));
+    t.appendChild(tr); return tr;
+  });
+  return { el: wrap, setHead:(i, txt) => { ths[i].innerHTML = txt; }, set: env => rows.forEach(r => r.classList.toggle('hl', !!env && sameEnv(r._env, env))) };
+}
+
+/* interruptor 1/0 */
+function toggleBtn(name, init, cb, subs){
+  let val = init; const b = el('button', 'tg'); b.type = 'button';
+  function draw(){
+    b.className = 'tg ' + (val ? 'on' : 'off');
+    b.innerHTML = `<b>${name} = ${V(val)}</b><small>${val ? (subs ? subs[0] : 'verdadera') : (subs ? subs[1] : 'falsa')}</small>`;
+    b.setAttribute('aria-pressed', val); b.setAttribute('aria-label', `${name} vale ${V(val)}`);
+  }
+  b.addEventListener('click', () => { val = !val; draw(); cb(val); });
+  draw();
+  return { el:b, get:() => val, set:v => { val = v; draw(); } };
+}
+
+/* ---------- circuitos (analogía física) ---------- */
+function circuit(mode, p, q){
+  const on = '#E55015', off = '#3a4a6b';
+  const w = (x1, y1, x2, y2, lit) => `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${lit ? on : off}" stroke-width="3.5" stroke-linecap="round"/>`;
+  const dotc = (x, y, lit) => `<circle cx="${x}" cy="${y}" r="3.6" fill="${lit ? on : off}"/>`;
+  const sw = (x, y, closed, lit, lab) => w(x, y, closed ? x+60 : x+54, closed ? y : y-26, closed && lit) + dotc(x, y, lit) + dotc(x+60, y, closed && lit) +
+    `<text x="${x+30}" y="${y+22}" text-anchor="middle" font-size="12" fill="#8B96AD">${lab}=${V(closed)}</text>`;
+  const lamp = (cx, cy, lit) => `<circle cx="${cx}" cy="${cy}" r="17" fill="${lit ? on : '#17233A'}" stroke="${lit ? '#ffb08a' : off}" stroke-width="2.5"/>` +
+    (lit ? [0,45,90,135,180,225,270,315].map(a => { const r = a*Math.PI/180; return `<line x1="${cx+23*Math.cos(r)}" y1="${cy+23*Math.sin(r)}" x2="${cx+31*Math.cos(r)}" y2="${cy+31*Math.sin(r)}" stroke="${on}" stroke-width="2.5" stroke-linecap="round"/>`; }).join('') : '') +
+    `<line x1="${cx-9}" y1="${cy-9}" x2="${cx+9}" y2="${cy+9}" stroke="${lit ? '#fff' : off}" stroke-width="2"/><line x1="${cx+9}" y1="${cy-9}" x2="${cx-9}" y2="${cy+9}" stroke="${lit ? '#fff' : off}" stroke-width="2"/>`;
+  const batt = (x, y1, y2) => `<line x1="${x-9}" y1="${y1}" x2="${x+9}" y2="${y1}" stroke="#E7ECF5" stroke-width="3"/><line x1="${x-5}" y1="${y1+8}" x2="${x+5}" y2="${y1+8}" stroke="#E7ECF5" stroke-width="3"/>`;
+  let s = '', lit = false;
+  if(mode === 'and'){
+    lit = p && q;
+    s += w(24,60,96,60,true) + sw(96,60,p,true,'p') + w(156,60,228,60,p) + sw(228,60,q,p,'q') + w(288,60,352,60,lit) + lamp(372,60,lit);
+    s += w(372,77,372,108,lit) + w(372,108,24,108,lit) + w(24,108,24,72,lit) + batt(24,60);
+  } else if(mode === 'or'){
+    lit = p || q;
+    s += w(24,70,96,70,true) + w(96,40,96,100,true) + w(96,40,150,40,true) + sw(150,40,p,true,'p') + w(210,40,300,40,p) +
+         w(96,100,150,100,true) + sw(150,100,q,true,'q') + w(210,100,300,100,q) + w(300,40,300,100,lit) + w(300,70,355,70,lit) + lamp(372,70,lit);
+    s += w(372,87,372,128,lit) + w(372,128,24,128,lit) + w(24,128,24,82,lit) + batt(24,70);
+  } else {
+    lit = p !== q;
+    const pt = [140,40], pb = [140,100], qt = [280,40], qb = [280,100];
+    s += w(24,70,110,70,true) + dotc(110,70,true) + dotc(310,70,lit) + w(310,70,355,70,lit) + lamp(372,70,lit);
+    s += w(110,70,140,p ? 40 : 100,true);
+    s += w(140,40,280,100,p) + w(140,100,280,40,!p);
+    s += w(310,70,280,q ? 40 : 100,lit);
+    s += [pt,pb,qt,qb].map(c => dotc(c[0], c[1], false)).join('');
+    s += `<text x="110" y="124" text-anchor="middle" font-size="12" fill="#8B96AD">p=${V(p)}</text><text x="310" y="124" text-anchor="middle" font-size="12" fill="#8B96AD">q=${V(q)}</text>`;
+    s += w(372,87,372,138,lit) + w(372,138,24,138,lit) + w(24,138,24,82,lit) + batt(24,70);
+  }
+  return `<svg viewBox="0 0 420 ${mode === 'xor' ? 150 : 140}" width="100%" style="max-width:420px" role="img" aria-label="Circuito con lámpara ${lit ? 'encendida' : 'apagada'}">${s}</svg>`;
+}
+
+
+function tfQuiz(items){
+  const box = el('div', 'viz-col'); box.style.width = '100%';
+  items.forEach(it => {
+    const row = el('div', 'qrow'); const tx = el('div', 'tx', it.q); const opts = el('div', 'opts'); const fb = el('div', 'fb');
+    [['Verdadero (1)', true], ['Falso (0)', false]].forEach(([lab, val]) => {
+      const b = el('button', 'toggle-btn', lab); b.type = 'button';
+      b.addEventListener('click', () => {
+        const ok = val === it.ans;
+        opts.querySelectorAll('button').forEach(x => x.classList.remove('good', 'bad'));
+        b.classList.add(ok ? 'good' : 'bad');
+        fb.innerHTML = (ok ? '<b class="ok">✔ Correcto.</b> ' : '<b class="no">✘ Casi.</b> ') + it.why;
+        row.classList.add('done');
+      });
+      opts.appendChild(b);
+    });
+    row.append(tx, opts, fb); box.appendChild(row);
+  });
+  return box;
+}
+
+/* clasificador por filas */
+function sortRows(items, options){
+  const box = el('div', 'viz-col'); box.style.width = '100%'; box.style.alignItems = 'stretch';
+  const stats = el('div', 'stats'); const sOk = el('div', 'stat c1', '<span class="l">acertadas</span><span class="v">0</span>'), sTot = el('div', 'stat', `<span class="l">total</span><span class="v">${items.length}</span>`);
+  stats.append(sOk, sTot); box.appendChild(stats);
+  const answered = new Set(); let good = 0;
+  items.forEach((it, idx) => {
+    const row = el('div', 'qrow'); const tx = el('div', 'tx', it.t); const opts = el('div', 'opts'); const fb = el('div', 'fb');
+    options.forEach(o => {
+      const b = el('button', 'toggle-btn', o.label); b.type = 'button';
+      b.addEventListener('click', () => {
+        const ok = o.k === it.a;
+        if(ok && !answered.has(idx)){ answered.add(idx); good++; sOk.querySelector('.v').textContent = good; }
+        opts.querySelectorAll('button').forEach(x => x.classList.remove('good', 'bad'));
+        b.classList.add(ok ? 'good' : 'bad');
+        fb.innerHTML = (ok ? '<b class="ok">✔ </b>' : '<b class="no">✘ Prueba otra vez. </b>') + (ok ? it.why : (it.hint || 'Piensa qué se puede afirmar de ella.'));
+        row.classList.toggle('done', ok);
+      });
+      opts.appendChild(b);
+    });
+    row.append(tx, opts, fb); box.appendChild(row);
+  });
+  return box;
+}
+
+const steps = [];
+function goStep(i){ goTo(i); }
+function qcards(list){
+  const g = el('div', 'qgrid');
+  list.forEach(([n, h, p, to]) => { const c = el('div', 'qcard', `<div class="n">${n}</div><h3>${h}</h3><p>${p}</p>`); c.tabIndex = 0; c.addEventListener('click', () => goStep(to)); c.addEventListener('keydown', e => { if(e.key === 'Enter') goStep(to); }); g.appendChild(c); });
+  return g;
+}
+
+const every = (ms, fn) => { const id = setInterval(fn, ms); timers.push(id); return id; };
+const chipBtn = (label, on, cb) => { const b = el('button', 'toggle-btn' + (on ? ' active' : ''), label); b.type = 'button'; b.addEventListener('click', () => cb(b)); return b; };
+const setStr = a => a.length ? '{' + a.join(', ') + '}' : '∅';
+
+const QUESTIONS = [
+  ['PREGUNTA 1', '¿Qué hace cada puerta lógica?', 'Siete puertas, su símbolo, su tabla y su función booleana.', 1],
+  ['PREGUNTA 2', '¿Cómo se lee un circuito?', 'De los cables a la fórmula f(x, y, z) y de vuelta.', 3],
+  ['PREGUNTA 3', '¿Para qué sirven en un ordenador?', 'Un medio sumador suma bits con solo dos puertas.', 5]
+];
+const GATES = {
+  and:  { n:'AND',  sym:'x · y', f:(a, b) => a && b, fe:'f(x,y) = x · y', body:'M0 0 H35 A30 30 0 0 1 35 60 H0 Z', w:65, bub:false, two:true },
+  or:   { n:'OR',   sym:'x + y', f:(a, b) => a || b, fe:'f(x,y) = x + y', body:'M0 0 Q40 0 70 30 Q40 60 0 60 Q18 30 0 0 Z', w:70, bub:false, two:true },
+  xor:  { n:'XOR',  sym:'x ⊻ y', f:(a, b) => a !== b, fe:'f(x,y) = (x̄ + ȳ) · (x + y)', body:'M0 0 Q40 0 70 30 Q40 60 0 60 Q18 30 0 0 Z', w:70, bub:false, two:true, extra:'M-9 0 Q9 30 -9 60' },
+  not:  { n:'NOT',  sym:'x̄', f:a => !a, fe:'f(x) = x̄', body:'M0 0 L0 60 L56 30 Z', w:56, bub:true, two:false },
+  nor:  { n:'NOR',  sym:'(x + y)′', f:(a, b) => !(a || b), fe:'f(x,y) = x̄ · ȳ', body:'M0 0 Q40 0 70 30 Q40 60 0 60 Q18 30 0 0 Z', w:70, bub:true, two:true },
+  nand: { n:'NAND', sym:'(x · y)′', f:(a, b) => !(a && b), fe:'f(x,y) = x̄ + ȳ', body:'M0 0 H35 A30 30 0 0 1 35 60 H0 Z', w:65, bub:true, two:true },
+  xnor: { n:'XNOR', sym:'x ↔ y', f:(a, b) => a === b, fe:'f(x,y) = x · y + x̄ · ȳ', body:'M0 0 Q40 0 70 30 Q40 60 0 60 Q18 30 0 0 Z', w:70, bub:true, two:true, extra:'M-9 0 Q9 30 -9 60' }
+};
+const ON = '#E55015', OFF = '#3a4a6b';
+const wire = (pts, lit) => `<polyline points="${pts.map(p => p.join(',')).join(' ')}" fill="none" stroke="${lit ? ON : OFF}" stroke-width="3.2" stroke-linejoin="round" stroke-linecap="round"/>`;
+const lampS = (x, y, lit) => `<circle cx="${x}" cy="${y}" r="10" fill="${lit ? ON : '#17233A'}" stroke="${lit ? '#ffb08a' : OFF}" stroke-width="2"/>`;
+const label = (x, y, t, anchor) => `<text x="${x}" y="${y}" fill="#E7ECF5" font-size="12" text-anchor="${anchor || 'middle'}">${t}</text>`;
+function ports(type, gx, gy){
+  const G = GATES[type], out = [gx + G.w + (G.bub ? 10 : 0), gy + 30];
+  return { ins:G.two ? [[gx, gy + 15], [gx, gy + 45]] : [[gx, gy + 30]], out };
+}
+function gateS(type, gx, gy, outVal){
+  const G = GATES[type];
+  let s = `<g transform="translate(${gx},${gy})"><path d="${G.body}" fill="${outVal ? 'rgba(229,80,21,.25)' : '#17233A'}" stroke="${outVal ? ON : '#8B96AD'}" stroke-width="2.4"/>`;
+  if(G.extra) s += `<path d="${G.extra}" fill="none" stroke="${outVal ? ON : '#8B96AD'}" stroke-width="2.4"/>`;
+  if(G.bub) s += `<circle cx="${G.w + 5}" cy="30" r="5" fill="#0B1220" stroke="${outVal ? ON : '#8B96AD'}" stroke-width="2.2"/>`;
+  s += `<text x="${G.w/2 - 6}" y="34" fill="#8B96AD" font-size="11" text-anchor="middle">${G.n}</text></g>`;
+  return s;
+}
+const svgBox = (w, h, inner, lbl) => `<svg viewBox="0 0 ${w} ${h}" width="100%" style="max-width:${w}px" role="img" aria-label="${lbl}">${inner}</svg>`;
+
+/* ---------- PASO 0 ---------- */
+steps.push({
+  name:'Antes de empezar: de la lógica al metal', short:'0 Contexto', shape:null,
+  desc:'Una <b>puerta lógica</b> es un componente electrónico que implementa un conector lógico: recibe bits y devuelve un bit. Combinando puertas se construye <b>cualquier circuito digital</b>, incluido un procesador. Hoy vas a verlas encenderse.',
+  render(stage){
+    const t = el('div', 'bio-text');
+    t.innerHTML = `<p><b>La idea de fondo.</b> Todo lo que ya sabes (∧, ∨, ¬, ⊻…) existe como una pieza física. Un cable a 1 es «hay tensión»; a 0, «no hay». La puerta AND solo saca 1 si sus dos entradas valen 1: es el circuito en serie que viste en lógica.</p>
+    <p><b>Analogía.</b> Piezas de LEGO: cada pieza hace una cosa muy sencilla. Un circuito lógico es una construcción de piezas conectadas con cables, y representa una <b>función booleana</b> concreta.</p>`;
+    stage.appendChild(t);
+    const flow = el('div', 'flow');
+    [['Las 7 puertas', 'AND OR XOR NOT…', 1], ['Su fórmula', 'f(x, y)', 2], ['Un circuito', 'f(x,y,z)', 3], ['Constructor', 'tus propios circuitos', 4], ['Medio sumador', 'sumar bits', 5]].forEach(([n, s, to], i, a) => {
+      const f = el('div', 'fnode', `${n}<small>${s}</small>`); f.tabIndex = 0; f.addEventListener('click', () => goStep(to)); f.addEventListener('keydown', e => { if(e.key === 'Enter') goStep(to); });
+      flow.appendChild(f); if(i < a.length-1) flow.appendChild(el('span', 'farrow', '→'));
+    });
+    stage.appendChild(flow);
+    stage.appendChild(el('p', 'pad-note', 'Haz clic en cualquier cuadro o pregunta para saltar a ese paso. También funcionan las flechas ← → del teclado.'));
+    stage.appendChild(qcards(QUESTIONS));
+  }
+});
+
+/* ---------- PASO 1: puertas ---------- */
+steps.push({
+  name:'Las siete puertas lógicas', short:'1 Puertas', shape:'AND OR XOR NOT NOR NAND XNOR',
+  desc:'Elige una puerta, cambia sus entradas y mira cómo se enciende el cable de salida. La tabla resalta la fila que estás viendo. Las que tienen un círculo en la salida son versiones <b>negadas</b>: NOT niega la entrada; NOR, NAND y XNOR son la negación de OR, AND y XOR.',
+  render(stage){
+    let cur = 'and', x = true, y = false; const pick = el('div', 'btn-row'), sw = el('div', 'btn-row'), box = el('div'), out = el('div', 'formula'), tb = el('div');
+    const tx = toggleBtn('x', x, v => { x = v; upd(); }, ['1', '0']), ty = toggleBtn('y', y, v => { y = v; upd(); }, ['1', '0']); sw.append(tx.el, ty.el);
+    function upd(){
+      const G = GATES[cur], p = ports(cur, 90, 20), o = G.two ? G.f(x, y) : G.f(x);
+      pick.querySelectorAll('button').forEach(b => b.classList.toggle('active', b._k === cur)); ty.el.style.display = G.two ? '' : 'none';
+      let s = '';
+      if(G.two){ s += wire([[10, p.ins[0][1]], p.ins[0]], x) + wire([[10, p.ins[1][1]], p.ins[1]], y) + label(8, p.ins[0][1] - 6, 'x', 'start') + label(8, p.ins[1][1] + 16, 'y', 'start'); }
+      else s += wire([[10, p.ins[0][1]], p.ins[0]], x) + label(8, p.ins[0][1] - 6, 'x', 'start');
+      s += gateS(cur, 90, 20, o) + wire([p.out, [250, p.out[1]]], o) + lampS(262, p.out[1], o) + label(262, p.out[1] + 28, 'salida', 'middle');
+      box.innerHTML = svgBox(300, 100, s, `Puerta ${G.n} con salida ${V(o)}`);
+      out.innerHTML = `<b>${G.n}</b>: ${G.fe}<br>${G.two ? `x = ${V(x)}, y = ${V(y)}` : `x = ${V(x)}`} → salida <span class="${o ? 'ok' : 'no'}">${V(o)}</span>`; out.classList.toggle('win', o);
+      tb.innerHTML = ''; const mt = makeTable(G.two ? ['x', 'y'] : ['x'], [{ h:G.n, f:e => G.two ? G.f(e.x, e.y) : G.f(e.x) }], env => { x = env.x; if(G.two) y = env.y; tx.set(x); ty.set(y); upd(); }); mt.set(G.two ? { x, y } : { x }); tb.appendChild(mt.el);
+    }
+    Object.keys(GATES).forEach(k => { const b = chipBtn(GATES[k].n, false, () => { cur = k; upd(); }); b._k = k; pick.appendChild(b); });
+    const row = el('div', 'viz-row'), c1 = el('div', 'viz-col'), c2 = el('div', 'viz-col'); c1.append(box, sw, out); c2.append(tb); row.append(c1, c2);
+    stage.append(pick, row);
+    stage.appendChild(el('p', 'pad-note', '<b>Truco para recordarlas:</b> AND = «los dos», OR = «alguno», XOR = «uno solo», NOT = «lo contrario». Las demás son esas, pero con el resultado invertido.'));
+    upd();
+  }
+});
+
+/* ---------- PASO 2: fórmulas ---------- */
+steps.push({
+  name:'Cada puerta es una función booleana de F₂ (o F₁)', short:'2 Fórmulas', shape:'f: B² → B',
+  desc:'Cada puerta tiene su <b>fórmula</b> en términos de +, · y complemento. Elige una y la página comprueba, fila a fila, que la fórmula coincide con el comportamiento de la puerta. Fíjate en NAND y NOR: son las <b>leyes de De Morgan</b> en forma de circuito.',
+  render(stage){
+    const FORM = { and:(x, y) => x && y, or:(x, y) => x || y, xor:(x, y) => (!x || !y) && (x || y), not:x => !x, nor:(x, y) => !x && !y, nand:(x, y) => !x || !y, xnor:(x, y) => (x && y) || (!x && !y) };
+    let cur = 'xor'; const pick = el('div', 'btn-row'), out = el('div', 'formula'), tb = el('div');
+    function upd(){
+      pick.querySelectorAll('button').forEach(b => b.classList.toggle('active', b._k === cur));
+      const G = GATES[cur], vs = G.two ? ['x', 'y'] : ['x']; const rows = combos(vs); const ok = rows.every(e => (G.two ? G.f(e.x, e.y) : G.f(e.x)) === (G.two ? FORM[cur](e.x, e.y) : FORM[cur](e.x)));
+      out.innerHTML = `<b>${G.n}</b> se escribe <b>${G.fe}</b><br>Comparadas las ${rows.length} filas: ${ok ? '<span class="ok">la fórmula coincide con la puerta en todas ✔</span>' : '<span class="no">no coincide</span>'}`;
+      out.classList.toggle('win', ok);
+      tb.innerHTML = ''; tb.appendChild(makeTable(vs, [{ h:'puerta ' + G.n, f:e => G.two ? G.f(e.x, e.y) : G.f(e.x), res:false }, { h:G.fe.split('=')[1].trim(), f:e => G.two ? FORM[cur](e.x, e.y) : FORM[cur](e.x) }]).el);
+    }
+    Object.keys(GATES).forEach(k => { const b = chipBtn(GATES[k].n, false, () => { cur = k; upd(); }); b._k = k; pick.appendChild(b); });
+    stage.append(pick, out, tb);
+    stage.appendChild(el('div', 'panel-title c2', 'Comprueba lo aprendido'));
+    stage.appendChild(tfQuiz([
+      { q:'La puerta NAND da 0 solo cuando las dos entradas valen 1', ans:true, why:'NAND = ¬(x·y): es la negación del AND, que solo da 1 con (1,1).' },
+      { q:'La puerta XOR con (1, 1) da 1', ans:false, why:'XOR da 1 solo si exactamente una entrada vale 1; con (1,1) da 0.' },
+      { q:'NOR(0, 0) = 1', ans:true, why:'NOR = x̄ · ȳ = 1 · 1 = 1.' }
+    ]));
+    upd();
+  }
+});
+
+/* ---------- PASO 3: circuito de la clase ---------- */
+steps.push({
+  name:'Un circuito: f(x, y, z) = (x + y) · z̄', short:'3 Circuito', shape:'f(x,y,z) = (x + y) · z̄',
+  desc:'Las puertas se conectan formando un <b>circuito lógico</b>, que representa un elemento de F₃. Este es el de la clase: una OR (A), una NOT (B) y una AND (C). Cambia x, y, z y sigue la señal por los cables: <b>naranja = 1</b>.',
+  render(stage){
+    let x = true, y = false, z = false; const sw = el('div', 'btn-row'), box = el('div'), out = el('div', 'formula'), tb = el('div');
+    const tx = toggleBtn('x', x, v => { x = v; upd(); }, ['1', '0']), ty = toggleBtn('y', y, v => { y = v; upd(); }, ['1', '0']), tz = toggleBtn('z', z, v => { z = v; upd(); }, ['1', '0']); sw.append(tx.el, ty.el, tz.el);
+    const f = (a, b, c) => (a || b) && !c;
+    function upd(){
+      const A = x || y, B = !z, C = A && B;
+      const pOr = ports('or', 130, 20), pNot = ports('not', 130, 130), pAnd = ports('and', 320, 70);
+      let s = wire([[14, pOr.ins[0][1]], pOr.ins[0]], x) + wire([[14, pOr.ins[1][1]], pOr.ins[1]], y) + wire([[14, pNot.ins[0][1]], pNot.ins[0]], z);
+      s += label(10, pOr.ins[0][1] - 6, 'x', 'start') + label(10, pOr.ins[1][1] + 16, 'y', 'start') + label(10, pNot.ins[0][1] - 6, 'z', 'start');
+      s += gateS('or', 130, 20, A) + gateS('not', 130, 130, B) + gateS('and', 320, 70, C);
+      s += wire([pOr.out, [pOr.out[0] + 40, pOr.out[1]], [pOr.out[0] + 40, pAnd.ins[0][1]], pAnd.ins[0]], A);
+      s += wire([pNot.out, [pNot.out[0] + 60, pNot.out[1]], [pNot.out[0] + 60, pAnd.ins[1][1]], pAnd.ins[1]], B);
+      s += wire([pAnd.out, [470, pAnd.out[1]]], C) + lampS(482, pAnd.out[1], C);
+      s += label(pOr.out[0] + 52, pOr.out[1] - 8, `A=${V(A)}`, 'start') + label(pNot.out[0] + 6, pNot.out[1] - 8, `B=${V(B)}`, 'start') + label(482, pAnd.out[1] + 28, `C=${V(C)}`, 'middle');
+      box.innerHTML = svgBox(510, 190, s, `Circuito con salida C=${V(C)}`);
+      out.innerHTML = `A = x + y = ${V(x)} + ${V(y)} = <b>${V(A)}</b> · B = z̄ = <b>${V(B)}</b><br>C = A · B = ${V(A)} · ${V(B)} = <span class="${C ? 'ok' : 'no'}">${V(C)}</span>`; out.classList.toggle('win', C);
+      tb.innerHTML = ''; const mt = makeTable(['x', 'y', 'z'], [{ h:'A = x+y', f:e => e.x || e.y, res:false }, { h:'B = z̄', f:e => !e.z, res:false }, { h:'C = A·B', f:e => f(e.x, e.y, e.z) }], env => { x = env.x; y = env.y; z = env.z; tx.set(x); ty.set(y); tz.set(z); upd(); }); mt.set({ x, y, z }); tb.appendChild(mt.el);
+    }
+    stage.append(sw, box, out, tb);
+    stage.appendChild(el('div', 'panel-title c2', 'Lee el circuito como una fórmula'));
+    stage.appendChild(tfQuiz([
+      { q:'Con x = 0, y = 0, z = 0 el circuito da 1', ans:f(false, false, false), why:'A = 0 + 0 = 0, B = 1, C = 0 · 1 = 0.' },
+      { q:'Con x = 1, y = 0, z = 0 el circuito da 1', ans:f(true, false, false), why:'A = 1, B = 1, C = 1 · 1 = 1.' },
+      { q:'Con x = 1, y = 1, z = 1 el circuito da 1', ans:f(true, true, true), why:'B = z̄ = 0, así que C = A · 0 = 0 aunque x e y valgan 1.' }
+    ]));
+    stage.appendChild(el('p', 'pad-note', '<b>Cómo leerlo:</b> la fórmula se lee de los cables hacia la salida: primero las puertas que reciben x, y, z (OR y NOT) y al final la que junta sus resultados (AND). Haz clic en una fila de la tabla para ver ese caso en el circuito.'));
+    upd();
+  }
+});
+
+/* ---------- PASO 4: constructor ---------- */
+steps.push({
+  name:'Constructor: diseña tu propio circuito', short:'4 Constructor', shape:'G₂( G₁(x, y), z o z̄ )',
+  desc:'Elige la primera puerta (con x e y), si quieres negar z, y la puerta final que combina ambas. La página dibuja el circuito, escribe la fórmula y cuenta en cuántos de los 8 casos da 1. Prueba a reproducir el de la clase: OR, negar z y AND.',
+  render(stage){
+    let g1 = 'or', g2 = 'and', negz = true, x = true, y = false, z = false; const k2 = ['and', 'or', 'xor', 'nand', 'nor', 'xnor'];
+    const b1 = el('div', 'btn-row'), b2 = el('div', 'btn-row'), sw = el('div', 'btn-row'), box = el('div'), out = el('div', 'formula'), tb = el('div');
+    const tx = toggleBtn('x', x, v => { x = v; upd(); }, ['1', '0']), ty = toggleBtn('y', y, v => { y = v; upd(); }, ['1', '0']), tz = toggleBtn('z', z, v => { z = v; upd(); }, ['1', '0']); sw.append(tx.el, ty.el, tz.el);
+    const nb = chipBtn('Negar z (puerta NOT)', true, b => { negz = !negz; b.classList.toggle('active', negz); upd(); });
+    const ev = (a, b, c) => { const A = GATES[g1].f(a, b), B = negz ? !c : c; return GATES[g2].f(A, B); };
+    function upd(){
+      b1.querySelectorAll('button').forEach(b => b.classList.toggle('active', b._k === g1)); b2.querySelectorAll('button').forEach(b => b.classList.toggle('active', b._k === g2));
+      const A = GATES[g1].f(x, y), B = negz ? !z : z, C = GATES[g2].f(A, B);
+      const p1 = ports(g1, 130, 20), p2 = ports(g2, 330, 70), pn = ports('not', 130, 130);
+      let s = wire([[14, p1.ins[0][1]], p1.ins[0]], x) + wire([[14, p1.ins[1][1]], p1.ins[1]], y) + label(10, p1.ins[0][1] - 6, 'x', 'start') + label(10, p1.ins[1][1] + 16, 'y', 'start') + label(10, 130 + 24, 'z', 'start');
+      s += gateS(g1, 130, 20, A);
+      if(negz){ s += wire([[14, pn.ins[0][1]], pn.ins[0]], z) + gateS('not', 130, 130, B) + wire([pn.out, [pn.out[0] + 70, pn.out[1]], [pn.out[0] + 70, p2.ins[1][1]], p2.ins[1]], B); }
+      else s += wire([[14, 160], [200, 160], [200, p2.ins[1][1]], p2.ins[1]], z);
+      s += wire([p1.out, [p1.out[0] + 40, p1.out[1]], [p1.out[0] + 40, p2.ins[0][1]], p2.ins[0]], A) + gateS(g2, 330, 70, C) + wire([p2.out, [480, p2.out[1]]], C) + lampS(492, p2.out[1], C);
+      s += label(p1.out[0] + 6, p1.out[1] - 8, `A=${V(A)}`, 'start') + label(492, p2.out[1] + 28, `C=${V(C)}`, 'middle');
+      box.innerHTML = svgBox(520, 200, s, `Circuito diseñado, salida ${V(C)}`);
+      const rows = combos(['x', 'y', 'z']), ones = rows.filter(e => ev(e.x, e.y, e.z)).length;
+      const e1 = `${GATES[g1].n}(x, y)`, e2 = negz ? 'NOT(z)' : 'z';
+      out.innerHTML = `<b>f(x, y, z) = ${GATES[g2].n}( ${e1} , ${e2} )</b><br>Con x=${V(x)}, y=${V(y)}, z=${V(z)} → <span class="${C ? 'ok' : 'no'}">${V(C)}</span><br>Da 1 en <b>${ones}</b> de 8 casos ${ones === 8 ? '(¡siempre 1: tautología!)' : (ones === 0 ? '(siempre 0: contradicción)' : '(contingente)')}`;
+      out.classList.toggle('win', C);
+      tb.innerHTML = ''; const mt = makeTable(['x', 'y', 'z'], [{ h:'f(x,y,z)', f:e => ev(e.x, e.y, e.z) }], env => { x = env.x; y = env.y; z = env.z; tx.set(x); ty.set(y); tz.set(z); upd(); }); mt.set({ x, y, z }); tb.appendChild(mt.el);
+    }
+    k2.forEach(k => { const a = chipBtn(GATES[k].n, false, () => { g1 = k; upd(); }); a._k = k; b1.appendChild(a); const c = chipBtn(GATES[k].n, false, () => { g2 = k; upd(); }); c._k = k; b2.appendChild(c); });
+    stage.append(el('div', 'panel-title c1', 'Puerta 1 (recibe x e y)'), b1, el('div', 'panel-title c2', 'Puerta final (recibe A y z)'), b2, (() => { const r = el('div', 'btn-row'); r.appendChild(nb); return r; })(), sw, box, out, tb);
+    stage.appendChild(el('p', 'pad-note', 'Reto: encuentra un circuito que dé 1 solo en 1 de los 8 casos (¿y en exactamente 3?). Pregunta: con este constructor, ¿puede la salida ser siempre 1 o siempre 0? Razona por qué no.'));
+    upd();
+  }
+});
+
+/* ---------- PASO 5: medio sumador ---------- */
+steps.push({
+  name:'Aplicación: un medio sumador suma bits', short:'5 Medio sumador', shape:'suma = x ⊻ y · acarreo = x · y',
+  desc:'Con solo <b>dos puertas</b> (XOR y AND) se suman dos bits. La XOR da el bit de la suma y la AND da el acarreo. Así las puertas lógicas se convierten en <b>aritmética</b>: es la pieza más pequeña de la unidad de cálculo de un procesador.',
+  render(stage){
+    let a = true, b = true; const sw = el('div', 'btn-row'), box = el('div'), out = el('div', 'formula'), tb = el('div');
+    const ta = toggleBtn('a', a, v => { a = v; upd(); }, ['1', '0']), tb2 = toggleBtn('b', b, v => { b = v; upd(); }, ['1', '0']); sw.append(ta.el, tb2.el);
+    function upd(){
+      const S = a !== b, Cy = a && b, px = ports('xor', 150, 15), pa = ports('and', 150, 105);
+      let s = wire([[14, 30], [60, 30], [60, px.ins[0][1]], px.ins[0]], a) + wire([[60, 30], [60, pa.ins[0][1]], pa.ins[0]], a);
+      s += wire([[14, 150], [90, 150], [90, px.ins[1][1]], px.ins[1]], b) + wire([[90, 150], [90, pa.ins[1][1]], pa.ins[1]], b);
+      s += label(10, 24, 'a', 'start') + label(10, 144, 'b', 'start') + gateS('xor', 150, 15, S) + gateS('and', 150, 105, Cy);
+      s += wire([px.out, [330, px.out[1]]], S) + lampS(342, px.out[1], S) + label(342, px.out[1] + 28, `suma=${V(S)}`, 'middle');
+      s += wire([pa.out, [330, pa.out[1]]], Cy) + lampS(342, pa.out[1], Cy) + label(342, pa.out[1] + 28, `acarreo=${V(Cy)}`, 'middle');
+      box.innerHTML = svgBox(420, 190, s, `Medio sumador: suma ${V(S)}, acarreo ${V(Cy)}`);
+      const total = V(a) + V(b);
+      out.innerHTML = `${V(a)} + ${V(b)} = <b>${total}</b> en decimal = <b>${V(Cy)}${V(S)}</b> en binario<br>suma = a ⊻ b = ${V(S)} · acarreo = a · b = ${V(Cy)}`; out.classList.toggle('win', true);
+      tb.innerHTML = ''; const mt = makeTable(['a', 'b'], [{ h:'acarreo', f:e => e.a && e.b, res:false }, { h:'suma', f:e => e.a !== e.b }], env => { a = env.a; b = env.b; ta.set(a); tb2.set(b); upd(); }); mt.set({ a, b }); tb.appendChild(mt.el);
+    }
+    stage.append(sw, box, out, tb);
+    stage.appendChild(el('p', 'pad-note', 'Cuando 1 + 1, la suma da 0 y el acarreo 1: es decir, <b>10</b> en binario (el 2). Combinando dos medios sumadores y una OR se obtiene un sumador completo (con acarreo de entrada); encadenando sumadores completos se construyen sumadores de 8, 32 o 64 bits.'));
+    upd();
+  }
+});
+
+/* ---------- PASO 6: resumen ---------- */
+steps.push({
+  name:'Resumen y código', short:'6 Resumen', shape:null,
+  desc:'Una puerta es una función booleana; un circuito es una composición de puertas. Las tablas de abajo las calcula la página.',
+  render(stage){
+    const T = el('div', 'tbl-wrap'); T.innerHTML = `<table class="dt"><tr><th>Puerta</th><th>f(x, y)</th><th>(0,0)</th><th>(0,1)</th><th>(1,0)</th><th>(1,1)</th></tr>${Object.keys(GATES).filter(k => GATES[k].two).map(k => `<tr><td>${GATES[k].n}</td><td>${GATES[k].fe.split('=')[1].trim()}</td>${[[0, 0], [0, 1], [1, 0], [1, 1]].map(([p, q]) => `<td>${vtag(GATES[k].f(!!p, !!q))}</td>`).join('')}</tr>`).join('')}<tr><td>NOT</td><td>x̄</td><td colspan="2">x = 0 → ${vtag(true)}</td><td colspan="2">x = 1 → ${vtag(false)}</td></tr></table>`;
+    stage.appendChild(T);
+    stage.appendChild(el('div', 'panel-title c1', 'En Python: el circuito de la clase y el medio sumador'));
+    stage.appendChild(codeBox(`def circuito(x, y, z):          # f(x,y,z) = (x + y) · z'
+    A = x | y                    # puerta OR
+    B = 1 - z                    # puerta NOT
+    return A & B                 # puerta AND
+
+def medio_sumador(a, b):
+    return a ^ b, a & b          # (suma, acarreo)
+
+print(circuito(1, 0, 0), circuito(1, 1, 1))
+print(medio_sumador(1, 1))`));
+    stage.appendChild(el('div', 'viz-label', 'Salida del programa (calculada aquí con las mismas reglas):'));
+    const circ = (x, y, z) => ((x | y) & (1 - z)); stage.appendChild(codeBox(`${circ(1, 0, 0)} ${circ(1, 1, 1)}\n(${1 ^ 1}, ${1 & 1})`));
+    stage.appendChild(el('div', 'panel-title c3', 'Errores frecuentes'));
+    const errs = el('div', 'bio-text'); errs.innerHTML = `<p><b>1.</b> Confundir OR con XOR: OR(1,1) = 1, XOR(1,1) = 0.</p>
+      <p><b>2.</b> Olvidar el círculo: una puerta con círculo en la salida es la <i>negada</i> (NAND ≠ AND).</p>
+      <p><b>3.</b> Leer el circuito de izquierda a derecha sin fijarse en los NOT intermedios: un NOT en z cambia todo el resultado.</p>
+      <p><b>4.</b> Creer que 1 + 1 = 1 también en el sumador: en aritmética binaria 1 + 1 = 10 (suma 0 y acarreo 1).</p>`;
+    stage.appendChild(errs); stage.appendChild(qcards(QUESTIONS));
+  }
+});
+
+/* =========================================================
+   Motor de navegación (idéntico en todas las actividades)
+========================================================= */
+let current = 0;
+function renderTrail(){
+  const tr = $('#trail'); tr.innerHTML = '';
+  steps.forEach((s, i) => { const b = el('button', null, s.short); b.type = 'button'; b.addEventListener('click', () => goTo(i)); tr.appendChild(b); });
+}
+function goTo(i){
+  current = i;
+  clearTimers();
+  const s = steps[current];
+  $('#stepCount').textContent = current === 0 ? 'Introducción' : `Paso ${current} de ${steps.length - 1}`;
+  $('#stepTitle').textContent = s.name;
+  $('#stepDesc').innerHTML = s.desc;
+  const chip = $('#shapeChip');
+  if(s.shape){ chip.style.display = ''; chip.innerHTML = `<b>${s.shape}</b>`; } else chip.style.display = 'none';
+  const stage = $('#stage'); stage.innerHTML = '';
+  s.render(stage);
+  const btns = document.querySelectorAll('.trail button');
+  btns.forEach((b, idx) => b.classList.toggle('active', idx === current));
+  if(btns[current]) btns[current].scrollIntoView({ block:'nearest', inline:'center' });
+  $('#prevBtn').disabled = current === 0;
+  $('#nextBtn').textContent = current === steps.length - 1 ? 'Volver al inicio ↺' : 'Siguiente →';
+  window.scrollTo(0, 0);
+}
+$('#prevBtn').addEventListener('click', () => { if(current > 0) goTo(current - 1); });
+$('#nextBtn').addEventListener('click', () => goTo(current === steps.length - 1 ? 0 : current + 1));
+document.addEventListener('keydown', e => {
+  if(e.target && (e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT')) return;
+  if(e.key === 'ArrowRight') $('#nextBtn').click();
+  if(e.key === 'ArrowLeft') $('#prevBtn').click();
+});
+renderTrail(); goTo(0);
+</script>
+</body>
+</html>

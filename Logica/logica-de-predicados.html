@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="generator" content="Generado con asistencia de IA (Claude) - revisar por el responsable antes de su uso">
+<title>Lógica de predicados</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<!-- Artefacto generado con asistencia de IA (Claude Sonnet 5.5). Requiere revision del desarrollador responsable. Contenido basado en las diapositivas de Lógica de predicados de 1-logicaRec.tex (02MIAR, VIU). Datos: solo ejemplos ficticios o de dominio publico. -->
+<style>
+  :root{
+    --bg:#0B1220; --panel:#121B2E; --panel-2:#17233A; --line:#26324A; --text:#E7ECF5; --muted:#8B96AD;
+    --viu:#E55015; --viu-dim:#4A2212;
+    --cyan:#5EEAD4; --cyan-dim:#1F4A45;
+    --pink:#F472B6; --pink-dim:#452236;
+    --radius:14px;
+    --font-head:'Space Grotesk','Segoe UI',sans-serif; --font-body:'IBM Plex Sans','Segoe UI',sans-serif; --font-mono:'IBM Plex Mono','Consolas',monospace;
+    padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+  }
+  *{box-sizing:border-box;}
+  html,body{height:100%;}
+  body{ margin:0; background:var(--bg); color:var(--text); font-family:var(--font-body); min-height:100%; display:flex; flex-direction:column; overflow-x:hidden; }
+  ::selection{ background:var(--viu-dim); color:var(--viu); }
+
+  header{ padding:18px clamp(16px,4vw,40px) 10px; display:flex; flex-direction:column; gap:14px; flex:0 0 auto; }
+  .headline-row{ display:flex; align-items:baseline; justify-content:space-between; gap:16px; flex-wrap:wrap; }
+  h1{ font-family:var(--font-head); font-weight:600; font-size:clamp(20px,2.6vw,28px); margin:0; letter-spacing:-0.01em; }
+  h1 span{ color:var(--viu); }
+  .net-tag{ font-family:var(--font-mono); font-size:12.5px; color:var(--muted); }
+  .trail{ display:flex; gap:4px; overflow-x:auto; padding-bottom:4px; scrollbar-width:thin; }
+  .trail::-webkit-scrollbar{height:5px;} .trail::-webkit-scrollbar-thumb{background:var(--line); border-radius:4px;}
+  .trail button{ flex:0 0 auto; background:var(--panel); border:1px solid var(--line); color:var(--muted); font-family:var(--font-mono); font-size:11.5px; padding:7px 11px; border-radius:999px; cursor:pointer; white-space:nowrap; transition:border-color .15s,color .15s,background .15s; }
+  .trail button:hover{ border-color:#3a4a6b; color:var(--text); }
+  .trail button.active{ background:var(--viu-dim); border-color:var(--viu); color:var(--viu); }
+
+  main{ flex:1 0 auto; display:flex; align-items:stretch; justify-content:center; padding:6px clamp(16px,4vw,40px) 10px; }
+  .card{ width:100%; max-width:1040px; background:var(--panel); border:1px solid var(--line); border-radius:var(--radius); padding:clamp(18px,3vw,30px); display:flex; flex-direction:column; gap:16px; }
+  .step-meta{ display:flex; justify-content:space-between; align-items:flex-start; gap:20px; flex-wrap:wrap; }
+  .step-count{ font-family:var(--font-mono); font-size:12.5px; color:var(--viu); margin:0 0 4px; }
+  .step-title{ font-family:var(--font-head); font-weight:600; font-size:clamp(18px,2.4vw,24px); margin:0; }
+  .step-desc{ color:var(--muted); font-size:14.5px; line-height:1.6; max-width:70ch; margin:6px 0 0; }
+  .shape-chip{ font-family:var(--font-mono); font-size:13px; background:var(--panel-2); border:1px solid var(--line); padding:9px 14px; border-radius:10px; color:var(--text); }
+  .shape-chip b{ color:var(--viu); font-weight:600; }
+  #stage{ display:flex; flex-direction:column; align-items:center; gap:16px; padding:6px 2px; }
+  #stage > *{ width:100%; }
+
+  footer{ flex:0 0 auto; display:flex; justify-content:center; gap:14px; flex-wrap:wrap; padding:4px clamp(16px,4vw,40px) calc(18px + env(safe-area-inset-bottom,0px)); }
+  .nav-btn{ font-family:var(--font-body); font-weight:500; font-size:14.5px; background:var(--panel); border:1px solid var(--line); color:var(--text); padding:11px 22px; border-radius:10px; cursor:pointer; transition:border-color .15s,transform .1s; }
+  .nav-btn:hover{ border-color:var(--viu); } .nav-btn:active{ transform:scale(.97); }
+  .nav-btn:disabled{ opacity:.35; cursor:default; } .nav-btn:disabled:hover{ border-color:var(--line); }
+  .nav-btn.primary{ background:var(--viu-dim); border-color:var(--viu); color:var(--viu); }
+
+  .viz-row{ display:flex; align-items:flex-start; justify-content:center; gap:clamp(18px,3vw,36px); flex-wrap:wrap; width:100%; }
+  .viz-col{ display:flex; flex-direction:column; align-items:center; gap:10px; flex:1 1 280px; min-width:0; }
+  .viz-label{ font-family:var(--font-mono); font-size:12px; color:var(--muted); text-align:center; line-height:1.4; }
+  .viz-label b{ color:var(--text); font-weight:600; }
+
+  .formula{ font-family:var(--font-mono); font-size:13.5px; background:var(--panel-2); border:1px solid var(--line); border-radius:10px; padding:12px 16px; min-height:44px; display:block; text-align:center; color:var(--text); max-width:720px; margin:0 auto; line-height:1.7; }
+  .formula b{ color:var(--cyan); } .formula .ok{ color:var(--viu); font-weight:600; } .formula .no{ color:var(--pink); font-weight:600; }
+  .formula.win{ border-color:var(--viu); }
+  .pad-note{ font-size:13px; color:var(--muted); text-align:center; max-width:74ch; margin:0 auto; line-height:1.6; }
+  .pad-note b{ color:var(--text); font-weight:600; }
+  .bio-text{ max-width:74ch; margin:0 auto; }
+  .bio-text p{ font-size:13.8px; line-height:1.65; color:var(--text); margin:0 0 10px; }
+  .bio-text b{ color:var(--viu); font-weight:600; } .bio-text i{ color:var(--cyan); font-style:normal; }
+
+  .qgrid{ display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:10px; }
+  .qcard{ background:var(--panel-2); border:1px solid var(--line); border-radius:12px; padding:14px 16px; cursor:pointer; transition:border-color .15s; }
+  .qcard:hover{ border-color:var(--viu); }
+  .qcard .n{ font-family:var(--font-mono); font-size:11.5px; color:var(--viu); }
+  .qcard h3{ font-family:var(--font-head); font-size:15px; margin:4px 0 6px; font-weight:600; }
+  .qcard p{ margin:0; font-size:12.5px; color:var(--muted); line-height:1.5; }
+
+  .btn-row{ display:flex; gap:8px; justify-content:center; flex-wrap:wrap; }
+  .toggle-btn{ font-family:var(--font-mono); font-size:11.5px; background:var(--panel-2); border:1px solid var(--line); color:var(--muted); padding:8px 13px; border-radius:999px; cursor:pointer; transition:all .15s; }
+  .toggle-btn:hover{ color:var(--text); border-color:#3a4a6b; }
+  .toggle-btn.active{ background:var(--viu-dim); border-color:var(--viu); color:var(--viu); }
+  .toggle-btn.good{ background:var(--viu-dim); border-color:var(--viu); color:var(--viu); }
+  .toggle-btn.bad{ background:var(--pink-dim); border-color:var(--pink); color:var(--pink); }
+
+  /* interruptor de valor de verdad */
+  .tg{ font-family:var(--font-mono); font-size:13px; background:var(--panel-2); border:1px solid var(--line); color:var(--muted); padding:10px 16px; border-radius:12px; cursor:pointer; transition:all .15s; text-align:left; min-width:150px; }
+  .tg b{ display:block; font-size:17px; color:var(--text); font-weight:600; }
+  .tg small{ display:block; font-size:11px; margin-top:2px; }
+  .tg.on{ background:var(--viu-dim); border-color:var(--viu); color:var(--viu); } .tg.on b{ color:var(--viu); }
+  .tg.off{ border-color:#3a4a6b; }
+  .tg:hover{ border-color:var(--viu); }
+
+  .tv{ display:inline-block; min-width:22px; padding:1px 6px; border-radius:6px; font-family:var(--font-mono); font-weight:600; font-size:12.5px; }
+  .tv.v1{ background:var(--viu-dim); color:var(--viu); } .tv.v0{ background:var(--pink-dim); color:var(--pink); }
+
+  .stats{ display:flex; gap:10px; flex-wrap:wrap; justify-content:center; }
+  .stat{ background:var(--panel-2); border:1px solid var(--line); border-radius:10px; padding:8px 14px; text-align:center; min-width:120px; }
+  .stat .l{ font-family:var(--font-mono); font-size:10.5px; color:var(--muted); display:block; margin-bottom:3px; }
+  .stat .v{ font-family:var(--font-mono); font-size:15px; font-weight:600; color:var(--text); }
+  .stat.c1 .v{ color:var(--viu); } .stat.c2 .v{ color:var(--cyan); } .stat.c3 .v{ color:var(--pink); }
+  .panel-title{ font-family:var(--font-head); font-weight:600; font-size:13.5px; color:var(--text); text-align:center; margin:0 0 2px; }
+  .panel-title.c1{ color:var(--viu); } .panel-title.c2{ color:var(--cyan); } .panel-title.c3{ color:var(--pink); }
+
+  pre.code{ margin:0; background:#0E1626; border:1px solid var(--line); border-radius:10px; padding:12px 14px; font-family:var(--font-mono); font-size:12.3px; line-height:1.6; color:var(--text); overflow-x:auto; text-align:left; }
+  pre.code .cm{ color:#6b7a99; } pre.code .kw{ color:var(--pink); }
+
+  table.dt{ border-collapse:collapse; font-family:var(--font-mono); font-size:12.5px; margin:0 auto; }
+  table.dt th,table.dt td{ border:1px solid var(--line); padding:6px 11px; text-align:center; }
+  table.dt th{ background:var(--panel-2); color:var(--muted); font-weight:500; }
+  table.dt th.res{ background:var(--viu-dim); color:var(--viu); }
+  table.dt tr.hl td{ background:rgba(94,234,212,.12); }
+  table.dt tr.hl td:first-child{ box-shadow:inset 3px 0 0 var(--cyan); }
+  table.dt tr.bad td{ background:rgba(244,114,182,.14); }
+  table.dt tr.pick{ cursor:pointer; } table.dt tr.pick:hover td{ background:rgba(255,255,255,.04); }
+  .tbl-wrap{ overflow-x:auto; max-width:100%; }
+
+  /* filas de preguntas (sorter) */
+  .qrow{ background:var(--panel-2); border:1px solid var(--line); border-radius:12px; padding:12px 14px; display:flex; gap:12px; align-items:center; justify-content:space-between; flex-wrap:wrap; }
+  .qrow .tx{ flex:1 1 280px; font-size:14px; line-height:1.5; }
+  .qrow .opts{ display:flex; gap:6px; flex-wrap:wrap; }
+  .qrow .fb{ flex:1 1 100%; font-size:12.5px; color:var(--muted); line-height:1.5; }
+  .qrow .fb b.ok{ color:var(--viu); } .qrow .fb b.no{ color:var(--pink); }
+  .qrow.done{ border-color:#3a4a6b; }
+
+  select{ font-family:var(--font-mono); font-size:13px; background:var(--panel-2); color:var(--text); border:1px solid var(--line); border-radius:8px; padding:8px 10px; max-width:100%; }
+  select:focus,button:focus-visible{ outline:2px solid var(--cyan); outline-offset:1px; }
+
+  .cards6{ display:grid; grid-template-columns:repeat(auto-fit,minmax(230px,1fr)); gap:10px; width:100%; }
+  .ccard{ background:var(--panel-2); border:1px solid var(--line); border-radius:12px; padding:12px 14px; display:flex; flex-direction:column; gap:6px; }
+  .ccard .sym{ font-family:var(--font-mono); font-size:22px; color:var(--viu); font-weight:600; }
+  .ccard .nm{ font-family:var(--font-head); font-weight:600; font-size:14px; }
+  .ccard .rd{ font-size:12.5px; color:var(--muted); line-height:1.5; }
+  .ccard .sent{ font-size:13px; line-height:1.5; color:var(--text); border-top:1px dashed var(--line); padding-top:6px; }
+
+  .strip{ display:flex; flex-direction:column; gap:4px; align-items:center; overflow-x:auto; max-width:100%; }
+  .srow{ display:flex; gap:3px; align-items:center; }
+  .slab{ flex:0 0 150px; font-family:var(--font-mono); font-size:11px; color:var(--muted); text-align:right; padding-right:8px; }
+  .srow > div{ flex:0 0 40px; width:40px; text-align:center; font-family:var(--font-mono); font-size:12px; padding:4px 0; border-radius:6px; background:var(--panel-2); border:1px solid var(--line); }
+  .srow > div.v1{ background:var(--viu-dim); border-color:var(--viu); color:var(--viu); }
+  .srow > div.v0{ background:var(--pink-dim); border-color:var(--pink); color:var(--pink); }
+  .srow > div.h{ background:transparent; border-color:transparent; color:var(--muted); }
+
+  .flow{ display:flex; flex-wrap:wrap; gap:8px; align-items:center; justify-content:center; }
+  .fnode{ background:var(--panel-2); border:1px solid var(--line); border-radius:10px; padding:8px 12px; font-family:var(--font-mono); font-size:12px; cursor:pointer; transition:border-color .15s; }
+  .fnode:hover{ border-color:var(--viu); } .fnode small{ display:block; color:var(--muted); font-size:10.5px; }
+  .farrow{ color:var(--muted); }
+
+  svg text{ font-family:var(--font-mono); }
+  @media (max-width:640px){ .viz-row{ gap:16px; } table.dt th,table.dt td{ padding:5px 7px; } }
+  @media (prefers-reduced-motion:reduce){ *{ transition:none !important; } }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="headline-row">
+    <h1>Lógica de predicados: <span>«todos»</span> y <span>«alguno»</span></h1>
+    <span class="net-tag">02MIAR · Matemáticas para la IA · Sesión 3</span>
+  </div>
+  <div class="trail" id="trail"></div>
+</header>
+
+<main>
+  <div class="card">
+    <div class="step-meta">
+      <div>
+        <p class="step-count" id="stepCount"></p>
+        <h2 class="step-title" id="stepTitle"></h2>
+        <p class="step-desc" id="stepDesc"></p>
+      </div>
+      <div class="shape-chip" id="shapeChip"></div>
+    </div>
+    <div id="stage"></div>
+  </div>
+</main>
+
+<footer>
+  <button class="nav-btn" id="prevBtn">← Anterior</button>
+  <button class="nav-btn primary" id="nextBtn">Siguiente →</button>
+</footer>
+
+<script>
+/* =========================================================
+   Utilidades
+========================================================= */
+const $ = s => document.querySelector(s);
+let timers = [];
+function clearTimers(){ timers.forEach(t => clearInterval(t)); timers = []; }
+function el(tag, cls, html){ const e = document.createElement(tag); if(cls) e.className = cls; if(html != null) e.innerHTML = html; return e; }
+const V = x => x ? 1 : 0;
+const vtag = x => `<span class="tv v${V(x)}">${V(x)}</span>`;
+const lower1 = s => s.charAt(0).toLowerCase() + s.slice(1);
+
+function py(code){
+  return code.replace(/&/g, '&amp;').replace(/</g, '&lt;').split('\n').map(l => {
+    const k = l.indexOf('#'); let body = l, cm = '';
+    if(k >= 0){ body = l.slice(0, k); cm = '<span class="cm">' + l.slice(k) + '</span>'; }
+    body = body.replace(/\b(import|from|as|print|def|return|not|and|or|for|in)\b/g, '<span class="kw">$1</span>');
+    return body + cm;
+  }).join('\n');
+}
+function codeBox(code){ const p = el('pre', 'code'); p.innerHTML = py(code); return p; }
+
+/* ---------- lógica: todas las combinaciones, en el orden de las diapositivas (1,1 / 1,0 / 0,1 / 0,0) ---------- */
+function combos(vars){
+  const n = vars.length, out = [];
+  for(let i = 0; i < (1 << n); i++){ const e = {}; vars.forEach((v, k) => e[v] = !((i >> (n-1-k)) & 1)); out.push(e); }
+  return out;
+}
+const sameEnv = (a, b) => Object.keys(a).every(k => a[k] === b[k]);
+const OPS = {
+  and: { sym:'∧', f:(p, q) => p && q },
+  or:  { sym:'∨', f:(p, q) => p || q },
+  xor: { sym:'⊻', f:(p, q) => p !== q },
+  imp: { sym:'→', f:(p, q) => !p || q },
+  iff: { sym:'↔', f:(p, q) => p === q }
+};
+function classify(f, vars){
+  const vals = combos(vars).map(f);
+  return vals.every(Boolean) ? 'T' : (vals.every(v => !v) ? 'C' : 'K');
+}
+const CLS = { T:'Tautología', C:'Contradicción', K:'Contingencia' };
+
+/* tabla de verdad viva: highlight de la fila actual; clic en fila = elegir esos valores */
+function makeTable(vars, cols, onPick, rowClass){
+  const wrap = el('div', 'tbl-wrap'), t = el('table', 'dt'); wrap.appendChild(t);
+  const head = el('tr'); const ths = [];
+  vars.forEach(v => head.appendChild(el('th', null, v)));
+  cols.forEach(c => { const th = el('th', c.res === false ? '' : 'res', c.h); ths.push(th); head.appendChild(th); });
+  t.appendChild(head);
+  const rows = combos(vars).map(env => {
+    const tr = el('tr', onPick ? 'pick' : ''); tr._env = env;
+    vars.forEach(v => tr.appendChild(el('td', null, vtag(env[v]))));
+    cols.forEach(c => tr.appendChild(el('td', null, vtag(c.f(env)))));
+    if(rowClass){ const rc = rowClass(env); if(rc) tr.classList.add(rc); }
+    if(onPick) tr.addEventListener('click', () => onPick(env));
+    t.appendChild(tr); return tr;
+  });
+  return { el: wrap, setHead:(i, txt) => { ths[i].innerHTML = txt; }, set: env => rows.forEach(r => r.classList.toggle('hl', !!env && sameEnv(r._env, env))) };
+}
+
+/* interruptor 1/0 */
+function toggleBtn(name, init, cb, subs){
+  let val = init; const b = el('button', 'tg'); b.type = 'button';
+  function draw(){
+    b.className = 'tg ' + (val ? 'on' : 'off');
+    b.innerHTML = `<b>${name} = ${V(val)}</b><small>${val ? (subs ? subs[0] : 'verdadera') : (subs ? subs[1] : 'falsa')}</small>`;
+    b.setAttribute('aria-pressed', val); b.setAttribute('aria-label', `${name} vale ${V(val)}`);
+  }
+  b.addEventListener('click', () => { val = !val; draw(); cb(val); });
+  draw();
+  return { el:b, get:() => val, set:v => { val = v; draw(); } };
+}
+
+/* ---------- circuitos (analogía física) ---------- */
+function circuit(mode, p, q){
+  const on = '#E55015', off = '#3a4a6b';
+  const w = (x1, y1, x2, y2, lit) => `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${lit ? on : off}" stroke-width="3.5" stroke-linecap="round"/>`;
+  const dotc = (x, y, lit) => `<circle cx="${x}" cy="${y}" r="3.6" fill="${lit ? on : off}"/>`;
+  const sw = (x, y, closed, lit, lab) => w(x, y, closed ? x+60 : x+54, closed ? y : y-26, closed && lit) + dotc(x, y, lit) + dotc(x+60, y, closed && lit) +
+    `<text x="${x+30}" y="${y+22}" text-anchor="middle" font-size="12" fill="#8B96AD">${lab}=${V(closed)}</text>`;
+  const lamp = (cx, cy, lit) => `<circle cx="${cx}" cy="${cy}" r="17" fill="${lit ? on : '#17233A'}" stroke="${lit ? '#ffb08a' : off}" stroke-width="2.5"/>` +
+    (lit ? [0,45,90,135,180,225,270,315].map(a => { const r = a*Math.PI/180; return `<line x1="${cx+23*Math.cos(r)}" y1="${cy+23*Math.sin(r)}" x2="${cx+31*Math.cos(r)}" y2="${cy+31*Math.sin(r)}" stroke="${on}" stroke-width="2.5" stroke-linecap="round"/>`; }).join('') : '') +
+    `<line x1="${cx-9}" y1="${cy-9}" x2="${cx+9}" y2="${cy+9}" stroke="${lit ? '#fff' : off}" stroke-width="2"/><line x1="${cx+9}" y1="${cy-9}" x2="${cx-9}" y2="${cy+9}" stroke="${lit ? '#fff' : off}" stroke-width="2"/>`;
+  const batt = (x, y1, y2) => `<line x1="${x-9}" y1="${y1}" x2="${x+9}" y2="${y1}" stroke="#E7ECF5" stroke-width="3"/><line x1="${x-5}" y1="${y1+8}" x2="${x+5}" y2="${y1+8}" stroke="#E7ECF5" stroke-width="3"/>`;
+  let s = '', lit = false;
+  if(mode === 'and'){
+    lit = p && q;
+    s += w(24,60,96,60,true) + sw(96,60,p,true,'p') + w(156,60,228,60,p) + sw(228,60,q,p,'q') + w(288,60,352,60,lit) + lamp(372,60,lit);
+    s += w(372,77,372,108,lit) + w(372,108,24,108,lit) + w(24,108,24,72,lit) + batt(24,60);
+  } else if(mode === 'or'){
+    lit = p || q;
+    s += w(24,70,96,70,true) + w(96,40,96,100,true) + w(96,40,150,40,true) + sw(150,40,p,true,'p') + w(210,40,300,40,p) +
+         w(96,100,150,100,true) + sw(150,100,q,true,'q') + w(210,100,300,100,q) + w(300,40,300,100,lit) + w(300,70,355,70,lit) + lamp(372,70,lit);
+    s += w(372,87,372,128,lit) + w(372,128,24,128,lit) + w(24,128,24,82,lit) + batt(24,70);
+  } else {
+    lit = p !== q;
+    const pt = [140,40], pb = [140,100], qt = [280,40], qb = [280,100];
+    s += w(24,70,110,70,true) + dotc(110,70,true) + dotc(310,70,lit) + w(310,70,355,70,lit) + lamp(372,70,lit);
+    s += w(110,70,140,p ? 40 : 100,true);
+    s += w(140,40,280,100,p) + w(140,100,280,40,!p);
+    s += w(310,70,280,q ? 40 : 100,lit);
+    s += [pt,pb,qt,qb].map(c => dotc(c[0], c[1], false)).join('');
+    s += `<text x="110" y="124" text-anchor="middle" font-size="12" fill="#8B96AD">p=${V(p)}</text><text x="310" y="124" text-anchor="middle" font-size="12" fill="#8B96AD">q=${V(q)}</text>`;
+    s += w(372,87,372,138,lit) + w(372,138,24,138,lit) + w(24,138,24,82,lit) + batt(24,70);
+  }
+  return `<svg viewBox="0 0 420 ${mode === 'xor' ? 150 : 140}" width="100%" style="max-width:420px" role="img" aria-label="Circuito con lámpara ${lit ? 'encendida' : 'apagada'}">${s}</svg>`;
+}
+
+
+function tfQuiz(items){
+  const box = el('div', 'viz-col'); box.style.width = '100%';
+  items.forEach(it => {
+    const row = el('div', 'qrow'); const tx = el('div', 'tx', it.q); const opts = el('div', 'opts'); const fb = el('div', 'fb');
+    [['Verdadero (1)', true], ['Falso (0)', false]].forEach(([lab, val]) => {
+      const b = el('button', 'toggle-btn', lab); b.type = 'button';
+      b.addEventListener('click', () => {
+        const ok = val === it.ans;
+        opts.querySelectorAll('button').forEach(x => x.classList.remove('good', 'bad'));
+        b.classList.add(ok ? 'good' : 'bad');
+        fb.innerHTML = (ok ? '<b class="ok">✔ Correcto.</b> ' : '<b class="no">✘ Casi.</b> ') + it.why;
+        row.classList.add('done');
+      });
+      opts.appendChild(b);
+    });
+    row.append(tx, opts, fb); box.appendChild(row);
+  });
+  return box;
+}
+
+/* clasificador por filas */
+function sortRows(items, options){
+  const box = el('div', 'viz-col'); box.style.width = '100%'; box.style.alignItems = 'stretch';
+  const stats = el('div', 'stats'); const sOk = el('div', 'stat c1', '<span class="l">acertadas</span><span class="v">0</span>'), sTot = el('div', 'stat', `<span class="l">total</span><span class="v">${items.length}</span>`);
+  stats.append(sOk, sTot); box.appendChild(stats);
+  const answered = new Set(); let good = 0;
+  items.forEach((it, idx) => {
+    const row = el('div', 'qrow'); const tx = el('div', 'tx', it.t); const opts = el('div', 'opts'); const fb = el('div', 'fb');
+    options.forEach(o => {
+      const b = el('button', 'toggle-btn', o.label); b.type = 'button';
+      b.addEventListener('click', () => {
+        const ok = o.k === it.a;
+        if(ok && !answered.has(idx)){ answered.add(idx); good++; sOk.querySelector('.v').textContent = good; }
+        opts.querySelectorAll('button').forEach(x => x.classList.remove('good', 'bad'));
+        b.classList.add(ok ? 'good' : 'bad');
+        fb.innerHTML = (ok ? '<b class="ok">✔ </b>' : '<b class="no">✘ Prueba otra vez. </b>') + (ok ? it.why : (it.hint || 'Piensa qué se puede afirmar de ella.'));
+        row.classList.toggle('done', ok);
+      });
+      opts.appendChild(b);
+    });
+    row.append(tx, opts, fb); box.appendChild(row);
+  });
+  return box;
+}
+
+const steps = [];
+function goStep(i){ goTo(i); }
+function qcards(list){
+  const g = el('div', 'qgrid');
+  list.forEach(([n, h, p, to]) => { const c = el('div', 'qcard', `<div class="n">${n}</div><h3>${h}</h3><p>${p}</p>`); c.tabIndex = 0; c.addEventListener('click', () => goStep(to)); c.addEventListener('keydown', e => { if(e.key === 'Enter') goStep(to); }); g.appendChild(c); });
+  return g;
+}
+
+const every = (ms, fn) => { const id = setInterval(fn, ms); timers.push(id); return id; };
+const chipBtn = (label, on, cb) => { const b = el('button', 'toggle-btn' + (on ? ' active' : ''), label); b.type = 'button'; b.addEventListener('click', () => cb(b)); return b; };
+const setStr = a => a.length ? '{' + a.join(', ') + '}' : '∅';
+
+const QUESTIONS = [
+  ['PREGUNTA 1', '¿Qué es un predicado?', 'Una afirmación con huecos que solo es verdadera o falsa cuando los rellenas.', 1],
+  ['PREGUNTA 2', '¿Qué significan ∀ y ∃?', '«Para todo» se refuta con un contraejemplo; «existe» se prueba con un testigo.', 2],
+  ['PREGUNTA 3', '¿Por qué importa el orden de los cuantificadores?', '∀x ∃y no es lo mismo que ∃y ∀x. Lo vas a ver en una matriz.', 4]
+];
+const rng_ = (a, b) => Array.from({ length:b - a + 1 }, (_, i) => a + i);
+const tuples2 = d => d.flatMap(x => d.map(y => [x, y]));
+const fmtT = t => t.length === 1 ? String(t[0]) : `(${t.join(', ')})`;
+
+/* ---------- PASO 0 ---------- */
+steps.push({
+  name:'Antes de empezar: cuando una frase tiene huecos', short:'0 Contexto', shape:null,
+  desc:'La lógica proposicional no sabe qué hacer con «x < 4», «todos los planetas tienen órbita elíptica» o «existe un entero z con z = z + 1». La <b>lógica de primer orden</b> añade <b>predicados</b> y <b>cuantificadores</b> (∀, ∃) para hablar de objetos y de «todos» o «alguno».',
+  render(stage){
+    const t = el('div', 'bio-text');
+    t.innerHTML = `<p><b>La idea de fondo.</b> «x &lt; 4» no es verdadera ni falsa hasta que le das valor a x: es una frase con un <i>hueco</i>. Si x = 3 es verdadera; si x = 7, falsa. Esa frase con huecos es un <b>predicado</b>.</p>
+    <p><b>Analogía.</b> Un formulario con casillas en blanco. Un cuantificador responde a «¿se rellena de cualquier modo?» (∀) o «¿hay al menos una forma de rellenarlo que funcione?» (∃). Es la lógica detrás de las consultas a bases de datos y de las reglas de un sistema de IA.</p>`;
+    stage.appendChild(t);
+    const flow = el('div', 'flow');
+    [['Predicado', 'p(x)', 1], ['Para todo', '∀', 2], ['Existe', '∃', 3], ['El orden', '∀∃ ≠ ∃∀', 4], ['Implicación', '⊨ y ≡', 5], ['Con conectores', '∧ ∨ y cuantificadores', 6], ['De Morgan', '¬∀ ≡ ∃¬', 7]].forEach(([n, s, to], i, a) => {
+      const f = el('div', 'fnode', `${n}<small>${s}</small>`); f.tabIndex = 0; f.addEventListener('click', () => goStep(to)); f.addEventListener('keydown', e => { if(e.key === 'Enter') goStep(to); });
+      flow.appendChild(f); if(i < a.length-1) flow.appendChild(el('span', 'farrow', '→'));
+    });
+    stage.appendChild(flow);
+    stage.appendChild(el('p', 'pad-note', 'Haz clic en cualquier cuadro o pregunta para saltar a ese paso. También funcionan las flechas ← → del teclado.'));
+    stage.appendChild(qcards(QUESTIONS));
+  }
+});
+
+/* ---------- PASO 1: predicados ---------- */
+steps.push({
+  name:'Predicado: una afirmación con huecos', short:'1 Predicado', shape:'p(x)  ·  p(x, y)',
+  desc:'Un <b>predicado</b> p(x₁, …, xₙ) habla de una propiedad o relación entre objetos. Al <b>sustituir</b> los huecos por valores concretos queda una proposición con valor de verdad. Prueba con animales, con un número y con una pareja de números.',
+  render(stage){
+    stage.appendChild(el('div', 'panel-title c1', 'p(x): «x es un reptil»'));
+    const AN = [['serpiente', true], ['gato', false], ['lagarto', true], ['tortuga', true], ['perro', false], ['cocodrilo', true]];
+    const bar = el('div', 'btn-row'), r1 = el('div', 'formula'); let ai = 0;
+    function u1(){ bar.querySelectorAll('button').forEach((b, i) => b.classList.toggle('active', i === ai)); const [n, v] = AN[ai]; r1.innerHTML = `p(<b>${n}</b>) = «${n} es un reptil» → ${vtag(v)}`; r1.classList.toggle('win', v); }
+    AN.forEach(([n], i) => bar.appendChild(chipBtn(n, false, () => { ai = i; u1(); }))); stage.append(bar, r1); u1();
+    stage.appendChild(el('div', 'panel-title c2', 'p(x): «x < 4»  — verdadera o falsa según x'));
+    let x = 3; const sl = el('input'); sl.type = 'range'; sl.min = -2; sl.max = 8; sl.value = x; sl.style.accentColor = 'var(--viu)'; sl.style.width = 'min(320px,70vw)'; sl.setAttribute('aria-label', 'Valor de x');
+    const c2 = el('div', 'btn-row'); c2.append(el('span', 'viz-label', 'x ='), sl, el('span', 'viz-label', '3')); const r2 = el('div', 'formula');
+    function u2(){ x = +sl.value; c2.lastChild.textContent = x; r2.innerHTML = `p(${x}) = «${x} &lt; 4» → ${vtag(x < 4)}<br><span style="color:var(--muted)">Sin dar valor a x, «x &lt; 4» no es proposición.</span>`; r2.classList.toggle('win', x < 4); }
+    sl.addEventListener('input', u2); stage.append(c2, r2); u2();
+    stage.appendChild(el('div', 'panel-title c3', 'p(x, y): «x + y = 3» — dos huecos'));
+    let px = 1, py = 2; const row = el('div', 'viz-row'), cl = el('div', 'viz-col'), cr = el('div', 'viz-col'); const sx = el('input'), sy = el('input');
+    [[sx, 'x'], [sy, 'y']].forEach(([s]) => { s.type = 'range'; s.min = 0; s.max = 4; s.style.accentColor = 'var(--viu)'; s.style.width = 'min(260px,60vw)'; }); sx.value = px; sy.value = py; sx.setAttribute('aria-label', 'x'); sy.setAttribute('aria-label', 'y');
+    const r3 = el('div', 'formula'), grid = el('div', 'tbl-wrap');
+    const rx = el('div', 'btn-row'); rx.append(el('span', 'viz-label', 'x ='), sx); const ry = el('div', 'btn-row'); ry.append(el('span', 'viz-label', 'y ='), sy); cl.append(rx, ry, r3);
+    function u3(){ px = +sx.value; py = +sy.value; const v = px + py === 3; r3.innerHTML = `p(${px}, ${py}) = «${px} + ${py} = 3» → ${vtag(v)}`; r3.classList.toggle('win', v);
+      grid.innerHTML = `<table class="dt"><tr><th>x\\y</th>${rng_(0, 4).map(j => `<th>${j}</th>`).join('')}</tr>${rng_(0, 4).map(i => `<tr><th>${i}</th>${rng_(0, 4).map(j => `<td style="${i === px && j === py ? 'outline:2px solid var(--cyan);outline-offset:-2px' : ''}">${vtag(i + j === 3)}</td>`).join('')}</tr>`).join('')}</table>`; }
+    sx.addEventListener('input', u3); sy.addEventListener('input', u3); cr.append(el('div', 'viz-label', 'Todas las parejas (x, y):'), grid); row.append(cl, cr); stage.appendChild(row); u3();
+    stage.appendChild(el('p', 'pad-note', 'Un predicado es, en el fondo, una <b>tabla de verdad con más filas</b>: una por cada valor (o pareja de valores) posible. Con x, y ∈ {0,…,4} hay 25 filas y solo 4 salen verdaderas.'));
+  }
+});
+
+/* ---------- PASO 2 y 3: cuantificadores ---------- */
+function quantStep(kind){
+  const ALL = kind === 'all';
+  const EX = ALL ? [
+    { t:'∀x ∈ ℝ, x² ≥ 0', ar:1, dom:N => rng_(-N, N), p:x => x*x >= 0, nl:'«El cuadrado de todo número real es mayor o igual que 0»' },
+    { t:'∀x, y ∈ ℤ, x + y > 0', ar:2, dom:N => rng_(-N, N), p:(x, y) => x + y > 0, nl:'«Todo par de enteros tiene suma positiva»' },
+    { t:'∀x ∈ ℕ, (x múltiplo de 4) → (x es par)', ar:1, dom:N => rng_(1, 4*N), p:x => x % 4 !== 0 || x % 2 === 0, nl:'«Si x es múltiplo de 4, entonces es par»' },
+    { t:'∀x ∈ ℕ, x es par', ar:1, dom:N => rng_(1, 2*N), p:x => x % 2 === 0, nl:'«Todo natural es par»' }
+  ] : [
+    { t:'∃x ∈ ℝ: x² = −1', ar:1, dom:N => rng_(-N, N), p:x => x*x === -1, nl:'«Existe un real cuyo cuadrado es −1»' },
+    { t:'∃x, y ∈ ℤ: x + y = 10', ar:2, dom:N => rng_(-N, N), p:(x, y) => x + y === 10, nl:'«Existe un par de enteros con suma 10»' },
+    { t:'∃x ∈ ℕ: x es primo y par', ar:1, dom:N => rng_(1, 4*N), p:x => x % 2 === 0 && [2].includes(x), nl:'«Existe un natural primo y par»' },
+    { t:'∃z ∈ ℤ: z = z + 1', ar:1, dom:N => rng_(-N, N), p:z => z === z + 1, nl:'«Existe un entero igual a su siguiente»' }
+  ];
+  return {
+    name:ALL ? 'Cuantificador universal ∀: «para todo»' : 'Cuantificador existencial ∃: «existe»', short:ALL ? '2 Para todo' : '3 Existe', shape:ALL ? '∀x, p(x)' : '∃x : p(x)',
+    desc:ALL ? '<b>∀x, p(x)</b> es verdadera cuando p se cumple para <b>todos</b> los valores. Basta <b>un contraejemplo</b> para que sea falsa. Elige una afirmación y amplía la muestra con el deslizador: la página busca el contraejemplo por ti.'
+             : '<b>∃x : p(x)</b> es verdadera cuando <b>algún</b> valor cumple p: se prueba con <b>un testigo</b>. Es falsa si ninguno la cumple. Amplía la muestra y mira cuándo aparece el testigo.',
+    render(stage){
+      let ci = 0, N = 3; const bar = el('div', 'btn-row'), out = el('div', 'formula'), grid = el('div', 'strip'), note = el('p', 'pad-note');
+      const sl = el('input'); sl.type = 'range'; sl.min = 1; sl.max = 6; sl.value = N; sl.style.accentColor = 'var(--viu)'; sl.style.width = 'min(320px,70vw)'; sl.setAttribute('aria-label', 'Tamaño de la muestra');
+      const ctrl = el('div', 'btn-row'); ctrl.append(el('span', 'viz-label', 'tamaño de la muestra N ='), sl, el('span', 'viz-label', '3'));
+      const chips = el('div', 'btn-row'); chips.style.maxHeight = '240px'; chips.style.overflowY = 'auto';
+      function upd(){
+        N = +sl.value; ctrl.lastChild.textContent = N; bar.querySelectorAll('button').forEach((b, i) => b.classList.toggle('active', i === ci));
+        const E = EX[ci], d = E.dom(N), ts = E.ar === 1 ? d.map(v => [v]) : tuples2(d); const vals = ts.map(t => E.p(...t));
+        chips.innerHTML = ''; ts.forEach((t, i) => { const c = el('span', 'tv v' + V(vals[i]), fmtT(t)); c.style.margin = '2px'; chips.appendChild(c); });
+        const good = vals.filter(Boolean).length, wit = ts.find((t, i) => vals[i]), cex = ts.find((t, i) => !vals[i]);
+        if(ALL){
+          out.innerHTML = `${E.t} · ${E.nl}<br>Muestra: ${ts.length} casos, <b>${good}</b> la cumplen.<br>` + (cex ? `<span class="no">Contraejemplo: p${fmtT(cex)} es falsa → ∀ queda <b>refutada</b>.</span>` : `<span class="ok">En esta muestra se cumple siempre.</span> Ojo: <b>probar casos no demuestra</b> un «para todo»; hay que razonarlo.`); out.classList.toggle('win', !cex);
+        } else {
+          out.innerHTML = `${E.t} · ${E.nl}<br>Muestra: ${ts.length} casos, <b>${good}</b> la cumplen.<br>` + (wit ? `<span class="ok">Testigo: p${fmtT(wit)} es verdadera → ∃ queda <b>probada</b>.</span>` : `<span class="no">Ningún testigo en esta muestra.</span> Ojo: no encontrarlo <b>no demuestra</b> que no exista; hay que razonarlo (en algunos ejemplos es cierto, p. ej. x² ≥ 0 siempre, z ≠ z + 1 siempre; en otros, como x + y = 10, el testigo existe pero la muestra es pequeña: amplíala).`); out.classList.toggle('win', !!wit);
+        }
+      }
+      EX.forEach((E, i) => bar.appendChild(chipBtn(E.t, false, () => { ci = i; upd(); })));
+      sl.addEventListener('input', upd); stage.append(bar, ctrl, el('div', 'viz-label', 'Cada casilla es un valor de la muestra: verde-naranja = cumple, rosa = no cumple.'), chips, out);
+      stage.appendChild(el('div', 'panel-title c3', 'Comprueba lo aprendido'));
+      stage.appendChild(tfQuiz(ALL ? [
+        { q:'Para refutar «∀x, p(x)» basta encontrar un valor con p(x) falsa', ans:true, why:'Un solo contraejemplo rompe el «para todo».' },
+        { q:'Para probar «∀x, p(x)» basta comprobar 10 valores', ans:false, why:'Diez casos no agotan el universo: hace falta un razonamiento general (o universo finito comprobado entero).' }
+      ] : [
+        { q:'Para probar «∃x : p(x)» basta un valor con p(x) verdadera', ans:true, why:'Un testigo es suficiente.' },
+        { q:'Si en una muestra grande nadie cumple p, entonces «∃x : p(x)» es falsa seguro', ans:false, why:'Podría existir fuera de la muestra; hace falta razonar sobre todo el universo.' }
+      ]));
+      upd();
+    }
+  };
+}
+steps.push(quantStep('all')); steps.push(quantStep('some'));
+
+/* ---------- PASO 4: orden ---------- */
+steps.push({
+  name:'El orden de los cuantificadores importa', short:'4 Orden', shape:'∀x ∃y  ≠  ∃y ∀x',
+  desc:'Los cuantificadores <b>no conmutan</b>. En una matriz R(x, y) («x admira a y»): <b>∀x ∃y R</b> pide que <i>cada fila</i> tenga una casilla encendida; <b>∃y ∀x R</b> pide una <i>columna entera</i> encendida. Pulsa casillas o carga un ejemplo.',
+  render(stage){
+    const P = ['Ana', 'Beto', 'Carla', 'Diego', 'Eva']; let R = P.map((_, i) => P.map((_, j) => j === (i + 1) % 5));
+    const out = el('div', 'formula'), box = el('div', 'tbl-wrap'), pre = el('div', 'btn-row');
+    function upd(){
+      const rowOk = R.map(r => r.some(Boolean)), colOk = P.map((_, j) => R.every(r => r[j])); const fe = rowOk.every(Boolean), ef = colOk.some(Boolean);
+      box.innerHTML = ''; const t = el('table', 'dt'); t.innerHTML = `<tr><th>x \\ y</th>${P.map(n => `<th>${n}</th>`).join('')}<th>∃y R(x,y)</th></tr>`;
+      P.forEach((n, i) => { const tr = el('tr'); tr.appendChild(el('th', null, n)); P.forEach((_, j) => { const td = el('td', 'pick', vtag(R[i][j])); td.style.cursor = 'pointer'; td.addEventListener('click', () => { R[i][j] = !R[i][j]; upd(); }); tr.appendChild(td); }); tr.appendChild(el('td', null, rowOk[i] ? `<span class="ok">✔ ${P[R[i].findIndex(Boolean)]}</span>` : '<span class="no">✘ nadie</span>')); t.appendChild(tr); });
+      const last = el('tr'); last.appendChild(el('th', null, '∀x R(x,y)')); colOk.forEach(c => last.appendChild(el('td', null, c ? '<span class="ok">✔</span>' : '<span class="no">✘</span>'))); last.appendChild(el('td')); t.appendChild(last); box.appendChild(t);
+      out.innerHTML = `<b>∀x ∃y R(x,y)</b> «todos admiran a alguien» → ${vtag(fe)}<br><b>∃y ∀x R(x,y)</b> «alguien es admirado por todos» → ${vtag(ef)}${ef ? ` (y = ${P[colOk.findIndex(Boolean)]})` : ''}<br>${ef && fe ? 'Si existe un y que valga para todos, también vale «para cada x hay un y» (∃∀ implica ∀∃).' : (fe && !ef ? '<span class="ok">Ejemplo de que ∀∃ NO implica ∃∀:</span> cada uno admira a alguien, pero no es la misma persona.' : '')}`;
+      out.classList.toggle('win', fe && !ef);
+    }
+    const PRESETS = [['Cada uno admira a su siguiente', () => P.map((_, i) => P.map((_, j) => j === (i + 1) % 5))], ['Todos admiran a Eva', () => P.map(() => P.map((_, j) => j === 4))], ['Nadie admira a nadie', () => P.map(() => P.map(() => false))], ['Todos admiran a todos', () => P.map(() => P.map(() => true))]];
+    PRESETS.forEach(([n, f]) => pre.appendChild(chipBtn(n, false, () => { R = f(); upd(); })));
+    stage.append(pre, box, out);
+    stage.appendChild(el('div', 'panel-title c2', 'El ejemplo de la clase con números naturales'));
+    stage.appendChild(tfQuiz([
+      { q:'∀x ∈ ℕ, ∃y ∈ ℕ : y > x  («para todo natural existe otro mayor»)', ans:true, why:'Siempre sirve y = x + 1. Es verdadera.' },
+      { q:'∃y ∈ ℕ : ∀x ∈ ℕ, y > x  («existe un natural mayor que todos»)', ans:false, why:'No hay ningún natural mayor que todos, ni siquiera mayor que él mismo: es falsa.' }
+    ]));
+    stage.appendChild(el('p', 'pad-note', '<b>Regla útil:</b> en «∀x ∃y», el y <i>puede depender</i> de x (cada fila su casilla). En «∃y ∀x», el y es <i>uno solo</i> para todos. Por eso ∃∀ es mucho más exigente.'));
+    upd();
+  }
+});
+
+/* ---------- PASO 5: implicación y equivalencia ---------- */
+steps.push({
+  name:'Implicación lógica (⊨) y equivalencia (≡)', short:'5 ⊨ y ≡', shape:'A ⊨ B  ·  A ≡ B',
+  desc:'«A implica lógicamente B» (A ⊨ B) significa que <b>B es verdadera siempre que A lo sea</b>. Si además B ⊨ A, son <b>equivalentes</b>. Elige un par: la tabla recorre todos los casos y marca en rosa los <b>contraejemplos</b>.',
+  render(stage){
+    const PAIRS = [
+      { n:'x > 4  y  x > 3', A:'x > 4', B:'x > 3', cols:['x'], rows:rng_(0, 9).map(v => [v]), fa:x => x > 4, fb:x => x > 3 },
+      { n:'x = y  y  x − y = 0', A:'x = y', B:'x − y = 0', cols:['x', 'y'], rows:tuples2(rng_(0, 3)), fa:(x, y) => x === y, fb:(x, y) => x - y === 0 },
+      { n:'∀x p(x)  y  ∃x p(x)', A:'∀x p(x)', B:'∃x p(x)', cols:['p(1)', 'p(2)', 'p(3)'], rows:combos(['a', 'b', 'c']).map(e => [e.a, e.b, e.c]), fa:(a, b, c) => a && b && c, fb:(a, b, c) => a || b || c, interp:true },
+      { n:'∀x(p ∧ q)  y  (∀p) ∧ (∀q)', A:'∀x [p(x) ∧ q(x)]', B:'[∀x p(x)] ∧ [∀x q(x)]', cols:['p(1)', 'p(2)', 'q(1)', 'q(2)'], rows:combos(['a', 'b', 'c', 'd']).map(e => [e.a, e.b, e.c, e.d]), fa:(a, b, c, d) => (a && c) && (b && d), fb:(a, b, c, d) => (a && b) && (c && d), interp:true }
+    ];
+    let pi = 0; const bar = el('div', 'btn-row'), out = el('div', 'formula'), tb = el('div', 'tbl-wrap');
+    function upd(){
+      bar.querySelectorAll('button').forEach((b, i) => b.classList.toggle('active', i === pi)); const P = PAIRS[pi];
+      const ab = P.rows.filter(r => P.fa(...r) && !P.fb(...r)), ba = P.rows.filter(r => !P.fa(...r) && P.fb(...r));
+      const t = el('table', 'dt'); t.innerHTML = `<tr>${P.cols.map(c => `<th>${c}</th>`).join('')}<th class="res">A</th><th class="res">B</th><th>¿rompe A⊨B?</th><th>¿rompe B⊨A?</th></tr>` + P.rows.map(r => { const a = P.fa(...r), b = P.fb(...r), x1 = a && !b, x2 = !a && b; return `<tr class="${x1 || x2 ? 'bad' : ''}">${r.map(v => `<td>${typeof v === 'boolean' ? vtag(v) : v}</td>`).join('')}<td>${vtag(a)}</td><td>${vtag(b)}</td><td>${x1 ? '<span class="no">sí</span>' : '·'}</td><td>${x2 ? '<span class="no">sí</span>' : '·'}</td></tr>`; }).join('');
+      tb.innerHTML = ''; tb.appendChild(t);
+      const imp = ab.length === 0, rev = ba.length === 0;
+      out.innerHTML = `A: <b>${P.A}</b> · B: <b>${P.B}</b>${P.interp ? '<br><span style="color:var(--muted)">Cada fila es una «interpretación» posible de los predicados.</span>' : ''}<br>A ⊨ B: ${vtag(imp)} ${imp ? '(no hay ningún caso con A verdadera y B falsa)' : `(contraejemplo: ${P.cols.map((c, i) => `${c}=${typeof ab[0][i] === 'boolean' ? V(ab[0][i]) : ab[0][i]}`).join(', ')})`}<br>B ⊨ A: ${vtag(rev)} ${rev ? '' : `(contraejemplo: ${P.cols.map((c, i) => `${c}=${typeof ba[0][i] === 'boolean' ? V(ba[0][i]) : ba[0][i]}`).join(', ')})`}<br><b>${imp && rev ? 'A ≡ B (equivalentes)' : (imp ? 'A ⊨ B pero NO son equivalentes' : (rev ? 'B ⊨ A pero NO son equivalentes' : 'Ninguna implica a la otra'))}</b>`;
+      out.classList.toggle('win', imp && rev);
+    }
+    PAIRS.forEach((P, i) => bar.appendChild(chipBtn(P.n, false, () => { pi = i; upd(); })));
+    stage.append(bar, out, tb);
+    stage.appendChild(el('p', 'pad-note', '<b>Idea:</b> «x &gt; 4» es más exigente que «x &gt; 3»: lo que cumple lo primero cumple lo segundo, pero no al revés (x = 4). Y «∀» implica «∃», pero «∃» no implica «∀».'));
+    upd();
+  }
+});
+
+/* ---------- PASO 6: cuantificadores y conectores ---------- */
+steps.push({
+  name:'Cuantificadores y conectores: lo que sí y lo que no se puede mover', short:'6 Con conectores', shape:'∀(p ∨ q) ⊭ (∀p) ∨ (∀q)',
+  desc:'¿Se puede «repartir» un cuantificador sobre ∨ y ∧? A veces sí (≡) y a veces solo en un sentido (⊨). Define p(x) y q(x) pulsando las casillas (o carga un ejemplo de la clase) y la página calcula <b>los dos lados</b> de cada relación.',
+  render(stage){
+    let n = 6; const p = Array(6).fill(false), q = Array(6).fill(false); const out = el('div'), grid = el('div', 'tbl-wrap'), pre = el('div', 'btn-row'), sz = el('div', 'btn-row');
+    function set(fp, fq, nn){ n = nn; for(let i = 0; i < 6; i++){ p[i] = i < n && fp(i + 1); q[i] = i < n && fq(i + 1); } upd(); }
+    function upd(){
+      sz.querySelectorAll('button').forEach((b, i) => b.classList.toggle('active', i + 3 === n));
+      const idx = rng_(0, n - 1), P = idx.map(i => p[i]), Q = idx.map(i => q[i]);
+      const all = a => a.every(Boolean), some = a => a.some(Boolean), or = (a, b) => a.map((v, i) => v || b[i]), and = (a, b) => a.map((v, i) => v && b[i]);
+      const t = el('table', 'dt'); t.innerHTML = `<tr><th>x</th>${idx.map(i => `<th>${i + 1}</th>`).join('')}</tr>`;
+      [['p(x)', p], ['q(x)', q]].forEach(([nm, arr]) => { const tr = el('tr'); tr.appendChild(el('th', null, nm)); idx.forEach(i => { const td = el('td', 'pick', vtag(arr[i])); td.style.cursor = 'pointer'; td.addEventListener('click', () => { arr[i] = !arr[i]; upd(); }); tr.appendChild(td); }); t.appendChild(tr); });
+      grid.innerHTML = ''; grid.appendChild(t);
+      const REL = [
+        { l:'∀x [p ∨ q]', r:'[∀x p] ∨ [∀x q]', a:all(or(P, Q)), b:all(P) || all(Q), kind:'rl', txt:'solo «lado derecho ⊨ lado izquierdo»' },
+        { l:'∃x [p ∨ q]', r:'[∃x p] ∨ [∃x q]', a:some(or(P, Q)), b:some(P) || some(Q), kind:'eq', txt:'equivalentes siempre' },
+        { l:'∀x [p ∧ q]', r:'[∀x p] ∧ [∀x q]', a:all(and(P, Q)), b:all(P) && all(Q), kind:'eq', txt:'equivalentes siempre' },
+        { l:'∃x [p ∧ q]', r:'[∃x p] ∧ [∃x q]', a:some(and(P, Q)), b:some(P) && some(Q), kind:'lr', txt:'solo «lado izquierdo ⊨ lado derecho»' }
+      ];
+      out.innerHTML = REL.map(R => { const same = R.a === R.b, sym = R.kind === 'eq' ? '≡' : (R.kind === 'rl' ? '⇐' : '⇒'); return `<div class="qrow" style="margin:4px 0"><div class="tx"><b>${R.l}</b> ${vtag(R.a)} &nbsp;<b style="color:var(--viu)">${sym}</b>&nbsp; <b>${R.r}</b> ${vtag(R.b)}</div><div class="viz-label">${R.txt}</div><div class="fb">${same ? 'En este caso los dos lados coinciden.' : '<b class="ok">¡Aquí los dos lados DIFIEREN!</b> Es el caso que muestra que no son equivalentes.'}</div></div>`; }).join('');
+    }
+    [3, 4, 5, 6].forEach(k => sz.appendChild(chipBtn(`universo {1..${k}}`, false, () => { n = k; upd(); })));
+    const PR = [['Par / impar (1..6)', () => set(x => x % 2 === 0, x => x % 2 === 1, 6)], ['Múltiplo de 2 y de 3 en {1..5}', () => set(x => x % 2 === 0, x => x % 3 === 0, 5)], ['Todos cumplen p y q', () => set(() => true, () => true, 6)]];
+    PR.forEach(([nm, f]) => pre.appendChild(chipBtn(nm, false, f)));
+    stage.append(el('div', 'panel-title c1', 'Ejemplos de la clase'), pre, sz, grid, out);
+    stage.appendChild(el('p', 'pad-note', '<b>Par/impar:</b> «todo natural es par o impar» es verdadera, pero «todos son pares, o todos son impares» es falsa. <b>Múltiplos en {1..5}:</b> «existe un múltiplo de 2 y existe un múltiplo de 3» es verdadera, pero «existe uno que sea múltiplo de 2 y de 3» es falsa.'));
+    set(x => x % 2 === 0, x => x % 2 === 1, 6);
+  }
+});
+
+/* ---------- PASO 7: De Morgan generalizado ---------- */
+steps.push({
+  name:'Negar cuantificadores: De Morgan generalizado', short:'7 De Morgan', shape:'¬∀ ≡ ∃¬  ·  ¬∃ ≡ ∀¬',
+  desc:'Negar «para todo» equivale a «existe uno que no»; negar «existe» equivale a «para todo no». Elige un predicado sobre {1,…,8}: la página calcula <b>ambos lados</b> de las cuatro leyes y te enseña el elemento clave.',
+  render(stage){
+    const U = rng_(1, 8); const PR = [['x es par', x => x % 2 === 0], ['x > 3', x => x > 3], ['x es primo', x => [2, 3, 5, 7].includes(x)], ['x es múltiplo de 9', x => x % 9 === 0], ['x ≥ 1', x => x >= 1]];
+    let pi = 0; const bar = el('div', 'btn-row'), out = el('div'), row = el('div', 'btn-row');
+    function upd(){
+      bar.querySelectorAll('button').forEach((b, i) => b.classList.toggle('active', i === pi)); const f = PR[pi][1], vals = U.map(f), cx = U.find(x => !f(x)), wt = U.find(x => f(x));
+      row.innerHTML = ''; U.forEach((x, i) => { const c = el('span', 'tv v' + V(vals[i]), String(x)); c.style.margin = '2px'; row.appendChild(c); });
+      const L = [
+        ['¬[∀x p(x)]', !vals.every(Boolean), '∃x : ¬p(x)', vals.some(v => !v), cx !== undefined ? `testigo de «no cumple»: x = ${cx}` : 'todos cumplen p'],
+        ['¬[∃x : p(x)]', !vals.some(Boolean), '∀x ¬p(x)', vals.every(v => !v), wt !== undefined ? `x = ${wt} sí cumple p, así que ∃ es verdadera` : 'nadie cumple p'],
+        ['∀x p(x)', vals.every(Boolean), '¬[∃x : ¬p(x)]', !vals.some(v => !v), ''],
+        ['∃x : p(x)', vals.some(Boolean), '¬[∀x ¬p(x)]', !vals.every(v => !v), '']
+      ];
+      out.innerHTML = L.map(([a, va, b, vb, note]) => `<div class="qrow" style="margin:4px 0"><div class="tx"><b>${a}</b> ${vtag(va)} &nbsp;<b style="color:var(--viu)">≡</b>&nbsp; <b>${b}</b> ${vtag(vb)}</div>${note ? `<div class="fb">${note}</div>` : ''}</div>`).join('');
+    }
+    PR.forEach(([n], i) => bar.appendChild(chipBtn('p(x): ' + n, false, () => { pi = i; upd(); })));
+    stage.append(bar, el('div', 'viz-label', 'Universo {1,…,8}: naranja = cumple p, rosa = no cumple'), row, out);
+    stage.appendChild(el('div', 'panel-title c2', 'Simplificar una fórmula paso a paso (ejemplo de la clase)'));
+    const STEPS = [['∀x, ¬[∃y : [p(x,y) → q(x)]]', 'Enunciado inicial'], ['∀x, ¬[∃y : [¬p(x,y) ∨ q(x)]]', 'p → q ≡ ¬p ∨ q'], ['∀x, ∀y, ¬[¬p(x,y) ∨ q(x)]', '¬∃ ≡ ∀¬'], ['∀x, ∀y, [¬¬p(x,y) ∧ ¬q(x)]', 'De Morgan: ¬(A ∨ B) ≡ ¬A ∧ ¬B'], ['∀x, ∀y, [p(x,y) ∧ ¬q(x)]', 'Doble negación: ¬¬p ≡ p'], ['∀x, y, [p(x,y) ∧ ¬q(x)]', 'Agrupar los ∀']];
+    let k = 0; const ladder = el('div'), nx = el('button', 'toggle-btn', 'Siguiente paso →'); nx.type = 'button'; const rs = el('button', 'toggle-btn', 'Reiniciar'); rs.type = 'button';
+    function drawL(){ ladder.innerHTML = STEPS.slice(0, k + 1).map(([f, w], i) => `<div class="formula" style="margin:4px auto;${i === k ? 'border-color:var(--viu)' : ''}">${f}<br><span style="color:var(--muted);font-size:12px">${w}</span></div>`).join(''); nx.disabled = k >= STEPS.length - 1; nx.style.opacity = nx.disabled ? .4 : 1; }
+    nx.addEventListener('click', () => { if(k < STEPS.length - 1){ k++; drawL(); } }); rs.addEventListener('click', () => { k = 0; drawL(); });
+    const nb = el('div', 'btn-row'); nb.append(nx, rs); stage.append(nb, ladder);
+    stage.appendChild(el('div', 'panel-title c3', '«No es cierto que todo entero sea par y positivo»'));
+    const Z = rng_(-3, 3), bad = Z.filter(x => !(x % 2 === 0 && x > 0)); const ex = el('div', 'formula');
+    ex.innerHTML = `¬[∀x ∈ ℤ, (x par ∧ x positivo)] ≡ ∃x ∈ ℤ : (x impar <b>o</b> x no positivo)<br>En {−3,…,3} lo cumplen (son «testigos»): <b>${bad.join(', ')}</b>.`; stage.appendChild(ex);
+    stage.appendChild(el('p', 'pad-note', 'Al negar: <b>∀ ↔ ∃</b> intercambian, y lo que hay dentro se niega (∧ pasa a ∨ por De Morgan).'));
+    drawL(); upd();
+  }
+});
+
+/* ---------- PASO 8: resumen ---------- */
+steps.push({
+  name:'Resumen y código', short:'8 Resumen', shape:null,
+  desc:'En programación, ∀ y ∃ son <code>all()</code> y <code>any()</code>. Las cifras de abajo las calcula la página.',
+  render(stage){
+    const T = el('div', 'tbl-wrap'); T.innerHTML = `<table class="dt"><tr><th>Símbolo</th><th>Se lee</th><th>Se refuta con</th><th>Se prueba con</th></tr>
+      <tr><td>∀x, p(x)</td><td>para todo x</td><td>un contraejemplo</td><td>un razonamiento general</td></tr>
+      <tr><td>∃x : p(x)</td><td>existe un x</td><td>un razonamiento general</td><td>un testigo</td></tr>
+      <tr><td>¬∀ ≡ ∃¬</td><td>De Morgan</td><td colspan="2">se cambian ∀ ↔ ∃ y se niega p</td></tr></table>`; stage.appendChild(T);
+    stage.appendChild(el('div', 'panel-title c1', 'En Python'));
+    stage.appendChild(codeBox(`U = range(1, 9)
+par = lambda x: x % 2 == 0
+
+print(all(par(x) for x in U))            # ∀x par(x)
+print(any(par(x) for x in U))            # ∃x par(x)
+print(not all(par(x) for x in U))        # ¬∀x par(x)
+print(any(not par(x) for x in U))        # ∃x ¬par(x)  (¡igual!)
+
+# ∀x ∃y : y > x   sobre U  (falla en el último elemento)
+print(all(any(y > x for y in U) for x in U))`));
+    const U = rng_(1, 8), par = x => x % 2 === 0; const py = b => b ? 'True' : 'False';
+    stage.appendChild(el('div', 'viz-label', 'Salida del programa (calculada aquí con las mismas reglas):'));
+    stage.appendChild(codeBox([U.every(par), U.some(par), !U.every(par), U.some(x => !par(x)), U.every(x => U.some(y => y > x))].map(py).join('\n')));
+    stage.appendChild(el('div', 'panel-title c3', 'Errores frecuentes'));
+    const errs = el('div', 'bio-text'); errs.innerHTML = `<p><b>1.</b> Creer que «para todo» se demuestra probando varios casos. Solo se <i>refuta</i> con casos.</p>
+      <p><b>2.</b> Intercambiar ∀∃ por ∃∀: «todos tienen alguien» no es «hay alguien de todos».</p>
+      <p><b>3.</b> Negar mal: ¬∀x p(x) es «existe x sin p», no «para todo x, no p».</p>
+      <p><b>4.</b> Repartir ∀ sobre ∨ (o ∃ sobre ∧) como si fuera una equivalencia: solo valen en un sentido.</p>`;
+    stage.appendChild(errs); stage.appendChild(qcards(QUESTIONS));
+  }
+});
+
+/* =========================================================
+   Motor de navegación (idéntico en todas las actividades)
+========================================================= */
+let current = 0;
+function renderTrail(){
+  const tr = $('#trail'); tr.innerHTML = '';
+  steps.forEach((s, i) => { const b = el('button', null, s.short); b.type = 'button'; b.addEventListener('click', () => goTo(i)); tr.appendChild(b); });
+}
+function goTo(i){
+  current = i;
+  clearTimers();
+  const s = steps[current];
+  $('#stepCount').textContent = current === 0 ? 'Introducción' : `Paso ${current} de ${steps.length - 1}`;
+  $('#stepTitle').textContent = s.name;
+  $('#stepDesc').innerHTML = s.desc;
+  const chip = $('#shapeChip');
+  if(s.shape){ chip.style.display = ''; chip.innerHTML = `<b>${s.shape}</b>`; } else chip.style.display = 'none';
+  const stage = $('#stage'); stage.innerHTML = '';
+  s.render(stage);
+  const btns = document.querySelectorAll('.trail button');
+  btns.forEach((b, idx) => b.classList.toggle('active', idx === current));
+  if(btns[current]) btns[current].scrollIntoView({ block:'nearest', inline:'center' });
+  $('#prevBtn').disabled = current === 0;
+  $('#nextBtn').textContent = current === steps.length - 1 ? 'Volver al inicio ↺' : 'Siguiente →';
+  window.scrollTo(0, 0);
+}
+$('#prevBtn').addEventListener('click', () => { if(current > 0) goTo(current - 1); });
+$('#nextBtn').addEventListener('click', () => goTo(current === steps.length - 1 ? 0 : current + 1));
+document.addEventListener('keydown', e => {
+  if(e.target && (e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT')) return;
+  if(e.key === 'ArrowRight') $('#nextBtn').click();
+  if(e.key === 'ArrowLeft') $('#prevBtn').click();
+});
+renderTrail(); goTo(0);
+</script>
+</body>
+</html>
