@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="generator" content="Generado con asistencia de IA (Claude) - revisar por el responsable antes de su uso">
+<title>Problemas de decisión</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<!-- Artefacto generado con asistencia de IA (Claude Sonnet 5.5). Requiere revision del desarrollador responsable. Contenido basado en las diapositivas de Problemas de decisión (P y NP) de 1-logicaRec.tex (02MIAR, VIU). Datos: solo ejemplos ficticios o de dominio publico. -->
+<style>
+  :root{
+    --bg:#0B1220; --panel:#121B2E; --panel-2:#17233A; --line:#26324A; --text:#E7ECF5; --muted:#8B96AD;
+    --viu:#E55015; --viu-dim:#4A2212;
+    --cyan:#5EEAD4; --cyan-dim:#1F4A45;
+    --pink:#F472B6; --pink-dim:#452236;
+    --radius:14px;
+    --font-head:'Space Grotesk','Segoe UI',sans-serif; --font-body:'IBM Plex Sans','Segoe UI',sans-serif; --font-mono:'IBM Plex Mono','Consolas',monospace;
+    padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+  }
+  *{box-sizing:border-box;}
+  html,body{height:100%;}
+  body{ margin:0; background:var(--bg); color:var(--text); font-family:var(--font-body); min-height:100%; display:flex; flex-direction:column; overflow-x:hidden; }
+  ::selection{ background:var(--viu-dim); color:var(--viu); }
+
+  header{ padding:18px clamp(16px,4vw,40px) 10px; display:flex; flex-direction:column; gap:14px; flex:0 0 auto; }
+  .headline-row{ display:flex; align-items:baseline; justify-content:space-between; gap:16px; flex-wrap:wrap; }
+  h1{ font-family:var(--font-head); font-weight:600; font-size:clamp(20px,2.6vw,28px); margin:0; letter-spacing:-0.01em; }
+  h1 span{ color:var(--viu); }
+  .net-tag{ font-family:var(--font-mono); font-size:12.5px; color:var(--muted); }
+  .trail{ display:flex; gap:4px; overflow-x:auto; padding-bottom:4px; scrollbar-width:thin; }
+  .trail::-webkit-scrollbar{height:5px;} .trail::-webkit-scrollbar-thumb{background:var(--line); border-radius:4px;}
+  .trail button{ flex:0 0 auto; background:var(--panel); border:1px solid var(--line); color:var(--muted); font-family:var(--font-mono); font-size:11.5px; padding:7px 11px; border-radius:999px; cursor:pointer; white-space:nowrap; transition:border-color .15s,color .15s,background .15s; }
+  .trail button:hover{ border-color:#3a4a6b; color:var(--text); }
+  .trail button.active{ background:var(--viu-dim); border-color:var(--viu); color:var(--viu); }
+
+  main{ flex:1 0 auto; display:flex; align-items:stretch; justify-content:center; padding:6px clamp(16px,4vw,40px) 10px; }
+  .card{ width:100%; max-width:1040px; background:var(--panel); border:1px solid var(--line); border-radius:var(--radius); padding:clamp(18px,3vw,30px); display:flex; flex-direction:column; gap:16px; }
+  .step-meta{ display:flex; justify-content:space-between; align-items:flex-start; gap:20px; flex-wrap:wrap; }
+  .step-count{ font-family:var(--font-mono); font-size:12.5px; color:var(--viu); margin:0 0 4px; }
+  .step-title{ font-family:var(--font-head); font-weight:600; font-size:clamp(18px,2.4vw,24px); margin:0; }
+  .step-desc{ color:var(--muted); font-size:14.5px; line-height:1.6; max-width:70ch; margin:6px 0 0; }
+  .shape-chip{ font-family:var(--font-mono); font-size:13px; background:var(--panel-2); border:1px solid var(--line); padding:9px 14px; border-radius:10px; color:var(--text); }
+  .shape-chip b{ color:var(--viu); font-weight:600; }
+  #stage{ display:flex; flex-direction:column; align-items:center; gap:16px; padding:6px 2px; }
+  #stage > *{ width:100%; }
+
+  footer{ flex:0 0 auto; display:flex; justify-content:center; gap:14px; flex-wrap:wrap; padding:4px clamp(16px,4vw,40px) calc(18px + env(safe-area-inset-bottom,0px)); }
+  .nav-btn{ font-family:var(--font-body); font-weight:500; font-size:14.5px; background:var(--panel); border:1px solid var(--line); color:var(--text); padding:11px 22px; border-radius:10px; cursor:pointer; transition:border-color .15s,transform .1s; }
+  .nav-btn:hover{ border-color:var(--viu); } .nav-btn:active{ transform:scale(.97); }
+  .nav-btn:disabled{ opacity:.35; cursor:default; } .nav-btn:disabled:hover{ border-color:var(--line); }
+  .nav-btn.primary{ background:var(--viu-dim); border-color:var(--viu); color:var(--viu); }
+
+  .viz-row{ display:flex; align-items:flex-start; justify-content:center; gap:clamp(18px,3vw,36px); flex-wrap:wrap; width:100%; }
+  .viz-col{ display:flex; flex-direction:column; align-items:center; gap:10px; flex:1 1 280px; min-width:0; }
+  .viz-label{ font-family:var(--font-mono); font-size:12px; color:var(--muted); text-align:center; line-height:1.4; }
+  .viz-label b{ color:var(--text); font-weight:600; }
+
+  .formula{ font-family:var(--font-mono); font-size:13.5px; background:var(--panel-2); border:1px solid var(--line); border-radius:10px; padding:12px 16px; min-height:44px; display:block; text-align:center; color:var(--text); max-width:720px; margin:0 auto; line-height:1.7; }
+  .formula b{ color:var(--cyan); } .formula .ok{ color:var(--viu); font-weight:600; } .formula .no{ color:var(--pink); font-weight:600; }
+  .formula.win{ border-color:var(--viu); }
+  .pad-note{ font-size:13px; color:var(--muted); text-align:center; max-width:74ch; margin:0 auto; line-height:1.6; }
+  .pad-note b{ color:var(--text); font-weight:600; }
+  .bio-text{ max-width:74ch; margin:0 auto; }
+  .bio-text p{ font-size:13.8px; line-height:1.65; color:var(--text); margin:0 0 10px; }
+  .bio-text b{ color:var(--viu); font-weight:600; } .bio-text i{ color:var(--cyan); font-style:normal; }
+
+  .qgrid{ display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:10px; }
+  .qcard{ background:var(--panel-2); border:1px solid var(--line); border-radius:12px; padding:14px 16px; cursor:pointer; transition:border-color .15s; }
+  .qcard:hover{ border-color:var(--viu); }
+  .qcard .n{ font-family:var(--font-mono); font-size:11.5px; color:var(--viu); }
+  .qcard h3{ font-family:var(--font-head); font-size:15px; margin:4px 0 6px; font-weight:600; }
+  .qcard p{ margin:0; font-size:12.5px; color:var(--muted); line-height:1.5; }
+
+  .btn-row{ display:flex; gap:8px; justify-content:center; flex-wrap:wrap; }
+  .toggle-btn{ font-family:var(--font-mono); font-size:11.5px; background:var(--panel-2); border:1px solid var(--line); color:var(--muted); padding:8px 13px; border-radius:999px; cursor:pointer; transition:all .15s; }
+  .toggle-btn:hover{ color:var(--text); border-color:#3a4a6b; }
+  .toggle-btn.active{ background:var(--viu-dim); border-color:var(--viu); color:var(--viu); }
+  .toggle-btn.good{ background:var(--viu-dim); border-color:var(--viu); color:var(--viu); }
+  .toggle-btn.bad{ background:var(--pink-dim); border-color:var(--pink); color:var(--pink); }
+
+  /* interruptor de valor de verdad */
+  .tg{ font-family:var(--font-mono); font-size:13px; background:var(--panel-2); border:1px solid var(--line); color:var(--muted); padding:10px 16px; border-radius:12px; cursor:pointer; transition:all .15s; text-align:left; min-width:150px; }
+  .tg b{ display:block; font-size:17px; color:var(--text); font-weight:600; }
+  .tg small{ display:block; font-size:11px; margin-top:2px; }
+  .tg.on{ background:var(--viu-dim); border-color:var(--viu); color:var(--viu); } .tg.on b{ color:var(--viu); }
+  .tg.off{ border-color:#3a4a6b; }
+  .tg:hover{ border-color:var(--viu); }
+
+  .tv{ display:inline-block; min-width:22px; padding:1px 6px; border-radius:6px; font-family:var(--font-mono); font-weight:600; font-size:12.5px; }
+  .tv.v1{ background:var(--viu-dim); color:var(--viu); } .tv.v0{ background:var(--pink-dim); color:var(--pink); }
+
+  .stats{ display:flex; gap:10px; flex-wrap:wrap; justify-content:center; }
+  .stat{ background:var(--panel-2); border:1px solid var(--line); border-radius:10px; padding:8px 14px; text-align:center; min-width:120px; }
+  .stat .l{ font-family:var(--font-mono); font-size:10.5px; color:var(--muted); display:block; margin-bottom:3px; }
+  .stat .v{ font-family:var(--font-mono); font-size:15px; font-weight:600; color:var(--text); }
+  .stat.c1 .v{ color:var(--viu); } .stat.c2 .v{ color:var(--cyan); } .stat.c3 .v{ color:var(--pink); }
+  .panel-title{ font-family:var(--font-head); font-weight:600; font-size:13.5px; color:var(--text); text-align:center; margin:0 0 2px; }
+  .panel-title.c1{ color:var(--viu); } .panel-title.c2{ color:var(--cyan); } .panel-title.c3{ color:var(--pink); }
+
+  pre.code{ margin:0; background:#0E1626; border:1px solid var(--line); border-radius:10px; padding:12px 14px; font-family:var(--font-mono); font-size:12.3px; line-height:1.6; color:var(--text); overflow-x:auto; text-align:left; }
+  pre.code .cm{ color:#6b7a99; } pre.code .kw{ color:var(--pink); }
+
+  table.dt{ border-collapse:collapse; font-family:var(--font-mono); font-size:12.5px; margin:0 auto; }
+  table.dt th,table.dt td{ border:1px solid var(--line); padding:6px 11px; text-align:center; }
+  table.dt th{ background:var(--panel-2); color:var(--muted); font-weight:500; }
+  table.dt th.res{ background:var(--viu-dim); color:var(--viu); }
+  table.dt tr.hl td{ background:rgba(94,234,212,.12); }
+  table.dt tr.hl td:first-child{ box-shadow:inset 3px 0 0 var(--cyan); }
+  table.dt tr.bad td{ background:rgba(244,114,182,.14); }
+  table.dt tr.pick{ cursor:pointer; } table.dt tr.pick:hover td{ background:rgba(255,255,255,.04); }
+  .tbl-wrap{ overflow-x:auto; max-width:100%; }
+
+  /* filas de preguntas (sorter) */
+  .qrow{ background:var(--panel-2); border:1px solid var(--line); border-radius:12px; padding:12px 14px; display:flex; gap:12px; align-items:center; justify-content:space-between; flex-wrap:wrap; }
+  .qrow .tx{ flex:1 1 280px; font-size:14px; line-height:1.5; }
+  .qrow .opts{ display:flex; gap:6px; flex-wrap:wrap; }
+  .qrow .fb{ flex:1 1 100%; font-size:12.5px; color:var(--muted); line-height:1.5; }
+  .qrow .fb b.ok{ color:var(--viu); } .qrow .fb b.no{ color:var(--pink); }
+  .qrow.done{ border-color:#3a4a6b; }
+
+  select{ font-family:var(--font-mono); font-size:13px; background:var(--panel-2); color:var(--text); border:1px solid var(--line); border-radius:8px; padding:8px 10px; max-width:100%; }
+  select:focus,button:focus-visible{ outline:2px solid var(--cyan); outline-offset:1px; }
+
+  .cards6{ display:grid; grid-template-columns:repeat(auto-fit,minmax(230px,1fr)); gap:10px; width:100%; }
+  .ccard{ background:var(--panel-2); border:1px solid var(--line); border-radius:12px; padding:12px 14px; display:flex; flex-direction:column; gap:6px; }
+  .ccard .sym{ font-family:var(--font-mono); font-size:22px; color:var(--viu); font-weight:600; }
+  .ccard .nm{ font-family:var(--font-head); font-weight:600; font-size:14px; }
+  .ccard .rd{ font-size:12.5px; color:var(--muted); line-height:1.5; }
+  .ccard .sent{ font-size:13px; line-height:1.5; color:var(--text); border-top:1px dashed var(--line); padding-top:6px; }
+
+  .strip{ display:flex; flex-direction:column; gap:4px; align-items:center; overflow-x:auto; max-width:100%; }
+  .srow{ display:flex; gap:3px; align-items:center; }
+  .slab{ flex:0 0 150px; font-family:var(--font-mono); font-size:11px; color:var(--muted); text-align:right; padding-right:8px; }
+  .srow > div{ flex:0 0 40px; width:40px; text-align:center; font-family:var(--font-mono); font-size:12px; padding:4px 0; border-radius:6px; background:var(--panel-2); border:1px solid var(--line); }
+  .srow > div.v1{ background:var(--viu-dim); border-color:var(--viu); color:var(--viu); }
+  .srow > div.v0{ background:var(--pink-dim); border-color:var(--pink); color:var(--pink); }
+  .srow > div.h{ background:transparent; border-color:transparent; color:var(--muted); }
+
+  .flow{ display:flex; flex-wrap:wrap; gap:8px; align-items:center; justify-content:center; }
+  .fnode{ background:var(--panel-2); border:1px solid var(--line); border-radius:10px; padding:8px 12px; font-family:var(--font-mono); font-size:12px; cursor:pointer; transition:border-color .15s; }
+  .fnode:hover{ border-color:var(--viu); } .fnode small{ display:block; color:var(--muted); font-size:10.5px; }
+  .farrow{ color:var(--muted); }
+
+  svg text{ font-family:var(--font-mono); }
+  @media (max-width:640px){ .viz-row{ gap:16px; } table.dt th,table.dt td{ padding:5px 7px; } }
+  @media (prefers-reduced-motion:reduce){ *{ transition:none !important; } }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="headline-row">
+    <h1>Problemas de decisión: <span>verificar</span> frente a <span>resolver</span></h1>
+    <span class="net-tag">02MIAR · Matemáticas para la IA · Sesión 3</span>
+  </div>
+  <div class="trail" id="trail"></div>
+</header>
+
+<main>
+  <div class="card">
+    <div class="step-meta">
+      <div>
+        <p class="step-count" id="stepCount"></p>
+        <h2 class="step-title" id="stepTitle"></h2>
+        <p class="step-desc" id="stepDesc"></p>
+      </div>
+      <div class="shape-chip" id="shapeChip"></div>
+    </div>
+    <div id="stage"></div>
+  </div>
+</main>
+
+<footer>
+  <button class="nav-btn" id="prevBtn">← Anterior</button>
+  <button class="nav-btn primary" id="nextBtn">Siguiente →</button>
+</footer>
+
+<script>
+/* =========================================================
+   Utilidades
+========================================================= */
+const $ = s => document.querySelector(s);
+let timers = [];
+function clearTimers(){ timers.forEach(t => clearInterval(t)); timers = []; }
+function el(tag, cls, html){ const e = document.createElement(tag); if(cls) e.className = cls; if(html != null) e.innerHTML = html; return e; }
+const V = x => x ? 1 : 0;
+const vtag = x => `<span class="tv v${V(x)}">${V(x)}</span>`;
+const lower1 = s => s.charAt(0).toLowerCase() + s.slice(1);
+
+function py(code){
+  return code.replace(/&/g, '&amp;').replace(/</g, '&lt;').split('\n').map(l => {
+    const k = l.indexOf('#'); let body = l, cm = '';
+    if(k >= 0){ body = l.slice(0, k); cm = '<span class="cm">' + l.slice(k) + '</span>'; }
+    body = body.replace(/\b(import|from|as|print|def|return|not|and|or|for|in)\b/g, '<span class="kw">$1</span>');
+    return body + cm;
+  }).join('\n');
+}
+function codeBox(code){ const p = el('pre', 'code'); p.innerHTML = py(code); return p; }
+
+/* ---------- lógica: todas las combinaciones, en el orden de las diapositivas (1,1 / 1,0 / 0,1 / 0,0) ---------- */
+function combos(vars){
+  const n = vars.length, out = [];
+  for(let i = 0; i < (1 << n); i++){ const e = {}; vars.forEach((v, k) => e[v] = !((i >> (n-1-k)) & 1)); out.push(e); }
+  return out;
+}
+const sameEnv = (a, b) => Object.keys(a).every(k => a[k] === b[k]);
+const OPS = {
+  and: { sym:'∧', f:(p, q) => p && q },
+  or:  { sym:'∨', f:(p, q) => p || q },
+  xor: { sym:'⊻', f:(p, q) => p !== q },
+  imp: { sym:'→', f:(p, q) => !p || q },
+  iff: { sym:'↔', f:(p, q) => p === q }
+};
+function classify(f, vars){
+  const vals = combos(vars).map(f);
+  return vals.every(Boolean) ? 'T' : (vals.every(v => !v) ? 'C' : 'K');
+}
+const CLS = { T:'Tautología', C:'Contradicción', K:'Contingencia' };
+
+/* tabla de verdad viva: highlight de la fila actual; clic en fila = elegir esos valores */
+function makeTable(vars, cols, onPick, rowClass){
+  const wrap = el('div', 'tbl-wrap'), t = el('table', 'dt'); wrap.appendChild(t);
+  const head = el('tr'); const ths = [];
+  vars.forEach(v => head.appendChild(el('th', null, v)));
+  cols.forEach(c => { const th = el('th', c.res === false ? '' : 'res', c.h); ths.push(th); head.appendChild(th); });
+  t.appendChild(head);
+  const rows = combos(vars).map(env => {
+    const tr = el('tr', onPick ? 'pick' : ''); tr._env = env;
+    vars.forEach(v => tr.appendChild(el('td', null, vtag(env[v]))));
+    cols.forEach(c => tr.appendChild(el('td', null, vtag(c.f(env)))));
+    if(rowClass){ const rc = rowClass(env); if(rc) tr.classList.add(rc); }
+    if(onPick) tr.addEventListener('click', () => onPick(env));
+    t.appendChild(tr); return tr;
+  });
+  return { el: wrap, setHead:(i, txt) => { ths[i].innerHTML = txt; }, set: env => rows.forEach(r => r.classList.toggle('hl', !!env && sameEnv(r._env, env))) };
+}
+
+/* interruptor 1/0 */
+function toggleBtn(name, init, cb, subs){
+  let val = init; const b = el('button', 'tg'); b.type = 'button';
+  function draw(){
+    b.className = 'tg ' + (val ? 'on' : 'off');
+    b.innerHTML = `<b>${name} = ${V(val)}</b><small>${val ? (subs ? subs[0] : 'verdadera') : (subs ? subs[1] : 'falsa')}</small>`;
+    b.setAttribute('aria-pressed', val); b.setAttribute('aria-label', `${name} vale ${V(val)}`);
+  }
+  b.addEventListener('click', () => { val = !val; draw(); cb(val); });
+  draw();
+  return { el:b, get:() => val, set:v => { val = v; draw(); } };
+}
+
+/* ---------- circuitos (analogía física) ---------- */
+function circuit(mode, p, q){
+  const on = '#E55015', off = '#3a4a6b';
+  const w = (x1, y1, x2, y2, lit) => `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${lit ? on : off}" stroke-width="3.5" stroke-linecap="round"/>`;
+  const dotc = (x, y, lit) => `<circle cx="${x}" cy="${y}" r="3.6" fill="${lit ? on : off}"/>`;
+  const sw = (x, y, closed, lit, lab) => w(x, y, closed ? x+60 : x+54, closed ? y : y-26, closed && lit) + dotc(x, y, lit) + dotc(x+60, y, closed && lit) +
+    `<text x="${x+30}" y="${y+22}" text-anchor="middle" font-size="12" fill="#8B96AD">${lab}=${V(closed)}</text>`;
+  const lamp = (cx, cy, lit) => `<circle cx="${cx}" cy="${cy}" r="17" fill="${lit ? on : '#17233A'}" stroke="${lit ? '#ffb08a' : off}" stroke-width="2.5"/>` +
+    (lit ? [0,45,90,135,180,225,270,315].map(a => { const r = a*Math.PI/180; return `<line x1="${cx+23*Math.cos(r)}" y1="${cy+23*Math.sin(r)}" x2="${cx+31*Math.cos(r)}" y2="${cy+31*Math.sin(r)}" stroke="${on}" stroke-width="2.5" stroke-linecap="round"/>`; }).join('') : '') +
+    `<line x1="${cx-9}" y1="${cy-9}" x2="${cx+9}" y2="${cy+9}" stroke="${lit ? '#fff' : off}" stroke-width="2"/><line x1="${cx+9}" y1="${cy-9}" x2="${cx-9}" y2="${cy+9}" stroke="${lit ? '#fff' : off}" stroke-width="2"/>`;
+  const batt = (x, y1, y2) => `<line x1="${x-9}" y1="${y1}" x2="${x+9}" y2="${y1}" stroke="#E7ECF5" stroke-width="3"/><line x1="${x-5}" y1="${y1+8}" x2="${x+5}" y2="${y1+8}" stroke="#E7ECF5" stroke-width="3"/>`;
+  let s = '', lit = false;
+  if(mode === 'and'){
+    lit = p && q;
+    s += w(24,60,96,60,true) + sw(96,60,p,true,'p') + w(156,60,228,60,p) + sw(228,60,q,p,'q') + w(288,60,352,60,lit) + lamp(372,60,lit);
+    s += w(372,77,372,108,lit) + w(372,108,24,108,lit) + w(24,108,24,72,lit) + batt(24,60);
+  } else if(mode === 'or'){
+    lit = p || q;
+    s += w(24,70,96,70,true) + w(96,40,96,100,true) + w(96,40,150,40,true) + sw(150,40,p,true,'p') + w(210,40,300,40,p) +
+         w(96,100,150,100,true) + sw(150,100,q,true,'q') + w(210,100,300,100,q) + w(300,40,300,100,lit) + w(300,70,355,70,lit) + lamp(372,70,lit);
+    s += w(372,87,372,128,lit) + w(372,128,24,128,lit) + w(24,128,24,82,lit) + batt(24,70);
+  } else {
+    lit = p !== q;
+    const pt = [140,40], pb = [140,100], qt = [280,40], qb = [280,100];
+    s += w(24,70,110,70,true) + dotc(110,70,true) + dotc(310,70,lit) + w(310,70,355,70,lit) + lamp(372,70,lit);
+    s += w(110,70,140,p ? 40 : 100,true);
+    s += w(140,40,280,100,p) + w(140,100,280,40,!p);
+    s += w(310,70,280,q ? 40 : 100,lit);
+    s += [pt,pb,qt,qb].map(c => dotc(c[0], c[1], false)).join('');
+    s += `<text x="110" y="124" text-anchor="middle" font-size="12" fill="#8B96AD">p=${V(p)}</text><text x="310" y="124" text-anchor="middle" font-size="12" fill="#8B96AD">q=${V(q)}</text>`;
+    s += w(372,87,372,138,lit) + w(372,138,24,138,lit) + w(24,138,24,82,lit) + batt(24,70);
+  }
+  return `<svg viewBox="0 0 420 ${mode === 'xor' ? 150 : 140}" width="100%" style="max-width:420px" role="img" aria-label="Circuito con lámpara ${lit ? 'encendida' : 'apagada'}">${s}</svg>`;
+}
+
+
+function tfQuiz(items){
+  const box = el('div', 'viz-col'); box.style.width = '100%';
+  items.forEach(it => {
+    const row = el('div', 'qrow'); const tx = el('div', 'tx', it.q); const opts = el('div', 'opts'); const fb = el('div', 'fb');
+    [['Verdadero (1)', true], ['Falso (0)', false]].forEach(([lab, val]) => {
+      const b = el('button', 'toggle-btn', lab); b.type = 'button';
+      b.addEventListener('click', () => {
+        const ok = val === it.ans;
+        opts.querySelectorAll('button').forEach(x => x.classList.remove('good', 'bad'));
+        b.classList.add(ok ? 'good' : 'bad');
+        fb.innerHTML = (ok ? '<b class="ok">✔ Correcto.</b> ' : '<b class="no">✘ Casi.</b> ') + it.why;
+        row.classList.add('done');
+      });
+      opts.appendChild(b);
+    });
+    row.append(tx, opts, fb); box.appendChild(row);
+  });
+  return box;
+}
+
+/* clasificador por filas */
+function sortRows(items, options){
+  const box = el('div', 'viz-col'); box.style.width = '100%'; box.style.alignItems = 'stretch';
+  const stats = el('div', 'stats'); const sOk = el('div', 'stat c1', '<span class="l">acertadas</span><span class="v">0</span>'), sTot = el('div', 'stat', `<span class="l">total</span><span class="v">${items.length}</span>`);
+  stats.append(sOk, sTot); box.appendChild(stats);
+  const answered = new Set(); let good = 0;
+  items.forEach((it, idx) => {
+    const row = el('div', 'qrow'); const tx = el('div', 'tx', it.t); const opts = el('div', 'opts'); const fb = el('div', 'fb');
+    options.forEach(o => {
+      const b = el('button', 'toggle-btn', o.label); b.type = 'button';
+      b.addEventListener('click', () => {
+        const ok = o.k === it.a;
+        if(ok && !answered.has(idx)){ answered.add(idx); good++; sOk.querySelector('.v').textContent = good; }
+        opts.querySelectorAll('button').forEach(x => x.classList.remove('good', 'bad'));
+        b.classList.add(ok ? 'good' : 'bad');
+        fb.innerHTML = (ok ? '<b class="ok">✔ </b>' : '<b class="no">✘ Prueba otra vez. </b>') + (ok ? it.why : (it.hint || 'Piensa qué se puede afirmar de ella.'));
+        row.classList.toggle('done', ok);
+      });
+      opts.appendChild(b);
+    });
+    row.append(tx, opts, fb); box.appendChild(row);
+  });
+  return box;
+}
+
+const steps = [];
+function goStep(i){ goTo(i); }
+function qcards(list){
+  const g = el('div', 'qgrid');
+  list.forEach(([n, h, p, to]) => { const c = el('div', 'qcard', `<div class="n">${n}</div><h3>${h}</h3><p>${p}</p>`); c.tabIndex = 0; c.addEventListener('click', () => goStep(to)); c.addEventListener('keydown', e => { if(e.key === 'Enter') goStep(to); }); g.appendChild(c); });
+  return g;
+}
+
+const every = (ms, fn) => { const id = setInterval(fn, ms); timers.push(id); return id; };
+const chipBtn = (label, on, cb) => { const b = el('button', 'toggle-btn' + (on ? ' active' : ''), label); b.type = 'button'; b.addEventListener('click', () => cb(b)); return b; };
+const setStr = a => a.length ? '{' + a.join(', ') + '}' : '∅';
+
+const rng_ = (a, b) => Array.from({ length:b - a + 1 }, (_, i) => a + i);
+const QUESTIONS = [
+  ['PREGUNTA 1', '¿Qué es un problema de decisión?', 'Una pregunta cuya respuesta es «sí» o «no».', 1],
+  ['PREGUNTA 2', '¿Qué es la clase P?', 'Problemas que se resuelven rápido: coste polinomial.', 2],
+  ['PREGUNTA 3', '¿Qué es NP y por qué «P = NP» vale un millón?', 'Problemas fáciles de verificar, quizá difíciles de resolver.', 5]
+];
+const SOL = ['534678912', '672195348', '198342567', '859761423', '426853791', '713924856', '961537284', '287419635', '345286179'].map(r => r.split('').map(Number));
+const A10 = [-11, 8, 7, 1, -2, 52, -14, 0, -10, 23];
+const sci = x => !isFinite(x) ? '∞' : (x < 1e6 ? String(Math.round(x)) : x.toExponential(2).replace('e+', ' × 10^'));
+function human(s){
+  if(s < 1e-6) return '< 1 μs'; if(s < 1e-3) return (s * 1e6).toFixed(1) + ' μs'; if(s < 1) return (s * 1e3).toFixed(1) + ' ms'; if(s < 60) return s.toFixed(1) + ' s'; if(s < 3600) return (s / 60).toFixed(1) + ' min'; if(s < 86400) return (s / 3600).toFixed(1) + ' h'; if(s < 3.15e7) return (s / 86400).toFixed(1) + ' días';
+  const y = s / 3.156e7; return y > 1.38e10 ? `${sci(y)} años (¡más que la edad del universo!)` : (y < 1e6 ? y.toFixed(1) : sci(y)) + ' años';
+}
+
+/* ---------- PASO 0 ---------- */
+steps.push({
+  name:'Antes de empezar: ¿qué problemas son «fáciles»?', short:'0 Contexto', shape:null,
+  desc:'Hay problemas que un ordenador resuelve en un instante y otros que, aunque sea fácil <b>comprobar</b> una solución, nadie sabe <b>encontrarla</b> rápido. Esa diferencia es una de las preguntas abiertas más importantes de la informática: <b>¿P = NP?</b> Aquí la vas a tocar con un Sudoku y con un problema de sumas.',
+  render(stage){
+    const t = el('div', 'bio-text');
+    t.innerHTML = `<p><b>La idea de fondo.</b> Resolver un Sudoku puede costar mucho; comprobar uno ya resuelto es cuestión de segundos. Esa asimetría entre <i>encontrar</i> y <i>verificar</i> es el corazón de la clase <b>NP</b>.</p>
+    <p><b>Conexión con lo ya visto.</b> En «complejidad computacional» aprendiste a contar operaciones y a distinguir n² de 2ⁿ. Aquí clasificamos <i>problemas</i> (no algoritmos) según el coste del mejor algoritmo conocido, y usamos las partes de un conjunto (2ⁿ subconjuntos) para ver cómo explota la búsqueda.</p>`;
+    stage.appendChild(t);
+    const flow = el('div', 'flow');
+    [['Decisión', 'sí o no', 1], ['Clase P', 'resolver rápido', 2], ['Verificar', 'el Sudoku', 3], ['Subconjuntos', 'suma cero', 4], ['P vs NP', 'el problema del millón', 5]].forEach(([n, s, to], i, a) => {
+      const f = el('div', 'fnode', `${n}<small>${s}</small>`); f.tabIndex = 0; f.addEventListener('click', () => goStep(to)); f.addEventListener('keydown', e => { if(e.key === 'Enter') goStep(to); });
+      flow.appendChild(f); if(i < a.length-1) flow.appendChild(el('span', 'farrow', '→'));
+    });
+    stage.appendChild(flow);
+    stage.appendChild(el('p', 'pad-note', 'Haz clic en cualquier cuadro o pregunta para saltar a ese paso. También funcionan las flechas ← → del teclado.'));
+    stage.appendChild(qcards(QUESTIONS));
+  }
+});
+
+/* ---------- PASO 1: problemas de decisión ---------- */
+steps.push({
+  name:'Problemas de decisión: la respuesta es «sí» o «no»', short:'1 Decisión', shape:'entrada → sí / no',
+  desc:'Un <b>problema de decisión</b> es un problema cuya respuesta se puede plantear como <b>«sí» o «no»</b> según su entrada. «¿Es este número primo?» lo es; «calcula el número primo siguiente» no (la respuesta es un número). Clasifica estas peticiones.',
+  render(stage){
+    stage.appendChild(sortRows([
+      { t:'¿Es par o impar el número 4 817?', a:'D', why:'Se responde con «sí/no» (¿es par?).', hint:'¿Se puede responder solo «sí» o «no»?' },
+      { t:'¿Es primo el número 97?', a:'D', why:'Entrada: un número. Salida: sí o no.' },
+      { t:'¿Es conexo este grafo?', a:'D', why:'Entrada: un grafo. Salida: sí o no.' },
+      { t:'¿Tiene solución este Sudoku?', a:'D', why:'Salida: sí (existe una forma de rellenarlo) o no.' },
+      { t:'Calcula el producto de dos matrices 3 × 3', a:'N', why:'La respuesta es una matriz, no un sí/no.', hint:'¿La respuesta es un «sí/no» o un objeto?' },
+      { t:'Encuentra el camino más corto entre dos ciudades', a:'N', why:'La respuesta es un camino. (Su versión de decisión sería «¿existe un camino de longitud ≤ k?»).', hint:'La respuesta es una ruta, no un sí/no.' },
+      { t:'Ordena una lista de números', a:'N', why:'La salida es una lista ordenada.', hint:'¿Qué devuelve el algoritmo?' }
+    ], [{ k:'D', label:'Problema de decisión' }, { k:'N', label:'No lo es' }]));
+    stage.appendChild(el('p', 'pad-note', '<b>Truco:</b> casi cualquier problema se puede reformular como decisión («¿existe una solución con tal propiedad?»). Por eso la teoría de P y NP se estudia con problemas de decisión.'));
+  }
+});
+
+/* ---------- PASO 2: clase P ---------- */
+steps.push({
+  name:'La clase P: se resuelven con coste polinomial', short:'2 Clase P', shape:'P = decisión resoluble en tiempo polinomial',
+  desc:'<b>P</b> reúne los problemas de decisión que un algoritmo <b>determinista</b> resuelve con coste <b>polinomial</b>. Tres ejemplos de la clase que puedes manipular: <b>par o impar</b> (O(1)), <b>matriz simétrica</b> (O(n²)) y <b>camino/ciclo euleriano</b> en un grafo (O(n²)).',
+  render(stage){
+    stage.appendChild(el('div', 'panel-title c1', '1 · ¿Par o impar? — coste O(1)'));
+    const inp = el('input'); inp.type = 'number'; inp.value = '4817'; inp.setAttribute('aria-label', 'Número entero'); inp.style.cssText = 'font-family:var(--font-mono);font-size:14px;background:var(--panel-2);color:var(--text);border:1px solid var(--line);border-radius:8px;padding:8px 10px;width:170px';
+    const r1 = el('div', 'formula'), row1 = el('div', 'btn-row'); row1.append(el('span', 'viz-label', 'n ='), inp);
+    function u1(){ const v = Math.trunc(+inp.value); const last = Math.abs(v) % 10; r1.innerHTML = Number.isFinite(v) ? `Basta mirar la <b>última cifra</b> (${last}) o hacer n mod 2 = ${((v % 2) + 2) % 2}: <b>1 operación</b>, sea n de 1 cifra o de mil.<br>Respuesta: ${v % 2 === 0 ? '<span class="ok">sí, es par</span>' : '<span class="no">no, es impar</span>'}` : 'Escribe un número.'; }
+    inp.addEventListener('input', u1); stage.append(row1, r1); u1();
+    stage.appendChild(el('div', 'panel-title c2', '2 · ¿Es simétrica la matriz? — coste O(n²)'));
+    let nn = 4; const M = Array.from({ length:5 }, (_, i) => Array.from({ length:5 }, (_, j) => (i + j) % 3)); M[0][1] = M[1][0] = 2; const sz = el('input'); sz.type = 'range'; sz.min = 2; sz.max = 5; sz.value = nn; sz.style.accentColor = 'var(--viu)'; sz.setAttribute('aria-label', 'Tamaño n de la matriz');
+    const c2 = el('div', 'btn-row'); c2.append(el('span', 'viz-label', 'n ='), sz, el('span', 'viz-label', '4')); const mt = el('div', 'tbl-wrap'), r2 = el('div', 'formula');
+    function u2(){ nn = +sz.value; c2.lastChild.textContent = nn; let cmp = 0, bad = null; for(let i = 0; i < nn; i++) for(let j = i + 1; j < nn; j++){ cmp++; if(M[i][j] !== M[j][i] && !bad) bad = [i, j]; }
+      const t = el('table', 'dt'); for(let i = 0; i < nn; i++){ const tr = el('tr'); for(let j = 0; j < nn; j++){ const td = el('td', 'pick', String(M[i][j])); td.style.cursor = 'pointer'; if(bad && ((i === bad[0] && j === bad[1]) || (i === bad[1] && j === bad[0]))) td.style.background = 'rgba(244,114,182,.25)'; td.addEventListener('click', () => { M[i][j] = (M[i][j] + 1) % 4; u2(); }); tr.appendChild(td); } t.appendChild(tr); } mt.innerHTML = ''; mt.appendChild(t);
+      r2.innerHTML = `Se comparan los pares (i, j) con i &lt; j: <b>${cmp}</b> comparaciones = n(n−1)/2 ~ n²/2 → <b>O(n²)</b><br>${bad ? `<span class="no">No es simétrica:</span> A[${bad[0] + 1}][${bad[1] + 1}] = ${M[bad[0]][bad[1]]} ≠ A[${bad[1] + 1}][${bad[0] + 1}] = ${M[bad[1]][bad[0]]} (marcadas en rosa)` : '<span class="ok">Sí, es simétrica.</span>'}`; r2.classList.toggle('win', !bad); }
+    sz.addEventListener('input', u2); stage.append(c2, el('div', 'viz-label', 'Clic en una celda para cambiar su valor'), mt, r2); u2();
+    stage.appendChild(el('div', 'panel-title c3', '3 · Camino o ciclo euleriano — coste O(n²)'));
+    const n = 5, PAIRS = []; for(let i = 0; i < n; i++) for(let j = i + 1; j < n; j++) PAIRS.push([i, j]);
+    const idx = (a, b) => PAIRS.findIndex(p => p[0] === a - 1 && p[1] === b - 1); let on = new Set([[1, 2], [2, 3], [3, 4], [4, 5], [1, 5]].map(p => idx(...p)));
+    const bar = el('div', 'btn-row'), pre = el('div', 'btn-row'), svg = el('div'), r3 = el('div', 'formula');
+    function u3(){
+      const E = [...on].map(k => PAIRS[k]), deg = Array(n).fill(0); E.forEach(([a, b]) => { deg[a]++; deg[b]++; });
+      const par = rng_(0, n - 1), f = x => par[x] === x ? x : (par[x] = f(par[x])); E.forEach(([a, b]) => par[f(a)] = f(b)); const withEdges = rng_(0, n - 1).filter(i => deg[i] > 0), conn = withEdges.length > 0 && new Set(withEdges.map(f)).size === 1, odd = deg.filter(d => d % 2).length;
+      const cyc = conn && odd === 0, path = conn && (odd === 0 || odd === 2);
+      const P = rng_(0, n - 1).map(i => { const a = -Math.PI / 2 + i * 2 * Math.PI / n; return [150 + 80 * Math.cos(a), 105 + 80 * Math.sin(a)]; });
+      let s = E.map(([a, b]) => `<line x1="${P[a][0]}" y1="${P[a][1]}" x2="${P[b][0]}" y2="${P[b][1]}" stroke="#E55015" stroke-width="2.4"/>`).join('') + P.map((p, i) => `<circle cx="${p[0]}" cy="${p[1]}" r="16" fill="#17233A" stroke="${deg[i] % 2 ? '#F472B6' : '#5EEAD4'}" stroke-width="2.4"/><text x="${p[0]}" y="${p[1] + 4}" fill="#E7ECF5" font-size="12" text-anchor="middle">${i + 1}</text><text x="${p[0] + (p[0] > 150 ? 24 : -24)}" y="${p[1] + 4}" fill="#8B96AD" font-size="11" text-anchor="middle">${deg[i]}</text>`).join('');
+      svg.innerHTML = `<svg viewBox="0 0 300 215" width="100%" style="max-width:300px;display:block;margin:0 auto" role="img" aria-label="Grafo de 5 vértices con los grados">${s}</svg>`;
+      bar.querySelectorAll('button').forEach((b, k) => b.classList.toggle('active', on.has(k)));
+      r3.innerHTML = `Grados: ${deg.map((d, i) => `${i + 1}:${d}`).join(' · ')} (en rosa: grado impar) · vértices de grado impar: <b>${odd}</b> · conexo: ${vtag(conn)}<br>¿Ciclo euleriano (recorrer todas las aristas una vez y volver)? ${vtag(cyc)} ${cyc ? '(todos los grados pares y conexo)' : ''}<br>¿Camino euleriano (recorrer todas las aristas una vez)? ${vtag(path)} ${path && !cyc ? '(exactamente 2 vértices de grado impar)' : ''}<br><span style="color:var(--muted)">Basta con calcular grados y comprobar conexión: coste polinomial.</span>`; r3.classList.toggle('win', path);
+    }
+    PAIRS.forEach(([a, b], k) => bar.appendChild(chipBtn(`{${a + 1},${b + 1}}`, false, () => { on.has(k) ? on.delete(k) : on.add(k); u3(); })));
+    pre.append(chipBtn('Ciclo de 5 (euleriano)', false, () => { on = new Set([[1, 2], [2, 3], [3, 4], [4, 5], [1, 5]].map(p => idx(...p))); u3(); }), chipBtn('Camino 1-2-3-4-5', false, () => { on = new Set([[1, 2], [2, 3], [3, 4], [4, 5]].map(p => idx(...p))); u3(); }), chipBtn('Estrella desde el 1', false, () => { on = new Set([[1, 2], [1, 3], [1, 4], [1, 5]].map(p => idx(...p))); u3(); }));
+    stage.append(pre, bar, svg, r3); u3();
+    stage.appendChild(el('p', 'pad-note', '<b>Ejemplo de la clase:</b> el algoritmo que decide si hay un camino que recorre todas las aristas una sola vez (euleriano) es de coste O(n²). Nota: no confundir con pasar una sola vez por cada <i>vértice</i> (hamiltoniano), que es mucho más difícil.'));
+  }
+});
+
+/* ---------- PASO 3: sudoku ---------- */
+steps.push({
+  name:'Verificar es fácil: el Sudoku', short:'3 Sudoku', shape:'verificar: polinomial',
+  desc:'Comprobar que un Sudoku está bien resuelto es rápido: se miran las <b>9 filas, 9 columnas y 9 cuadrados</b>. Edita la cuadrícula (clic en una celda para cambiar su valor) y la página <b>verifica</b> contando cuántas comprobaciones hace. Prueba a romper la solución o a vaciar celdas: <b>encontrar</b> una solución es otra historia.',
+  render(stage){
+    let G = SOL.map(r => r.slice()); const box = el('div'), out = el('div', 'formula'), pre = el('div', 'btn-row');
+    function verify(){ const bad = new Set(); let ops = 0, empty = 0; G.forEach(r => r.forEach(v => { if(!v) empty++; }));
+      const grp = (cells) => { const seen = {}; cells.forEach(([r, c]) => { ops++; const v = G[r][c]; if(!v) return; (seen[v] = seen[v] || []).push([r, c]); }); Object.values(seen).forEach(a => { if(a.length > 1) a.forEach(([r, c]) => bad.add(r * 9 + c)); }); };
+      for(let i = 0; i < 9; i++){ grp(rng_(0, 8).map(j => [i, j])); grp(rng_(0, 8).map(j => [j, i])); const br = Math.floor(i / 3) * 3, bc = (i % 3) * 3; grp(rng_(0, 8).map(j => [br + Math.floor(j / 3), bc + j % 3])); }
+      return { bad, ops, empty }; }
+    function upd(){
+      const V_ = verify(), ok = V_.bad.size === 0 && V_.empty === 0;
+      box.innerHTML = `<div class="tbl-wrap"><table class="dt" style="border:2px solid var(--muted)">${G.map((r, i) => `<tr>${r.map((v, j) => `<td class="pick" data-r="${i}" data-c="${j}" style="width:34px;height:34px;cursor:pointer;${j % 3 === 2 && j < 8 ? 'border-right:2px solid var(--muted);' : ''}${i % 3 === 2 && i < 8 ? 'border-bottom:2px solid var(--muted);' : ''}${V_.bad.has(i * 9 + j) ? 'background:rgba(244,114,182,.3);color:#F472B6;' : ''}${!v ? 'color:var(--muted);' : ''}">${v || '·'}</td>`).join('')}</tr>`).join('')}</table></div>`;
+      box.querySelectorAll('td[data-r]').forEach(td => td.addEventListener('click', () => { const r = +td.dataset.r, c = +td.dataset.c; G[r][c] = (G[r][c] + 1) % 10; upd(); }));
+      out.innerHTML = `Comprobaciones realizadas: <b>${V_.ops}</b> (27 grupos × 9 celdas) — <b>coste polinomial</b>, no importa lo difícil que fuera resolverlo<br>` + (ok ? '<span class="ok">✔ Sudoku correctamente resuelto.</span>' : `<span class="no">✘ No es válido todavía:</span> ${V_.bad.size ? V_.bad.size + ' celdas en conflicto (rosa)' : ''}${V_.bad.size && V_.empty ? ' y ' : ''}${V_.empty ? V_.empty + ' celdas vacías' : ''}`) + (V_.empty ? `<br>Para <b>encontrar</b> la solución con fuerza bruta habría que probar hasta 9<sup>${V_.empty}</sup> = <b>${sci(Math.pow(9, V_.empty))}</b> rellenos` : ''); out.classList.toggle('win', ok);
+    }
+    const SEED = [3, 7, 12, 18, 22, 27, 31, 35, 40, 44, 49, 53, 58, 62, 66, 71, 75, 79, 5, 14, 24, 33, 42, 51, 60, 69, 78, 9, 20, 37, 46, 55, 64, 73, 1, 16, 29, 38, 47, 56];
+    pre.append(chipBtn('Solución completa', false, () => { G = SOL.map(r => r.slice()); upd(); }), chipBtn('Cambiar un número (3 en vez de 5)', false, () => { G = SOL.map(r => r.slice()); G[0][0] = 3; upd(); }), chipBtn('Vaciar 20 celdas', false, () => { G = SOL.map(r => r.slice()); SEED.slice(0, 20).forEach(k => G[Math.floor(k / 9)][k % 9] = 0); upd(); }), chipBtn('Vaciar 40 celdas', false, () => { G = SOL.map(r => r.slice()); SEED.slice(0, 40).forEach(k => G[Math.floor(k / 9)][k % 9] = 0); upd(); }));
+    stage.append(pre, box, out);
+    stage.appendChild(el('p', 'pad-note', '<b>Idea clave de NP:</b> dada una solución («certificado»), comprobarla cuesta poco (coste polinomial). Pero <b>encontrarla</b> puede obligar a explorar un número astronómico de casos. Con 40 celdas vacías ya son más de 10³⁸ rellenos posibles, aunque los algoritmos inteligentes podan mucho.'));
+    upd();
+  }
+});
+
+/* ---------- PASO 4: suma cero ---------- */
+steps.push({
+  name:'Verificar es barato, buscar es caro: subconjuntos que suman 0', short:'4 Suma cero', shape:'verificar O(n) · buscar O(n·2ⁿ)',
+  desc:'Dado A = {−11, 8, 7, 1, −2, 52, −14, 0, −10, 23}, ¿existe un subconjunto <b>no vacío</b> cuyos elementos sumen 0? <b>Verificar</b> un subconjunto propuesto es sumarlo (O(n)). <b>Buscar</b> por fuerza bruta obliga a probar los 2ⁿ subconjuntos. Prueba con B = {1, −14, −10, 23} y luego lanza la búsqueda completa.',
+  render(stage){
+    let sel = new Set([3, 6, 8, 9]); const bar = el('div', 'btn-row'), out = el('div', 'formula'), bf = el('div', 'formula'), tb = el('div', 'tbl-wrap');
+    function upd(){
+      bar.querySelectorAll('button').forEach((b, i) => b.classList.toggle('active', sel.has(i)));
+      const B = A10.filter((_, i) => sel.has(i)), s = B.reduce((a, b) => a + b, 0), ok = B.length > 0 && s === 0;
+      out.innerHTML = `B = {${B.join(', ') || '∅'}} → suma = ${B.length ? B.join(' + ').replace(/\+ -/g, '− ') + ' = ' : ''}<b>${s}</b> ${B.length ? (ok ? '<span class="ok">✔ suma 0: certificado válido</span>' : '<span class="no">✘ no suma 0</span>') : '(elige elementos)'}<br>Coste de verificar: <b>${Math.max(B.length - 1, 0)}</b> sumas ≤ n − 1 → <b>O(n)</b>`; out.classList.toggle('win', ok);
+    }
+    A10.forEach((v, i) => bar.appendChild(chipBtn(String(v), false, () => { sel.has(i) ? sel.delete(i) : sel.add(i); upd(); })));
+    const go = el('button', 'toggle-btn', '🔎 Buscar por fuerza bruta (los 2ⁿ subconjuntos)'); go.type = 'button';
+    go.addEventListener('click', () => { const n = A10.length; let sols = [], adds = 0, tested = 0; for(let m = 1; m < (1 << n); m++){ let s = 0, k = 0; for(let i = 0; i < n; i++) if(m & (1 << i)){ s += A10[i]; k++; } adds += k - 1; tested++; if(s === 0) sols.push(A10.filter((_, i) => m & (1 << i))); }
+      bf.innerHTML = `Subconjuntos no vacíos probados: <b>${tested}</b> (2<sup>${n}</sup> − 1)<br>Sumas realizadas: <b>${adds}</b> = Σ (k−1)·C(n,k) = n·2<sup>n−1</sup> − 2<sup>n</sup> + 1 = ${n * Math.pow(2, n - 1) - Math.pow(2, n) + 1} <span class="ok">✔ coincide con la clase</span><br>Subconjuntos que suman 0: <b>${sols.length}</b>${sols.length ? ' → ' + sols.slice(0, 6).map(s => '{' + s.join(', ') + '}').join(' · ') + (sols.length > 6 ? ' …' : '') : ''}`; bf.classList.add('win'); });
+    const sz = el('input'); sz.type = 'range'; sz.min = 5; sz.max = 60; sz.value = 10; sz.style.accentColor = 'var(--viu)'; sz.style.width = 'min(280px,70vw)'; sz.setAttribute('aria-label', 'Tamaño n del conjunto');
+    const c3 = el('div', 'btn-row'); c3.append(el('span', 'viz-label', 'n ='), sz, el('span', 'viz-label', '10')); const gr = el('div', 'formula');
+    function u3(){ const n = +sz.value; c3.lastChild.textContent = n; const ver = n - 1, bru = n * Math.pow(2, n); gr.innerHTML = `Con n = ${n} elementos (a 10⁹ operaciones por segundo):<br>Verificar un subconjunto: ~${ver} operaciones → <b>${human(ver / 1e9)}</b><br>Buscar por fuerza bruta: ~n·2ⁿ = ${sci(bru)} operaciones → <b>${human(bru / 1e9)}</b>`; gr.classList.toggle('win', bru / 1e9 < 1); }
+    sz.addEventListener('input', u3);
+    stage.append(el('div', 'panel-title c1', 'Elige un subconjunto B de A'), bar, out, el('div', 'btn-row'), bf, el('div', 'panel-title c2', 'Cómo explota la búsqueda'), c3, gr);
+    stage.children[stage.children.length - 3].appendChild(go);
+    stage.appendChild(el('p', 'pad-note', '<b>Ojo:</b> existen algoritmos más listos que la fuerza bruta (por ejemplo, programación dinámica), pero ninguno conocido resuelve el caso general en tiempo polinomial. Si se encontrara uno, se probaría P = NP.'));
+    upd(); u3();
+  }
+});
+
+/* ---------- PASO 5: P vs NP ---------- */
+steps.push({
+  name:'P, NP y el problema del millón', short:'5 P vs NP', shape:'P ⊆ NP · ¿P = NP?',
+  desc:'<b>P</b>: se <i>resuelven</i> con coste polinomial. <b>NP</b>: se pueden <i>verificar</i> con coste polinomial (equivalentemente, se resuelven en tiempo polinomial por una máquina no determinista). Todo problema de P está también en NP (P ⊆ NP). La gran pregunta: <b>¿P = NP?</b> Clasifica ejemplos y mira el diagrama.',
+  render(stage){
+    stage.appendChild(el('div', 'formula', `<svg viewBox="0 0 420 160" width="100%" style="max-width:420px;display:block;margin:0 auto" role="img" aria-label="P contenido en NP"><ellipse cx="210" cy="82" rx="185" ry="70" fill="rgba(94,234,212,.08)" stroke="#5EEAD4" stroke-width="2"/><text x="330" y="45" fill="#5EEAD4" font-size="14" font-weight="600">NP</text><text x="300" y="68" fill="#8B96AD" font-size="11">Sudoku · suma cero</text><ellipse cx="135" cy="92" rx="85" ry="42" fill="rgba(229,80,21,.12)" stroke="#E55015" stroke-width="2.4"/><text x="135" y="78" fill="#E55015" font-size="14" font-weight="600" text-anchor="middle">P</text><text x="135" y="98" fill="#8B96AD" font-size="11" text-anchor="middle">par/impar · simétrica</text><text x="135" y="112" fill="#8B96AD" font-size="11" text-anchor="middle">euleriano</text></svg><br>Hoy se sabe que <b>P ⊆ NP</b>. Lo que <b>nadie sabe</b> es si los problemas como el Sudoku o la suma cero están <i>realmente</i> fuera de P (P ≠ NP) o si existe un algoritmo rápido que aún no hemos descubierto (P = NP).`));
+    stage.appendChild(sortRows([
+      { t:'¿Es par o impar un número? (se resuelve en O(1))', a:'P', why:'Se resuelve rápido. Todo problema de P también está en NP, pero lo más informativo es decir P.', hint:'¿Se resuelve directamente con un algoritmo polinomial?' },
+      { t:'¿Es simétrica una matriz? (O(n²))', a:'P', why:'Se resuelve en tiempo polinomial.', hint:'Basta comparar pares de casillas.' },
+      { t:'¿Existe un camino euleriano en este grafo simple? (O(n²))', a:'P', why:'Se decide con los grados y la conexión: tiempo polinomial.', hint:'Es el ejemplo de la clase.' },
+      { t:'¿Tiene solución este Sudoku? (verificar: polinomial; resolver: desconocido)', a:'N', why:'Una solución se verifica rápido (NP), pero no se conoce un algoritmo rápido para encontrarla.', hint:'¿Se conoce un algoritmo polinomial para resolverlo?' },
+      { t:'¿Existe un subconjunto de A que sume 0? (verificar O(n); fuerza bruta n·2ⁿ)', a:'N', why:'Verificable en tiempo polinomial; resolver en general se desconoce.', hint:'Verificar es barato, buscar es exponencial.' }
+    ], [{ k:'P', label:'En P (resoluble rápido)' }, { k:'N', label:'En NP (verificable rápido)' }]));
+    stage.appendChild(el('div', 'panel-title c3', 'Comprueba lo aprendido'));
+    stage.appendChild(tfQuiz([
+      { q:'Todo problema de P está también en NP', ans:true, why:'Si puedes resolverlo rápido, también puedes verificar una solución rápido (resolviéndolo tú).' },
+      { q:'Está demostrado que P ≠ NP', ans:false, why:'Es una pregunta abierta: uno de los «problemas del milenio» (premio de un millón de dólares).' },
+      { q:'Verificar una solución de un problema de NP tiene coste polinomial', ans:true, why:'Es justo la definición de NP.' }
+    ]));
+    stage.appendChild(el('div', 'formula', '<span style="color:var(--viu);font-size:20px;font-weight:600">PROBLEMA DEL MILLÓN: ¿P = NP?</span>'));
+    stage.appendChild(el('p', 'pad-note', 'Si P = NP, muchos problemas hoy intratables (rutas óptimas, planificación, criptoanálisis…) tendrían algoritmos rápidos. La mayoría de expertos cree que P ≠ NP, pero nadie lo ha demostrado.'));
+  }
+});
+
+/* ---------- PASO 6: resumen ---------- */
+steps.push({
+  name:'Resumen y código', short:'6 Resumen', shape:null,
+  desc:'Distinguir «verificar» de «resolver» es la clave. Las cifras de abajo las calcula la página con las mismas reglas.',
+  render(stage){
+    const T = el('div', 'tbl-wrap'); T.innerHTML = `<table class="dt"><tr><th>Clase</th><th>Definición</th><th>Ejemplos de la clase</th></tr><tr><td>Decisión</td><td>respuesta sí/no</td><td>¿primo? ¿conexo?</td></tr><tr><td><b>P</b></td><td>resoluble en tiempo polinomial (determinista)</td><td>par/impar O(1) · simétrica O(n²) · euleriano O(n²)</td></tr><tr><td><b>NP</b></td><td>verificable en tiempo polinomial</td><td>Sudoku · suma cero · y todo P</td></tr><tr><td colspan="3">P ⊆ NP · ¿P = NP? abierto</td></tr></table>`; stage.appendChild(T);
+    stage.appendChild(el('div', 'panel-title c1', 'En Python: verificar frente a buscar'));
+    stage.appendChild(codeBox(`from itertools import combinations
+
+A = [-11, 8, 7, 1, -2, 52, -14, 0, -10, 23]
+B = [1, -14, -10, 23]
+
+def verifica(sub):                 # O(n): verificar es barato
+    return len(sub) > 0 and sum(sub) == 0
+
+def busca(a):                      # O(n·2^n): buscar es caro
+    return [c for k in range(1, len(a) + 1)
+              for c in combinations(a, k) if sum(c) == 0]
+
+print(verifica(B))
+print(len(busca(A)))               # nº de subconjuntos que suman 0`));
+    let cnt = 0; const n = A10.length; for(let m = 1; m < (1 << n); m++){ let s = 0; for(let i = 0; i < n; i++) if(m & (1 << i)) s += A10[i]; if(s === 0) cnt++; }
+    stage.appendChild(el('div', 'viz-label', 'Salida del programa (calculada aquí con las mismas reglas):'));
+    stage.appendChild(codeBox(`True\n${cnt}`));
+    stage.appendChild(el('div', 'panel-title c3', 'Errores frecuentes'));
+    const errs = el('div', 'bio-text'); errs.innerHTML = `<p><b>1.</b> Pensar que NP significa «no polinomial»: significa <i>polinomial no determinista</i> (verificable en tiempo polinomial).</p>
+      <p><b>2.</b> Creer que todo problema de NP es difícil: P está dentro de NP y contiene los fáciles.</p>
+      <p><b>3.</b> Confundir <i>resolver</i> con <i>verificar</i>: comprobar un Sudoku es rápido, resolverlo no lo parece.</p>
+      <p><b>4.</b> Decir que P ≠ NP «está demostrado»: es una pregunta abierta.</p>`;
+    stage.appendChild(errs); stage.appendChild(qcards(QUESTIONS));
+  }
+});
+
+/* =========================================================
+   Motor de navegación (idéntico en todas las actividades)
+========================================================= */
+let current = 0;
+function renderTrail(){
+  const tr = $('#trail'); tr.innerHTML = '';
+  steps.forEach((s, i) => { const b = el('button', null, s.short); b.type = 'button'; b.addEventListener('click', () => goTo(i)); tr.appendChild(b); });
+}
+function goTo(i){
+  current = i;
+  clearTimers();
+  const s = steps[current];
+  $('#stepCount').textContent = current === 0 ? 'Introducción' : `Paso ${current} de ${steps.length - 1}`;
+  $('#stepTitle').textContent = s.name;
+  $('#stepDesc').innerHTML = s.desc;
+  const chip = $('#shapeChip');
+  if(s.shape){ chip.style.display = ''; chip.innerHTML = `<b>${s.shape}</b>`; } else chip.style.display = 'none';
+  const stage = $('#stage'); stage.innerHTML = '';
+  s.render(stage);
+  const btns = document.querySelectorAll('.trail button');
+  btns.forEach((b, idx) => b.classList.toggle('active', idx === current));
+  if(btns[current]) btns[current].scrollIntoView({ block:'nearest', inline:'center' });
+  $('#prevBtn').disabled = current === 0;
+  $('#nextBtn').textContent = current === steps.length - 1 ? 'Volver al inicio ↺' : 'Siguiente →';
+  window.scrollTo(0, 0);
+}
+$('#prevBtn').addEventListener('click', () => { if(current > 0) goTo(current - 1); });
+$('#nextBtn').addEventListener('click', () => goTo(current === steps.length - 1 ? 0 : current + 1));
+document.addEventListener('keydown', e => {
+  if(e.target && (e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT')) return;
+  if(e.key === 'ArrowRight') $('#nextBtn').click();
+  if(e.key === 'ArrowLeft') $('#prevBtn').click();
+});
+renderTrail(); goTo(0);
+</script>
+</body>
+</html>

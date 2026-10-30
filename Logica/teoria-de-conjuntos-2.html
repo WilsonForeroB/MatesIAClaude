@@ -1,0 +1,667 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="generator" content="Generado con asistencia de IA (Claude) - revisar por el responsable antes de su uso">
+<title>Teoría de conjuntos: operaciones y funciones</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<!-- Artefacto generado con asistencia de IA (Claude Sonnet 5.5). Requiere revision del desarrollador responsable. Contenido basado en las diapositivas de Teoría de conjuntos (parte II) de 1-logicaRec.tex (02MIAR, VIU). Datos: solo ejemplos ficticios o de dominio publico. -->
+<style>
+  :root{
+    --bg:#0B1220; --panel:#121B2E; --panel-2:#17233A; --line:#26324A; --text:#E7ECF5; --muted:#8B96AD;
+    --viu:#E55015; --viu-dim:#4A2212;
+    --cyan:#5EEAD4; --cyan-dim:#1F4A45;
+    --pink:#F472B6; --pink-dim:#452236;
+    --radius:14px;
+    --font-head:'Space Grotesk','Segoe UI',sans-serif; --font-body:'IBM Plex Sans','Segoe UI',sans-serif; --font-mono:'IBM Plex Mono','Consolas',monospace;
+    padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+  }
+  *{box-sizing:border-box;}
+  html,body{height:100%;}
+  body{ margin:0; background:var(--bg); color:var(--text); font-family:var(--font-body); min-height:100%; display:flex; flex-direction:column; overflow-x:hidden; }
+  ::selection{ background:var(--viu-dim); color:var(--viu); }
+
+  header{ padding:18px clamp(16px,4vw,40px) 10px; display:flex; flex-direction:column; gap:14px; flex:0 0 auto; }
+  .headline-row{ display:flex; align-items:baseline; justify-content:space-between; gap:16px; flex-wrap:wrap; }
+  h1{ font-family:var(--font-head); font-weight:600; font-size:clamp(20px,2.6vw,28px); margin:0; letter-spacing:-0.01em; }
+  h1 span{ color:var(--viu); }
+  .net-tag{ font-family:var(--font-mono); font-size:12.5px; color:var(--muted); }
+  .trail{ display:flex; gap:4px; overflow-x:auto; padding-bottom:4px; scrollbar-width:thin; }
+  .trail::-webkit-scrollbar{height:5px;} .trail::-webkit-scrollbar-thumb{background:var(--line); border-radius:4px;}
+  .trail button{ flex:0 0 auto; background:var(--panel); border:1px solid var(--line); color:var(--muted); font-family:var(--font-mono); font-size:11.5px; padding:7px 11px; border-radius:999px; cursor:pointer; white-space:nowrap; transition:border-color .15s,color .15s,background .15s; }
+  .trail button:hover{ border-color:#3a4a6b; color:var(--text); }
+  .trail button.active{ background:var(--viu-dim); border-color:var(--viu); color:var(--viu); }
+
+  main{ flex:1 0 auto; display:flex; align-items:stretch; justify-content:center; padding:6px clamp(16px,4vw,40px) 10px; }
+  .card{ width:100%; max-width:1040px; background:var(--panel); border:1px solid var(--line); border-radius:var(--radius); padding:clamp(18px,3vw,30px); display:flex; flex-direction:column; gap:16px; }
+  .step-meta{ display:flex; justify-content:space-between; align-items:flex-start; gap:20px; flex-wrap:wrap; }
+  .step-count{ font-family:var(--font-mono); font-size:12.5px; color:var(--viu); margin:0 0 4px; }
+  .step-title{ font-family:var(--font-head); font-weight:600; font-size:clamp(18px,2.4vw,24px); margin:0; }
+  .step-desc{ color:var(--muted); font-size:14.5px; line-height:1.6; max-width:70ch; margin:6px 0 0; }
+  .shape-chip{ font-family:var(--font-mono); font-size:13px; background:var(--panel-2); border:1px solid var(--line); padding:9px 14px; border-radius:10px; color:var(--text); }
+  .shape-chip b{ color:var(--viu); font-weight:600; }
+  #stage{ display:flex; flex-direction:column; align-items:center; gap:16px; padding:6px 2px; }
+  #stage > *{ width:100%; }
+
+  footer{ flex:0 0 auto; display:flex; justify-content:center; gap:14px; flex-wrap:wrap; padding:4px clamp(16px,4vw,40px) calc(18px + env(safe-area-inset-bottom,0px)); }
+  .nav-btn{ font-family:var(--font-body); font-weight:500; font-size:14.5px; background:var(--panel); border:1px solid var(--line); color:var(--text); padding:11px 22px; border-radius:10px; cursor:pointer; transition:border-color .15s,transform .1s; }
+  .nav-btn:hover{ border-color:var(--viu); } .nav-btn:active{ transform:scale(.97); }
+  .nav-btn:disabled{ opacity:.35; cursor:default; } .nav-btn:disabled:hover{ border-color:var(--line); }
+  .nav-btn.primary{ background:var(--viu-dim); border-color:var(--viu); color:var(--viu); }
+
+  .viz-row{ display:flex; align-items:flex-start; justify-content:center; gap:clamp(18px,3vw,36px); flex-wrap:wrap; width:100%; }
+  .viz-col{ display:flex; flex-direction:column; align-items:center; gap:10px; flex:1 1 280px; min-width:0; }
+  .viz-label{ font-family:var(--font-mono); font-size:12px; color:var(--muted); text-align:center; line-height:1.4; }
+  .viz-label b{ color:var(--text); font-weight:600; }
+
+  .formula{ font-family:var(--font-mono); font-size:13.5px; background:var(--panel-2); border:1px solid var(--line); border-radius:10px; padding:12px 16px; min-height:44px; display:block; text-align:center; color:var(--text); max-width:720px; margin:0 auto; line-height:1.7; }
+  .formula b{ color:var(--cyan); } .formula .ok{ color:var(--viu); font-weight:600; } .formula .no{ color:var(--pink); font-weight:600; }
+  .formula.win{ border-color:var(--viu); }
+  .pad-note{ font-size:13px; color:var(--muted); text-align:center; max-width:74ch; margin:0 auto; line-height:1.6; }
+  .pad-note b{ color:var(--text); font-weight:600; }
+  .bio-text{ max-width:74ch; margin:0 auto; }
+  .bio-text p{ font-size:13.8px; line-height:1.65; color:var(--text); margin:0 0 10px; }
+  .bio-text b{ color:var(--viu); font-weight:600; } .bio-text i{ color:var(--cyan); font-style:normal; }
+
+  .qgrid{ display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:10px; }
+  .qcard{ background:var(--panel-2); border:1px solid var(--line); border-radius:12px; padding:14px 16px; cursor:pointer; transition:border-color .15s; }
+  .qcard:hover{ border-color:var(--viu); }
+  .qcard .n{ font-family:var(--font-mono); font-size:11.5px; color:var(--viu); }
+  .qcard h3{ font-family:var(--font-head); font-size:15px; margin:4px 0 6px; font-weight:600; }
+  .qcard p{ margin:0; font-size:12.5px; color:var(--muted); line-height:1.5; }
+
+  .btn-row{ display:flex; gap:8px; justify-content:center; flex-wrap:wrap; }
+  .toggle-btn{ font-family:var(--font-mono); font-size:11.5px; background:var(--panel-2); border:1px solid var(--line); color:var(--muted); padding:8px 13px; border-radius:999px; cursor:pointer; transition:all .15s; }
+  .toggle-btn:hover{ color:var(--text); border-color:#3a4a6b; }
+  .toggle-btn.active{ background:var(--viu-dim); border-color:var(--viu); color:var(--viu); }
+  .toggle-btn.good{ background:var(--viu-dim); border-color:var(--viu); color:var(--viu); }
+  .toggle-btn.bad{ background:var(--pink-dim); border-color:var(--pink); color:var(--pink); }
+
+  /* interruptor de valor de verdad */
+  .tg{ font-family:var(--font-mono); font-size:13px; background:var(--panel-2); border:1px solid var(--line); color:var(--muted); padding:10px 16px; border-radius:12px; cursor:pointer; transition:all .15s; text-align:left; min-width:150px; }
+  .tg b{ display:block; font-size:17px; color:var(--text); font-weight:600; }
+  .tg small{ display:block; font-size:11px; margin-top:2px; }
+  .tg.on{ background:var(--viu-dim); border-color:var(--viu); color:var(--viu); } .tg.on b{ color:var(--viu); }
+  .tg.off{ border-color:#3a4a6b; }
+  .tg:hover{ border-color:var(--viu); }
+
+  .tv{ display:inline-block; min-width:22px; padding:1px 6px; border-radius:6px; font-family:var(--font-mono); font-weight:600; font-size:12.5px; }
+  .tv.v1{ background:var(--viu-dim); color:var(--viu); } .tv.v0{ background:var(--pink-dim); color:var(--pink); }
+
+  .stats{ display:flex; gap:10px; flex-wrap:wrap; justify-content:center; }
+  .stat{ background:var(--panel-2); border:1px solid var(--line); border-radius:10px; padding:8px 14px; text-align:center; min-width:120px; }
+  .stat .l{ font-family:var(--font-mono); font-size:10.5px; color:var(--muted); display:block; margin-bottom:3px; }
+  .stat .v{ font-family:var(--font-mono); font-size:15px; font-weight:600; color:var(--text); }
+  .stat.c1 .v{ color:var(--viu); } .stat.c2 .v{ color:var(--cyan); } .stat.c3 .v{ color:var(--pink); }
+  .panel-title{ font-family:var(--font-head); font-weight:600; font-size:13.5px; color:var(--text); text-align:center; margin:0 0 2px; }
+  .panel-title.c1{ color:var(--viu); } .panel-title.c2{ color:var(--cyan); } .panel-title.c3{ color:var(--pink); }
+
+  pre.code{ margin:0; background:#0E1626; border:1px solid var(--line); border-radius:10px; padding:12px 14px; font-family:var(--font-mono); font-size:12.3px; line-height:1.6; color:var(--text); overflow-x:auto; text-align:left; }
+  pre.code .cm{ color:#6b7a99; } pre.code .kw{ color:var(--pink); }
+
+  table.dt{ border-collapse:collapse; font-family:var(--font-mono); font-size:12.5px; margin:0 auto; }
+  table.dt th,table.dt td{ border:1px solid var(--line); padding:6px 11px; text-align:center; }
+  table.dt th{ background:var(--panel-2); color:var(--muted); font-weight:500; }
+  table.dt th.res{ background:var(--viu-dim); color:var(--viu); }
+  table.dt tr.hl td{ background:rgba(94,234,212,.12); }
+  table.dt tr.hl td:first-child{ box-shadow:inset 3px 0 0 var(--cyan); }
+  table.dt tr.bad td{ background:rgba(244,114,182,.14); }
+  table.dt tr.pick{ cursor:pointer; } table.dt tr.pick:hover td{ background:rgba(255,255,255,.04); }
+  .tbl-wrap{ overflow-x:auto; max-width:100%; }
+
+  /* filas de preguntas (sorter) */
+  .qrow{ background:var(--panel-2); border:1px solid var(--line); border-radius:12px; padding:12px 14px; display:flex; gap:12px; align-items:center; justify-content:space-between; flex-wrap:wrap; }
+  .qrow .tx{ flex:1 1 280px; font-size:14px; line-height:1.5; }
+  .qrow .opts{ display:flex; gap:6px; flex-wrap:wrap; }
+  .qrow .fb{ flex:1 1 100%; font-size:12.5px; color:var(--muted); line-height:1.5; }
+  .qrow .fb b.ok{ color:var(--viu); } .qrow .fb b.no{ color:var(--pink); }
+  .qrow.done{ border-color:#3a4a6b; }
+
+  select{ font-family:var(--font-mono); font-size:13px; background:var(--panel-2); color:var(--text); border:1px solid var(--line); border-radius:8px; padding:8px 10px; max-width:100%; }
+  select:focus,button:focus-visible{ outline:2px solid var(--cyan); outline-offset:1px; }
+
+  .cards6{ display:grid; grid-template-columns:repeat(auto-fit,minmax(230px,1fr)); gap:10px; width:100%; }
+  .ccard{ background:var(--panel-2); border:1px solid var(--line); border-radius:12px; padding:12px 14px; display:flex; flex-direction:column; gap:6px; }
+  .ccard .sym{ font-family:var(--font-mono); font-size:22px; color:var(--viu); font-weight:600; }
+  .ccard .nm{ font-family:var(--font-head); font-weight:600; font-size:14px; }
+  .ccard .rd{ font-size:12.5px; color:var(--muted); line-height:1.5; }
+  .ccard .sent{ font-size:13px; line-height:1.5; color:var(--text); border-top:1px dashed var(--line); padding-top:6px; }
+
+  .strip{ display:flex; flex-direction:column; gap:4px; align-items:center; overflow-x:auto; max-width:100%; }
+  .srow{ display:flex; gap:3px; align-items:center; }
+  .slab{ flex:0 0 150px; font-family:var(--font-mono); font-size:11px; color:var(--muted); text-align:right; padding-right:8px; }
+  .srow > div{ flex:0 0 40px; width:40px; text-align:center; font-family:var(--font-mono); font-size:12px; padding:4px 0; border-radius:6px; background:var(--panel-2); border:1px solid var(--line); }
+  .srow > div.v1{ background:var(--viu-dim); border-color:var(--viu); color:var(--viu); }
+  .srow > div.v0{ background:var(--pink-dim); border-color:var(--pink); color:var(--pink); }
+  .srow > div.h{ background:transparent; border-color:transparent; color:var(--muted); }
+
+  .flow{ display:flex; flex-wrap:wrap; gap:8px; align-items:center; justify-content:center; }
+  .fnode{ background:var(--panel-2); border:1px solid var(--line); border-radius:10px; padding:8px 12px; font-family:var(--font-mono); font-size:12px; cursor:pointer; transition:border-color .15s; }
+  .fnode:hover{ border-color:var(--viu); } .fnode small{ display:block; color:var(--muted); font-size:10.5px; }
+  .farrow{ color:var(--muted); }
+
+  svg text{ font-family:var(--font-mono); }
+  @media (max-width:640px){ .viz-row{ gap:16px; } table.dt th,table.dt td{ padding:5px 7px; } }
+  @media (prefers-reduced-motion:reduce){ *{ transition:none !important; } }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="headline-row">
+    <h1>Teoría de conjuntos (II): <span>operar</span> y <span>relacionar</span></h1>
+    <span class="net-tag">02MIAR · Matemáticas para la IA · Sesión 3</span>
+  </div>
+  <div class="trail" id="trail"></div>
+</header>
+
+<main>
+  <div class="card">
+    <div class="step-meta">
+      <div>
+        <p class="step-count" id="stepCount"></p>
+        <h2 class="step-title" id="stepTitle"></h2>
+        <p class="step-desc" id="stepDesc"></p>
+      </div>
+      <div class="shape-chip" id="shapeChip"></div>
+    </div>
+    <div id="stage"></div>
+  </div>
+</main>
+
+<footer>
+  <button class="nav-btn" id="prevBtn">← Anterior</button>
+  <button class="nav-btn primary" id="nextBtn">Siguiente →</button>
+</footer>
+
+<script>
+/* =========================================================
+   Utilidades
+========================================================= */
+const $ = s => document.querySelector(s);
+let timers = [];
+function clearTimers(){ timers.forEach(t => clearInterval(t)); timers = []; }
+function el(tag, cls, html){ const e = document.createElement(tag); if(cls) e.className = cls; if(html != null) e.innerHTML = html; return e; }
+const V = x => x ? 1 : 0;
+const vtag = x => `<span class="tv v${V(x)}">${V(x)}</span>`;
+const lower1 = s => s.charAt(0).toLowerCase() + s.slice(1);
+
+function py(code){
+  return code.replace(/&/g, '&amp;').replace(/</g, '&lt;').split('\n').map(l => {
+    const k = l.indexOf('#'); let body = l, cm = '';
+    if(k >= 0){ body = l.slice(0, k); cm = '<span class="cm">' + l.slice(k) + '</span>'; }
+    body = body.replace(/\b(import|from|as|print|def|return|not|and|or|for|in)\b/g, '<span class="kw">$1</span>');
+    return body + cm;
+  }).join('\n');
+}
+function codeBox(code){ const p = el('pre', 'code'); p.innerHTML = py(code); return p; }
+
+/* ---------- lógica: todas las combinaciones, en el orden de las diapositivas (1,1 / 1,0 / 0,1 / 0,0) ---------- */
+function combos(vars){
+  const n = vars.length, out = [];
+  for(let i = 0; i < (1 << n); i++){ const e = {}; vars.forEach((v, k) => e[v] = !((i >> (n-1-k)) & 1)); out.push(e); }
+  return out;
+}
+const sameEnv = (a, b) => Object.keys(a).every(k => a[k] === b[k]);
+const OPS = {
+  and: { sym:'∧', f:(p, q) => p && q },
+  or:  { sym:'∨', f:(p, q) => p || q },
+  xor: { sym:'⊻', f:(p, q) => p !== q },
+  imp: { sym:'→', f:(p, q) => !p || q },
+  iff: { sym:'↔', f:(p, q) => p === q }
+};
+function classify(f, vars){
+  const vals = combos(vars).map(f);
+  return vals.every(Boolean) ? 'T' : (vals.every(v => !v) ? 'C' : 'K');
+}
+const CLS = { T:'Tautología', C:'Contradicción', K:'Contingencia' };
+
+/* tabla de verdad viva: highlight de la fila actual; clic en fila = elegir esos valores */
+function makeTable(vars, cols, onPick, rowClass){
+  const wrap = el('div', 'tbl-wrap'), t = el('table', 'dt'); wrap.appendChild(t);
+  const head = el('tr'); const ths = [];
+  vars.forEach(v => head.appendChild(el('th', null, v)));
+  cols.forEach(c => { const th = el('th', c.res === false ? '' : 'res', c.h); ths.push(th); head.appendChild(th); });
+  t.appendChild(head);
+  const rows = combos(vars).map(env => {
+    const tr = el('tr', onPick ? 'pick' : ''); tr._env = env;
+    vars.forEach(v => tr.appendChild(el('td', null, vtag(env[v]))));
+    cols.forEach(c => tr.appendChild(el('td', null, vtag(c.f(env)))));
+    if(rowClass){ const rc = rowClass(env); if(rc) tr.classList.add(rc); }
+    if(onPick) tr.addEventListener('click', () => onPick(env));
+    t.appendChild(tr); return tr;
+  });
+  return { el: wrap, setHead:(i, txt) => { ths[i].innerHTML = txt; }, set: env => rows.forEach(r => r.classList.toggle('hl', !!env && sameEnv(r._env, env))) };
+}
+
+/* interruptor 1/0 */
+function toggleBtn(name, init, cb, subs){
+  let val = init; const b = el('button', 'tg'); b.type = 'button';
+  function draw(){
+    b.className = 'tg ' + (val ? 'on' : 'off');
+    b.innerHTML = `<b>${name} = ${V(val)}</b><small>${val ? (subs ? subs[0] : 'verdadera') : (subs ? subs[1] : 'falsa')}</small>`;
+    b.setAttribute('aria-pressed', val); b.setAttribute('aria-label', `${name} vale ${V(val)}`);
+  }
+  b.addEventListener('click', () => { val = !val; draw(); cb(val); });
+  draw();
+  return { el:b, get:() => val, set:v => { val = v; draw(); } };
+}
+
+/* ---------- circuitos (analogía física) ---------- */
+function circuit(mode, p, q){
+  const on = '#E55015', off = '#3a4a6b';
+  const w = (x1, y1, x2, y2, lit) => `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${lit ? on : off}" stroke-width="3.5" stroke-linecap="round"/>`;
+  const dotc = (x, y, lit) => `<circle cx="${x}" cy="${y}" r="3.6" fill="${lit ? on : off}"/>`;
+  const sw = (x, y, closed, lit, lab) => w(x, y, closed ? x+60 : x+54, closed ? y : y-26, closed && lit) + dotc(x, y, lit) + dotc(x+60, y, closed && lit) +
+    `<text x="${x+30}" y="${y+22}" text-anchor="middle" font-size="12" fill="#8B96AD">${lab}=${V(closed)}</text>`;
+  const lamp = (cx, cy, lit) => `<circle cx="${cx}" cy="${cy}" r="17" fill="${lit ? on : '#17233A'}" stroke="${lit ? '#ffb08a' : off}" stroke-width="2.5"/>` +
+    (lit ? [0,45,90,135,180,225,270,315].map(a => { const r = a*Math.PI/180; return `<line x1="${cx+23*Math.cos(r)}" y1="${cy+23*Math.sin(r)}" x2="${cx+31*Math.cos(r)}" y2="${cy+31*Math.sin(r)}" stroke="${on}" stroke-width="2.5" stroke-linecap="round"/>`; }).join('') : '') +
+    `<line x1="${cx-9}" y1="${cy-9}" x2="${cx+9}" y2="${cy+9}" stroke="${lit ? '#fff' : off}" stroke-width="2"/><line x1="${cx+9}" y1="${cy-9}" x2="${cx-9}" y2="${cy+9}" stroke="${lit ? '#fff' : off}" stroke-width="2"/>`;
+  const batt = (x, y1, y2) => `<line x1="${x-9}" y1="${y1}" x2="${x+9}" y2="${y1}" stroke="#E7ECF5" stroke-width="3"/><line x1="${x-5}" y1="${y1+8}" x2="${x+5}" y2="${y1+8}" stroke="#E7ECF5" stroke-width="3"/>`;
+  let s = '', lit = false;
+  if(mode === 'and'){
+    lit = p && q;
+    s += w(24,60,96,60,true) + sw(96,60,p,true,'p') + w(156,60,228,60,p) + sw(228,60,q,p,'q') + w(288,60,352,60,lit) + lamp(372,60,lit);
+    s += w(372,77,372,108,lit) + w(372,108,24,108,lit) + w(24,108,24,72,lit) + batt(24,60);
+  } else if(mode === 'or'){
+    lit = p || q;
+    s += w(24,70,96,70,true) + w(96,40,96,100,true) + w(96,40,150,40,true) + sw(150,40,p,true,'p') + w(210,40,300,40,p) +
+         w(96,100,150,100,true) + sw(150,100,q,true,'q') + w(210,100,300,100,q) + w(300,40,300,100,lit) + w(300,70,355,70,lit) + lamp(372,70,lit);
+    s += w(372,87,372,128,lit) + w(372,128,24,128,lit) + w(24,128,24,82,lit) + batt(24,70);
+  } else {
+    lit = p !== q;
+    const pt = [140,40], pb = [140,100], qt = [280,40], qb = [280,100];
+    s += w(24,70,110,70,true) + dotc(110,70,true) + dotc(310,70,lit) + w(310,70,355,70,lit) + lamp(372,70,lit);
+    s += w(110,70,140,p ? 40 : 100,true);
+    s += w(140,40,280,100,p) + w(140,100,280,40,!p);
+    s += w(310,70,280,q ? 40 : 100,lit);
+    s += [pt,pb,qt,qb].map(c => dotc(c[0], c[1], false)).join('');
+    s += `<text x="110" y="124" text-anchor="middle" font-size="12" fill="#8B96AD">p=${V(p)}</text><text x="310" y="124" text-anchor="middle" font-size="12" fill="#8B96AD">q=${V(q)}</text>`;
+    s += w(372,87,372,138,lit) + w(372,138,24,138,lit) + w(24,138,24,82,lit) + batt(24,70);
+  }
+  return `<svg viewBox="0 0 420 ${mode === 'xor' ? 150 : 140}" width="100%" style="max-width:420px" role="img" aria-label="Circuito con lámpara ${lit ? 'encendida' : 'apagada'}">${s}</svg>`;
+}
+
+
+function tfQuiz(items){
+  const box = el('div', 'viz-col'); box.style.width = '100%';
+  items.forEach(it => {
+    const row = el('div', 'qrow'); const tx = el('div', 'tx', it.q); const opts = el('div', 'opts'); const fb = el('div', 'fb');
+    [['Verdadero (1)', true], ['Falso (0)', false]].forEach(([lab, val]) => {
+      const b = el('button', 'toggle-btn', lab); b.type = 'button';
+      b.addEventListener('click', () => {
+        const ok = val === it.ans;
+        opts.querySelectorAll('button').forEach(x => x.classList.remove('good', 'bad'));
+        b.classList.add(ok ? 'good' : 'bad');
+        fb.innerHTML = (ok ? '<b class="ok">✔ Correcto.</b> ' : '<b class="no">✘ Casi.</b> ') + it.why;
+        row.classList.add('done');
+      });
+      opts.appendChild(b);
+    });
+    row.append(tx, opts, fb); box.appendChild(row);
+  });
+  return box;
+}
+
+/* clasificador por filas */
+function sortRows(items, options){
+  const box = el('div', 'viz-col'); box.style.width = '100%'; box.style.alignItems = 'stretch';
+  const stats = el('div', 'stats'); const sOk = el('div', 'stat c1', '<span class="l">acertadas</span><span class="v">0</span>'), sTot = el('div', 'stat', `<span class="l">total</span><span class="v">${items.length}</span>`);
+  stats.append(sOk, sTot); box.appendChild(stats);
+  const answered = new Set(); let good = 0;
+  items.forEach((it, idx) => {
+    const row = el('div', 'qrow'); const tx = el('div', 'tx', it.t); const opts = el('div', 'opts'); const fb = el('div', 'fb');
+    options.forEach(o => {
+      const b = el('button', 'toggle-btn', o.label); b.type = 'button';
+      b.addEventListener('click', () => {
+        const ok = o.k === it.a;
+        if(ok && !answered.has(idx)){ answered.add(idx); good++; sOk.querySelector('.v').textContent = good; }
+        opts.querySelectorAll('button').forEach(x => x.classList.remove('good', 'bad'));
+        b.classList.add(ok ? 'good' : 'bad');
+        fb.innerHTML = (ok ? '<b class="ok">✔ </b>' : '<b class="no">✘ Prueba otra vez. </b>') + (ok ? it.why : (it.hint || 'Piensa qué se puede afirmar de ella.'));
+        row.classList.toggle('done', ok);
+      });
+      opts.appendChild(b);
+    });
+    row.append(tx, opts, fb); box.appendChild(row);
+  });
+  return box;
+}
+
+const steps = [];
+function goStep(i){ goTo(i); }
+function qcards(list){
+  const g = el('div', 'qgrid');
+  list.forEach(([n, h, p, to]) => { const c = el('div', 'qcard', `<div class="n">${n}</div><h3>${h}</h3><p>${p}</p>`); c.tabIndex = 0; c.addEventListener('click', () => goStep(to)); c.addEventListener('keydown', e => { if(e.key === 'Enter') goStep(to); }); g.appendChild(c); });
+  return g;
+}
+
+const every = (ms, fn) => { const id = setInterval(fn, ms); timers.push(id); return id; };
+const chipBtn = (label, on, cb) => { const b = el('button', 'toggle-btn' + (on ? ' active' : ''), label); b.type = 'button'; b.addEventListener('click', () => cb(b)); return b; };
+const setStr = a => a.length ? '{' + a.join(', ') + '}' : '∅';
+
+const rng_ = (a, b) => Array.from({ length:b - a + 1 }, (_, i) => a + i);
+const QUESTIONS = [
+  ['PREGUNTA 1', '¿Cómo se comparan y combinan conjuntos?', 'Inclusión, igualdad, ∩, ∪, diferencia y complemento en un diagrama de Venn vivo.', 1],
+  ['PREGUNTA 2', '¿Cuántos subconjuntos y pares se pueden formar?', 'P(A) tiene 2ⁿ elementos; A × B tiene |A|·|B| pares.', 4],
+  ['PREGUNTA 3', '¿Cuándo una regla es una función, y cuándo es inyectiva o sobreyectiva?', 'Dibuja flechas entre A y B y la página las clasifica.', 5]
+];
+const setTxt = a => a.length ? '{' + a.join(', ') + '}' : '∅';
+
+/* ---------- Diagrama de Venn clicable ---------- */
+function vennWidget(items, state, onChange, hi){
+  const box = el('div'); const W = 520, H = 290;
+  const slots = { 1:{ cx:115, cy:120 }, 2:{ cx:260, cy:120 }, 3:{ cx:405, cy:120 }, 0:{ cx:260, cy:255 } };
+  function draw(){
+    const cnt = { 0:0, 1:0, 2:0, 3:0 }, pos = items.map((_, i) => { const s = state[i], k = cnt[s]++; return { s, k }; });
+    const perRow = { 0:8, 1:3, 2:2, 3:3 };
+    let svg = `<rect x="4" y="4" width="${W - 8}" height="${H - 8}" rx="12" fill="none" stroke="#3a4a6b"/><text x="14" y="22" fill="#8B96AD" font-size="12">U (universo)</text>
+      <circle cx="190" cy="120" r="108" fill="rgba(94,234,212,.08)" stroke="#5EEAD4" stroke-width="2"/><circle cx="330" cy="120" r="108" fill="rgba(229,80,21,.08)" stroke="#E55015" stroke-width="2"/>
+      <text x="100" y="26" fill="#5EEAD4" font-size="13" font-weight="600">A</text><text x="420" y="26" fill="#E55015" font-size="13" font-weight="600">B</text>`;
+    items.forEach((it, i) => { const { s, k } = pos[i], sl = slots[s], pr = perRow[s]; const col = k % pr, row = Math.floor(k / pr), n = Math.min(pr, cnt[s] - row * pr);
+      const x = sl.cx + (col - (n - 1) / 2) * 34, y = sl.cy + (row - 1) * 34 + (s === 0 ? 0 : 6); const on = hi ? hi(s) : false;
+      svg += `<g data-i="${i}" style="cursor:pointer" tabindex="0" role="button" aria-label="${it}: ${['fuera de A y B', 'solo en A', 'en A y B', 'solo en B'][s]}"><circle cx="${x}" cy="${y}" r="15" fill="${on ? 'rgba(229,80,21,.35)' : '#17233A'}" stroke="${on ? '#E55015' : '#8B96AD'}" stroke-width="${on ? 2.5 : 1.5}"/><text x="${x}" y="${y + 4}" fill="#E7ECF5" font-size="12" text-anchor="middle">${it}</text></g>`; });
+    box.innerHTML = `<svg viewBox="0 0 ${W} ${H}" width="100%" style="max-width:${W}px;display:block;margin:0 auto" role="img" aria-label="Diagrama de Venn de A y B">${svg}</svg>`;
+    box.querySelectorAll('g[data-i]').forEach(g => { const f = () => { const i = +g.dataset.i; state[i] = (state[i] + 1) % 4; onChange(); }; g.addEventListener('click', f); g.addEventListener('keydown', e => { if(e.key === 'Enter' || e.key === ' '){ e.preventDefault(); f(); } }); });
+  }
+  box.draw = draw; return box;
+}
+const setsOf = (items, st) => ({ A:items.filter((_, i) => st[i] === 1 || st[i] === 2), B:items.filter((_, i) => st[i] === 2 || st[i] === 3), U:items.slice() });
+/* ejemplos: [items, estados]; estado 0 fuera, 1 solo A, 2 ambos, 3 solo B */
+const mk = (items, A, B) => ({ items, st:items.map(x => (A.includes(x) ? 1 : 0) + (B.includes(x) ? 2 : 0) === 3 ? 2 : (A.includes(x) ? 1 : (B.includes(x) ? 3 : 0))) });
+const EX_REL = [
+  { n:'A={a,b,c}, B={a,b,c,d}', ...mk(['a', 'b', 'c', 'd'], ['a', 'b', 'c'], ['a', 'b', 'c', 'd']) },
+  { n:'A={1,3,4}, B={1,2,4}', ...mk([1, 2, 3, 4], [1, 3, 4], [1, 2, 4]) },
+  { n:'A={a,b,c}, B={b,c,a}', ...mk(['a', 'b', 'c'], ['a', 'b', 'c'], ['b', 'c', 'a']) },
+  { n:'A=∅, B={a,b}', ...mk(['a', 'b'], [], ['a', 'b']) }
+];
+const EX_OP = [
+  { n:'A={−1,3,5,2,6,9}, B={−1,0,4,3,7,9,10}', ...mk([-1, 0, 2, 3, 4, 5, 6, 7, 9, 10], [-1, 3, 5, 2, 6, 9], [-1, 0, 4, 3, 7, 9, 10]) },
+  { n:'A={a,b,c}, B={c,d,e}', ...mk(['a', 'b', 'c', 'd', 'e'], ['a', 'b', 'c'], ['c', 'd', 'e']) },
+  { n:'A={a,b,c}, B={d,e,f} (disjuntos)', ...mk(['a', 'b', 'c', 'd', 'e', 'f'], ['a', 'b', 'c'], ['d', 'e', 'f']) },
+  { n:'A={a,b,c,f}, B={b,c,e,f,g,j}', ...mk(['a', 'b', 'c', 'e', 'f', 'g', 'j'], ['a', 'b', 'c', 'f'], ['b', 'c', 'e', 'f', 'g', 'j']) }
+];
+
+/* ---------- PASO 0 ---------- */
+steps.push({
+  name:'Antes de empezar: conjuntos que se comparan y se transforman', short:'0 Contexto', shape:null,
+  desc:'Con conjuntos se pueden <b>comparar</b> (⊆, =), <b>combinar</b> (∩, ∪, \\, complemento), <b>contar</b> (partes y productos) y <b>relacionar</b> (funciones). Son las herramientas con las que se describen los datos y las transformaciones de un modelo de IA.',
+  render(stage){
+    const t = el('div', 'bio-text');
+    t.innerHTML = `<p><b>La idea de fondo.</b> Una operación entre conjuntos es una operación lógica disfrazada: <i>A ∩ B</i> son los elementos que cumplen «está en A <b>y</b> está en B»; <i>A ∪ B</i>, «en A <b>o</b> en B»; el complemento, «<b>no</b> está en A». Todo lo que sabes de lógica proposicional se reaprovecha.</p>
+    <p><b>Analogía.</b> Dos listas de invitados (A y B). Quién está en las dos, en alguna, solo en una, en ninguna… Y una función es la «hoja de asignación» que a cada invitado le da exactamente una mesa.</p>`;
+    stage.appendChild(t);
+    const flow = el('div', 'flow');
+    [['Inclusión', '⊆ y =', 1], ['Operaciones', '∩ ∪ \\ ᶜ', 2], ['Intervalos', 'en la recta real', 3], ['Partes y producto', '2ⁿ y A × B', 4], ['Funciones', 'inyectiva, sobreyectiva', 5], ['Composición', 'g∘f y f⁻¹', 6]].forEach(([n, s, to], i, a) => {
+      const f = el('div', 'fnode', `${n}<small>${s}</small>`); f.tabIndex = 0; f.addEventListener('click', () => goStep(to)); f.addEventListener('keydown', e => { if(e.key === 'Enter') goStep(to); });
+      flow.appendChild(f); if(i < a.length-1) flow.appendChild(el('span', 'farrow', '→'));
+    });
+    stage.appendChild(flow);
+    stage.appendChild(el('p', 'pad-note', 'Haz clic en cualquier cuadro o pregunta para saltar a ese paso. También funcionan las flechas ← → del teclado.'));
+    stage.appendChild(qcards(QUESTIONS));
+  }
+});
+
+/* ---------- PASO 1: inclusión e igualdad ---------- */
+steps.push({
+  name:'Inclusión e igualdad: ¿está A dentro de B?', short:'1 Inclusión', shape:'A ⊆ B  ·  A = B',
+  desc:'<b>A ⊆ B</b> significa que <b>todo</b> elemento de A está también en B. <b>A = B</b> si A ⊆ B y B ⊆ A. Haz clic en un elemento del diagrama para moverlo entre «solo A», «A y B», «solo B» y «fuera»: la página recalcula y te dice qué elemento rompe cada relación.',
+  render(stage){
+    let ei = 0, items = EX_REL[0].items.slice(), st = EX_REL[0].st.slice();
+    const pre = el('div', 'btn-row'), out = el('div', 'formula'), holder = el('div');
+    function render(){
+      pre.querySelectorAll('button').forEach((b, i) => b.classList.toggle('active', i === ei));
+      holder.innerHTML = ''; const v = vennWidget(items, st, render, null); holder.appendChild(v); v.draw();
+      const { A, B } = setsOf(items, st), sub = (X, Y) => X.find(x => !Y.includes(x)), ab = sub(A, B), ba = sub(B, A), inter = A.filter(x => B.includes(x));
+      out.innerHTML = `A = ${setTxt(A)} · B = ${setTxt(B)}<br>A ⊆ B: ${vtag(ab === undefined)} ${ab === undefined ? '(todo elemento de A está en B)' : `(<b>${ab}</b> ∈ A pero ∉ B)`}<br>B ⊆ A: ${vtag(ba === undefined)} ${ba === undefined ? '' : `(<b>${ba}</b> ∈ B pero ∉ A)`}<br>A = B: ${vtag(ab === undefined && ba === undefined)} · ∅ ⊆ A: ${vtag(true)} (siempre) ${inter.length === 0 ? '· A y B son <b>disjuntos</b>' : ''}`;
+      out.classList.toggle('win', ab === undefined && ba === undefined);
+    }
+    EX_REL.forEach((E, i) => pre.appendChild(chipBtn(E.n, false, () => { ei = i; items = E.items.slice(); st = E.st.slice(); render(); })));
+    stage.append(pre, holder, el('div', 'viz-label', 'Clic en un elemento para cambiarlo de zona (solo A → A y B → solo B → fuera).'), out);
+    stage.appendChild(el('div', 'panel-title c3', 'Comprueba lo aprendido'));
+    stage.appendChild(tfQuiz([
+      { q:'{a, b, c} = {b, c, a}', ans:true, why:'El orden no importa: cada uno está contenido en el otro.' },
+      { q:'{1, 3, 4} ⊆ {1, 2, 4}', ans:false, why:'3 ∈ A pero 3 ∉ B: un contraejemplo basta.' },
+      { q:'∅ ⊆ A para cualquier conjunto A', ans:true, why:'Es verdad «por vacío»: no hay ningún elemento de ∅ que falle.' }
+    ]));
+    render();
+  }
+});
+
+/* ---------- PASO 2: operaciones ---------- */
+steps.push({
+  name:'Operaciones: ∩, ∪, diferencia y complemento', short:'2 Operaciones', shape:'A∩B · A∪B · B\\A · Aᶜ',
+  desc:'La <b>intersección</b> reúne lo común (∧), la <b>unión</b> lo de cualquiera (∨), la <b>diferencia</b> B \\ A lo que está en B y no en A, y el <b>complemento</b> Aᶜ lo que queda fuera de A dentro del universo U. Elige una operación: los elementos que forman el resultado se iluminan.',
+  render(stage){
+    const OPS = [
+      { k:'int', t:'A ∩ B', lg:'x ∈ A  ∧  x ∈ B', hi:s => s === 2, f:(A, B, U) => U.filter(x => A.includes(x) && B.includes(x)) },
+      { k:'uni', t:'A ∪ B', lg:'x ∈ A  ∨  x ∈ B', hi:s => s !== 0, f:(A, B, U) => U.filter(x => A.includes(x) || B.includes(x)) },
+      { k:'ba', t:'B \\ A', lg:'x ∈ B  ∧  x ∉ A', hi:s => s === 3, f:(A, B, U) => U.filter(x => B.includes(x) && !A.includes(x)) },
+      { k:'ab', t:'A \\ B', lg:'x ∈ A  ∧  x ∉ B', hi:s => s === 1, f:(A, B, U) => U.filter(x => A.includes(x) && !B.includes(x)) },
+      { k:'ac', t:'Aᶜ', lg:'x ∈ U  ∧  x ∉ A', hi:s => s === 0 || s === 3, f:(A, B, U) => U.filter(x => !A.includes(x)) },
+      { k:'bc', t:'Bᶜ', lg:'x ∈ U  ∧  x ∉ B', hi:s => s === 0 || s === 1, f:(A, B, U) => U.filter(x => !B.includes(x)) }
+    ];
+    let ei = 0, oi = 0, items = EX_OP[0].items.slice(), st = EX_OP[0].st.slice(); const pre = el('div', 'btn-row'), ob = el('div', 'btn-row'), out = el('div', 'formula'), holder = el('div');
+    function render(){
+      pre.querySelectorAll('button').forEach((b, i) => b.classList.toggle('active', i === ei)); ob.querySelectorAll('button').forEach((b, i) => b.classList.toggle('active', i === oi));
+      holder.innerHTML = ''; const v = vennWidget(items, st, render, OPS[oi].hi); holder.appendChild(v); v.draw();
+      const { A, B, U } = setsOf(items, st), O = OPS[oi], r = O.f(A, B, U), d1 = OPS[2].f(A, B, U), d2 = U.filter(x => B.includes(x) && !A.includes(x)), same = d1.length === B.filter(x => !A.includes(x)).length && d1.every(x => B.includes(x) && !A.includes(x));
+      out.innerHTML = `A = ${setTxt(A)} · B = ${setTxt(B)} · U = ${setTxt(U)}<br><b>${O.t}</b> = {x | ${O.lg}} = <b>${setTxt(r)}</b>${r.length === 0 ? ' <span class="ok">(conjunto vacío)</span>' : ''} · cardinal ${r.length}<br>Comprobación: B \\ A = B ∩ Aᶜ → ${setTxt(d1)} = ${setTxt(B.filter(x => !A.includes(x)))} ${vtag(same)}`;
+      out.classList.toggle('win', r.length > 0);
+    }
+    EX_OP.forEach((E, i) => pre.appendChild(chipBtn(E.n, false, () => { ei = i; items = E.items.slice(); st = E.st.slice(); render(); })));
+    OPS.forEach((O, i) => ob.appendChild(chipBtn(O.t, false, () => { oi = i; render(); })));
+    stage.append(el('div', 'panel-title c1', 'Elige un ejemplo de la clase'), pre, el('div', 'panel-title c2', 'Elige una operación'), ob, holder, el('div', 'viz-label', 'Naranja = elemento del resultado · clic en un elemento para moverlo de zona'), out);
+    stage.appendChild(el('p', 'pad-note', '<b>Conexión con la lógica:</b> ∩ ↔ ∧, ∪ ↔ ∨, complemento ↔ ¬. Por eso las leyes de De Morgan también valen aquí: (A ∪ B)ᶜ = Aᶜ ∩ Bᶜ. Mueve elementos y compruébalo con las dos últimas operaciones.'));
+    render();
+  }
+});
+
+/* ---------- PASO 3: intervalos ---------- */
+steps.push({
+  name:'Intervalos de la recta real: ∩, ∪ y diferencia', short:'3 Intervalos', shape:'[a, b]  ]a, b]  [a, b[',
+  desc:'En ℝ los conjuntos son <b>intervalos</b>, y que un extremo sea cerrado [ ] o abierto ] [ importa. Define A y B con los controles y la página calcula A ∩ B, A ∪ B, B \\ A y A \\ B <b>exactamente</b>, dibujando el resultado sobre la recta.',
+  render(stage){
+    const I = { A:{ lo:-1, hi:1, cl:true, ch:true }, B:{ lo:0, hi:2, cl:false, ch:true } }; const out = el('div', 'formula'), svg = el('div'), ctrl = el('div');
+    const inI = (v, X) => (v > X.lo || (v === X.lo && X.cl)) && (v < X.hi || (v === X.hi && X.ch));
+    const txt = X => X.lo > X.hi ? '∅' : `${X.cl ? '[' : ']'}${X.lo}, ${X.hi}${X.ch ? ']' : '['}`;
+    function ops(f){ const pts = [...new Set([I.A.lo, I.A.hi, I.B.lo, I.B.hi])].sort((a, b) => a - b); const segs = [{ k:'o', v:pts[0] - 1, pt:false }]; pts.forEach((p, i) => { segs.push({ k:'p', v:p, pt:true, lo:p, hi:p }); segs.push({ k:'o', v:i < pts.length - 1 ? (p + pts[i + 1]) / 2 : p + 1, lo:p, hi:i < pts.length - 1 ? pts[i + 1] : Infinity }); });
+      const truth = segs.map(s => f(inI(s.v, I.A), inI(s.v, I.B))); const res = []; let cur = null;
+      segs.forEach((s, i) => { if(truth[i]){ if(!cur) cur = { lo:s.k === 'p' ? s.lo : (s.lo === undefined ? -Infinity : s.lo), cl:s.k === 'p', hi:null, ch:false }; cur.hi = s.k === 'p' ? s.hi : s.hi; cur.ch = s.k === 'p'; } else if(cur){ res.push(cur); cur = null; } }); if(cur) res.push(cur);
+      return res.map(r => ({ lo:r.lo, hi:r.hi, cl:r.cl, ch:r.ch })); }
+    const fmt = r => r.length ? r.map(x => `${x.lo === -Infinity ? ']−∞' : (x.cl ? '[' : ']') + x.lo}, ${x.hi === Infinity ? '+∞[' : x.hi + (x.ch ? ']' : '[')}`).join(' ∪ ') : '∅';
+    function draw(){
+      const X = v => 40 + (v + 4) / 9 * 420, W = 500; let s = `<line x1="20" y1="120" x2="${W - 10}" y2="120" stroke="#3a4a6b" stroke-width="2"/>`;
+      for(let v = -4; v <= 5; v++) s += `<line x1="${X(v)}" y1="115" x2="${X(v)}" y2="125" stroke="#3a4a6b"/><text x="${X(v)}" y="140" fill="#8B96AD" font-size="10" text-anchor="middle">${v}</text>`;
+      const bar = (R, y, c, label) => R.forEach(r => { const a = r.lo === -Infinity ? 20 : X(r.lo), b = r.hi === Infinity ? W - 10 : X(r.hi); s += `<line x1="${a}" y1="${y}" x2="${b}" y2="${y}" stroke="${c}" stroke-width="6" stroke-linecap="butt"/>` + (r.lo !== -Infinity ? `<circle cx="${a}" cy="${y}" r="5.5" fill="${r.cl ? c : '#0B1220'}" stroke="${c}" stroke-width="2"/>` : '') + (r.hi !== Infinity ? `<circle cx="${b}" cy="${y}" r="5.5" fill="${r.ch ? c : '#0B1220'}" stroke="${c}" stroke-width="2"/>` : '') + `<text x="${a}" y="${y - 12}" fill="${c}" font-size="11">${label}</text>`; });
+      bar([{ lo:I.A.lo, hi:I.A.hi, cl:I.A.cl, ch:I.A.ch }].filter(x => x.lo <= x.hi), 30, '#5EEAD4', 'A'); bar([{ lo:I.B.lo, hi:I.B.hi, cl:I.B.cl, ch:I.B.ch }].filter(x => x.lo <= x.hi), 62, '#E55015', 'B');
+      bar(ops((a, b) => a && b), 95, '#F472B6', 'A ∩ B');
+      svg.innerHTML = `<svg viewBox="0 0 ${W} 150" width="100%" style="max-width:${W}px;display:block;margin:0 auto" role="img" aria-label="Intervalos A y B sobre la recta real">${s}</svg>`;
+      const R = [['A ∩ B', (a, b) => a && b], ['A ∪ B', (a, b) => a || b], ['B \\ A', (a, b) => b && !a], ['A \\ B', (a, b) => a && !b]];
+      out.innerHTML = `A = <b>${txt(I.A)}</b> · B = <b>${txt(I.B)}</b><br>` + R.map(([n, f]) => `${n} = <b>${fmt(ops(f))}</b>`).join('<br>');
+    }
+    const row = (nm, X, cc) => { const r = el('div', 'btn-row'); const mkS = (k, lbl) => { const s = el('input'); s.type = 'range'; s.min = -3; s.max = 4; s.step = 0.5; s.value = X[k]; s.style.accentColor = cc; s.style.width = 'min(180px,40vw)'; s.setAttribute('aria-label', `${nm} ${lbl}`); const v = el('span', 'viz-label', String(X[k])); s.addEventListener('input', () => { X[k] = +s.value; v.textContent = X[k]; draw(); }); return [el('span', 'viz-label', lbl), s, v]; };
+      r.append(el('b', null, nm), ...mkS('lo', 'extremo izq.'), ...mkS('hi', 'extremo der.')); const c1 = toggleBtn('izq', X.cl, v => { X.cl = v; draw(); }, ['cerrado [', 'abierto ]']), c2 = toggleBtn('der', X.ch, v => { X.ch = v; draw(); }, ['cerrado ]', 'abierto [']); r.append(c1.el, c2.el); return r; };
+    ctrl.append(row('A', I.A, '#5EEAD4'), row('B', I.B, '#E55015'));
+    stage.append(ctrl, svg, out);
+    stage.appendChild(el('p', 'pad-note', '<b>Ejemplos de la clase:</b> A = [−1, 1] y B = ]0, 2] → A ∩ B = ]0, 1], B \\ A = ]1, 2], A \\ B = [−1, 0]. Con A = [0, 1] y B = [1, 2] la intersección es el punto {1}. Cambia un extremo de cerrado a abierto y mira cómo desaparece.'));
+    draw();
+  }
+});
+
+/* ---------- PASO 4: partes y producto cartesiano ---------- */
+steps.push({
+  name:'Partes de un conjunto y producto cartesiano', short:'4 Partes y A×B', shape:'|𝒫(A)| = 2ⁿ  ·  |A×B| = |A|·|B|',
+  desc:'El conjunto de las <b>partes</b> 𝒫(A) reúne todos los subconjuntos de A: si A tiene n elementos, 𝒫(A) tiene <b>2ⁿ</b> (cada elemento está o no está). El <b>producto cartesiano</b> A × B reúne todos los pares (a, b). Añade elementos y mira cómo crecen.',
+  render(stage){
+    const POOL = ['a', 'b', 'c', 'd', 'e']; let n = 3; const sl = el('input'); sl.type = 'range'; sl.min = 0; sl.max = 5; sl.value = n; sl.style.accentColor = 'var(--viu)'; sl.style.width = 'min(280px,70vw)'; sl.setAttribute('aria-label', 'Tamaño de A');
+    const ctrl = el('div', 'btn-row'); ctrl.append(el('span', 'viz-label', '|A| ='), sl, el('span', 'viz-label', '3')); const out = el('div', 'formula'), parts = el('div', 'btn-row'); parts.style.maxHeight = '230px'; parts.style.overflowY = 'auto';
+    function upd(){
+      n = +sl.value; ctrl.lastChild.textContent = n; const A = POOL.slice(0, n), P = []; for(let m = 0; m < (1 << n); m++) P.push(A.filter((_, i) => m & (1 << i)));
+      parts.innerHTML = ''; P.forEach(s => { const c = el('span', 'tv v' + V(s.length > 0), setTxt(s)); c.style.margin = '2px'; parts.appendChild(c); });
+      out.innerHTML = `A = ${setTxt(A)} → |A| = ${n}<br>𝒫(A) tiene <b>2<sup>${n}</sup> = ${1 << n}</b> subconjuntos${n ? ` (uno de ellos es ∅ y otro es A)` : ' (solo ∅)'}`;
+    }
+    sl.addEventListener('input', upd); stage.append(ctrl, parts, out);
+    stage.appendChild(el('div', 'panel-title c2', 'Producto cartesiano: A = {1, 2, 3}, B = {α, β}'));
+    const AA = [1, 2, 3], BB = ['α', 'β']; let hi = null; const grid = el('div', 'tbl-wrap'), pc = el('div', 'formula');
+    function drawP(){ const t = el('table', 'dt'); t.innerHTML = `<tr><th>A \\ B</th>${BB.map(b => `<th>${b}</th>`).join('')}</tr>`; AA.forEach(a => { const tr = el('tr'); tr.appendChild(el('th', null, a)); BB.forEach(b => { const td = el('td', 'pick', `(${a}, ${b})`); td.style.cursor = 'pointer'; if(hi && hi[0] === a && hi[1] === b) td.className = 'hl pick'; td.addEventListener('click', () => { hi = [a, b]; drawP(); }); tr.appendChild(td); }); t.appendChild(tr); }); grid.innerHTML = ''; grid.appendChild(t);
+      pc.innerHTML = `A × B tiene |A|·|B| = ${AA.length}·${BB.length} = <b>${AA.length * BB.length}</b> pares ordenados.${hi ? `<br>Has elegido (${hi[0]}, ${hi[1]}): <b>${hi[0]}</b> ∈ A ocupa la 1.ª posición y <b>${hi[1]}</b> ∈ B la 2.ª. El par (${hi[1]}, ${hi[0]}) <b>no</b> pertenece a A × B: el orden importa.` : ''}`; }
+    stage.append(grid, pc);
+    stage.appendChild(tfQuiz([
+      { q:'Si |A| = 4, entonces |𝒫(A)| = 16', ans:true, why:'2⁴ = 16.' }, { q:'|A × B| con |A| = 3 y |B| = 2 vale 5', ans:false, why:'Son 3·2 = 6 pares, no 3 + 2.' }
+    ]));
+    upd(); drawP();
+  }
+});
+
+/* ---------- PASO 5: funciones ---------- */
+function relProps(R, nB){
+  const outs = R.map(r => r.map((v, j) => v ? j : -1).filter(j => j >= 0)), isF = outs.every(o => o.length === 1);
+  const ins = Array.from({ length:nB }, (_, j) => R.filter(r => r[j]).length), im = ins.map((c, j) => c > 0 ? j : -1).filter(j => j >= 0);
+  return { outs, isF, im, inj:isF && ins.every(c => c <= 1), sur:isF && ins.every(c => c >= 1), ins };
+}
+const SCEN = [
+  { n:'A={1,2,3} → B={1,3,5,8} (la de la clase)', A:['1', '2', '3'], B:['1', '3', '5', '8'], pre:[
+    ['Función (ejemplo 1 de la clase)', [[0, 1, 0, 0], [0, 0, 1, 0], [0, 1, 0, 0]]], ['1 con dos imágenes (ejemplo 2)', [[1, 1, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]]],
+    ['2 sin imagen (ejemplo 3)', [[0, 0, 1, 0], [0, 0, 0, 0], [0, 0, 0, 1]]], ['Inyectiva', [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0]]]] },
+  { n:'A={α,β,γ} → B={ρ,σ,τ} (biyección)', A:['α', 'β', 'γ'], B:['ρ', 'σ', 'τ'], pre:[
+    ['Biyectiva: α→τ, β→σ, γ→ρ', [[0, 0, 1], [0, 1, 0], [1, 0, 0]]], ['Constante: todo → σ', [[0, 1, 0], [0, 1, 0], [0, 1, 0]]], ['α→ρ, β→ρ, γ→σ', [[1, 0, 0], [1, 0, 0], [0, 1, 0]]]] },
+  { n:'A={1,2,3,4} → B={a,b,c} (más elementos en A)', A:['1', '2', '3', '4'], B:['a', 'b', 'c'], pre:[
+    ['Sobreyectiva (no inyectiva)', [[1, 0, 0], [0, 1, 0], [0, 0, 1], [1, 0, 0]]], ['No sobreyectiva (falta c)', [[1, 0, 0], [0, 1, 0], [1, 0, 0], [0, 1, 0]]]] }
+];
+steps.push({
+  name:'Aplicaciones: ¿es función? ¿inyectiva? ¿sobreyectiva?', short:'5 Funciones', shape:'f: A → B',
+  desc:'Una regla f: A → B es una <b>función</b> si a <b>cada</b> elemento de A le asigna <b>un único</b> elemento de B. Activa las casillas (flechas) de la matriz: la página dice si es función y, en ese caso, si es <b>inyectiva</b> (no se repiten imágenes), <b>sobreyectiva</b> (se alcanza todo B) o <b>biyectiva</b> (las dos).',
+  render(stage){
+    let sc = 0, R = [], C = []; const sbar = el('div', 'btn-row'), pre = el('div', 'btn-row'), svg = el('div'), mat = el('div', 'tbl-wrap'), out = el('div', 'formula'), cb = el('div', 'btn-row'), pim = el('div', 'formula');
+    function load(k){ sc = k; const S = SCEN[sc]; R = S.pre[0][1].map(r => r.map(Boolean)); C = S.B.map(() => false);
+      sbar.querySelectorAll('button').forEach((b, i) => b.classList.toggle('active', i === sc)); pre.innerHTML = ''; S.pre.forEach(([n, m]) => pre.appendChild(chipBtn(n, false, () => { R = m.map(r => r.map(Boolean)); upd(); })));
+      cb.innerHTML = ''; S.B.forEach((b, j) => cb.appendChild(chipBtn(`C ∋ ${b}`, false, bt => { C[j] = !C[j]; bt.classList.toggle('active', C[j]); upd(); }))); upd(); }
+    function upd(){
+      const S = SCEN[sc], A = S.A, B = S.B, P = relProps(R, B.length), yB = j => 40 + j * (170 / Math.max(B.length - 1, 1)), yA = i => 40 + i * (170 / Math.max(A.length - 1, 1));
+      mat.innerHTML = ''; const t = el('table', 'dt'); t.innerHTML = `<tr><th>f ⊂ A×B</th>${B.map(b => `<th>${b}</th>`).join('')}</tr>`;
+      A.forEach((a, i) => { const tr = el('tr'); tr.appendChild(el('th', null, `${a} ↦`)); B.forEach((b, j) => { const td = el('td', 'pick', vtag(R[i][j])); td.style.cursor = 'pointer'; td.addEventListener('click', () => { R[i][j] = !R[i][j]; upd(); }); tr.appendChild(td); }); t.appendChild(tr); }); mat.appendChild(t);
+      let s = `<text x="55" y="14" fill="#5EEAD4" font-size="12" text-anchor="middle">A (dominio)</text><text x="285" y="14" fill="#E55015" font-size="12" text-anchor="middle">B (codominio)</text>`;
+      A.forEach((a, i) => { R[i].forEach((v, j) => { if(v) s += `<line x1="70" y1="${yA(i)}" x2="270" y2="${yB(j)}" stroke="${P.outs[i].length === 1 ? '#E55015' : '#F472B6'}" stroke-width="2.4"/>`; }); s += `<circle cx="55" cy="${yA(i)}" r="15" fill="#17233A" stroke="${P.outs[i].length === 1 ? '#5EEAD4' : '#F472B6'}" stroke-width="2"/><text x="55" y="${yA(i) + 4}" fill="#E7ECF5" font-size="12" text-anchor="middle">${a}</text>`; });
+      B.forEach((b, j) => { s += `<circle cx="285" cy="${yB(j)}" r="15" fill="${C[j] ? 'rgba(94,234,212,.3)' : '#17233A'}" stroke="${P.ins[j] ? '#E55015' : '#8B96AD'}" stroke-width="2"/><text x="285" y="${yB(j) + 4}" fill="#E7ECF5" font-size="12" text-anchor="middle">${b}</text>`; });
+      svg.innerHTML = `<svg viewBox="0 0 340 225" width="100%" style="max-width:340px;display:block;margin:0 auto" role="img" aria-label="Diagrama de flechas de A a B">${s}</svg>`;
+      const why = []; A.forEach((a, i) => { if(P.outs[i].length === 0) why.push(`${a} ∈ A no tiene asignado ningún valor`); if(P.outs[i].length > 1) why.push(`${a} ∈ A tiene ${P.outs[i].length} valores (${P.outs[i].map(j => B[j]).join(' y ')})`); });
+      out.innerHTML = `¿Es una función? ${vtag(P.isF)} ${P.isF ? '' : '<br><span class="no">' + why.join('; ') + '</span>'}` + (P.isF ? `<br>Dom(f) = ${setTxt(A)} · codominio B = ${setTxt(B)} · imagen f(A) = <b>${setTxt(P.im.map(j => B[j]))}</b><br>Inyectiva: ${vtag(P.inj)} ${P.inj ? '' : '(dos elementos de A comparten imagen)'} · Sobreyectiva: ${vtag(P.sur)} ${P.sur ? '' : `(no se alcanza ${B.filter((_, j) => !P.im.includes(j)).join(', ')})`}<br><b>${P.inj && P.sur ? 'Biyectiva' : (P.inj ? 'Solo inyectiva' : (P.sur ? 'Solo sobreyectiva' : 'Ni inyectiva ni sobreyectiva'))}</b><br><span style="color:var(--muted)">Teorema: ${P.inj ? `inyectiva ⇒ |A| ≤ |B| (${A.length} ≤ ${B.length}) ✔ ` : ''}${P.sur ? `sobreyectiva ⇒ |A| ≥ |B| (${A.length} ≥ ${B.length}) ✔ ` : ''}${P.inj && P.sur ? `biyectiva ⇒ |A| = |B| ✔` : ''}</span>` : '');
+      out.classList.toggle('win', P.isF);
+      const pr = P.isF ? A.filter((_, i) => C.some((c, j) => c && R[i][j])) : []; pim.innerHTML = P.isF ? `Preimagen de C = ${setTxt(B.filter((_, j) => C[j]))}: f⁻¹(C) = <b>${setTxt(pr)}</b>` : 'La preimagen se calcula para funciones: arregla primero la regla.';
+    }
+    SCEN.forEach((S, i) => sbar.appendChild(chipBtn(S.n, false, () => load(i))));
+    stage.append(el('div', 'panel-title c1', 'Elige los conjuntos y dibuja la regla (o carga un ejemplo)'), sbar, pre, svg, mat, out, el('div', 'panel-title c2', 'Preimagen: elige un subconjunto C de B'), cb, pim);
+    stage.appendChild(el('p', 'pad-note', '<b>Truco visual:</b> función = de cada elemento de A sale <i>una</i> flecha. Inyectiva = a cada elemento de B llega <i>como mucho una</i>. Sobreyectiva = a cada elemento de B llega <i>al menos una</i>. Biyectiva = <i>exactamente una</i>. Con |A| &lt; |B| nunca puede ser sobreyectiva; con |A| &gt; |B| nunca inyectiva.'));
+    load(0);
+  }
+});
+
+/* ---------- PASO 6: composición e inversa ---------- */
+steps.push({
+  name:'Composición g∘f, identidad e inversa', short:'6 Composición', shape:'(g∘f)(a) = g(f(a))  ·  f⁻¹',
+  desc:'La <b>composición</b> aplica una función y luego otra: (g∘f)(a) = g(f(a)). Si f y g son inyectivas (o sobreyectivas, o biyectivas), g∘f también lo es. Una función es <b>biyectiva</b> si y solo si tiene <b>inversa</b> f⁻¹ con f⁻¹∘f = id<sub>A</sub> y f∘f⁻¹ = id<sub>B</sub>. Elige f y g y compruébalo; abajo, el ejemplo con √x y eˣ.',
+  render(stage){
+    const A = ['1', '2', '3'], B = ['a', 'b', 'c'], Cc = ['x', 'y', 'z'];
+    const FS = [{ n:'f₁ biyectiva: 1→a, 2→b, 3→c', m:[0, 1, 2] }, { n:'f₂ constante: todo → a', m:[0, 0, 0] }, { n:'f₃: 1→a, 2→b, 3→b', m:[0, 1, 1] }, { n:'f₄ biyectiva: 1→c, 2→a, 3→b', m:[2, 0, 1] }];
+    const GS = [{ n:'g₁ biyectiva: a→x, b→y, c→z', m:[0, 1, 2] }, { n:'g₂: a→x, b→x, c→y', m:[0, 0, 1] }, { n:'g₃ biyectiva: a→z, b→y, c→x', m:[2, 1, 0] }, { n:'g₄ constante: todo → y', m:[1, 1, 1] }];
+    let fi = 0, gi = 0; const bf = el('div', 'btn-row'), bg = el('div', 'btn-row'), out = el('div', 'formula'), inv = el('div', 'formula');
+    const inj = m => new Set(m).size === m.length, sur = (m, n) => new Set(m).size === n;
+    function upd(){
+      bf.querySelectorAll('button').forEach((b, i) => b.classList.toggle('active', i === fi)); bg.querySelectorAll('button').forEach((b, i) => b.classList.toggle('active', i === gi));
+      const f = FS[fi].m, g = GS[gi].m, h = f.map(j => g[j]);
+      const pr = (m, nB, nm) => `${nm}: inyectiva ${vtag(inj(m))} sobreyectiva ${vtag(sur(m, nB))}`;
+      out.innerHTML = `${pr(f, 3, 'f')}<br>${pr(g, 3, 'g')}<br><b>g∘f</b>: ${A.map((a, i) => `${a}→${Cc[h[i]]}`).join(', ')}<br>${pr(h, 3, 'g∘f')}<br>` +
+        `Teorema: «f, g inyectivas ⇒ g∘f inyectiva» → ${inj(f) && inj(g) ? (inj(h) ? '<span class="ok">premisa cierta y conclusión cierta ✔</span>' : '<span class="no">¡contradice el teorema!</span>') : 'premisa no se cumple aquí (no aplica)'}<br>Teorema: «f, g sobreyectivas ⇒ g∘f sobreyectiva» → ${sur(f, 3) && sur(g, 3) ? (sur(h, 3) ? '<span class="ok">premisa cierta y conclusión cierta ✔</span>' : '<span class="no">¡contradice el teorema!</span>') : 'premisa no se cumple aquí (no aplica)'}`;
+      out.classList.toggle('win', true);
+      if(inj(f) && sur(f, 3)){ const fi_ = [0, 0, 0]; f.forEach((j, i) => fi_[j] = i); const idOk = A.every((_, i) => fi_[f[i]] === i), idOk2 = B.every((_, j) => f[fi_[j]] === j);
+        inv.innerHTML = `f es <b>biyectiva</b> → existe f⁻¹: ${B.map((b, j) => `${b}→${A[fi_[j]]}`).join(', ')}<br>f⁻¹∘f = id<sub>A</sub>: ${vtag(idOk)} · f∘f⁻¹ = id<sub>B</sub>: ${vtag(idOk2)}`; inv.classList.add('win'); }
+      else { inv.innerHTML = `f <b>no</b> es biyectiva (${inj(f) ? '' : 'no es inyectiva'}${!inj(f) && !sur(f, 3) ? ' ni ' : ''}${sur(f, 3) ? '' : 'no es sobreyectiva'}) → <b>no tiene inversa</b>: no hay forma única de «deshacer» f.`; inv.classList.remove('win'); }
+    }
+    FS.forEach((F, i) => bf.appendChild(chipBtn(F.n, false, () => { fi = i; upd(); }))); GS.forEach((G, i) => bg.appendChild(chipBtn(G.n, false, () => { gi = i; upd(); })));
+    stage.append(el('div', 'panel-title c1', 'f: A = {1,2,3} → B = {a,b,c}'), bf, el('div', 'panel-title c2', 'g: B → C = {x,y,z}'), bg, out, el('div', 'panel-title c3', 'Aplicación inversa'), inv);
+    stage.appendChild(el('div', 'panel-title c2', 'Con números: f(x) = √x y g(x) = eˣ'));
+    let x = 1; const sx = el('input'); sx.type = 'range'; sx.min = 0; sx.max = 16; sx.step = 0.5; sx.value = x; sx.style.accentColor = 'var(--viu)'; sx.style.width = 'min(280px,70vw)'; sx.setAttribute('aria-label', 'Valor de x');
+    const cx = el('div', 'btn-row'); cx.append(el('span', 'viz-label', 'x ='), sx, el('span', 'viz-label', '4')); const nm = el('div', 'formula');
+    function u2(){ x = +sx.value; cx.lastChild.textContent = x; const a = Math.exp(Math.sqrt(x)), b = Math.sqrt(Math.exp(x)); nm.innerHTML = `(g∘f)(${x}) = g(√${x}) = e<sup>√${x}</sup> = <b>${a.toFixed(4)}</b><br>(f∘g)(${x}) = f(e<sup>${x}</sup>) = √(e<sup>${x}</sup>) = e<sup>${x}/2</sup> = <b>${b.toFixed(4)}</b><br>${Math.abs(a - b) < 1e-9 ? 'Casualmente coinciden' : '<b>g∘f ≠ f∘g</b>: la composición <b>no es conmutativa</b>.'}`; }
+    sx.addEventListener('input', u2); stage.append(cx, nm);
+    upd(); u2();
+  }
+});
+
+/* ---------- PASO 7: resumen ---------- */
+steps.push({
+  name:'Resumen y código', short:'7 Resumen', shape:null,
+  desc:'En Python, los conjuntos y las operaciones con ellos son tipos nativos. Las cifras de abajo las calcula la página.',
+  render(stage){
+    const T = el('div', 'tbl-wrap'); T.innerHTML = `<table class="dt"><tr><th>Notación</th><th>Se lee</th><th>Python</th></tr><tr><td>A ⊆ B</td><td>A incluido en B</td><td><code>A &lt;= B</code></td></tr><tr><td>A ∩ B</td><td>intersección</td><td><code>A &amp; B</code></td></tr><tr><td>A ∪ B</td><td>unión</td><td><code>A | B</code></td></tr><tr><td>B \\ A</td><td>diferencia</td><td><code>B - A</code></td></tr><tr><td>A × B</td><td>producto cartesiano</td><td><code>product(A, B)</code></td></tr><tr><td>|𝒫(A)|</td><td>2ⁿ</td><td><code>2 ** len(A)</code></td></tr></table>`; stage.appendChild(T);
+    stage.appendChild(el('div', 'panel-title c1', 'En Python'));
+    stage.appendChild(codeBox(`from itertools import product, combinations
+
+A = {-1, 3, 5, 2, 6, 9}
+B = {-1, 0, 4, 3, 7, 9, 10}
+
+print(sorted(A & B))             # A ∩ B
+print(sorted(A | B))             # A ∪ B
+print(sorted(B - A))             # B \\ A
+print({1, 2} <= {1, 2, 3})       # ⊆
+
+X = {1, 2, 3}
+partes = [set(c) for r in range(len(X) + 1) for c in combinations(X, r)]
+print(len(partes))               # 2 ** 3
+print(len(list(product(X, "ab"))))   # |X × {a,b}| = 6
+
+f = {1: "a", 2: "b", 3: "c"}     # una función es un diccionario
+print(len(set(f.values())) == len(f))   # inyectiva`));
+    const A = new Set([-1, 3, 5, 2, 6, 9]), B = new Set([-1, 0, 4, 3, 7, 9, 10]); const ss = s => '[' + [...s].sort((a, b) => a - b).join(', ') + ']';
+    stage.appendChild(el('div', 'viz-label', 'Salida del programa (calculada aquí con las mismas reglas):'));
+    stage.appendChild(codeBox([ss([...A].filter(x => B.has(x))), ss(new Set([...A, ...B])), ss([...B].filter(x => !A.has(x))), 'True', '8', '6', 'True'].join('\n')));
+    stage.appendChild(el('div', 'panel-title c3', 'Errores frecuentes'));
+    const errs = el('div', 'bio-text'); errs.innerHTML = `<p><b>1.</b> Confundir ∈ con ⊆: «a ∈ A» (un elemento) frente a «{a} ⊆ A» (un subconjunto).</p>
+      <p><b>2.</b> Decir que una relación es función aunque algún elemento de A tenga dos imágenes, o ninguna.</p>
+      <p><b>3.</b> Mezclar inyectiva y sobreyectiva: inyectiva = no se repiten imágenes; sobreyectiva = no queda nada en B sin alcanzar.</p>
+      <p><b>4.</b> Creer que g∘f = f∘g. En general no es así (√ y exp del ejemplo).</p>`;
+    stage.appendChild(errs); stage.appendChild(qcards(QUESTIONS));
+  }
+});
+
+/* =========================================================
+   Motor de navegación (idéntico en todas las actividades)
+========================================================= */
+let current = 0;
+function renderTrail(){
+  const tr = $('#trail'); tr.innerHTML = '';
+  steps.forEach((s, i) => { const b = el('button', null, s.short); b.type = 'button'; b.addEventListener('click', () => goTo(i)); tr.appendChild(b); });
+}
+function goTo(i){
+  current = i;
+  clearTimers();
+  const s = steps[current];
+  $('#stepCount').textContent = current === 0 ? 'Introducción' : `Paso ${current} de ${steps.length - 1}`;
+  $('#stepTitle').textContent = s.name;
+  $('#stepDesc').innerHTML = s.desc;
+  const chip = $('#shapeChip');
+  if(s.shape){ chip.style.display = ''; chip.innerHTML = `<b>${s.shape}</b>`; } else chip.style.display = 'none';
+  const stage = $('#stage'); stage.innerHTML = '';
+  s.render(stage);
+  const btns = document.querySelectorAll('.trail button');
+  btns.forEach((b, idx) => b.classList.toggle('active', idx === current));
+  if(btns[current]) btns[current].scrollIntoView({ block:'nearest', inline:'center' });
+  $('#prevBtn').disabled = current === 0;
+  $('#nextBtn').textContent = current === steps.length - 1 ? 'Volver al inicio ↺' : 'Siguiente →';
+  window.scrollTo(0, 0);
+}
+$('#prevBtn').addEventListener('click', () => { if(current > 0) goTo(current - 1); });
+$('#nextBtn').addEventListener('click', () => goTo(current === steps.length - 1 ? 0 : current + 1));
+document.addEventListener('keydown', e => {
+  if(e.target && (e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT')) return;
+  if(e.key === 'ArrowRight') $('#nextBtn').click();
+  if(e.key === 'ArrowLeft') $('#prevBtn').click();
+});
+renderTrail(); goTo(0);
+</script>
+</body>
+</html>

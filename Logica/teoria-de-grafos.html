@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="generator" content="Generado con asistencia de IA (Claude) - revisar por el responsable antes de su uso">
+<title>Teoría de grafos</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<!-- Artefacto generado con asistencia de IA (Claude Sonnet 5.5). Requiere revision del desarrollador responsable. Contenido basado en las diapositivas de Teoría de grafos, Grafos dirigidos, simples y conexos de 1-logicaRec.tex (02MIAR, VIU). Datos: solo ejemplos ficticios o de dominio publico. -->
+<style>
+  :root{
+    --bg:#0B1220; --panel:#121B2E; --panel-2:#17233A; --line:#26324A; --text:#E7ECF5; --muted:#8B96AD;
+    --viu:#E55015; --viu-dim:#4A2212;
+    --cyan:#5EEAD4; --cyan-dim:#1F4A45;
+    --pink:#F472B6; --pink-dim:#452236;
+    --radius:14px;
+    --font-head:'Space Grotesk','Segoe UI',sans-serif; --font-body:'IBM Plex Sans','Segoe UI',sans-serif; --font-mono:'IBM Plex Mono','Consolas',monospace;
+    padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+  }
+  *{box-sizing:border-box;}
+  html,body{height:100%;}
+  body{ margin:0; background:var(--bg); color:var(--text); font-family:var(--font-body); min-height:100%; display:flex; flex-direction:column; overflow-x:hidden; }
+  ::selection{ background:var(--viu-dim); color:var(--viu); }
+
+  header{ padding:18px clamp(16px,4vw,40px) 10px; display:flex; flex-direction:column; gap:14px; flex:0 0 auto; }
+  .headline-row{ display:flex; align-items:baseline; justify-content:space-between; gap:16px; flex-wrap:wrap; }
+  h1{ font-family:var(--font-head); font-weight:600; font-size:clamp(20px,2.6vw,28px); margin:0; letter-spacing:-0.01em; }
+  h1 span{ color:var(--viu); }
+  .net-tag{ font-family:var(--font-mono); font-size:12.5px; color:var(--muted); }
+  .trail{ display:flex; gap:4px; overflow-x:auto; padding-bottom:4px; scrollbar-width:thin; }
+  .trail::-webkit-scrollbar{height:5px;} .trail::-webkit-scrollbar-thumb{background:var(--line); border-radius:4px;}
+  .trail button{ flex:0 0 auto; background:var(--panel); border:1px solid var(--line); color:var(--muted); font-family:var(--font-mono); font-size:11.5px; padding:7px 11px; border-radius:999px; cursor:pointer; white-space:nowrap; transition:border-color .15s,color .15s,background .15s; }
+  .trail button:hover{ border-color:#3a4a6b; color:var(--text); }
+  .trail button.active{ background:var(--viu-dim); border-color:var(--viu); color:var(--viu); }
+
+  main{ flex:1 0 auto; display:flex; align-items:stretch; justify-content:center; padding:6px clamp(16px,4vw,40px) 10px; }
+  .card{ width:100%; max-width:1040px; background:var(--panel); border:1px solid var(--line); border-radius:var(--radius); padding:clamp(18px,3vw,30px); display:flex; flex-direction:column; gap:16px; }
+  .step-meta{ display:flex; justify-content:space-between; align-items:flex-start; gap:20px; flex-wrap:wrap; }
+  .step-count{ font-family:var(--font-mono); font-size:12.5px; color:var(--viu); margin:0 0 4px; }
+  .step-title{ font-family:var(--font-head); font-weight:600; font-size:clamp(18px,2.4vw,24px); margin:0; }
+  .step-desc{ color:var(--muted); font-size:14.5px; line-height:1.6; max-width:70ch; margin:6px 0 0; }
+  .shape-chip{ font-family:var(--font-mono); font-size:13px; background:var(--panel-2); border:1px solid var(--line); padding:9px 14px; border-radius:10px; color:var(--text); }
+  .shape-chip b{ color:var(--viu); font-weight:600; }
+  #stage{ display:flex; flex-direction:column; align-items:center; gap:16px; padding:6px 2px; }
+  #stage > *{ width:100%; }
+
+  footer{ flex:0 0 auto; display:flex; justify-content:center; gap:14px; flex-wrap:wrap; padding:4px clamp(16px,4vw,40px) calc(18px + env(safe-area-inset-bottom,0px)); }
+  .nav-btn{ font-family:var(--font-body); font-weight:500; font-size:14.5px; background:var(--panel); border:1px solid var(--line); color:var(--text); padding:11px 22px; border-radius:10px; cursor:pointer; transition:border-color .15s,transform .1s; }
+  .nav-btn:hover{ border-color:var(--viu); } .nav-btn:active{ transform:scale(.97); }
+  .nav-btn:disabled{ opacity:.35; cursor:default; } .nav-btn:disabled:hover{ border-color:var(--line); }
+  .nav-btn.primary{ background:var(--viu-dim); border-color:var(--viu); color:var(--viu); }
+
+  .viz-row{ display:flex; align-items:flex-start; justify-content:center; gap:clamp(18px,3vw,36px); flex-wrap:wrap; width:100%; }
+  .viz-col{ display:flex; flex-direction:column; align-items:center; gap:10px; flex:1 1 280px; min-width:0; }
+  .viz-label{ font-family:var(--font-mono); font-size:12px; color:var(--muted); text-align:center; line-height:1.4; }
+  .viz-label b{ color:var(--text); font-weight:600; }
+
+  .formula{ font-family:var(--font-mono); font-size:13.5px; background:var(--panel-2); border:1px solid var(--line); border-radius:10px; padding:12px 16px; min-height:44px; display:block; text-align:center; color:var(--text); max-width:720px; margin:0 auto; line-height:1.7; }
+  .formula b{ color:var(--cyan); } .formula .ok{ color:var(--viu); font-weight:600; } .formula .no{ color:var(--pink); font-weight:600; }
+  .formula.win{ border-color:var(--viu); }
+  .pad-note{ font-size:13px; color:var(--muted); text-align:center; max-width:74ch; margin:0 auto; line-height:1.6; }
+  .pad-note b{ color:var(--text); font-weight:600; }
+  .bio-text{ max-width:74ch; margin:0 auto; }
+  .bio-text p{ font-size:13.8px; line-height:1.65; color:var(--text); margin:0 0 10px; }
+  .bio-text b{ color:var(--viu); font-weight:600; } .bio-text i{ color:var(--cyan); font-style:normal; }
+
+  .qgrid{ display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:10px; }
+  .qcard{ background:var(--panel-2); border:1px solid var(--line); border-radius:12px; padding:14px 16px; cursor:pointer; transition:border-color .15s; }
+  .qcard:hover{ border-color:var(--viu); }
+  .qcard .n{ font-family:var(--font-mono); font-size:11.5px; color:var(--viu); }
+  .qcard h3{ font-family:var(--font-head); font-size:15px; margin:4px 0 6px; font-weight:600; }
+  .qcard p{ margin:0; font-size:12.5px; color:var(--muted); line-height:1.5; }
+
+  .btn-row{ display:flex; gap:8px; justify-content:center; flex-wrap:wrap; }
+  .toggle-btn{ font-family:var(--font-mono); font-size:11.5px; background:var(--panel-2); border:1px solid var(--line); color:var(--muted); padding:8px 13px; border-radius:999px; cursor:pointer; transition:all .15s; }
+  .toggle-btn:hover{ color:var(--text); border-color:#3a4a6b; }
+  .toggle-btn.active{ background:var(--viu-dim); border-color:var(--viu); color:var(--viu); }
+  .toggle-btn.good{ background:var(--viu-dim); border-color:var(--viu); color:var(--viu); }
+  .toggle-btn.bad{ background:var(--pink-dim); border-color:var(--pink); color:var(--pink); }
+
+  /* interruptor de valor de verdad */
+  .tg{ font-family:var(--font-mono); font-size:13px; background:var(--panel-2); border:1px solid var(--line); color:var(--muted); padding:10px 16px; border-radius:12px; cursor:pointer; transition:all .15s; text-align:left; min-width:150px; }
+  .tg b{ display:block; font-size:17px; color:var(--text); font-weight:600; }
+  .tg small{ display:block; font-size:11px; margin-top:2px; }
+  .tg.on{ background:var(--viu-dim); border-color:var(--viu); color:var(--viu); } .tg.on b{ color:var(--viu); }
+  .tg.off{ border-color:#3a4a6b; }
+  .tg:hover{ border-color:var(--viu); }
+
+  .tv{ display:inline-block; min-width:22px; padding:1px 6px; border-radius:6px; font-family:var(--font-mono); font-weight:600; font-size:12.5px; }
+  .tv.v1{ background:var(--viu-dim); color:var(--viu); } .tv.v0{ background:var(--pink-dim); color:var(--pink); }
+
+  .stats{ display:flex; gap:10px; flex-wrap:wrap; justify-content:center; }
+  .stat{ background:var(--panel-2); border:1px solid var(--line); border-radius:10px; padding:8px 14px; text-align:center; min-width:120px; }
+  .stat .l{ font-family:var(--font-mono); font-size:10.5px; color:var(--muted); display:block; margin-bottom:3px; }
+  .stat .v{ font-family:var(--font-mono); font-size:15px; font-weight:600; color:var(--text); }
+  .stat.c1 .v{ color:var(--viu); } .stat.c2 .v{ color:var(--cyan); } .stat.c3 .v{ color:var(--pink); }
+  .panel-title{ font-family:var(--font-head); font-weight:600; font-size:13.5px; color:var(--text); text-align:center; margin:0 0 2px; }
+  .panel-title.c1{ color:var(--viu); } .panel-title.c2{ color:var(--cyan); } .panel-title.c3{ color:var(--pink); }
+
+  pre.code{ margin:0; background:#0E1626; border:1px solid var(--line); border-radius:10px; padding:12px 14px; font-family:var(--font-mono); font-size:12.3px; line-height:1.6; color:var(--text); overflow-x:auto; text-align:left; }
+  pre.code .cm{ color:#6b7a99; } pre.code .kw{ color:var(--pink); }
+
+  table.dt{ border-collapse:collapse; font-family:var(--font-mono); font-size:12.5px; margin:0 auto; }
+  table.dt th,table.dt td{ border:1px solid var(--line); padding:6px 11px; text-align:center; }
+  table.dt th{ background:var(--panel-2); color:var(--muted); font-weight:500; }
+  table.dt th.res{ background:var(--viu-dim); color:var(--viu); }
+  table.dt tr.hl td{ background:rgba(94,234,212,.12); }
+  table.dt tr.hl td:first-child{ box-shadow:inset 3px 0 0 var(--cyan); }
+  table.dt tr.bad td{ background:rgba(244,114,182,.14); }
+  table.dt tr.pick{ cursor:pointer; } table.dt tr.pick:hover td{ background:rgba(255,255,255,.04); }
+  .tbl-wrap{ overflow-x:auto; max-width:100%; }
+
+  /* filas de preguntas (sorter) */
+  .qrow{ background:var(--panel-2); border:1px solid var(--line); border-radius:12px; padding:12px 14px; display:flex; gap:12px; align-items:center; justify-content:space-between; flex-wrap:wrap; }
+  .qrow .tx{ flex:1 1 280px; font-size:14px; line-height:1.5; }
+  .qrow .opts{ display:flex; gap:6px; flex-wrap:wrap; }
+  .qrow .fb{ flex:1 1 100%; font-size:12.5px; color:var(--muted); line-height:1.5; }
+  .qrow .fb b.ok{ color:var(--viu); } .qrow .fb b.no{ color:var(--pink); }
+  .qrow.done{ border-color:#3a4a6b; }
+
+  select{ font-family:var(--font-mono); font-size:13px; background:var(--panel-2); color:var(--text); border:1px solid var(--line); border-radius:8px; padding:8px 10px; max-width:100%; }
+  select:focus,button:focus-visible{ outline:2px solid var(--cyan); outline-offset:1px; }
+
+  .cards6{ display:grid; grid-template-columns:repeat(auto-fit,minmax(230px,1fr)); gap:10px; width:100%; }
+  .ccard{ background:var(--panel-2); border:1px solid var(--line); border-radius:12px; padding:12px 14px; display:flex; flex-direction:column; gap:6px; }
+  .ccard .sym{ font-family:var(--font-mono); font-size:22px; color:var(--viu); font-weight:600; }
+  .ccard .nm{ font-family:var(--font-head); font-weight:600; font-size:14px; }
+  .ccard .rd{ font-size:12.5px; color:var(--muted); line-height:1.5; }
+  .ccard .sent{ font-size:13px; line-height:1.5; color:var(--text); border-top:1px dashed var(--line); padding-top:6px; }
+
+  .strip{ display:flex; flex-direction:column; gap:4px; align-items:center; overflow-x:auto; max-width:100%; }
+  .srow{ display:flex; gap:3px; align-items:center; }
+  .slab{ flex:0 0 150px; font-family:var(--font-mono); font-size:11px; color:var(--muted); text-align:right; padding-right:8px; }
+  .srow > div{ flex:0 0 40px; width:40px; text-align:center; font-family:var(--font-mono); font-size:12px; padding:4px 0; border-radius:6px; background:var(--panel-2); border:1px solid var(--line); }
+  .srow > div.v1{ background:var(--viu-dim); border-color:var(--viu); color:var(--viu); }
+  .srow > div.v0{ background:var(--pink-dim); border-color:var(--pink); color:var(--pink); }
+  .srow > div.h{ background:transparent; border-color:transparent; color:var(--muted); }
+
+  .flow{ display:flex; flex-wrap:wrap; gap:8px; align-items:center; justify-content:center; }
+  .fnode{ background:var(--panel-2); border:1px solid var(--line); border-radius:10px; padding:8px 12px; font-family:var(--font-mono); font-size:12px; cursor:pointer; transition:border-color .15s; }
+  .fnode:hover{ border-color:var(--viu); } .fnode small{ display:block; color:var(--muted); font-size:10.5px; }
+  .farrow{ color:var(--muted); }
+
+  svg text{ font-family:var(--font-mono); }
+  @media (max-width:640px){ .viz-row{ gap:16px; } table.dt th,table.dt td{ padding:5px 7px; } }
+  @media (prefers-reduced-motion:reduce){ *{ transition:none !important; } }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="headline-row">
+    <h1>Teoría de grafos: <span>puntos</span> y <span>conexiones</span></h1>
+    <span class="net-tag">02MIAR · Matemáticas para la IA · Sesión 3</span>
+  </div>
+  <div class="trail" id="trail"></div>
+</header>
+
+<main>
+  <div class="card">
+    <div class="step-meta">
+      <div>
+        <p class="step-count" id="stepCount"></p>
+        <h2 class="step-title" id="stepTitle"></h2>
+        <p class="step-desc" id="stepDesc"></p>
+      </div>
+      <div class="shape-chip" id="shapeChip"></div>
+    </div>
+    <div id="stage"></div>
+  </div>
+</main>
+
+<footer>
+  <button class="nav-btn" id="prevBtn">← Anterior</button>
+  <button class="nav-btn primary" id="nextBtn">Siguiente →</button>
+</footer>
+
+<script>
+/* =========================================================
+   Utilidades
+========================================================= */
+const $ = s => document.querySelector(s);
+let timers = [];
+function clearTimers(){ timers.forEach(t => clearInterval(t)); timers = []; }
+function el(tag, cls, html){ const e = document.createElement(tag); if(cls) e.className = cls; if(html != null) e.innerHTML = html; return e; }
+const V = x => x ? 1 : 0;
+const vtag = x => `<span class="tv v${V(x)}">${V(x)}</span>`;
+const lower1 = s => s.charAt(0).toLowerCase() + s.slice(1);
+
+function py(code){
+  return code.replace(/&/g, '&amp;').replace(/</g, '&lt;').split('\n').map(l => {
+    const k = l.indexOf('#'); let body = l, cm = '';
+    if(k >= 0){ body = l.slice(0, k); cm = '<span class="cm">' + l.slice(k) + '</span>'; }
+    body = body.replace(/\b(import|from|as|print|def|return|not|and|or|for|in)\b/g, '<span class="kw">$1</span>');
+    return body + cm;
+  }).join('\n');
+}
+function codeBox(code){ const p = el('pre', 'code'); p.innerHTML = py(code); return p; }
+
+/* ---------- lógica: todas las combinaciones, en el orden de las diapositivas (1,1 / 1,0 / 0,1 / 0,0) ---------- */
+function combos(vars){
+  const n = vars.length, out = [];
+  for(let i = 0; i < (1 << n); i++){ const e = {}; vars.forEach((v, k) => e[v] = !((i >> (n-1-k)) & 1)); out.push(e); }
+  return out;
+}
+const sameEnv = (a, b) => Object.keys(a).every(k => a[k] === b[k]);
+const OPS = {
+  and: { sym:'∧', f:(p, q) => p && q },
+  or:  { sym:'∨', f:(p, q) => p || q },
+  xor: { sym:'⊻', f:(p, q) => p !== q },
+  imp: { sym:'→', f:(p, q) => !p || q },
+  iff: { sym:'↔', f:(p, q) => p === q }
+};
+function classify(f, vars){
+  const vals = combos(vars).map(f);
+  return vals.every(Boolean) ? 'T' : (vals.every(v => !v) ? 'C' : 'K');
+}
+const CLS = { T:'Tautología', C:'Contradicción', K:'Contingencia' };
+
+/* tabla de verdad viva: highlight de la fila actual; clic en fila = elegir esos valores */
+function makeTable(vars, cols, onPick, rowClass){
+  const wrap = el('div', 'tbl-wrap'), t = el('table', 'dt'); wrap.appendChild(t);
+  const head = el('tr'); const ths = [];
+  vars.forEach(v => head.appendChild(el('th', null, v)));
+  cols.forEach(c => { const th = el('th', c.res === false ? '' : 'res', c.h); ths.push(th); head.appendChild(th); });
+  t.appendChild(head);
+  const rows = combos(vars).map(env => {
+    const tr = el('tr', onPick ? 'pick' : ''); tr._env = env;
+    vars.forEach(v => tr.appendChild(el('td', null, vtag(env[v]))));
+    cols.forEach(c => tr.appendChild(el('td', null, vtag(c.f(env)))));
+    if(rowClass){ const rc = rowClass(env); if(rc) tr.classList.add(rc); }
+    if(onPick) tr.addEventListener('click', () => onPick(env));
+    t.appendChild(tr); return tr;
+  });
+  return { el: wrap, setHead:(i, txt) => { ths[i].innerHTML = txt; }, set: env => rows.forEach(r => r.classList.toggle('hl', !!env && sameEnv(r._env, env))) };
+}
+
+/* interruptor 1/0 */
+function toggleBtn(name, init, cb, subs){
+  let val = init; const b = el('button', 'tg'); b.type = 'button';
+  function draw(){
+    b.className = 'tg ' + (val ? 'on' : 'off');
+    b.innerHTML = `<b>${name} = ${V(val)}</b><small>${val ? (subs ? subs[0] : 'verdadera') : (subs ? subs[1] : 'falsa')}</small>`;
+    b.setAttribute('aria-pressed', val); b.setAttribute('aria-label', `${name} vale ${V(val)}`);
+  }
+  b.addEventListener('click', () => { val = !val; draw(); cb(val); });
+  draw();
+  return { el:b, get:() => val, set:v => { val = v; draw(); } };
+}
+
+/* ---------- circuitos (analogía física) ---------- */
+function circuit(mode, p, q){
+  const on = '#E55015', off = '#3a4a6b';
+  const w = (x1, y1, x2, y2, lit) => `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${lit ? on : off}" stroke-width="3.5" stroke-linecap="round"/>`;
+  const dotc = (x, y, lit) => `<circle cx="${x}" cy="${y}" r="3.6" fill="${lit ? on : off}"/>`;
+  const sw = (x, y, closed, lit, lab) => w(x, y, closed ? x+60 : x+54, closed ? y : y-26, closed && lit) + dotc(x, y, lit) + dotc(x+60, y, closed && lit) +
+    `<text x="${x+30}" y="${y+22}" text-anchor="middle" font-size="12" fill="#8B96AD">${lab}=${V(closed)}</text>`;
+  const lamp = (cx, cy, lit) => `<circle cx="${cx}" cy="${cy}" r="17" fill="${lit ? on : '#17233A'}" stroke="${lit ? '#ffb08a' : off}" stroke-width="2.5"/>` +
+    (lit ? [0,45,90,135,180,225,270,315].map(a => { const r = a*Math.PI/180; return `<line x1="${cx+23*Math.cos(r)}" y1="${cy+23*Math.sin(r)}" x2="${cx+31*Math.cos(r)}" y2="${cy+31*Math.sin(r)}" stroke="${on}" stroke-width="2.5" stroke-linecap="round"/>`; }).join('') : '') +
+    `<line x1="${cx-9}" y1="${cy-9}" x2="${cx+9}" y2="${cy+9}" stroke="${lit ? '#fff' : off}" stroke-width="2"/><line x1="${cx+9}" y1="${cy-9}" x2="${cx-9}" y2="${cy+9}" stroke="${lit ? '#fff' : off}" stroke-width="2"/>`;
+  const batt = (x, y1, y2) => `<line x1="${x-9}" y1="${y1}" x2="${x+9}" y2="${y1}" stroke="#E7ECF5" stroke-width="3"/><line x1="${x-5}" y1="${y1+8}" x2="${x+5}" y2="${y1+8}" stroke="#E7ECF5" stroke-width="3"/>`;
+  let s = '', lit = false;
+  if(mode === 'and'){
+    lit = p && q;
+    s += w(24,60,96,60,true) + sw(96,60,p,true,'p') + w(156,60,228,60,p) + sw(228,60,q,p,'q') + w(288,60,352,60,lit) + lamp(372,60,lit);
+    s += w(372,77,372,108,lit) + w(372,108,24,108,lit) + w(24,108,24,72,lit) + batt(24,60);
+  } else if(mode === 'or'){
+    lit = p || q;
+    s += w(24,70,96,70,true) + w(96,40,96,100,true) + w(96,40,150,40,true) + sw(150,40,p,true,'p') + w(210,40,300,40,p) +
+         w(96,100,150,100,true) + sw(150,100,q,true,'q') + w(210,100,300,100,q) + w(300,40,300,100,lit) + w(300,70,355,70,lit) + lamp(372,70,lit);
+    s += w(372,87,372,128,lit) + w(372,128,24,128,lit) + w(24,128,24,82,lit) + batt(24,70);
+  } else {
+    lit = p !== q;
+    const pt = [140,40], pb = [140,100], qt = [280,40], qb = [280,100];
+    s += w(24,70,110,70,true) + dotc(110,70,true) + dotc(310,70,lit) + w(310,70,355,70,lit) + lamp(372,70,lit);
+    s += w(110,70,140,p ? 40 : 100,true);
+    s += w(140,40,280,100,p) + w(140,100,280,40,!p);
+    s += w(310,70,280,q ? 40 : 100,lit);
+    s += [pt,pb,qt,qb].map(c => dotc(c[0], c[1], false)).join('');
+    s += `<text x="110" y="124" text-anchor="middle" font-size="12" fill="#8B96AD">p=${V(p)}</text><text x="310" y="124" text-anchor="middle" font-size="12" fill="#8B96AD">q=${V(q)}</text>`;
+    s += w(372,87,372,138,lit) + w(372,138,24,138,lit) + w(24,138,24,82,lit) + batt(24,70);
+  }
+  return `<svg viewBox="0 0 420 ${mode === 'xor' ? 150 : 140}" width="100%" style="max-width:420px" role="img" aria-label="Circuito con lámpara ${lit ? 'encendida' : 'apagada'}">${s}</svg>`;
+}
+
+
+function tfQuiz(items){
+  const box = el('div', 'viz-col'); box.style.width = '100%';
+  items.forEach(it => {
+    const row = el('div', 'qrow'); const tx = el('div', 'tx', it.q); const opts = el('div', 'opts'); const fb = el('div', 'fb');
+    [['Verdadero (1)', true], ['Falso (0)', false]].forEach(([lab, val]) => {
+      const b = el('button', 'toggle-btn', lab); b.type = 'button';
+      b.addEventListener('click', () => {
+        const ok = val === it.ans;
+        opts.querySelectorAll('button').forEach(x => x.classList.remove('good', 'bad'));
+        b.classList.add(ok ? 'good' : 'bad');
+        fb.innerHTML = (ok ? '<b class="ok">✔ Correcto.</b> ' : '<b class="no">✘ Casi.</b> ') + it.why;
+        row.classList.add('done');
+      });
+      opts.appendChild(b);
+    });
+    row.append(tx, opts, fb); box.appendChild(row);
+  });
+  return box;
+}
+
+/* clasificador por filas */
+function sortRows(items, options){
+  const box = el('div', 'viz-col'); box.style.width = '100%'; box.style.alignItems = 'stretch';
+  const stats = el('div', 'stats'); const sOk = el('div', 'stat c1', '<span class="l">acertadas</span><span class="v">0</span>'), sTot = el('div', 'stat', `<span class="l">total</span><span class="v">${items.length}</span>`);
+  stats.append(sOk, sTot); box.appendChild(stats);
+  const answered = new Set(); let good = 0;
+  items.forEach((it, idx) => {
+    const row = el('div', 'qrow'); const tx = el('div', 'tx', it.t); const opts = el('div', 'opts'); const fb = el('div', 'fb');
+    options.forEach(o => {
+      const b = el('button', 'toggle-btn', o.label); b.type = 'button';
+      b.addEventListener('click', () => {
+        const ok = o.k === it.a;
+        if(ok && !answered.has(idx)){ answered.add(idx); good++; sOk.querySelector('.v').textContent = good; }
+        opts.querySelectorAll('button').forEach(x => x.classList.remove('good', 'bad'));
+        b.classList.add(ok ? 'good' : 'bad');
+        fb.innerHTML = (ok ? '<b class="ok">✔ </b>' : '<b class="no">✘ Prueba otra vez. </b>') + (ok ? it.why : (it.hint || 'Piensa qué se puede afirmar de ella.'));
+        row.classList.toggle('done', ok);
+      });
+      opts.appendChild(b);
+    });
+    row.append(tx, opts, fb); box.appendChild(row);
+  });
+  return box;
+}
+
+const steps = [];
+function goStep(i){ goTo(i); }
+function qcards(list){
+  const g = el('div', 'qgrid');
+  list.forEach(([n, h, p, to]) => { const c = el('div', 'qcard', `<div class="n">${n}</div><h3>${h}</h3><p>${p}</p>`); c.tabIndex = 0; c.addEventListener('click', () => goStep(to)); c.addEventListener('keydown', e => { if(e.key === 'Enter') goStep(to); }); g.appendChild(c); });
+  return g;
+}
+
+const every = (ms, fn) => { const id = setInterval(fn, ms); timers.push(id); return id; };
+const chipBtn = (label, on, cb) => { const b = el('button', 'toggle-btn' + (on ? ' active' : ''), label); b.type = 'button'; b.addEventListener('click', () => cb(b)); return b; };
+const setStr = a => a.length ? '{' + a.join(', ') + '}' : '∅';
+
+const rng_ = (a, b) => Array.from({ length:b - a + 1 }, (_, i) => a + i);
+const QUESTIONS = [
+  ['PREGUNTA 1', '¿Qué es un grafo?', 'Vértices, aristas y la aplicación γ que dice qué une cada arista.', 1],
+  ['PREGUNTA 2', '¿Cuándo un grafo es simple?', 'Sin aristas paralelas y sin bucles. Con su matriz de adyacencia.', 3],
+  ['PREGUNTA 3', '¿Cuándo un grafo es conexo?', 'Existe un camino entre cualquier par de vértices. Compruébalo con un buscador de caminos.', 4]
+];
+const VN = i => 'v' + (i + 1);
+const COLORS = ['#E55015', '#5EEAD4', '#F472B6', '#fbbf24', '#8B96AD'];
+
+/* ---------- dibujo de grafos ---------- */
+function layout(n){ const cx = 170, cy = 118, R = n <= 2 ? 70 : 88; return Array.from({ length:n }, (_, i) => { const a = -Math.PI / 2 + i * 2 * Math.PI / n; return [cx + R * Math.cos(a), cy + R * Math.sin(a), Math.cos(a), Math.sin(a)]; }); }
+function drawGraph(n, edges, o = {}){
+  const P = layout(n), rN = 17, dir = !!o.directed, hi = o.hi || new Set(), ncol = o.ncol || (() => '#5EEAD4'); const groups = {};
+  edges.forEach((e, i) => { if(!e) return; const key = e[0] === e[1] ? 'L' + e[0] : Math.min(e[0], e[1]) + '-' + Math.max(e[0], e[1]); (groups[key] = groups[key] || []).push(i); });
+  let s = `<defs><marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#E55015"/></marker><marker id="arrh" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#F472B6"/></marker></defs>`;
+  Object.entries(groups).forEach(([key, idxs]) => idxs.forEach((ei, k) => {
+    const [u, v] = edges[ei], on = hi.has(ei), col = on ? '#F472B6' : '#E55015';
+    if(u === v){ const p = P[u], ox = p[2], oy = p[3], cx = p[0] + ox * 30, cy = p[1] + oy * 30, off = k * 10; s += `<circle cx="${cx + ox * off}" cy="${cy + oy * off}" r="${15 + k * 5}" fill="none" stroke="${col}" stroke-width="2.4"/><text x="${p[0] + ox * (56 + off)}" y="${p[1] + oy * (56 + off) + 4}" fill="${col}" font-size="11" text-anchor="middle">e${ei + 1}</text>`; return; }
+    const A = P[u], B = P[v], m = idxs.length, d = (k - (m - 1) / 2) * 34, mx = (A[0] + B[0]) / 2, my = (A[1] + B[1]) / 2; let nx = -(B[1] - A[1]), ny = B[0] - A[0]; const nl = Math.hypot(nx, ny) || 1; nx /= nl; ny /= nl; if(u > v){ nx = -nx; ny = -ny; }
+    const cx = mx + nx * 2 * d, cy = my + ny * 2 * d; const un = (x, y) => { const l = Math.hypot(x, y) || 1; return [x / l, y / l]; };
+    const t1 = un(cx - A[0], cy - A[1]), t2 = un(B[0] - cx, B[1] - cy), sx = A[0] + t1[0] * rN, sy = A[1] + t1[1] * rN, ex = B[0] - t2[0] * (rN + (dir ? 2 : 0)), ey = B[1] - t2[1] * (rN + (dir ? 2 : 0));
+    s += `<path d="M${sx} ${sy} Q${cx} ${cy} ${ex} ${ey}" fill="none" stroke="${col}" stroke-width="2.4"${dir ? ` marker-end="url(#${on ? 'arrh' : 'arr'})"` : ''}/><text x="${mx + nx * d + nx * 11}" y="${my + ny * d + ny * 11 + 4}" fill="${col}" font-size="11" text-anchor="middle">e${ei + 1}</text>`;
+  }));
+  P.forEach((p, i) => { s += `<circle cx="${p[0]}" cy="${p[1]}" r="${rN}" fill="#17233A" stroke="${ncol(i)}" stroke-width="2.4"/><text x="${p[0]}" y="${p[1] + 4}" fill="#E7ECF5" font-size="12" text-anchor="middle">${VN(i)}</text>`; });
+  return `<svg viewBox="0 0 340 236" width="100%" style="max-width:380px;display:block;margin:0 auto" role="img" aria-label="Dibujo del grafo">${s}</svg>`;
+}
+const gdeg = (n, edges, dir) => { const d = Array(n).fill(0), i_ = Array(n).fill(0), o_ = Array(n).fill(0); edges.forEach(e => { if(!e) return; if(e[0] === e[1]) d[e[0]] += 2; else { d[e[0]]++; d[e[1]]++; } o_[e[0]]++; i_[e[1]]++; }); return { d, i_, o_ }; };
+
+/* editor de γ */
+function gammaEditor(cfg, onChange){
+  const box = el('div'); const st = { n:cfg.n, edges:cfg.edges.map(e => e ? e.slice() : null) };
+  const rows = el('div'); const free = el('div', 'viz-label', '');
+  function draw(){
+    rows.innerHTML = ''; const NE = cfg.maxE;
+    for(let i = 0; i < NE; i++){ const r = el('div', 'btn-row'); r.style.margin = '2px 0'; const mkSel = (k) => { const s = el('select'); s.appendChild(el('option', null, '—')).value = ''; for(let v = 0; v < st.n; v++) s.appendChild(el('option', null, VN(v))).value = v; s.value = st.edges[i] ? st.edges[i][k] : ''; s.setAttribute('aria-label', `extremo ${k + 1} de e${i + 1}`);
+      s.addEventListener('change', () => { const a = rows.children[i].querySelectorAll('select'), x = a[0].value, y = a[1].value; st.edges[i] = (x !== '' && y !== '') ? [+x, +y] : null; onChange(); }); return s; };
+      r.append(el('span', 'viz-label', `γ(e${i + 1}) =`), el('span', 'viz-label', cfg.directed ? '(' : '{'), mkSel(0), el('span', 'viz-label', ','), mkSel(1), el('span', 'viz-label', cfg.directed ? ')' : '}')); rows.appendChild(r); }
+  }
+  box.append(rows); box.draw = draw; box.state = st; box.load = (n, edges) => { st.n = n; st.edges = Array.from({ length:cfg.maxE }, (_, i) => edges[i] ? edges[i].slice() : null); draw(); };
+  st.edges = Array.from({ length:cfg.maxE }, (_, i) => st.edges[i] || null); return box;
+}
+function graphStep(cfg){
+  return {
+    name:cfg.name, short:cfg.short, shape:cfg.shape, desc:cfg.desc,
+    render(stage){
+      const ed = gammaEditor({ n:cfg.pre[0].n_, edges:cfg.pre[0].e, maxE:cfg.maxE, directed:cfg.directed }, () => upd());
+      const pre = el('div', 'btn-row'), svg = el('div'), out = el('div', 'formula'), extra = el('div');
+      let cur = 0;
+      function upd(){
+        const st = ed.state; pre.querySelectorAll('button').forEach((b, i) => b.classList.toggle('active', i === cur));
+        const E = st.edges.filter(Boolean); svg.innerHTML = drawGraph(st.n, st.edges, { directed:cfg.directed });
+        const g = gdeg(st.n, st.edges, cfg.directed), loops = st.edges.map((e, i) => e && e[0] === e[1] ? i + 1 : 0).filter(Boolean);
+        const seen = {}, par = []; st.edges.forEach((e, i) => { if(!e) return; const k = cfg.directed ? e[0] + '>' + e[1] : Math.min(e[0], e[1]) + '-' + Math.max(e[0], e[1]); if(seen[k] !== undefined) par.push([seen[k] + 1, i + 1]); else seen[k] = i; });
+        const simple = !loops.length && !par.length;
+        out.innerHTML = `V = {${rng_(0, st.n - 1).map(VN).join(', ')}} · E = {${st.edges.map((e, i) => e ? 'e' + (i + 1) : null).filter(Boolean).join(', ') || '∅'}} · |V| = ${st.n}, |E| = ${E.length}<br>` +
+          (cfg.directed ? `Grados de entrada / salida: ${rng_(0, st.n - 1).map(i => `${VN(i)}: ${g.i_[i]}/${g.o_[i]}`).join(' · ')}` : `Grados: ${rng_(0, st.n - 1).map(i => `${VN(i)}: ${g.d[i]}`).join(' · ')} (el bucle cuenta 2) · suma = ${g.d.reduce((a, b) => a + b, 0)} = 2·|E| ${g.d.reduce((a, b) => a + b, 0) === 2 * E.length ? vtag(true) : ''}`) +
+          `<br>Bucles: <b>${loops.length ? loops.map(i => 'e' + i).join(', ') : 'ninguno'}</b> · Aristas paralelas: <b>${par.length ? par.map(p => `e${p[0]} y e${p[1]}`).join('; ') : 'ninguna'}</b><br>¿Grafo simple? ${vtag(simple)} ${simple ? '(γ inyectiva y sin bucles)' : `(${loops.length ? 'tiene bucles' : ''}${loops.length && par.length ? ' y ' : ''}${par.length ? 'γ no es inyectiva' : ''})`}`;
+        out.classList.toggle('win', simple); if(cfg.adj) cfg.adj(extra, st, cfg.directed);
+      }
+      cfg.pre.forEach((p, i) => pre.appendChild(chipBtn(p.n, false, () => { cur = i; ed.load(p.n_v || p.n_, p.e); upd(); })));
+      ed.draw(); stage.append(el('div', 'panel-title c1', 'Ejemplos de la clase'), pre, svg, el('div', 'panel-title c2', 'La aplicación de incidencia γ: edita a qué vértices une cada arista'), ed, out, extra);
+      cfg.after && cfg.after(stage); upd();
+    }
+  };
+}
+const adjTable = (extra, st, dir) => { const n = st.n, M = Array.from({ length:n }, () => Array(n).fill(0)); st.edges.forEach(e => { if(!e) return; if(dir){ M[e[0]][e[1]]++; } else if(e[0] === e[1]) M[e[0]][e[0]]++; else { M[e[0]][e[1]]++; M[e[1]][e[0]]++; } });
+  extra.innerHTML = `<div class="panel-title c3">Matriz de adyacencia A (A[i][j] = nº de aristas${dir ? ' de vi a vj' : ' entre vi y vj'})</div><div class="tbl-wrap"><table class="dt"><tr><th></th>${rng_(0, n - 1).map(i => `<th>${VN(i)}</th>`).join('')}</tr>${M.map((r, i) => `<tr><th>${VN(i)}</th>${r.map(x => `<td>${vtag(x > 0)}<small style="color:var(--muted)">${x > 1 ? ' ×' + x : ''}</small></td>`).join('')}</tr>`).join('')}</table></div>`; };
+
+/* ---------- PASO 0 ---------- */
+steps.push({
+  name:'Antes de empezar: puntos y conexiones', short:'0 Contexto', shape:null,
+  desc:'Un <b>grafo</b> es la forma matemática de hablar de <b>cosas y las conexiones entre ellas</b>: ciudades y carreteras, personas y amistades, neuronas y sinapsis, páginas web y enlaces. Aquí vas a construir grafos y a ver cómo la lógica y los conjuntos los describen.',
+  render(stage){
+    const t = el('div', 'bio-text');
+    t.innerHTML = `<p><b>La idea de fondo.</b> Un grafo tiene <i>vértices</i> (los puntos) y <i>aristas</i> (las conexiones). La definición formal usa una aplicación γ que a cada arista le asigna los vértices que une: es una <b>función</b>, como las de teoría de conjuntos.</p>
+    <p><b>Por qué importa en IA.</b> Las redes neuronales son grafos dirigidos con pesos (siguiente tema); las redes sociales, los mapas de rutas, los grafos de conocimiento y las dependencias entre variables también.</p>`;
+    stage.appendChild(t);
+    const flow = el('div', 'flow');
+    [['Grafo (V, E, γ)', 'no dirigido', 1], ['Dirigido', 'aristas con flecha', 2], ['Simple', 'sin bucles ni paralelas', 3], ['Conexo', 'caminos entre todos', 4]].forEach(([n, s, to], i, a) => {
+      const f = el('div', 'fnode', `${n}<small>${s}</small>`); f.tabIndex = 0; f.addEventListener('click', () => goStep(to)); f.addEventListener('keydown', e => { if(e.key === 'Enter') goStep(to); });
+      flow.appendChild(f); if(i < a.length-1) flow.appendChild(el('span', 'farrow', '→'));
+    });
+    stage.appendChild(flow);
+    stage.appendChild(el('p', 'pad-note', 'Haz clic en cualquier cuadro o pregunta para saltar a ese paso. También funcionan las flechas ← → del teclado.'));
+    stage.appendChild(qcards(QUESTIONS));
+  }
+});
+
+/* ---------- PASO 1: grafo ---------- */
+steps.push(graphStep({
+  name:'Un grafo es una terna (V, E, γ)', short:'1 Grafo', shape:'G = (V, E, γ)  ·  γ: E → pares de V', maxE:7, directed:false,
+  desc:'Un <b>grafo</b> G = (V, E, γ) tiene vértices V, aristas E y una aplicación de <b>incidencia</b> γ que identifica cada arista con el par de vértices que une. Carga un ejemplo de la clase o <b>edita γ</b> tú mismo: el dibujo y los datos se actualizan al instante. Permite bucles y aristas paralelas.',
+  pre:[
+    { n:'Ejemplo 1: v₁—v₂—v₃', n_v:3, e:[[0, 1], [1, 2]] },
+    { n:'Ejemplo 2: con un bucle en v₂', n_v:4, e:[[1, 1], [1, 2], [2, 3], [3, 1]] },
+    { n:'Ejemplo 3: aristas paralelas', n_v:4, e:[[0, 1], [0, 1], [1, 2], [1, 2], [0, 3], [1, 3], [2, 3]] }
+  ].map(p => ({ ...p, n:p.n, n_:p.n_v })),
+  after:stage => stage.appendChild(el('p', 'pad-note', '<b>Comprueba:</b> con el ejemplo 2, γ(e₁) = {v₂, v₂}: es un <b>bucle</b>. Con el ejemplo 3, γ(e₁) = γ(e₂) = {v₁, v₂}: dos aristas distintas unen los mismos vértices, así que γ <b>no es inyectiva</b>. Las dos cosas serán importantes en «grafos simples».'))
+}));
+/* ---------- PASO 2: dirigido ---------- */
+steps.push(graphStep({
+  name:'Grafos dirigidos: las aristas tienen sentido', short:'2 Dirigido', shape:'γ: E → V × V', maxE:6, directed:true,
+  desc:'En un <b>grafo dirigido</b>, γ asigna a cada arista un <b>par ordenado</b> (origen, destino): la flecha solo se puede recorrer en un sentido. Es la estructura de una red neuronal. Edita γ y mira cómo cambian los grados de <b>entrada</b> y de <b>salida</b>.',
+  pre:[{ n:'Ejemplo de la clase', n_:4, e:[[0, 1], [0, 2], [1, 2], [2, 3]] }, { n:'Con ciclo: v₁→v₂→v₃→v₁', n_:3, e:[[0, 1], [1, 2], [2, 0]] }, { n:'Con bucle y flecha doble', n_:3, e:[[0, 0], [0, 1], [1, 0], [1, 2]] }],
+  adj:adjTable,
+  after:stage => stage.appendChild(el('p', 'pad-note', '<b>Ejemplo de la clase:</b> γ(e₁) = (v₁, v₂), γ(e₂) = (v₁, v₃), γ(e₃) = (v₂, v₃), γ(e₄) = (v₃, v₄). Fíjate: de v₄ no sale ninguna flecha (grado de salida 0) y a v₁ no llega ninguna (grado de entrada 0). La matriz de adyacencia ya no es simétrica.'))
+}));
+
+/* ---------- PASO 3: simple ---------- */
+steps.push(graphStep({
+  name:'Grafos simples: sin aristas repetidas y sin bucles', short:'3 Simple', shape:'γ inyectiva  ∧  sin bucles', maxE:7, directed:false,
+  desc:'Un grafo es <b>simple</b> si cumple dos condiciones: (1) <b>γ es inyectiva</b>, es decir, no hay dos aristas que unan el mismo par de vértices; (2) <b>no hay bucles</b>. La página comprueba las dos y te dice <b>qué arista</b> rompe cada una. En un grafo simple se puede olvidar γ y trabajar con su <b>matriz de adyacencia</b>.',
+  pre:[
+    { n:'Simple (ejemplo 1)', n_:3, e:[[0, 1], [1, 2]] }, { n:'No simple: bucle (ejemplo 2)', n_:4, e:[[1, 1], [1, 2], [2, 3], [3, 1]] },
+    { n:'No simple: paralelas (ejemplo 3)', n_:4, e:[[0, 1], [0, 1], [1, 2], [1, 2], [0, 3], [1, 3], [2, 3]] }, { n:'Simple con 4 vértices', n_:4, e:[[0, 1], [0, 2], [1, 2], [2, 3]] }
+  ],
+  adj:adjTable,
+  after:stage => { stage.appendChild(el('div', 'panel-title c3', 'Comprueba lo aprendido')); stage.appendChild(tfQuiz([
+    { q:'Un grafo con dos aristas distintas que unen v₁ y v₂ es simple', ans:false, why:'γ(e) = γ(e′): γ no es inyectiva.' }, { q:'Un grafo sin bucles ni aristas paralelas es simple', ans:true, why:'Son justo las dos condiciones de la definición.' }
+  ])); }
+}));
+
+/* ---------- PASO 4: conexo ---------- */
+steps.push({
+  name:'Grafos conexos: ¿se puede llegar de cualquiera a cualquiera?', short:'4 Conexo', shape:'camino entre todo par',
+  desc:'Un grafo es <b>conexo</b> si para cada par de vértices distintos existe un <b>camino</b> (sucesión de aristas adyacentes) que los une. Activa o desactiva aristas entre los 5 vértices: la página colorea las <b>componentes conexas</b> y busca un camino entre los dos vértices que elijas.',
+  render(stage){
+    const n = 5, PAIRS = []; for(let i = 0; i < n; i++) for(let j = i + 1; j < n; j++) PAIRS.push([i, j]);
+    let on = new Set([0, 1, 3, 4, 7, 9].map(k => k)); /* se recalcula abajo con los pares de la clase */
+    const idx = (a, b) => PAIRS.findIndex(p => p[0] === a - 1 && p[1] === b - 1);
+    const EX1 = [[1, 2], [1, 3], [2, 3], [3, 4], [3, 5], [4, 5]].map(p => idx(...p)), EX2 = [[1, 2], [1, 3], [2, 3], [4, 5]].map(p => idx(...p));
+    on = new Set(EX1); let s = 0, t = 4;
+    const bar = el('div', 'btn-row'), pre = el('div', 'btn-row'), svg = el('div'), out = el('div', 'formula'), sel1 = el('select'), sel2 = el('select'), pr = el('div', 'btn-row');
+    rng_(0, n - 1).forEach(i => { sel1.appendChild(el('option', null, String(i + 1))).value = i; sel2.appendChild(el('option', null, String(i + 1))).value = i; }); sel1.value = s; sel2.value = t;
+    function comps(){ const par = rng_(0, n - 1); const f = x => par[x] === x ? x : (par[x] = f(par[x])); [...on].forEach(k => { const [a, b] = PAIRS[k]; par[f(a)] = f(b); }); return rng_(0, n - 1).map(f); }
+    function bfs(a, b){ const prev = Array(n).fill(-2); prev[a] = -1; const q = [a]; while(q.length){ const x = q.shift(); if(x === b) break; [...on].forEach(k => { const [u, v] = PAIRS[k]; const y = u === x ? v : (v === x ? u : -1); if(y >= 0 && prev[y] === -2){ prev[y] = x; q.push(y); } }); } if(prev[b] === -2) return null; const path = []; for(let x = b; x !== -1; x = prev[x]) path.unshift(x); return path; }
+    function upd(){
+      s = +sel1.value; t = +sel2.value; const C = comps(), roots = [...new Set(C)], conn = roots.length === 1; const path = s === t ? [s] : bfs(s, t);
+      const edges = [...on].sort((a, b) => a - b).map(k => PAIRS[k]), hi = new Set(); if(path) for(let i = 0; i + 1 < path.length; i++){ const k = edges.findIndex(e => (e[0] === path[i] && e[1] === path[i + 1]) || (e[1] === path[i] && e[0] === path[i + 1])); if(k >= 0) hi.add(k); }
+      svg.innerHTML = drawGraph(n, edges, { hi, ncol:i => COLORS[roots.indexOf(C[i]) % COLORS.length] });
+      bar.querySelectorAll('button').forEach((b, k) => b.classList.toggle('active', on.has(k)));
+      out.innerHTML = `Aristas: ${edges.map(e => `{${e[0] + 1},${e[1] + 1}}`).join(', ') || '∅'}<br>Componentes conexas: <b>${roots.length}</b> → ${roots.map(r => '{' + rng_(0, n - 1).filter(i => C[i] === r).map(i => i + 1).join(',') + '}').join(' · ')}<br>¿G es conexo? ${vtag(conn)} ${conn ? '(una sola componente)' : '(hay vértices a los que no se puede llegar)'}<br>Camino de <b>${s + 1}</b> a <b>${t + 1}</b>: ${path ? `<span class="ok">${path.map(x => x + 1).join(' → ')}</span> (longitud ${path.length - 1})` : '<span class="no">no existe ningún camino</span>'}`; out.classList.toggle('win', conn);
+    }
+    PAIRS.forEach(([a, b], k) => bar.appendChild(chipBtn(`{${a + 1},${b + 1}}`, false, () => { on.has(k) ? on.delete(k) : on.add(k); upd(); })));
+    pre.append(chipBtn('Ejemplo 1 (conexo)', false, () => { on = new Set(EX1); upd(); }), chipBtn('Ejemplo 2 (no conexo)', false, () => { on = new Set(EX2); upd(); }));
+    [sel1, sel2].forEach(x => x.addEventListener('change', upd)); pr.append(el('span', 'viz-label', 'camino de'), sel1, el('span', 'viz-label', 'a'), sel2);
+    stage.append(el('div', 'panel-title c1', 'Ejemplos de la clase'), pre, el('div', 'panel-title c2', 'Aristas posibles (pulsa para activar/desactivar)'), bar, svg, pr, out);
+    stage.appendChild(el('p', 'pad-note', '<b>Ejemplo 1:</b> {1,2},{1,3},{2,3},{3,4},{3,5},{4,5} → conexo. <b>Ejemplo 2:</b> {1,2},{1,3},{2,3},{4,5} → no conexo: no hay camino de 3 a 5, y los colores muestran las dos «islas». Prueba a añadir una sola arista {3,4} al ejemplo 2.'));
+    upd();
+  }
+});
+
+/* ---------- PASO 5: resumen ---------- */
+steps.push({
+  name:'Resumen y código', short:'5 Resumen', shape:null,
+  desc:'En programación, un grafo simple suele guardarse como diccionario de adyacencias o como matriz. La conexión se comprueba con un recorrido (BFS). Las cifras de abajo las calcula la página.',
+  render(stage){
+    const T = el('div', 'tbl-wrap'); T.innerHTML = `<table class="dt"><tr><th>Concepto</th><th>Definición</th></tr><tr><td>Grafo</td><td>(V, E, γ), γ: E → pares de vértices</td></tr><tr><td>Dirigido</td><td>γ: E → V × V (pares ordenados)</td></tr><tr><td>Simple</td><td>γ inyectiva y sin bucles</td></tr><tr><td>Conexo</td><td>camino entre cualquier par de vértices</td></tr></table>`; stage.appendChild(T);
+    stage.appendChild(el('div', 'panel-title c1', 'En Python'));
+    stage.appendChild(codeBox(`from collections import deque
+
+def conexo(vertices, aristas):
+    ady = {v: set() for v in vertices}
+    for a, b in aristas:
+        ady[a].add(b); ady[b].add(a)
+    visto, cola = {vertices[0]}, deque([vertices[0]])
+    while cola:                               # recorrido en anchura (BFS)
+        for w in ady[cola.popleft()] - visto:
+            visto.add(w); cola.append(w)
+    return len(visto) == len(vertices)
+
+V = [1, 2, 3, 4, 5]
+print(conexo(V, [(1,2),(1,3),(2,3),(3,4),(3,5),(4,5)]))
+print(conexo(V, [(1,2),(1,3),(2,3),(4,5)]))`));
+    const ok = (E) => { const par = [0, 1, 2, 3, 4], f = x => par[x] === x ? x : (par[x] = f(par[x])); E.forEach(([a, b]) => par[f(a - 1)] = f(b - 1)); return new Set([0, 1, 2, 3, 4].map(f)).size === 1; };
+    stage.appendChild(el('div', 'viz-label', 'Salida del programa (calculada aquí con las mismas reglas):'));
+    stage.appendChild(codeBox([ok([[1, 2], [1, 3], [2, 3], [3, 4], [3, 5], [4, 5]]), ok([[1, 2], [1, 3], [2, 3], [4, 5]])].map(b => b ? 'True' : 'False').join('\n')));
+    stage.appendChild(el('div', 'panel-title c3', 'Errores frecuentes'));
+    const errs = el('div', 'bio-text'); errs.innerHTML = `<p><b>1.</b> Contar el bucle una sola vez al calcular el grado: un bucle aporta 2.</p>
+      <p><b>2.</b> Pensar que un grafo con varias aristas no es simple: solo deja de serlo si dos aristas distintas unen el mismo par de vértices (γ no es inyectiva) o hay un bucle.</p>
+      <p><b>3.</b> Creer que dibujar el grafo «de otra forma» lo cambia: lo que define el grafo es γ, no el dibujo.</p>
+      <p><b>4.</b> Ignorar la dirección: en un grafo dirigido v₁→v₂ no implica que se pueda ir de v₂ a v₁.</p>`;
+    stage.appendChild(errs); stage.appendChild(qcards(QUESTIONS));
+  }
+});
+
+/* =========================================================
+   Motor de navegación (idéntico en todas las actividades)
+========================================================= */
+let current = 0;
+function renderTrail(){
+  const tr = $('#trail'); tr.innerHTML = '';
+  steps.forEach((s, i) => { const b = el('button', null, s.short); b.type = 'button'; b.addEventListener('click', () => goTo(i)); tr.appendChild(b); });
+}
+function goTo(i){
+  current = i;
+  clearTimers();
+  const s = steps[current];
+  $('#stepCount').textContent = current === 0 ? 'Introducción' : `Paso ${current} de ${steps.length - 1}`;
+  $('#stepTitle').textContent = s.name;
+  $('#stepDesc').innerHTML = s.desc;
+  const chip = $('#shapeChip');
+  if(s.shape){ chip.style.display = ''; chip.innerHTML = `<b>${s.shape}</b>`; } else chip.style.display = 'none';
+  const stage = $('#stage'); stage.innerHTML = '';
+  s.render(stage);
+  const btns = document.querySelectorAll('.trail button');
+  btns.forEach((b, idx) => b.classList.toggle('active', idx === current));
+  if(btns[current]) btns[current].scrollIntoView({ block:'nearest', inline:'center' });
+  $('#prevBtn').disabled = current === 0;
+  $('#nextBtn').textContent = current === steps.length - 1 ? 'Volver al inicio ↺' : 'Siguiente →';
+  window.scrollTo(0, 0);
+}
+$('#prevBtn').addEventListener('click', () => { if(current > 0) goTo(current - 1); });
+$('#nextBtn').addEventListener('click', () => goTo(current === steps.length - 1 ? 0 : current + 1));
+document.addEventListener('keydown', e => {
+  if(e.target && (e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT')) return;
+  if(e.key === 'ArrowRight') $('#nextBtn').click();
+  if(e.key === 'ArrowLeft') $('#prevBtn').click();
+});
+renderTrail(); goTo(0);
+</script>
+</body>
+</html>
