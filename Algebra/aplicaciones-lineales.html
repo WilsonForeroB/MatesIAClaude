@@ -1,0 +1,831 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="generator" content="Generado con asistencia de IA (Claude) - revisar por el responsable antes de su uso">
+<title>Aplicaciones lineales, núcleo e imagen</title>
+<!-- Artefacto generado con asistencia de IA (Claude Sonnet 5.5). Requiere revision del desarrollador responsable. Contenido basado en las diapositivas de Aplicaciones lineales, nucleo e imagen de 2-algebraa.tex (02MIAR, VIU), con las erratas corregidas. Datos: solo ejemplos ficticios o de dominio publico. Sin dependencias de red. -->
+<style>
+  :root{
+    --bg:#0B1220; --panel:#121B2E; --panel-2:#17233A; --line:#26324A; --text:#E7ECF5; --muted:#8B96AD;
+    --viu:#E55015; --viu-dim:#4A2212;
+    --cyan:#5EEAD4; --cyan-dim:#1F4A45;
+    --pink:#F472B6; --pink-dim:#452236;
+    --radius:14px;
+    --font-head:'Space Grotesk','Segoe UI',sans-serif; --font-body:'IBM Plex Sans','Segoe UI',sans-serif; --font-mono:'IBM Plex Mono','Consolas',monospace;
+    padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+  }
+  *{box-sizing:border-box;}
+  html,body{height:100%;}
+  body{ margin:0; background:var(--bg); color:var(--text); font-family:var(--font-body); min-height:100%; display:flex; flex-direction:column; overflow-x:hidden; }
+  ::selection{ background:var(--viu-dim); color:var(--viu); }
+
+  header{ padding:18px clamp(16px,4vw,40px) 10px; display:flex; flex-direction:column; gap:14px; flex:0 0 auto; }
+  .headline-row{ display:flex; align-items:baseline; justify-content:space-between; gap:16px; flex-wrap:wrap; }
+  h1{ font-family:var(--font-head); font-weight:600; font-size:clamp(20px,2.6vw,28px); margin:0; letter-spacing:-0.01em; }
+  h1 span{ color:var(--viu); }
+  .net-tag{ font-family:var(--font-mono); font-size:12.5px; color:var(--muted); }
+  .trail{ display:flex; gap:4px; overflow-x:auto; padding-bottom:4px; scrollbar-width:thin; }
+  .trail::-webkit-scrollbar{height:5px;} .trail::-webkit-scrollbar-thumb{background:var(--line); border-radius:4px;}
+  .trail button{ flex:0 0 auto; background:var(--panel); border:1px solid var(--line); color:var(--muted); font-family:var(--font-mono); font-size:11.5px; padding:7px 11px; border-radius:999px; cursor:pointer; white-space:nowrap; transition:border-color .15s,color .15s,background .15s; }
+  .trail button:hover{ border-color:#3a4a6b; color:var(--text); }
+  .trail button.active{ background:var(--viu-dim); border-color:var(--viu); color:var(--viu); }
+
+  main{ flex:1 0 auto; display:flex; align-items:stretch; justify-content:center; padding:6px clamp(16px,4vw,40px) 10px; }
+  .card{ width:100%; max-width:1040px; background:var(--panel); border:1px solid var(--line); border-radius:var(--radius); padding:clamp(18px,3vw,30px); display:flex; flex-direction:column; gap:16px; min-width:0; }
+  .step-meta{ display:flex; justify-content:space-between; align-items:flex-start; gap:20px; flex-wrap:wrap; }
+  .step-count{ font-family:var(--font-mono); font-size:12.5px; color:var(--viu); margin:0 0 4px; }
+  .step-title{ font-family:var(--font-head); font-weight:600; font-size:clamp(18px,2.4vw,24px); margin:0; }
+  .step-desc{ color:var(--muted); font-size:14.5px; line-height:1.6; max-width:70ch; margin:6px 0 0; }
+  .step-desc b{ color:var(--text); font-weight:600; }
+  .shape-chip{ font-family:var(--font-mono); font-size:13px; background:var(--panel-2); border:1px solid var(--line); padding:9px 14px; border-radius:10px; color:var(--text); }
+  .shape-chip b{ color:var(--viu); font-weight:600; }
+  #stage{ display:flex; flex-direction:column; align-items:center; gap:16px; padding:6px 2px; }
+  #stage > *{ width:100%; min-width:0; }
+
+  footer{ flex:0 0 auto; display:flex; justify-content:center; gap:14px; flex-wrap:wrap; padding:4px clamp(16px,4vw,40px) calc(18px + env(safe-area-inset-bottom,0px)); }
+  .nav-btn{ font-family:var(--font-body); font-weight:500; font-size:14.5px; background:var(--panel); border:1px solid var(--line); color:var(--text); padding:11px 22px; border-radius:10px; cursor:pointer; transition:border-color .15s,transform .1s; }
+  .nav-btn:hover{ border-color:var(--viu); } .nav-btn:active{ transform:scale(.97); }
+  .nav-btn:disabled{ opacity:.35; cursor:default; } .nav-btn:disabled:hover{ border-color:var(--line); }
+  .nav-btn.primary{ background:var(--viu-dim); border-color:var(--viu); color:var(--viu); }
+
+  .viz-row{ display:flex; align-items:flex-start; justify-content:center; gap:clamp(18px,3vw,36px); flex-wrap:wrap; width:100%; }
+  .viz-col{ display:flex; flex-direction:column; align-items:center; gap:10px; flex:1 1 280px; min-width:0; }
+  .viz-label{ font-family:var(--font-mono); font-size:12px; color:var(--muted); text-align:center; line-height:1.4; }
+  .viz-label b{ color:var(--text); font-weight:600; }
+
+  .formula{ font-family:var(--font-mono); font-size:13.5px; background:var(--panel-2); border:1px solid var(--line); border-radius:10px; padding:12px 16px; min-height:44px; display:block; text-align:center; color:var(--text); max-width:720px; margin:0 auto; line-height:1.7; overflow-x:auto; }
+  .formula b{ color:var(--cyan); } .formula .ok{ color:var(--viu); font-weight:600; } .formula .no{ color:var(--pink); font-weight:600; }
+  .formula.win{ border-color:var(--viu); }
+  .pad-note{ font-size:13px; color:var(--muted); text-align:center; max-width:74ch; margin:0 auto; line-height:1.6; }
+  .pad-note b{ color:var(--text); font-weight:600; }
+  .bio-text{ max-width:74ch; margin:0 auto; }
+  .bio-text p{ font-size:13.8px; line-height:1.65; color:var(--text); margin:0 0 10px; }
+  .bio-text b{ color:var(--viu); font-weight:600; } .bio-text i{ color:var(--cyan); font-style:normal; }
+
+  .qgrid{ display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:10px; }
+  .qcard{ background:var(--panel-2); border:1px solid var(--line); border-radius:12px; padding:14px 16px; cursor:pointer; transition:border-color .15s; }
+  .qcard:hover{ border-color:var(--viu); }
+  .qcard .n{ font-family:var(--font-mono); font-size:11.5px; color:var(--viu); }
+  .qcard h3{ font-family:var(--font-head); font-size:15px; margin:4px 0 6px; font-weight:600; }
+  .qcard p{ margin:0; font-size:12.5px; color:var(--muted); line-height:1.5; }
+
+  .btn-row{ display:flex; gap:8px; justify-content:center; flex-wrap:wrap; align-items:center; }
+  .toggle-btn{ font-family:var(--font-mono); font-size:11.5px; background:var(--panel-2); border:1px solid var(--line); color:var(--muted); padding:8px 13px; border-radius:999px; cursor:pointer; transition:all .15s; }
+  .toggle-btn:hover{ color:var(--text); border-color:#3a4a6b; }
+  .toggle-btn.active{ background:var(--viu-dim); border-color:var(--viu); color:var(--viu); }
+  .toggle-btn.good{ background:var(--viu-dim); border-color:var(--viu); color:var(--viu); }
+  .toggle-btn.bad{ background:var(--pink-dim); border-color:var(--pink); color:var(--pink); }
+
+  .tv{ display:inline-block; min-width:22px; padding:1px 6px; border-radius:6px; font-family:var(--font-mono); font-weight:600; font-size:12.5px; }
+  .tv.v1{ background:var(--viu-dim); color:var(--viu); } .tv.v0{ background:var(--pink-dim); color:var(--pink); }
+
+  .stats{ display:flex; gap:10px; flex-wrap:wrap; justify-content:center; }
+  .stat{ background:var(--panel-2); border:1px solid var(--line); border-radius:10px; padding:8px 14px; text-align:center; min-width:110px; }
+  .stat .l{ font-family:var(--font-mono); font-size:10.5px; color:var(--muted); display:block; margin-bottom:3px; }
+  .stat .v{ font-family:var(--font-mono); font-size:15px; font-weight:600; color:var(--text); }
+  .stat.c1 .v{ color:var(--viu); } .stat.c2 .v{ color:var(--cyan); } .stat.c3 .v{ color:var(--pink); }
+  .panel-title{ font-family:var(--font-head); font-weight:600; font-size:13.5px; color:var(--text); text-align:center; margin:0 0 2px; }
+  .panel-title.c1{ color:var(--viu); } .panel-title.c2{ color:var(--cyan); } .panel-title.c3{ color:var(--pink); }
+
+  pre.code{ margin:0; background:#0E1626; border:1px solid var(--line); border-radius:10px; padding:12px 14px; font-family:var(--font-mono); font-size:12.3px; line-height:1.6; color:var(--text); overflow-x:auto; text-align:left; }
+  pre.code .cm{ color:#6b7a99; } pre.code .kw{ color:var(--pink); }
+
+  table.dt{ border-collapse:collapse; font-family:var(--font-mono); font-size:12.5px; margin:0 auto; }
+  table.dt th,table.dt td{ border:1px solid var(--line); padding:6px 11px; text-align:center; }
+  table.dt th{ background:var(--panel-2); color:var(--muted); font-weight:500; }
+  table.dt th.res{ background:var(--viu-dim); color:var(--viu); }
+  table.dt tr.hl td{ background:rgba(94,234,212,.12); }
+  table.dt tr.pick{ cursor:pointer; } table.dt tr.pick:hover td{ background:rgba(255,255,255,.04); }
+  .tbl-wrap{ overflow-x:auto; max-width:100%; }
+
+  .qrow{ background:var(--panel-2); border:1px solid var(--line); border-radius:12px; padding:12px 14px; display:flex; gap:12px; align-items:center; justify-content:space-between; flex-wrap:wrap; }
+  .qrow .tx{ flex:1 1 280px; font-size:14px; line-height:1.5; }
+  .qrow .opts{ display:flex; gap:6px; flex-wrap:wrap; }
+  .qrow .fb{ flex:1 1 100%; font-size:12.5px; color:var(--muted); line-height:1.5; }
+  .qrow .fb b.ok{ color:var(--viu); } .qrow .fb b.no{ color:var(--pink); }
+  .qrow.done{ border-color:#3a4a6b; }
+
+  select,.nin{ font-family:var(--font-mono); font-size:13px; background:var(--panel-2); color:var(--text); border:1px solid var(--line); border-radius:8px; padding:8px 10px; max-width:100%; }
+  select:focus,button:focus-visible,.nin:focus,summary:focus-visible,input[type=range]:focus-visible{ outline:2px solid var(--cyan); outline-offset:1px; }
+
+  .flow{ display:flex; flex-wrap:wrap; gap:8px; align-items:center; justify-content:center; }
+  .fnode{ background:var(--panel-2); border:1px solid var(--line); border-radius:10px; padding:8px 12px; font-family:var(--font-mono); font-size:12px; cursor:pointer; transition:border-color .15s; }
+  .fnode:hover{ border-color:var(--viu); } .fnode small{ display:block; color:var(--muted); font-size:10.5px; }
+  .farrow{ color:var(--muted); }
+
+  /* matrices y fórmulas con tablas/CSS (sin librerías) */
+  table.mx{ border-collapse:separate; border-spacing:0; font-family:var(--font-mono); font-size:13px; border-left:2px solid var(--muted); border-right:2px solid var(--muted); border-radius:7px; margin:2px 3px; display:inline-table; vertical-align:middle; }
+  table.mx td{ padding:4px 10px; text-align:right; min-width:34px; white-space:nowrap; }
+  table.mx td.c1{ color:var(--viu); } table.mx td.c2{ color:var(--cyan); } table.mx td.c3{ color:var(--pink); }
+  table.mx td.piv{ background:var(--viu-dim); color:var(--viu); font-weight:600; }
+  table.mx td.col{ background:rgba(94,234,212,.12); }
+  table.mx.mxin td{ padding:3px 4px; }
+  .nin{ width:68px; text-align:right; padding:6px 7px; }
+  .nin.bad{ border-color:var(--pink); background:var(--pink-dim); }
+  .eq{ display:flex; align-items:center; justify-content:center; flex-wrap:wrap; gap:6px 8px; font-family:var(--font-mono); font-size:13.5px; line-height:1.5; max-width:100%; }
+  .eq .op{ color:var(--muted); } .eq .nm{ color:var(--cyan); } .eq .nm.o{ color:var(--viu); }
+  .eqscroll{ overflow-x:auto; max-width:100%; padding:4px 0; }
+  .fld{ display:inline-flex; align-items:center; gap:6px; font-family:var(--font-mono); font-size:12.5px; color:var(--muted); }
+  .fld .nin{ width:72px; }
+  .flds{ display:flex; gap:12px; flex-wrap:wrap; justify-content:center; align-items:center; }
+  .sl{ display:flex; align-items:center; gap:10px; font-family:var(--font-mono); font-size:12.5px; color:var(--muted); flex-wrap:wrap; justify-content:center; }
+  .sl input[type=range]{ accent-color:var(--viu); width:min(300px,60vw); }
+  .sl output{ color:var(--viu); min-width:6ch; display:inline-block; text-align:left; }
+  .bar{ display:flex; gap:3px; justify-content:center; flex-wrap:wrap; }
+  .bar span{ width:30px; height:26px; border-radius:6px; border:1px solid var(--line); background:var(--panel-2); font-family:var(--font-mono); font-size:11px; color:var(--muted); display:flex; align-items:center; justify-content:center; }
+  .bar span.k{ background:var(--pink-dim); border-color:var(--pink); color:var(--pink); }
+  .bar span.i{ background:var(--viu-dim); border-color:var(--viu); color:var(--viu); }
+  .bar span.z{ border-style:dashed; }
+  details{ background:var(--panel-2); border:1px solid var(--line); border-radius:12px; padding:10px 14px; max-width:74ch; margin:0 auto; }
+  details summary{ cursor:pointer; font-family:var(--font-head); font-weight:600; font-size:14px; color:var(--cyan); }
+  details .sol{ margin-top:10px; font-size:13.5px; line-height:1.7; }
+  details .sol b{ color:var(--viu); }
+  .tagrow{ display:flex; gap:8px; justify-content:center; flex-wrap:wrap; }
+  .tag{ font-family:var(--font-mono); font-size:12px; padding:5px 11px; border-radius:999px; border:1px solid var(--line); background:var(--panel-2); color:var(--muted); }
+  .tag.y{ background:var(--viu-dim); border-color:var(--viu); color:var(--viu); } .tag.n{ background:var(--pink-dim); border-color:var(--pink); color:var(--pink); }
+
+  svg text{ font-family:var(--font-mono); }
+  svg{ max-width:100%; height:auto; }
+  @media (max-width:640px){ .viz-row{ gap:16px; } table.dt th,table.dt td{ padding:5px 7px; } table.mx td{ padding:4px 6px; min-width:26px; } .nin{ width:58px; } }
+  @media (prefers-reduced-motion:reduce){ *{ transition:none !important; } }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="headline-row">
+    <h1>Aplicaciones <span>lineales</span>, núcleo e imagen</h1>
+    <span class="net-tag">02MIAR · Matemáticas para la IA · Sesión 6</span>
+  </div>
+  <div class="trail" id="trail"></div>
+</header>
+
+<main>
+  <div class="card">
+    <div class="step-meta">
+      <div>
+        <p class="step-count" id="stepCount"></p>
+        <h2 class="step-title" id="stepTitle"></h2>
+        <p class="step-desc" id="stepDesc"></p>
+      </div>
+      <div class="shape-chip" id="shapeChip"></div>
+    </div>
+    <div id="stage"></div>
+  </div>
+</main>
+
+<footer>
+  <button class="nav-btn" id="prevBtn">← Anterior</button>
+  <button class="nav-btn primary" id="nextBtn">Siguiente →</button>
+</footer>
+
+<script>
+/* =========================================================
+   Utilidades generales
+========================================================= */
+const $ = s => document.querySelector(s);
+let timers = [];
+function clearTimers(){ timers.forEach(t => clearInterval(t)); timers = []; }
+function el(tag, cls, html){ const e = document.createElement(tag); if(cls) e.className = cls; if(html != null) e.innerHTML = html; return e; }
+const V = x => x ? 1 : 0;
+const vtag = x => `<span class="tv v${V(x)}">${x ? '✔' : '✘'}</span>`;
+
+function py(code){
+  return code.replace(/&/g, '&amp;').replace(/</g, '&lt;').split('\n').map(l => {
+    const k = l.indexOf('#'); let body = l, cm = '';
+    if(k >= 0){ body = l.slice(0, k); cm = '<span class="cm">' + l.slice(k) + '</span>'; }
+    body = body.replace(/\b(import|from|as|print|def|return|not|and|or|for|in)\b/g, '<span class="kw">$1</span>');
+    return body + cm;
+  }).join('\n');
+}
+function codeBox(code){ const p = el('pre', 'code'); p.innerHTML = py(code); return p; }
+
+/* ---------- números y vectores (todo se calcula aquí) ---------- */
+const clean = x => Math.abs(x) < 1e-10 ? 0 : x;
+const fmt = x => String(Math.round(clean(x) * 1e4) / 1e4).replace(/-/g, '−');
+const vec = v => '(' + v.map(fmt).join(', ') + ')';
+const matVec = (M, v) => M.map(r => r.reduce((s, a, j) => s + a * v[j], 0));
+const matMul = (A, B) => A.map(r => B[0].map((_, j) => r.reduce((s, a, k) => s + a * B[k][j], 0)));
+const vAdd = (a, b) => a.map((x, i) => x + b[i]);
+const vScale = (k, a) => a.map(x => k * x);
+const maxDiff = (a, b) => Math.max(0, ...a.map((x, i) => Math.abs(x - b[i])));
+const close = (a, b, t = 1e-9) => a.every((x, i) => Math.abs(x - b[i]) <= t * (1 + Math.abs(x) + Math.abs(b[i])));
+const R = n => `ℝ<sup>${n}</sup>`;
+const sub = (s, i) => `${s}<sub>${i}</sub>`;
+const colv = v => mx(v.map(x => [fmt(x)]));
+
+/* matriz dibujada con tabla + CSS; cls(i,j) devuelve una clase de color */
+function mx(rows, cls){
+  return '<table class="mx">' + rows.map((r, i) => '<tr>' + r.map((x, j) => `<td class="${cls ? (cls(i, j) || '') : ''}">${x}</td>`).join('') + '</tr>').join('') + '</table>';
+}
+const mxn = (M, cls) => mx(M.map(r => r.map(fmt)), cls);
+const eqRow = parts => `<div class="eqscroll"><div class="eq">${parts.join('')}</div></div>`;
+const op = s => `<span class="op">${s}</span>`;
+
+/* entradas numéricas */
+function matInput(data, rows, cols, onCh, name){
+  const t = el('table', 'mx mxin');
+  for(let i = 0; i < rows; i++){
+    const tr = el('tr');
+    for(let j = 0; j < cols; j++){
+      const td = el('td'), inp = el('input', 'nin'); inp.type = 'number'; inp.step = 'any'; inp.value = data[i][j]; inp.setAttribute('aria-label', `${name || 'M'} fila ${i+1} columna ${j+1}`);
+      inp.addEventListener('input', () => { const v = inp.valueAsNumber; if(Number.isNaN(v)){ inp.classList.add('bad'); data[i][j] = 0; } else { inp.classList.remove('bad'); data[i][j] = v; } onCh(); });
+      td.appendChild(inp); tr.appendChild(td);
+    }
+    t.appendChild(tr);
+  }
+  return t;
+}
+function vecInput(arr, labels, onCh){
+  const w = el('div', 'flds'); const inputs = [];
+  arr.forEach((val, i) => {
+    const f = el('label', 'fld', labels[i] + ' = '); const inp = el('input', 'nin'); inp.type = 'number'; inp.step = 'any'; inp.value = val; inp.setAttribute('aria-label', labels[i]);
+    inp.addEventListener('input', () => { const v = inp.valueAsNumber; if(Number.isNaN(v)){ inp.classList.add('bad'); arr[i] = 0; } else { inp.classList.remove('bad'); arr[i] = v; } onCh(); });
+    f.appendChild(inp); w.appendChild(f); inputs.push(inp);
+  });
+  w.sync = () => inputs.forEach((inp, i) => { inp.value = arr[i]; inp.classList.remove('bad'); });
+  return w;
+}
+function slider(label, min, max, val, fmtOut, cb){
+  const w = el('div', 'sl'), lb = el('span', null, label), inp = el('input'), out = el('output');
+  inp.type = 'range'; inp.min = min; inp.max = max; inp.step = 1; inp.value = val; inp.setAttribute('aria-label', label);
+  const draw = () => { out.textContent = fmtOut(+inp.value); };
+  inp.addEventListener('input', () => { draw(); cb(+inp.value); });
+  w.append(lb, inp, out); draw();
+  return { el:w, set:v => { inp.value = v; draw(); }, get:() => +inp.value };
+}
+const chipBtn = (label, on, cb) => { const b = el('button', 'toggle-btn' + (on ? ' active' : ''), label); b.type = 'button'; b.addEventListener('click', () => cb(b)); return b; };
+function mkSelect(opts, val, cb, aria){
+  const s = el('select'); s.setAttribute('aria-label', aria || 'selector');
+  opts.forEach(([v, t]) => { const o = el('option', null, t); o.value = v; if(String(v) === String(val)) o.selected = true; s.appendChild(o); });
+  s.addEventListener('change', () => cb(s.value)); return s;
+}
+
+/* ---------- cuestionario verdadero/falso ---------- */
+function tfQuiz(items){
+  const box = el('div', 'viz-col'); box.style.width = '100%';
+  items.forEach(it => {
+    const row = el('div', 'qrow'); const tx = el('div', 'tx', it.q); const opts = el('div', 'opts'); const fb = el('div', 'fb');
+    [['Verdadero', true], ['Falso', false]].forEach(([lab, val]) => {
+      const b = el('button', 'toggle-btn', lab); b.type = 'button';
+      b.addEventListener('click', () => {
+        const ok = val === it.ans;
+        opts.querySelectorAll('button').forEach(x => x.classList.remove('good', 'bad'));
+        b.classList.add(ok ? 'good' : 'bad');
+        fb.innerHTML = (ok ? '<b class="ok">✔ Correcto.</b> ' : '<b class="no">✘ Casi.</b> ') + it.why;
+        row.classList.add('done');
+      });
+      opts.appendChild(b);
+    });
+    row.append(tx, opts, fb); box.appendChild(row);
+  });
+  return box;
+}
+
+const steps = [];
+function goStep(i){ goTo(i); }
+function qcards(list){
+  const g = el('div', 'qgrid');
+  list.forEach(([n, h, p, to]) => { const c = el('div', 'qcard', `<div class="n">${n}</div><h3>${h}</h3><p>${p}</p>`); c.tabIndex = 0; c.addEventListener('click', () => goStep(to)); c.addEventListener('keydown', e => { if(e.key === 'Enter') goStep(to); }); g.appendChild(c); });
+  return g;
+}
+
+const QUESTIONS = [
+  ['PREGUNTA 1', '¿Qué es una aplicación lineal?', 'Conservar sumas y múltiplos: f(au₁ + bu₂) = af(u₁) + bf(u₂).', 1],
+  ['PREGUNTA 2', '¿Cómo se representa con una matriz?', 'Las columnas de M_f son las imágenes de la base canónica.', 2],
+  ['PREGUNTA 3', '¿Qué son el núcleo y la imagen?', 'Lo que T anula, lo que T alcanza y el teorema de la dimensión.', 6]
+];
+
+/* =========================================================
+   Aritmética exacta con fracciones (eliminación gaussiana)
+========================================================= */
+const gcd = (a, b) => { a = Math.abs(a); b = Math.abs(b); while(b){ [a, b] = [b, a % b]; } return a; };
+const Fr = (n, d = 1) => { if(d < 0){ n = -n; d = -d; } const g = gcd(n, d) || 1; return { n:n / g, d:d / g }; };
+const fadd = (a, b) => Fr(a.n * b.d + b.n * a.d, a.d * b.d);
+const fsub = (a, b) => Fr(a.n * b.d - b.n * a.d, a.d * b.d);
+const fmul = (a, b) => Fr(a.n * b.n, a.d * b.d);
+const fdiv = (a, b) => Fr(a.n * b.d, a.d * b.n);
+const fz = a => a.n === 0;
+const fstr = a => (a.d === 1 ? String(Math.abs(a.n)) : `${Math.abs(a.n)}/${a.d}`).replace(/^/, a.n < 0 ? '−' : '');
+function parseFr(s){
+  s = String(s).trim().replace('−', '-').replace(',', '.'); let m;
+  if((m = s.match(/^(-?\d+)\/(\d+)$/))){ if(+m[2] === 0) return null; return Fr(+m[1], +m[2]); }
+  if((m = s.match(/^(-?)(\d+)(?:\.(\d{1,4}))?$/))){ const dec = m[3] || '', d = Math.pow(10, dec.length), n = +(m[2] + dec); return Fr(m[1] ? -n : n, d); }
+  return null;
+}
+function rref(A, m, n){
+  const Rm = A.map(r => r.slice()), piv = []; let r = 0;
+  for(let c = 0; c < n && r < m; c++){
+    let p = -1; for(let i = r; i < m; i++) if(!fz(Rm[i][c])){ p = i; break; }
+    if(p < 0) continue;
+    [Rm[r], Rm[p]] = [Rm[p], Rm[r]]; const inv = Rm[r][c]; Rm[r] = Rm[r].map(x => fdiv(x, inv));
+    for(let i = 0; i < m; i++) if(i !== r && !fz(Rm[i][c])){ const f = Rm[i][c]; Rm[i] = Rm[i].map((x, j) => fsub(x, fmul(f, Rm[r][j]))); }
+    piv.push(c); r++;
+  }
+  return { R:Rm, piv };
+}
+/* análisis completo de T(x) = A x, A de m×n con entradas fraccionarias */
+function analyze(A, m, n){
+  const { R:Rm, piv } = rref(A, m, n), free = []; for(let c = 0; c < n; c++) if(!piv.includes(c)) free.push(c);
+  const ker = free.map(f => { const k = Array.from({ length:n }, () => Fr(0)); k[f] = Fr(1); piv.forEach((pc, i) => { k[pc] = Fr(-Rm[i][f].n, Rm[i][f].d); }); return k; });
+  const img = piv.map(c => A.map(r => r[c]));
+  const rank = piv.length;
+  const killed = ker.every(k => A.every(row => fz(row.reduce((s, a, j) => fadd(s, fmul(a, k[j])), Fr(0)))));
+  return { m, n, R:Rm, piv, free, ker, img, rank, dimKer:n - rank, inj:rank === n, surj:rank === m, killed };
+}
+const toFr = M => M.map(r => r.map(x => Fr(x)));
+
+/* aplicaciones/matrices de ejemplo compartidas */
+const PRESETS = [
+  { name:'T(x,y) = (x+y, x+y)',               A:[[1, 1], [1, 1]] },
+  { name:'T(x,y) = (3x, 3y)',                 A:[[3, 0], [0, 3]] },
+  { name:'M_f : ℝ³→ℝ⁴ de la clase',           A:[[1, 1, 0], [0, 1, -1], [2, 1, 1], [0, 0, 3]] },
+  { name:'d/dt : P₃→P₂ (coef. c₀…c₃)',        A:[[0, 1, 0, 0], [0, 0, 2, 0], [0, 0, 0, 3]] },
+  { name:'proyección (x,y,z)→(x,y)',          A:[[1, 0, 0], [0, 1, 0]] },
+  { name:'rotación de 90°',                   A:[[0, -1], [1, 0]] },
+  { name:'matriz 3×3 de rango 2',             A:[[1, 2, 3], [4, 5, 6], [7, 8, 9]] }
+];
+
+/* ---------- rotaciones ---------- */
+const EX = { 0:['1', '0'], 30:['√3/2', '1/2'], 45:['√2/2', '√2/2'], 60:['1/2', '√3/2'], 90:['0', '1'], 120:['−1/2', '√3/2'], 135:['−√2/2', '√2/2'], 150:['−√3/2', '1/2'], 180:['−1', '0'], 210:['−√3/2', '−1/2'], 225:['−√2/2', '−√2/2'], 240:['−1/2', '−√3/2'], 270:['0', '−1'], 300:['1/2', '−√3/2'], 315:['√2/2', '−√2/2'], 330:['√3/2', '−1/2'] };
+const exactCS = deg => EX[((deg % 360) + 360) % 360];
+const rotM = deg => { const t = deg * Math.PI / 180, c = Math.cos(t), s = Math.sin(t); return [[c, -s], [s, c]]; };
+function piFrac(deg){
+  if(deg === 0) return '0'; const g = gcd(deg, 180), n = deg / g, d = 180 / g;
+  return d === 1 ? (n === 1 ? 'π' : `${n}π`) : (n === 1 ? `π/${d}` : `${n}π/${d}`);
+}
+function rotLabel(deg){ return `${deg}° = ${piFrac(deg)} rad`; }
+function rotExactM(deg){ const e = exactCS(deg); if(!e) return null; const neg = s => s === '0' ? '0' : s.startsWith('−') ? s.slice(1) : '−' + s; return [[e[0], neg(e[1])], [e[1], e[0]]]; }
+
+/* =========================================================
+   PASO 0 · Contexto
+========================================================= */
+steps.push({
+  name:'Antes de empezar: funciones que respetan la suma', short:'0 Contexto', shape:null,
+  desc:'Una <b>aplicación lineal</b> es una función entre espacios vectoriales que conserva sumas y múltiplos. Casi todo en IA (capas de una red, giros, proyecciones, derivadas) se descompone en piezas así, y todas se calculan con <b>matrices</b>.',
+  render(stage){
+    const t = el('div', 'bio-text');
+    t.innerHTML = `<p><b>La idea de fondo.</b> Si conoces lo que hace una aplicación lineal con unos pocos vectores (la base), la conoces entera. Por eso se pueden guardar en una matriz: columnas = qué hace con cada vector básico.</p>
+    <p><b>Plan de la sesión.</b> Comprobaremos linealidad, construiremos la matriz <i>M<sub>f</sub></i>, compondremos aplicaciones (producto de matrices), veremos las rotaciones del plano y definiremos <i>núcleo</i> e <i>imagen</i> con el teorema de la dimensión. Terminamos con la capa de una red neuronal.</p>`;
+    stage.appendChild(t);
+    const flow = el('div', 'flow');
+    [['Linealidad', 'f(au + bv)', 1], ['Matriz M_f', 'f(v) = M_f v', 2], ['Composición', 'M_g M_f', 3], ['Rotaciones', 'M_θ', 4], ['Núcleo e imagen', 'ker T, Im T', 6], ['Capa de red', 'Wx + b', 8]].forEach(([n, s, to], i, a) => {
+      const f = el('div', 'fnode', `${n}<small>${s}</small>`); f.tabIndex = 0; f.addEventListener('click', () => goStep(to)); f.addEventListener('keydown', e => { if(e.key === 'Enter') goStep(to); });
+      flow.appendChild(f); if(i < a.length - 1) flow.appendChild(el('span', 'farrow', '→'));
+    });
+    stage.appendChild(flow);
+    stage.appendChild(el('p', 'pad-note', 'Haz clic en cualquier cuadro o pregunta para saltar a ese paso. También funcionan las flechas ← → del teclado (salvo mientras escribes en un campo).'));
+    stage.appendChild(qcards(QUESTIONS));
+  }
+});
+
+/* =========================================================
+   PASO 1 · Linealidad
+========================================================= */
+const LMAPS = {
+  a:{ n:3, m:2, lin:true,  name:'f(x,y,z) = (x+y, 2z−x)', f:v => [v[0] + v[1], 2 * v[2] - v[0]], dom:R(3), cod:R(2), vars:['x', 'y', 'z'],
+      why:'Cada componente es una combinación lineal de x, y, z (sin términos constantes ni productos): f(au₁+bu₂) = a f(u₁) + b f(u₂) se cumple por distributividad.' },
+  b:{ n:2, m:2, lin:false, name:'f(x,y) = (x, x²−y)', f:v => [v[0], v[0] * v[0] - v[1]], dom:R(2), cod:R(2), vars:['x', 'y'],
+      why:'El término x² rompe la linealidad: f(2·e₁) = (2, 4) pero 2·f(e₁) = (2, 2).' },
+  c:{ n:2, m:2, lin:false, name:'f(x,y) = (x−y, x+1)', f:v => [v[0] - v[1], v[0] + 1], dom:R(2), cod:R(2), vars:['x', 'y'],
+      why:'f(0,0) = (0, 1) ≠ (0,0): una aplicación lineal siempre manda el 0 al 0 (basta tomar a = b = 0). Es una aplicación <i>afín</i>, no lineal.' },
+  d:{ n:4, m:3, lin:true,  name:'d/dt : P₃ → P₂, c₀+c₁t+c₂t²+c₃t³ ↦ c₁+2c₂t+3c₃t²', f:v => [v[1], 2 * v[2], 3 * v[3]], dom:'P<sub>3</sub> ≅ ' + R(4), cod:'P<sub>2</sub> ≅ ' + R(3), vars:['c₀', 'c₁', 'c₂', 'c₃'],
+      why:'La derivada cumple (au+bv)′ = a u′ + b v′. En coeficientes, (c₀,c₁,c₂,c₃) ↦ (c₁, 2c₂, 3c₃): cada componente es combinación lineal.' },
+  e:{ n:2, m:2, lin:false, name:'f(x,y) = (|x|, y)  (extra)', f:v => [Math.abs(v[0]), v[1]], dom:R(2), cod:R(2), vars:['x', 'y'],
+      why:'Con escalares negativos falla: f(−1·e₁) = (1, 0) pero −1·f(e₁) = (−1, 0). Con x e y positivos parece lineal: ¡un solo ejemplo no basta!' }
+};
+function mulberry32(a){ return function(){ a |= 0; a = a + 0x6D2B79F5 | 0; let t = Math.imul(a ^ a >>> 15, 1 | a); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
+
+steps.push({
+  name:'Aplicación lineal: f(au₁ + bu₂) = a f(u₁) + b f(u₂)', short:'1 Linealidad', shape:'f(au₁ + bu₂) = a f(u₁) + b f(u₂)',
+  desc:'Una aplicación <b>f: ℝⁿ→ℝᵐ</b> es lineal si respeta combinaciones lineales (equivale a: f(u+v) = f(u)+f(v) y f(ku) = k f(u)). Elige un ejemplo, cambia u₁, u₂, a, b y mira cómo se calculan ambos lados. Un solo contraejemplo demuestra que NO es lineal; ninguna cantidad de aciertos demuestra que SÍ lo es.',
+  render(stage){
+    let key = 'a'; const st = { u1:null, u2:null, a:2, b:3 };
+    const pick = el('div', 'btn-row'), area = el('div'), out = el('div', 'formula'), why = el('p', 'pad-note'), res = el('div', 'formula');
+    const defaults = n => ({ u1:[1, 2, -1, 3].slice(0, n), u2:[-2, 1, 1, 0].slice(0, n) });
+    function build(){
+      const M = LMAPS[key], d = defaults(M.n); st.u1 = d.u1; st.u2 = d.u2; area.innerHTML = '';
+      const row = el('div', 'viz-row'); const c1 = el('div', 'viz-col'), c2 = el('div', 'viz-col');
+      c1.append(el('div', 'panel-title c2', 'u₁'), vecInput(st.u1, M.vars.map(v => v + '₁'), upd), el('div', 'panel-title c2', 'u₂'), vecInput(st.u2, M.vars.map(v => v + '₂'), upd));
+      const ab = el('div', 'flds');
+      [['a', 'a'], ['b', 'b']].forEach(([k, lab]) => { const f = el('label', 'fld', lab + ' = '), i = el('input', 'nin'); i.type = 'number'; i.step = 'any'; i.value = st[k]; i.setAttribute('aria-label', lab); i.addEventListener('input', () => { const v = i.valueAsNumber; if(Number.isNaN(v)){ i.classList.add('bad'); st[k] = 0; } else { i.classList.remove('bad'); st[k] = v; } upd(); }); f.appendChild(i); ab.appendChild(f); });
+      c2.append(el('div', 'panel-title c1', 'Escalares'), ab);
+      row.append(c1, c2); area.appendChild(row);
+    }
+    function upd(){
+      const M = LMAPS[key]; pick.querySelectorAll('button').forEach(b => b.classList.toggle('active', b._k === key));
+      const { u1, u2, a, b } = st, u = vAdd(vScale(a, u1), vScale(b, u2));
+      const lhs = M.f(u), fu1 = M.f(u1), fu2 = M.f(u2), rhs = vAdd(vScale(a, fu1), vScale(b, fu2)), ok = close(lhs, rhs);
+      out.innerHTML = `<b>${M.name}</b> &nbsp;(${M.dom} → ${M.cod})<br>au₁ + bu₂ = ${fmt(a)}·${vec(u1)} + ${fmt(b)}·${vec(u2)} = <b>${vec(u)}</b><br>f(au₁+bu₂) = <b>${vec(lhs)}</b><br>a f(u₁) + b f(u₂) = ${fmt(a)}·${vec(fu1)} + ${fmt(b)}·${vec(fu2)} = <b>${vec(rhs)}</b><br>${ok ? '<span class="ok">Coinciden en esta prueba ✔</span>' : '<span class="no">NO coinciden: contraejemplo ✘ → f no es lineal</span>'}`;
+      out.classList.toggle('win', ok);
+      why.innerHTML = `<b>${M.lin ? 'Es lineal.' : 'No es lineal.'}</b> ${M.why}${(!ok || Math.abs(a + b - 1) > 1e-9) ? '' : ' <b>Ojo:</b> con a + b = 1 hasta las aplicaciones afines pasan la prueba; cambia a o b.'}`;
+    }
+    function search(){
+      const M = LMAPS[key], rnd = mulberry32(2024), ri = (lo, hi) => lo + Math.floor(rnd() * (hi - lo + 1)); let fails = 0, first = null; const N = 300;
+      for(let t = 0; t < N; t++){
+        const u1 = Array.from({ length:M.n }, () => ri(-5, 5)), u2 = Array.from({ length:M.n }, () => ri(-5, 5)), a = ri(-3, 3), b = ri(-3, 3);
+        const lhs = M.f(vAdd(vScale(a, u1), vScale(b, u2))), rhs = vAdd(vScale(a, M.f(u1)), vScale(b, M.f(u2)));
+        if(!close(lhs, rhs)){ fails++; if(!first) first = { u1, u2, a, b }; }
+      }
+      if(first){
+        st.u1.splice(0, M.n, ...first.u1); st.u2.splice(0, M.n, ...first.u2); st.a = first.a; st.b = first.b;
+        build(); upd();
+        res.innerHTML = `<span class="no">${fails} de ${N} pruebas aleatorias fallan.</span> Primer contraejemplo cargado arriba: basta uno para concluir que f <b>no es lineal</b>.`; res.classList.remove('win');
+      } else {
+        res.innerHTML = `<span class="ok">0 fallos en ${N} pruebas aleatorias.</span> Es coherente con la linealidad, pero no es una demostración: la prueba es algebraica (ver la explicación de abajo).`; res.classList.add('win');
+      }
+    }
+    const CHIP = { a:'(x+y, 2z−x)', b:'(x, x²−y)', c:'(x−y, x+1)', d:'d/dt en P₃', e:'(|x|, y) extra' };
+    Object.keys(LMAPS).forEach(k => { const b = chipBtn(CHIP[k], false, () => { key = k; res.innerHTML = 'Pulsa «Buscar contraejemplo» para probar 300 casos aleatorios.'; res.classList.remove('win'); build(); upd(); }); b._k = k; pick.appendChild(b); });
+    const find = chipBtn('Buscar contraejemplo (300 pruebas)', false, search); find.classList.add('active');
+    res.innerHTML = 'Pulsa «Buscar contraejemplo» para probar 300 casos aleatorios.';
+    const bar = el('div', 'btn-row'); bar.appendChild(find);
+    stage.append(pick, area, out, why, bar, res);
+    stage.appendChild(el('div', 'panel-title c2', 'Comprueba lo aprendido'));
+    stage.appendChild(tfQuiz([
+      { q:'f(x,y) = (2x, x+y) es lineal', ans:true, why:'Ambas componentes son combinaciones lineales de x e y: f = M·(x,y) con M = [[2,0],[1,1]].' },
+      { q:'f(x,y) = (x+1, y) es lineal', ans:false, why:'f(0,0) = (1,0) ≠ (0,0). Toda aplicación lineal manda el cero al cero.' },
+      { q:'f(x,y) = (xy, x) es lineal', ans:false, why:'f(2,2) = (4,2) pero 2·f(1,1) = (2,2): el producto xy rompe la homogeneidad.' }
+    ]));
+    build(); upd();
+  }
+});
+
+/* =========================================================
+   PASO 2 · Matriz M_f
+========================================================= */
+const MM = {
+  tex:{ n:3, m:4, name:'f(x,y,z) = (x+y, y−z, 2x+y+z, 3z)', f:v => [v[0] + v[1], v[1] - v[2], 2 * v[0] + v[1] + v[2], 3 * v[2]], vars:['x', 'y', 'z'] },
+  a:{ n:3, m:2, name:'f(x,y,z) = (x+y, 2z−x)', f:v => [v[0] + v[1], 2 * v[2] - v[0]], vars:['x', 'y', 'z'] },
+  d:{ n:4, m:3, name:'d/dt en P₃ → P₂: (c₀,c₁,c₂,c₃) ↦ (c₁, 2c₂, 3c₃)', f:v => [v[1], 2 * v[2], 3 * v[3]], vars:['c₀', 'c₁', 'c₂', 'c₃'] },
+  r:{ n:2, m:2, name:'giro de 30° (π/6): f(x,y) = (cos30°·x − sen30°·y, sen30°·x + cos30°·y)', f:v => matVec(rotM(30), v), vars:['x', 'y'] }
+};
+const NAMES = { tex:'ℝ³ → ℝ⁴ (clase)', a:'ℝ³ → ℝ²', d:'derivada P₃ → P₂', r:'giro 30° en ℝ²' };
+steps.push({
+  name:'La matriz que representa a una aplicación lineal', short:'2 Matriz M_f', shape:'f(v) = M<sub>f</sub> v &nbsp;·&nbsp; M<sub>f</sub> ∈ ℝ<sup>m×n</sup>',
+  desc:'Toda aplicación lineal <b>f: ℝⁿ→ℝᵐ</b> tiene una matriz <b>M<sub>f</sub></b> de tamaño m×n con f(v) = M<sub>f</sub> v. Se construye <b>aplicando f a la base canónica</b>: la columna j de M<sub>f</sub> es f(e<sub>j</sub>). Porque v = v₁e₁ + … + vₙeₙ implica f(v) = v₁f(e₁) + … + vₙf(eₙ).',
+  render(stage){
+    let key = 'tex'; let v = [1, 2, 3, 4]; const pick = el('div', 'btn-row'), area = el('div'), out = el('div'), res = el('div', 'formula'); let vin;
+    function build(){ area.innerHTML = ''; const M = MM[key]; v = [1, 2, 3, 4].slice(0, M.n); vin = vecInput(v, M.vars, upd); area.append(vin); }
+    function upd(){
+      const M = MM[key]; pick.querySelectorAll('button').forEach(b => b.classList.toggle('active', b._k === key));
+      const cols = Array.from({ length:M.n }, (_, j) => M.f(Array.from({ length:M.n }, (_, i) => i === j ? 1 : 0)));
+      const Mf = Array.from({ length:M.m }, (_, i) => cols.map(c => c[i]));
+      let html = `<div class="pad-note"><b>${M.name}</b> &nbsp;(${R(M.n)} → ${R(M.m)})</div>`;
+      html += cols.map((c, j) => eqRow([`<span class="nm">f(e<sub>${j+1}</sub>)</span>`, op('='), `<span class="nm">f</span>`, op('('), colv(Array.from({ length:M.n }, (_, i) => i === j ? 1 : 0)), op(')'), op('='), colv(c)])).join('');
+      html += eqRow([`<span class="nm o">M<sub>f</sub></span>`, op('= ['), op('f(e₁) | … | f(e<sub>' + M.n + '</sub>)'), op(']'), op('='), mxn(Mf, (i, j) => 'c' + (1 + j % 3)), op(`&nbsp;(${M.m}×${M.n})`)]);
+      out.innerHTML = html;
+      const direct = M.f(v), viaM = matVec(Mf, v), ok = close(direct, viaM);
+      res.innerHTML = eqRow([`<span class="nm">v</span>`, op('='), colv(v), op('→'), `<span class="nm">f(v)</span>`, op('='), colv(direct), op('&nbsp;&nbsp;|&nbsp;&nbsp;'), `<span class="nm o">M<sub>f</sub>v</span>`, op('='), mxn(Mf, (i, j) => 'c' + (1 + j % 3)), colv(v), op('='), colv(viaM)]) + `<div>${ok ? '<span class="ok">f(v) = M_f v ✔ (calculadas por separado)</span>' : '<span class="no">no coinciden</span>'}</div>`;
+      res.classList.toggle('win', ok);
+    }
+    Object.keys(MM).forEach(k => { const b = chipBtn(NAMES[k], false, () => { key = k; build(); upd(); }); b._k = k; pick.appendChild(b); });
+    stage.append(pick, area, out, el('div', 'panel-title c1', 'Aplica f a un vector v (edítalo) y compáralo con M_f v'), res);
+    stage.appendChild(el('p', 'pad-note', 'La aplicación se evalúa de dos formas independientes: con su fórmula y multiplicando por la matriz que has visto construir. En un espacio con bases B y B′ distintas de las canónicas, [T(v)] = M_T [v] usa coordenadas respecto a esas bases.'));
+    build(); upd();
+  }
+});
+
+/* =========================================================
+   PASO 3 · Composición
+========================================================= */
+steps.push({
+  name:'Composición de aplicaciones = producto de matrices', short:'3 Composición', shape:'M<sub>g∘f</sub> = M<sub>g</sub> M<sub>f</sub>',
+  desc:'Si f: ℝⁿ→ℝˢ y g: ℝˢ→ℝᵐ son lineales, g∘f: ℝⁿ→ℝᵐ también lo es y su matriz es <b>M<sub>g</sub> · M<sub>f</sub></b>: primero actúa f (a la derecha), luego g. Edita las matrices (n=3, s=2) y el vector: la página aplica f y luego g paso a paso y lo compara con el producto.',
+  render(stage){
+    const Mf = [[1, 1, 0], [-1, 0, 2]], Mg = [[1, 2], [0, 1], [3, -1]]; let m = 2; const v = [1, 2, 3];
+    const left = el('div', 'viz-col'), right = el('div', 'viz-col'), row = el('div', 'viz-row'), out = el('div'), res = el('div', 'formula'); const selWrap = el('div', 'btn-row');
+    let gBox = el('div');
+    function buildG(){ gBox.innerHTML = ''; gBox.appendChild(matInput(Mg, m, 2, upd, 'M_g')); }
+    selWrap.append(el('span', 'viz-label', 'filas de M_g (m) ='), mkSelect([[2, '2'], [3, '3']], m, x => { m = +x; buildG(); upd(); }, 'número de filas de M_g'));
+    left.append(el('div', 'panel-title c2', 'M_f  (2×3)'), matInput(Mf, 2, 3, upd, 'M_f'), el('div', 'panel-title c1', 'v ∈ ℝ³'));
+    const vi = vecInput(v, ['v₁', 'v₂', 'v₃'], upd); left.append(vi);
+    right.append(el('div', 'panel-title c1', 'M_g'), selWrap, gBox);
+    row.append(left, right);
+    function upd(){
+      const Mgm = Mg.slice(0, m), w = matVec(Mf, v), z = matVec(Mgm, w), P = matMul(Mgm, Mf), Pv = matVec(P, v), ok = close(z, Pv);
+      let h = eqRow([`<span class="nm">w = f(v) = M<sub>f</sub>v</span>`, op('='), colv(w), op(`&nbsp;∈ ${R(2)}`)]);
+      h += eqRow([`<span class="nm">g(w) = M<sub>g</sub>w</span>`, op('='), colv(z), op(`&nbsp;∈ ${R(m)}`)]);
+      h += eqRow([`<span class="nm o">M<sub>g</sub>M<sub>f</sub></span>`, op(`= (${m}×2)(2×3) =`), mxn(P), op(`(${m}×3)`), op('→ (M<sub>g</sub>M<sub>f</sub>)v ='), colv(Pv)]);
+      out.innerHTML = h;
+      let other;
+      if(m === 3){ const Q = matMul(Mf, Mgm); other = `M<sub>f</sub>M<sub>g</sub> = (2×3)(3×2) sí existe, pero es <b>otra</b> aplicación: f∘g: ℝ²→ℝ², matriz ${mxn(Q)}`; }
+      else other = 'M<sub>f</sub>M<sub>g</sub> = (2×3)(2×2): <span class="no">no está definido</span> (3 ≠ 2). El orden importa.';
+      res.innerHTML = `${ok ? '<span class="ok">g(f(v)) = (M_g M_f) v ✔</span>' : '<span class="no">no coinciden</span>'}<br>${other}`; res.classList.toggle('win', ok);
+    }
+    buildG(); stage.append(row, out, res);
+    stage.appendChild(el('p', 'pad-note', '<b>Demostración (idea):</b> g(f(u)) = g(M_f u) = M_g(M_f u) = (M_g M_f)u por asociatividad del producto de matrices; y g∘f es lineal porque g(f(au+bw)) = g(af(u)+bf(w)) = a g(f(u)) + b g(f(w)).'));
+    upd();
+  }
+});
+
+/* =========================================================
+   PASO 4 · Rotaciones
+========================================================= */
+steps.push({
+  name:'Rotaciones en ℝ²', short:'4 Rotaciones', shape:'M<sub>θ</sub> = [[cos θ, −sen θ], [sen θ, cos θ]]',
+  desc:'La rotación de ángulo <b>θ</b> (en sentido antihorario, medido en <b>radianes</b>) es lineal y su matriz es <b>M<sub>θ</sub></b>. Mueve el deslizador de θ y el vector v (también puedes hacer clic en el plano para colocarlo): la página calcula la matriz y la imagen f<sub>θ</sub>(v).',
+  render(stage){
+    let deg = 30; const v = [3, 1]; const row = el('div', 'viz-row'), c1 = el('div', 'viz-col'), c2 = el('div', 'viz-col'), svgBox = el('div'), out = el('div'), btns = el('div', 'btn-row');
+    const sl = slider('θ', 0, 360, deg, d => rotLabel(d), d => { deg = d; upd(); }); let vi;
+    const S = 26, O = 180, X = x => O + x * S, Y = y => O - y * S;
+    function arrow(x1, y1, x2, y2, col, w){
+      const dx = x2 - x1, dy = y2 - y1, L = Math.hypot(dx, dy); if(L < 1e-9) return '';
+      const ux = dx / L, uy = dy / L, hs = Math.min(0.45, L * 0.5), bx = x2 - ux * hs, by = y2 - uy * hs, px = -uy * hs * 0.45, py2 = ux * hs * 0.45;
+      return `<line x1="${X(x1)}" y1="${Y(y1)}" x2="${X(bx)}" y2="${Y(by)}" stroke="${col}" stroke-width="${w || 3}" stroke-linecap="round"/><polygon points="${X(x2)},${Y(y2)} ${X(bx + px)},${Y(by + py2)} ${X(bx - px)},${Y(by - py2)}" fill="${col}"/>`;
+    }
+    function upd(){
+      const M = rotM(deg), w = matVec(M, v), t = deg * Math.PI / 180, nv = Math.hypot(v[0], v[1]), nw = Math.hypot(w[0], w[1]), dot = v[0] * w[0] + v[1] * w[1];
+      let s = ''; for(let k = -6; k <= 6; k++){ s += `<line x1="${X(k)}" y1="${Y(-6.5)}" x2="${X(k)}" y2="${Y(6.5)}" stroke="#26324A" stroke-width="1"/><line x1="${X(-6.5)}" y1="${Y(k)}" x2="${X(6.5)}" y2="${Y(k)}" stroke="#26324A" stroke-width="1"/>`; }
+      s += `<line x1="${X(-6.5)}" y1="${Y(0)}" x2="${X(6.5)}" y2="${Y(0)}" stroke="#3a4a6b" stroke-width="1.6"/><line x1="${X(0)}" y1="${Y(-6.5)}" x2="${X(0)}" y2="${Y(6.5)}" stroke="#3a4a6b" stroke-width="1.6"/>`;
+      s += `<text x="${X(6.3)}" y="${Y(0) - 6}" fill="#8B96AD" font-size="11" text-anchor="end">x</text><text x="${X(0) + 6}" y="${Y(6.2)}" fill="#8B96AD" font-size="11">y</text>`;
+      if(nv > 1e-9){
+        s += `<circle cx="${X(0)}" cy="${Y(0)}" r="${nv * S}" fill="none" stroke="#3a4a6b" stroke-dasharray="4 4"/>`;
+        const ph = Math.atan2(v[1], v[0]), pts = []; const r0 = Math.min(1.2, nv * 0.6); for(let k = 0; k <= 40; k++){ const a = ph + t * k / 40; pts.push(`${X(r0 * Math.cos(a))},${Y(r0 * Math.sin(a))}`); }
+        s += `<polyline points="${pts.join(' ')}" fill="none" stroke="#F472B6" stroke-width="2"/>`;
+        s += arrow(0, 0, v[0], v[1], '#5EEAD4', 3) + arrow(0, 0, w[0], w[1], '#E55015', 3.4);
+        s += `<text x="${X(v[0]) + 8}" y="${Y(v[1]) - 6}" fill="#5EEAD4" font-size="12">v</text><text x="${X(w[0]) + 8}" y="${Y(w[1]) - 6}" fill="#E55015" font-size="12">f(v)</text>`;
+      }
+      svgBox.innerHTML = `<svg viewBox="0 0 360 360" width="100%" style="max-width:360px;cursor:crosshair" role="img" aria-label="Plano con el vector v y su giro f(v) de ${deg} grados">${s}</svg>`;
+      const ex = rotExactM(deg), e = exactCS(deg);
+      let h = eqRow([`<span class="nm o">M<sub>θ</sub></span>`, op('='), mx([['cos θ', '−sen θ'], ['sen θ', 'cos θ']], () => 'c3'), op('='), ex ? mx(ex) : '', ex ? op('≈') : '', mxn(M)]);
+      h += eqRow([`<span class="nm">f<sub>θ</sub>(v)</span>`, op('='), mxn(M), colv(v), op('='), colv(w)]);
+      out.innerHTML = h;
+      stats.innerHTML = `<div class="stat c2"><span class="l">θ</span><span class="v">${fmt(t)} rad</span></div><div class="stat"><span class="l">‖v‖</span><span class="v">${fmt(nv)}</span></div><div class="stat c1"><span class="l">‖f(v)‖</span><span class="v">${fmt(nw)}</span></div><div class="stat c3"><span class="l">v · f(v)</span><span class="v">${fmt(dot)}</span></div><div class="stat"><span class="l">‖v‖² cos θ</span><span class="v">${fmt(nv * nv * Math.cos(t))}</span></div>`;
+      note.innerHTML = `${Math.abs(nv - nw) < 1e-9 ? '<span class="ok">‖f(v)‖ = ‖v‖ ✔</span>' : '<span class="no">la norma cambia</span>'} &nbsp;(la rotación conserva longitudes)<br>${Math.abs(dot) < 1e-9 ? '<span class="ok">v ⟂ f(v)</span> (producto escalar 0)' : 'v · f(v) = ‖v‖² cos θ'}`;
+      note.classList.toggle('win', Math.abs(nv - nw) < 1e-9);
+      vi.sync();
+    }
+    const stats = el('div', 'stats'), note = el('div', 'formula');
+    [[30, 'π/6'], [60, 'π/3'], [90, 'π/2'], [180, 'π']].forEach(([d, l]) => btns.appendChild(chipBtn(l + ' (' + d + '°)', false, () => { deg = d; sl.set(d); upd(); })));
+    vi = vecInput(v, ['x', 'y'], upd);
+    svgBox.addEventListener('click', e => { const sv = svgBox.querySelector('svg'); if(!sv) return; const r = sv.getBoundingClientRect(); const sx = (e.clientX - r.left) / r.width * 360, sy = (e.clientY - r.top) / r.height * 360; v[0] = Math.max(-6, Math.min(6, Math.round((sx - O) / S * 2) / 2)); v[1] = Math.max(-6, Math.min(6, Math.round((O - sy) / S * 2) / 2)); upd(); });
+    c1.append(svgBox); c2.append(sl.el, btns, el('div', 'panel-title c2', 'Vector v'), vi, stats, note); row.append(c1, c2);
+    stage.append(row, out);
+    stage.appendChild(el('p', 'pad-note', 'Fíjate: para θ = 90° (π/2) el vector rotado es (−y, x), y su producto escalar con (x, y) es −xy + yx = 0: son <b>ortogonales</b>. Las diapositivas hablan de «θ grados»; la fórmula con cos y sen necesita θ en radianes (θ = 30° = π/6).'));
+    upd();
+  }
+});
+
+/* =========================================================
+   PASO 5 · Composición de rotaciones
+========================================================= */
+steps.push({
+  name:'Componer rotaciones: girar α y luego β', short:'5 Rot. compuestas', shape:'M<sub>β</sub> M<sub>α</sub> = M<sub>α+β</sub>',
+  desc:'Girar α y después β es girar α+β. En matrices, <b>M<sub>β</sub> · M<sub>α</sub> = M<sub>α+β</sub></b>. Con α = π/6 y β = π/3 sale el giro de π/2, de matriz [[0, −1],[1, 0]]. Mueve α y β y la página verifica numéricamente la identidad para cualquier par.',
+  render(stage){
+    let al = 30, be = 60; const v = [3, 1]; const out = el('div'), res = el('div', 'formula'), orth = el('div', 'formula'), btns = el('div', 'btn-row');
+    const sa = slider('α', 0, 360, al, d => rotLabel(d), d => { al = d; upd(); }), sb = slider('β', 0, 360, be, d => rotLabel(d), d => { be = d; upd(); }); const vi = vecInput(v, ['x', 'y'], upd);
+    function dm(deg){ const e = rotExactM(deg); return e ? mx(e) : ''; }
+    function upd(){
+      const Ma = rotM(al), Mb = rotM(be), P = matMul(Mb, Ma), Q = matMul(Ma, Mb), Mab = rotM(al + be);
+      const d1 = maxDiff(P.flat(), Mab.flat()), d2 = maxDiff(P.flat(), Q.flat());
+      let h = eqRow([`<span class="nm">M<sub>β</sub></span>`, op('='), mxn(Mb), op('·'), `<span class="nm">M<sub>α</sub></span>`, op('='), mxn(Ma), op('='), `<span class="nm o">M<sub>β</sub>M<sub>α</sub></span>`, op('='), mxn(P)]);
+      h += eqRow([`<span class="nm o">M<sub>α+β</sub></span>`, op(`(${rotLabel(((al + be) % 360 + 360) % 360)})`), op('='), mxn(Mab)]);
+      out.innerHTML = h;
+      res.innerHTML = `máx |M_β M_α − M_{α+β}| = <b>${d1.toExponential(1)}</b> ${d1 < 1e-12 ? '<span class="ok">≈ 0 ✔ (solo error de redondeo)</span>' : '<span class="no">≠ 0</span>'}<br>máx |M_β M_α − M_α M_β| = <b>${d2.toExponential(1)}</b> ${d2 < 1e-12 ? '<span class="ok">≈ 0: en ℝ² los giros conmutan</span>' : '<span class="no">no conmutan</span>'}`; res.classList.toggle('win', d1 < 1e-12);
+      const w = matVec(Mab, v), dot = v[0] * w[0] + v[1] * w[1], t = (al + be) * Math.PI / 180, hint = Math.abs(Math.cos(t)) < 1e-9;
+      orth.innerHTML = `f<sub>α+β</sub>(v) = ${vec(w)} &nbsp;con v = ${vec(v)}<br>v · f<sub>α+β</sub>(v) = <b>${fmt(dot)}</b> ${hint ? `<span class="ok">→ ortogonales: α+β ≡ ${Math.sin(t) > 0 ? '90°, f(x,y) = (−y, x)' : '270°, f(x,y) = (y, −x)'}</span>` : (Math.abs(v[0]) + Math.abs(v[1]) < 1e-12 ? '<span class="muted">v = 0: caso trivial (producto 0)</span>' : '<span class="no">→ no ortogonales (cos(α+β) ≠ 0)</span>')}`;
+      orth.classList.toggle('win', hint); vi.sync();
+    }
+    [[30, 60, 'π/6 y π/3'], [45, 45, 'π/4 y π/4'], [120, 150, '2π/3 y 5π/6'], [200, 170, '200° y 170°']].forEach(([a, b, l]) => btns.appendChild(chipBtn(l, false, () => { al = a; be = b; sa.set(a); sb.set(b); upd(); })));
+    stage.append(btns, sa.el, sb.el, out, res, el('div', 'panel-title c2', 'Ortogonalidad con el original: v · f(v)'), vi, orth);
+    const det = el('details'); det.innerHTML = `<summary>Mini-ejercicio: demuestra f<sub>β</sub> ∘ f<sub>α</sub> = f<sub>α+β</sub> (solución desplegable)</summary><div class="sol">
+      <p>Recuerda: cos(α+β) = cos α cos β − sen α sen β &nbsp; y &nbsp; sen(α+β) = sen α cos β + cos α sen β.</p>
+      <p>M<sub>β</sub>M<sub>α</sub> = [[cos β, −sen β],[sen β, cos β]] · [[cos α, −sen α],[sen α, cos α]]:</p>
+      <p>· fila 1, col. 1: cos β cos α − sen β sen α = <b>cos(α+β)</b><br>
+         · fila 1, col. 2: −cos β sen α − sen β cos α = −(sen α cos β + cos α sen β) = <b>−sen(α+β)</b><br>
+         · fila 2, col. 1: sen β cos α + cos β sen α = <b>sen(α+β)</b><br>
+         · fila 2, col. 2: −sen β sen α + cos β cos α = <b>cos(α+β)</b></p>
+      <p>Luego M<sub>β</sub>M<sub>α</sub> = M<sub>α+β</sub>, y por el teorema de la composición f<sub>β</sub>∘f<sub>α</sub> = f<sub>α+β</sub>. ∎</p></div>`;
+    stage.append(det);
+    stage.appendChild(el('p', 'pad-note', 'Nota: en las diapositivas el producto de π/3 por π/6 aparece escrito con M<sub>π/6</sub> a la izquierda; el orden correcto es M<sub>π/3</sub>M<sub>π/6</sub>. Para rotaciones del plano da lo mismo (conmutan), pero no es cierto en general ni en ℝ³.'));
+    upd();
+  }
+});
+
+/* =========================================================
+   PASO 6 · Núcleo e imagen (widget Gauss)
+========================================================= */
+steps.push({
+  name:'Núcleo e imagen de T(x) = Ax', short:'6 Núcleo e imagen', shape:'dim V = dim ker T + dim Im T',
+  desc:'<b>ker T</b> = {v ∈ V : T(v) = 0} es un subespacio de V; <b>Im T</b> = {T(v) : v ∈ V} es un subespacio de W y <b>rango(T) = dim Im T</b>. Edita la matriz A (m×n, enteros, decimales o fracciones como 1/2): la página hace la eliminación gaussiana exacta y comprueba el <b>teorema de la dimensión</b>.',
+  render(stage){
+    let n = 2, m = 2, name = PRESETS[0].name; let S = PRESETS[0].A.map(r => r.map(String));
+    const pick = el('div', 'btn-row'), sizes = el('div', 'btn-row'), gridBox = el('div'), out = el('div'); let inputs = [];
+    function resize(nn, mm){ const old = S; S = Array.from({ length:mm }, (_, i) => Array.from({ length:nn }, (_, j) => (old[i] && old[i][j] != null) ? old[i][j] : '0')); n = nn; m = mm; }
+    function buildGrid(){
+      gridBox.innerHTML = ''; inputs = []; const t = el('table', 'mx mxin');
+      for(let i = 0; i < m; i++){ const tr = el('tr'); inputs.push([]); for(let j = 0; j < n; j++){ const td = el('td'), inp = el('input', 'nin'); inp.type = 'text'; inp.inputMode = 'decimal'; inp.value = S[i][j]; inp.setAttribute('aria-label', `A fila ${i+1} columna ${j+1}`); inp.addEventListener('input', () => { S[i][j] = inp.value; name = 'matriz editada'; upd(); }); td.appendChild(inp); tr.appendChild(td); inputs[i].push(inp); } t.appendChild(tr); }
+      const w = el('div', 'btn-row'); w.append(el('span', 'viz-label', 'A ='), t); gridBox.appendChild(w);
+    }
+    function load(P){ S = P.A.map(r => r.map(String)); n = P.A[0].length; m = P.A.length; name = P.name; selN.value = n; selM.value = m; buildGrid(); upd(); }
+    const selN = mkSelect([[1, '1'], [2, '2'], [3, '3'], [4, '4']], n, x => { resize(+x, m); buildGrid(); upd(); }, 'columnas n'), selM = mkSelect([[1, '1'], [2, '2'], [3, '3'], [4, '4']], m, x => { resize(n, +x); buildGrid(); upd(); }, 'filas m');
+    sizes.append(el('span', 'viz-label', 'n (columnas, dim V) ='), selN, el('span', 'viz-label', 'm (filas, dim W) ='), selM);
+    PRESETS.forEach(P => pick.appendChild(chipBtn(P.name, false, () => load(P))));
+    function upd(){
+      let bad = false; const A = S.map((r, i) => r.map((s, j) => { const f = parseFr(s); inputs[i][j].classList.toggle('bad', !f); if(!f) bad = true; return f || Fr(0); }));
+      if(bad){ out.innerHTML = '<div class="formula"><span class="no">Hay entradas no válidas (usa enteros, decimales o fracciones a/b).</span></div>'; return; }
+      const a = analyze(A, m, n);
+      const kerTxt = a.dimKer === 0 ? 'ker T = {0}' : `ker T = { ${a.ker.map((_, i) => `t<sub>${i+1}</sub>k<sub>${i+1}</sub>`).join(' + ')} : t<sub>i</sub> ∈ ℝ }`;
+      const imTxt = a.rank === 0 ? 'Im T = {0}' : (a.rank === m ? `Im T = ${R(m)}` : `Im T = gen{ ${a.img.map((_, i) => `c<sub>${i+1}</sub>`).join(', ')} }`);
+      let h = `<div class="pad-note"><b>${name}</b> &nbsp;· T: ${R(n)} → ${R(m)}, T(x) = Ax</div>`;
+      h += eqRow([`<span class="nm">R</span>`, op('= rref(A) ='), mx(a.R.map(r => r.map(fstr)), (i, j) => a.piv.includes(j) && i < a.piv.length && a.piv[i] === j ? 'piv' : ''), op('&nbsp;pivotes en columnas: ' + (a.piv.length ? a.piv.map(c => c + 1).join(', ') : 'ninguna'))]);
+      h += `<div class="stats"><div class="stat"><span class="l">dim V = n</span><span class="v">${n}</span></div><div class="stat c3"><span class="l">dim ker T</span><span class="v">${a.dimKer}</span></div><div class="stat c1"><span class="l">rango = dim Im T</span><span class="v">${a.rank}</span></div><div class="stat"><span class="l">dim W = m</span><span class="v">${m}</span></div></div>`;
+      h += `<div class="bar" aria-label="reparto de dimensiones de V">${Array.from({ length:n }, (_, i) => i < a.dimKer ? '<span class="k">ker</span>' : '<span class="i">Im</span>').join('')}</div><div class="viz-label">dim V = ${n} = <b style="color:var(--pink)">${a.dimKer}</b> (ker) + <b style="color:var(--viu)">${a.rank}</b> (Im)</div>`;
+      h += `<div class="formula ${n === a.dimKer + a.rank ? 'win' : ''}"><b>Teorema:</b> dim V = dim ker T + dim Im T → ${n} = ${a.dimKer} + ${a.rank} ${n === a.dimKer + a.rank ? '<span class="ok">✔</span>' : '<span class="no">✘</span>'}</div>`;
+      h += `<div class="viz-row"><div class="viz-col"><div class="panel-title c3">${kerTxt}</div>` + (a.dimKer ? a.ker.map((k, i) => eqRow([`<span class="nm">k<sub>${i+1}</sub></span>`, op('='), mx(k.map(x => [fstr(x)]), () => 'c3'), op('→ A·k<sub>' + (i+1) + '</sub> ='), mx(A.map(r => [fstr(r.reduce((s, x, j) => fadd(s, fmul(x, k[j])), Fr(0)))]))])).join('') : '<div class="viz-label">Solo el vector 0 cumple Ax = 0.</div>') + `</div>`;
+      h += `<div class="viz-col"><div class="panel-title c1">${imTxt}</div>` + (a.rank ? a.img.map((c, i) => eqRow([`<span class="nm o">c<sub>${i+1}</sub></span>`, op(`= columna ${a.piv[i] + 1} de A =`), mx(c.map(x => [fstr(x)]), () => 'c1')])).join('') + '<div class="viz-label">Una base de Im T: las columnas de A (originales, no de R) en las posiciones de los pivotes.</div>' : '<div class="viz-label">A = 0: la imagen es solo el vector 0.</div>') + `</div></div>`;
+      h += `<div class="tagrow"><span class="tag ${a.inj ? 'y' : 'n'}">inyectiva ⇔ ker T = {0} ⇔ rango = n: ${a.inj ? 'sí' : 'no'}</span><span class="tag ${a.surj ? 'y' : 'n'}">sobreyectiva ⇔ rango = m: ${a.surj ? 'sí' : 'no'}</span><span class="tag ${a.inj && a.surj ? 'y' : 'n'}">biyectiva: ${a.inj && a.surj ? 'sí' : 'no'}</span></div>`;
+      out.innerHTML = h;
+    }
+    stage.append(pick, sizes, gridBox, out);
+    stage.appendChild(el('p', 'pad-note', '<b>Cómo se calcula:</b> ker T = soluciones de Ax = 0 (una base por cada columna sin pivote: variable libre = 1, resto de libres = 0). Im T = espacio generado por las columnas de A; una base son las columnas con pivote. Ejemplo de clase: T(x,y) = (x+y, x+y) → ker = {(x, −x)} (dim 1), Im = {(a, a)} (dim 1), 2 = 1 + 1. Y T(x,y) = (3x, 3y) → ker = {0}, Im = ℝ², 2 = 0 + 2: biyectiva.'));
+    buildGrid(); upd();
+  }
+});
+
+/* =========================================================
+   PASO 7 · Inyectiva, sobreyectiva y corolario
+========================================================= */
+steps.push({
+  name:'Inyectiva, sobreyectiva y el corolario', short:'7 Inyectiva/sobre.', shape:'inyectiva ⇔ ker = {0} · sobreyectiva ⇔ rango = dim W',
+  desc:'Con el teorema de la dimensión todo se reduce a contar. <b>Inyectiva ⇔ ker T = {0} ⇔ rango = n</b>; <b>sobreyectiva ⇔ Im T = W ⇔ rango = m</b>. Y si dim V = dim W, ambas condiciones son <b>equivalentes</b> (corolario). Es decir, cuando dim V = dim W, inyectiva ⇔ sobreyectiva ⇔ biyectiva.',
+  render(stage){
+    const rows = PRESETS.map(P => { const m = P.A.length, n = P.A[0].length; return { P, ...analyze(toFr(P.A), m, n) }; });
+    const T = el('div', 'tbl-wrap');
+    T.innerHTML = `<table class="dt"><tr><th>Aplicación</th><th>n → m</th><th>rango</th><th>dim ker</th><th>inyectiva</th><th>sobreyectiva</th><th>¿n = m?</th></tr>${rows.map(r => `<tr><td style="text-align:left">${r.P.name}</td><td>${r.n} → ${r.m}</td><td>${r.rank}</td><td>${r.dimKer}</td><td>${vtag(r.inj)}</td><td>${vtag(r.surj)}</td><td>${r.n === r.m ? (r.inj === r.surj ? '<span class="tv v1">inj ⇔ sobre ✔</span>' : '<span class="tv v0">¡falla!</span>') : '<span class="tv" style="color:var(--muted)">no aplica</span>'}</td></tr>`).join('')}</table>`;
+    stage.appendChild(T);
+    stage.appendChild(el('p', 'pad-note', 'Las columnas se calculan por eliminación gaussiana exacta a partir de cada matriz. Mira las filas con n ≠ m: la 3ª (ℝ³→ℝ⁴) es inyectiva y no sobreyectiva; la 4ª (derivada P₃→P₂) es sobreyectiva y no inyectiva (ker = constantes). El corolario <b>no</b> se aplica cuando las dimensiones difieren.'));
+    /* explorador */
+    stage.appendChild(el('div', 'panel-title c1', 'Explorador: elige dimensiones y rango'));
+    let n = 3, m = 3, r = 2; const sel = el('div', 'btn-row'), out = el('div');
+    const opts = k => Array.from({ length:k }, (_, i) => [i + 1, String(i + 1)]);
+    const sn = mkSelect(opts(5), n, x => { n = +x; fix(); }, 'n'), sm = mkSelect(opts(5), m, x => { m = +x; fix(); }, 'm'); let sr = null;
+    function fix(){ const mx2 = Math.min(n, m); r = Math.min(r, mx2); sr = remake(); upd(); }
+    function remake(){ const old = sel.querySelector('select.rk'); const s = mkSelect(Array.from({ length:Math.min(n, m) + 1 }, (_, i) => [i, String(i)]), r, x => { r = +x; upd(); }, 'rango'); s.classList.add('rk'); if(old) old.replaceWith(s); return s; }
+    sel.append(el('span', 'viz-label', 'n = dim V'), sn, el('span', 'viz-label', 'm = dim W'), sm, el('span', 'viz-label', 'rango'));
+    const first = mkSelect(Array.from({ length:Math.min(n, m) + 1 }, (_, i) => [i, String(i)]), r, x => { r = +x; upd(); }, 'rango'); first.classList.add('rk'); sel.appendChild(first);
+    function upd(){
+      const k = n - r, inj = r === n, surj = r === m, both = n === m;
+      let h = `<div class="bar">${Array.from({ length:n }, (_, i) => i < k ? '<span class="k">ker</span>' : '<span class="i">Im</span>').join('')}<span style="border:none;background:none;width:24px">→</span>${Array.from({ length:m }, (_, i) => i < r ? '<span class="i">Im</span>' : '<span class="z">·</span>').join('')}</div><div class="viz-label">V = ${R(n)} reparte sus ${n} dimensiones entre ker (${k}) e Im (${r}); en W = ${R(m)} la imagen ocupa ${r} de ${m}</div>`;
+      h += `<div class="tagrow"><span class="tag">dim ker = n − rango = ${k}</span><span class="tag ${inj ? 'y' : 'n'}">inyectiva: ${inj ? 'sí' : 'no'}</span><span class="tag ${surj ? 'y' : 'n'}">sobreyectiva: ${surj ? 'sí' : 'no'}</span></div>`;
+      let msg;
+      if(both) msg = `Como n = m = ${n}: inyectiva (${inj ? 'sí' : 'no'}) ⇔ sobreyectiva (${surj ? 'sí' : 'no'}) <span class="ok">✔ corolario</span>. ${inj ? 'T es biyectiva (invertible).' : 'T no es invertible: pierde dimensión (dim ker = ' + k + ').'}`;
+      else if(n > m) msg = `n > m: nunca inyectiva, pues dim ker = n − rango ≥ n − m = ${n - m} > 0. ${surj ? 'Aquí es sobreyectiva (rango máximo).' : 'Aquí tampoco es sobreyectiva.'}`;
+      else msg = `n < m: nunca sobreyectiva, pues rango ≤ n < m. ${inj ? 'Aquí es inyectiva (rango máximo).' : 'Aquí tampoco es inyectiva.'}`;
+      out.innerHTML = h + `<div class="formula ${both ? 'win' : ''}">${msg}</div>`;
+    }
+    stage.append(sel, out);
+    const det = el('details'); det.innerHTML = `<summary>¿Por qué inyectiva ⇔ ker T = {0}? (solución desplegable)</summary><div class="sol"><p>(⇒) Si T es inyectiva y T(v) = 0 = T(0), entonces v = 0.</p><p>(⇐) Si ker T = {0} y T(u) = T(w), por linealidad T(u − w) = 0, luego u − w = 0 y u = w. ∎ (Las diapositivas solo enuncian la implicación «⇐»; el recíproco también es cierto.)</p><p>Sobreyectiva ⇔ Im T = W ⇔ dim Im T = dim W, pues un subespacio con la misma dimensión que W es W entero.</p></div>`;
+    stage.append(det);
+    stage.appendChild(el('div', 'panel-title c2', 'Comprueba lo aprendido'));
+    stage.appendChild(tfQuiz([
+      { q:'Una aplicación lineal T: ℝ³ → ℝ² puede ser inyectiva', ans:false, why:'dim ker = 3 − rango ≥ 3 − 2 = 1, así que el núcleo contiene vectores no nulos.' },
+      { q:'Una aplicación lineal T: ℝ² → ℝ³ puede ser sobreyectiva', ans:false, why:'rango ≤ 2 < 3 = dim W: la imagen es a lo sumo un plano dentro de ℝ³.' },
+      { q:'Si T: ℝ⁴ → ℝ⁴ es lineal y ker T = {0}, entonces T es sobreyectiva', ans:true, why:'rango = 4 − 0 = 4 = dim W (corolario con dim V = dim W).' },
+      { q:'Si T: ℝ³ → ℝ⁴ es inyectiva, entonces es biyectiva', ans:false, why:'Inyectiva da rango 3 < 4: la imagen es un subespacio propio de ℝ⁴. El corolario exige dim V = dim W.' }
+    ]));
+    upd();
+  }
+});
+
+/* =========================================================
+   PASO 8 · Capa de red neuronal
+========================================================= */
+const ACT = { id:{ n:'identidad', f:z => z }, relu:{ n:'ReLU', f:z => Math.max(0, z) }, sig:{ n:'sigmoide', f:z => 1 / (1 + Math.exp(-z)) }, tanh:{ n:'tanh', f:Math.tanh } };
+steps.push({
+  name:'Motivación en IA: una capa de red neuronal', short:'8 Capa de red', shape:'a<sup>R</sup> = f(W a<sup>L</sup> + b) &nbsp;·&nbsp; W ∈ ℝ<sup>m×n</sup>',
+  desc:'Una capa que pasa información de n neuronas a m neuronas calcula <b>a<sub>i</sub><sup>R</sup> = f<sub>i</sub>(Σ<sub>j</sub> ω<sub>ij</sub> a<sub>j</sub><sup>L</sup> + b<sub>i</sub>)</b>: una <b>aplicación lineal</b> (la matriz W, de tamaño m×n) más un <b>sesgo</b> b más una <b>activación</b> f. Edita W, b y la entrada. (Aquí f<sub>i</sub> es la activación, no la aplicación lineal de antes.)',
+  render(stage){
+    const W = [[1, -2, 0.5], [0, 1, 1]], b = [0.5, -1], a = [1, 2, 2]; let act = 'relu';
+    const row = el('div', 'viz-row'), c1 = el('div', 'viz-col'), c2 = el('div', 'viz-col'), svgBox = el('div'), out = el('div'), chk = el('div');
+    c1.append(el('div', 'panel-title c1', 'W (2×3)'), matInput(W, 2, 3, upd, 'W'), el('div', 'panel-title c2', 'Sesgo b'), vecInput(b, ['b₁', 'b₂'], upd), el('div', 'panel-title c3', 'Entrada a^L'), vecInput(a, ['a₁', 'a₂', 'a₃'], upd));
+    const sel = el('div', 'btn-row'); sel.append(el('span', 'viz-label', 'activación f ='), mkSelect(Object.keys(ACT).map(k => [k, ACT[k].n]), act, x => { act = x; upd(); }, 'función de activación')); c1.append(sel);
+    c2.append(svgBox); row.append(c1, c2);
+    function upd(){
+      const F = ACT[act].f, Wa = matVec(W, a), z = vAdd(Wa, b), o = z.map(F);
+      /* dibujo */
+      const inY = [40, 100, 160], outY = [70, 130], ix = 40, ox = 260; let s = '';
+      for(let i = 0; i < 2; i++) for(let j = 0; j < 3; j++){ const w = W[i][j], col = w >= 0 ? '#E55015' : '#F472B6'; s += `<line x1="${ix}" y1="${inY[j]}" x2="${ox}" y2="${outY[i]}" stroke="${col}" stroke-width="${Math.min(5, 0.8 + 1.4 * Math.abs(w))}" opacity=".75"/>`; const t = 0.28 + 0.1 * i; s += `<text x="${ix + (ox - ix) * t}" y="${inY[j] + (outY[i] - inY[j]) * t - 4}" fill="#E7ECF5" font-size="10">ω${i+1}${j+1}=${fmt(w)}</text>`; }
+      a.forEach((x, j) => { s += `<circle cx="${ix}" cy="${inY[j]}" r="17" fill="#17233A" stroke="#5EEAD4" stroke-width="2"/><text x="${ix}" y="${inY[j] + 4}" fill="#E7ECF5" font-size="11" text-anchor="middle">${fmt(x)}</text><text x="${ix - 24}" y="${inY[j] + 4}" fill="#8B96AD" font-size="10" text-anchor="end">a${j+1}</text>`; });
+      o.forEach((x, i) => { s += `<circle cx="${ox}" cy="${outY[i]}" r="19" fill="rgba(229,80,21,.25)" stroke="#E55015" stroke-width="2"/><text x="${ox}" y="${outY[i] + 4}" fill="#E7ECF5" font-size="11" text-anchor="middle">${fmt(x)}</text><text x="${ox + 26}" y="${outY[i] + 4}" fill="#8B96AD" font-size="10">a${i+1}ᴿ</text>`; });
+      svgBox.innerHTML = `<svg viewBox="0 0 320 200" width="100%" style="max-width:360px" role="img" aria-label="Capa de 3 neuronas a 2 neuronas">${s}</svg>`;
+      let h = '';
+      for(let i = 0; i < 2; i++) h += `<div class="eqscroll"><div class="eq">${op(`neurona ${i+1}:`)}<span>z<sub>${i+1}</sub> = ${[0, 1, 2].map(j => `${fmt(W[i][j])}·${fmt(a[j])}`).join(' + ')} + ${fmt(b[i])} = <b style="color:var(--cyan)">${fmt(z[i])}</b></span>${op('→')}<span>a<sub>${i+1}</sub><sup>R</sup> = ${ACT[act].n}(${fmt(z[i])}) = <b style="color:var(--viu)">${fmt(o[i])}</b></span></div></div>`;
+      h += eqRow([`<span class="nm">Wa</span>`, op('='), colv(Wa), op('+'), `<span class="nm">b</span>`, op('='), colv(b), op('= z ='), colv(z), op(`→ ${ACT[act].n} →`), colv(o)]);
+      const Wa1 = W.map((r, i) => [...r, b[i]]); const ah = [...a, 1];
+      h += eqRow([`<span class="nm o">[W | b]</span>`, op('='), mxn(Wa1, (i, j) => j === 3 ? 'c2' : ''), op('·'), colv(ah), op('='), colv(matVec(Wa1, ah)), op(close(matVec(Wa1, ah), z) ? '= z ✔' : '≠ z')]);
+      out.innerHTML = h;
+      /* comprobación de linealidad */
+      const u1 = [1, 0, 2], u2 = [0, 1, -1], ka = 2, kb = 3, u = vAdd(vScale(ka, u1), vScale(kb, u2));
+      const maps = [['L(x) = Wx', x => matVec(W, x), 'lineal'], ['A(x) = Wx + b', x => vAdd(matVec(W, x), b), 'afín (lineal solo si b = 0)'], [`N(x) = ${ACT[act].n}(Wx + b)`, x => vAdd(matVec(W, x), b).map(F), 'no lineal en general']];
+      let t = `<table class="dt"><tr><th>aplicación</th><th>f(2u₁+3u₂)</th><th>2f(u₁)+3f(u₂)</th><th>¿coinciden?</th></tr>`;
+      maps.forEach(([nm, f]) => { const l = f(u), r = vAdd(vScale(ka, f(u1)), vScale(kb, f(u2))); t += `<tr><td style="text-align:left">${nm}</td><td>${vec(l)}</td><td>${vec(r)}</td><td>${vtag(close(l, r))}</td></tr>`; });
+      t += '</table>';
+      const L0 = vAdd(matVec(W, [0, 0, 0]), b);
+      const W2 = [[1, 1], [-1, 2]], two = matVec(W2, Wa), oneM = matVec(matMul(W2, W), a);
+      chk.innerHTML = `<div class="panel-title c3">¿Es lineal? Prueba con u₁ = (1,0,2), u₂ = (0,1,−1), a = 2, b = 3</div><div class="tbl-wrap">${t}</div><div class="formula">Una aplicación lineal cumple T(0) = 0. Aquí A(0) = b = ${vec(L0)} ${close(L0, [0, 0]) ? '= 0 → pasa' : '≠ 0 → <span class="no">x ↦ Wx + b es afín, no lineal</span>'}.<br>Sin activación ni sesgo, dos capas se funden en una: W₂(W a) = ${vec(two)} y (W₂W) a = ${vec(oneM)} ${close(two, oneM) ? '<span class="ok">✔ (composición = producto de matrices)</span>' : ''}</div>`;
+    }
+    stage.append(row, out, chk);
+    stage.appendChild(el('p', 'pad-note', '<b>Moraleja:</b> W a es lineal; W a + b es <b>afín</b> (se vuelve lineal en una dimensión más, usando la matriz ampliada [W | b] sobre (a, 1)); y la <b>activación no lineal</b> es lo que impide que apilar capas equivalga a una sola. Entrenar una red es, en gran parte, elegir bien las entradas de W y b.'));
+    upd();
+  }
+});
+
+/* =========================================================
+   PASO 9 · Resumen y código
+========================================================= */
+const pyF = x => Number.isInteger(x) ? x.toFixed(1) : String(x);
+const pyL = (a, f) => '[' + a.map(x => (f ? pyF(x) : String(x))).join(', ') + ']';
+steps.push({
+  name:'Resumen y código', short:'9 Resumen', shape:null,
+  desc:'Una aplicación lineal se determina por la imagen de la base y se codifica en una matriz; su núcleo y su imagen reparten las dimensiones de V. Los resultados del bloque de Python los calcula la página con las mismas matrices.',
+  render(stage){
+    const T = el('div', 'tbl-wrap'); T.innerHTML = `<table class="dt"><tr><th>Concepto</th><th>Definición / fórmula</th><th>Cómo se calcula</th></tr>
+      <tr><td>Lineal</td><td style="text-align:left">f(au₁+bu₂) = af(u₁)+bf(u₂)</td><td style="text-align:left">Comprobar ∀ u₁, u₂, a, b</td></tr>
+      <tr><td>M_f</td><td style="text-align:left">f(v) = M_f v, columnas f(e_j)</td><td style="text-align:left">Aplicar f a la base canónica</td></tr>
+      <tr><td>Composición</td><td style="text-align:left">M_{g∘f} = M_g M_f</td><td style="text-align:left">Producto de matrices (orden: g a la izquierda)</td></tr>
+      <tr><td>ker T</td><td style="text-align:left">{v : T(v) = 0} ⊆ V</td><td style="text-align:left">Resolver Ax = 0</td></tr>
+      <tr><td>Im T, rango</td><td style="text-align:left">{T(v)} ⊆ W, dim Im T</td><td style="text-align:left">Columnas con pivote de A</td></tr>
+      <tr><td>Dimensión</td><td style="text-align:left">dim V = dim ker T + dim Im T</td><td style="text-align:left">n = (n − rango) + rango</td></tr>
+      <tr><td>Inj. / sobre.</td><td style="text-align:left">ker = {0} / rango = dim W</td><td style="text-align:left">Si dim V = dim W son equivalentes</td></tr></table>`;
+    stage.appendChild(T);
+    stage.appendChild(el('div', 'panel-title c1', 'En Python: matriz, rango, giros y una capa de red'));
+    const Mf = PRESETS[2].A, v = [1, 2, 3], Wn = [[1, -2, 0.5], [0, 1, 1]], bn = [0.5, -1], an = [1, 2, 2];
+    const code = `import numpy as np
+
+# 1) matriz de f(x,y,z) = (x+y, y-z, 2x+y+z, 3z) y su rango
+Mf = np.array(${'[' + Mf.map(r => pyL(r)).join(', ') + ']'})
+v = np.array(${pyL(v)})
+print((Mf @ v).tolist())
+r = np.linalg.matrix_rank(Mf)
+print(r, Mf.shape[1] - r)            # rango y dim ker
+
+# 2) composicion de rotaciones: f_(pi/3) o f_(pi/6)
+def R(t):
+    return np.array([[np.cos(t), -np.sin(t)], [np.sin(t), np.cos(t)]])
+print((np.round(R(np.pi/3) @ R(np.pi/6), 6) + 0.0).tolist())
+
+# 3) capa 3 -> 2: W a + b y despues ReLU
+W = np.array(${'[' + Wn.map(r => pyL(r, true)).join(', ') + ']'})
+b = np.array(${pyL(bn, true)})
+a = np.array(${pyL(an)})
+z = W @ a + b
+print(z.tolist(), np.maximum(0, z).tolist())`;
+    stage.appendChild(codeBox(code));
+    stage.appendChild(el('div', 'viz-label', 'Salida del programa (calculada aquí con las mismas reglas):'));
+    const p1 = matVec(Mf, v), rk = analyze(toFr(Mf), 4, 3).rank, P = matMul(rotM(60), rotM(30)).map(r => r.map(x => { const q = Math.round(x * 1e6) / 1e6; return q === 0 ? 0 : q; }));
+    const z = vAdd(matVec(Wn, an), bn), zr = z.map(x => Math.max(0, x));
+    stage.appendChild(codeBox(`${pyL(p1)}\n${rk} ${3 - rk}\n[${P.map(r => pyL(r, true)).join(', ')}]\n${pyL(z, true)} ${pyL(zr, true)}`));
+    stage.appendChild(el('div', 'panel-title c3', 'Errores frecuentes'));
+    const errs = el('div', 'bio-text'); errs.innerHTML = `<p><b>1.</b> Creer que x ↦ Wx + b es lineal: con b ≠ 0 es <i>afín</i> (manda 0 a b). Toda aplicación lineal cumple T(0) = 0.</p>
+      <p><b>2.</b> «Comprobar» la linealidad con un ejemplo numérico: un contraejemplo la refuta, pero ningún número de aciertos la demuestra (y con a + b = 1 las afines parecen lineales).</p>
+      <p><b>3.</b> Invertir el orden de la composición: M_{g∘f} = M_g M_f (primero actúa f, a la derecha). M_f M_g puede no existir o ser otra aplicación.</p>
+      <p><b>4.</b> Confundir espacios: ker T vive en V (el dominio) e Im T en W (el codominio). Además dim V = dim ker + dim Im, no dim W.</p>
+      <p><b>5.</b> Aplicar «inyectiva ⇔ sobreyectiva» cuando dim V ≠ dim W: ℝ³→ℝ⁴ puede ser inyectiva sin ser sobreyectiva.</p>
+      <p><b>6.</b> Tomar como base de Im T las filas o columnas de la forma escalonada R: hay que usar las columnas <i>originales</i> de A con pivote.</p>
+      <p><b>7.</b> Medir θ en grados dentro de cos y sen: las fórmulas exigen radianes (30° = π/6).</p>`;
+    stage.appendChild(errs); stage.appendChild(qcards(QUESTIONS));
+  }
+});
+
+/* =========================================================
+   Motor de navegación (idéntico en todas las actividades)
+========================================================= */
+let current = 0;
+function renderTrail(){
+  const tr = $('#trail'); tr.innerHTML = '';
+  steps.forEach((s, i) => { const b = el('button', null, s.short); b.type = 'button'; b.addEventListener('click', () => goTo(i)); tr.appendChild(b); });
+}
+function goTo(i){
+  current = i;
+  clearTimers();
+  const s = steps[current];
+  $('#stepCount').textContent = current === 0 ? 'Introducción' : `Paso ${current} de ${steps.length - 1}`;
+  $('#stepTitle').textContent = s.name;
+  $('#stepDesc').innerHTML = s.desc;
+  const chip = $('#shapeChip');
+  if(s.shape){ chip.style.display = ''; chip.innerHTML = `<b>${s.shape}</b>`; } else chip.style.display = 'none';
+  const stage = $('#stage'); stage.innerHTML = '';
+  s.render(stage);
+  const btns = document.querySelectorAll('.trail button');
+  btns.forEach((b, idx) => b.classList.toggle('active', idx === current));
+  if(btns[current]) btns[current].scrollIntoView({ block:'nearest', inline:'center' });
+  $('#prevBtn').disabled = current === 0;
+  $('#nextBtn').textContent = current === steps.length - 1 ? 'Volver al inicio ↺' : 'Siguiente →';
+  window.scrollTo(0, 0);
+}
+$('#prevBtn').addEventListener('click', () => { if(current > 0) goTo(current - 1); });
+$('#nextBtn').addEventListener('click', () => goTo(current === steps.length - 1 ? 0 : current + 1));
+document.addEventListener('keydown', e => {
+  if(e.target && (e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT' || e.target.tagName === 'TEXTAREA')) return;
+  if(e.key === 'ArrowRight') $('#nextBtn').click();
+  if(e.key === 'ArrowLeft') $('#prevBtn').click();
+});
+renderTrail(); goTo(0);
+</script>
+</body>
+</html>

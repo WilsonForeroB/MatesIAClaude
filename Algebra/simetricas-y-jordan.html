@@ -1,0 +1,985 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="generator" content="Generado con asistencia de IA (Claude) - revisar por el responsable antes de su uso">
+<title>Matrices simétricas, definidas positivas y forma de Jordan</title>
+<!-- Artefacto generado con asistencia de IA (Claude Sonnet 5.5). Requiere revision del desarrollador responsable. Contenido basado en las diapositivas de Matrices simetricas y Forma de Jordan de 2-algebraa.tex (02MIAR, VIU), con correcciones. Datos: solo ejemplos ficticios o de dominio publico. Sin dependencias de red. -->
+<style>
+  :root{
+    --bg:#0B1220; --panel:#121B2E; --panel-2:#17233A; --line:#26324A; --text:#E7ECF5; --muted:#8B96AD;
+    --viu:#E55015; --viu-dim:#4A2212;
+    --cyan:#5EEAD4; --cyan-dim:#1F4A45;
+    --pink:#F472B6; --pink-dim:#452236;
+    --radius:14px;
+    --font-head:'Space Grotesk','Segoe UI',sans-serif; --font-body:'IBM Plex Sans','Segoe UI',sans-serif; --font-mono:'IBM Plex Mono','Consolas',monospace;
+    padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+  }
+  *{box-sizing:border-box;}
+  html,body{height:100%;}
+  body{ margin:0; background:var(--bg); color:var(--text); font-family:var(--font-body); min-height:100%; display:flex; flex-direction:column; overflow-x:hidden; }
+  ::selection{ background:var(--viu-dim); color:var(--viu); }
+
+  header{ padding:18px clamp(16px,4vw,40px) 10px; display:flex; flex-direction:column; gap:14px; flex:0 0 auto; }
+  .headline-row{ display:flex; align-items:baseline; justify-content:space-between; gap:16px; flex-wrap:wrap; }
+  h1{ font-family:var(--font-head); font-weight:600; font-size:clamp(20px,2.6vw,28px); margin:0; letter-spacing:-0.01em; }
+  h1 span{ color:var(--viu); }
+  .net-tag{ font-family:var(--font-mono); font-size:12.5px; color:var(--muted); }
+  .trail{ display:flex; gap:4px; overflow-x:auto; padding-bottom:4px; scrollbar-width:thin; }
+  .trail::-webkit-scrollbar{height:5px;} .trail::-webkit-scrollbar-thumb{background:var(--line); border-radius:4px;}
+  .trail button{ flex:0 0 auto; background:var(--panel); border:1px solid var(--line); color:var(--muted); font-family:var(--font-mono); font-size:11.5px; padding:7px 11px; border-radius:999px; cursor:pointer; white-space:nowrap; transition:border-color .15s,color .15s,background .15s; }
+  .trail button:hover{ border-color:#3a4a6b; color:var(--text); }
+  .trail button.active{ background:var(--viu-dim); border-color:var(--viu); color:var(--viu); }
+
+  main{ flex:1 0 auto; display:flex; align-items:stretch; justify-content:center; padding:6px clamp(16px,4vw,40px) 10px; }
+  .card{ width:100%; max-width:1040px; background:var(--panel); border:1px solid var(--line); border-radius:var(--radius); padding:clamp(18px,3vw,30px); display:flex; flex-direction:column; gap:16px; }
+  .step-meta{ display:flex; justify-content:space-between; align-items:flex-start; gap:20px; flex-wrap:wrap; }
+  .step-count{ font-family:var(--font-mono); font-size:12.5px; color:var(--viu); margin:0 0 4px; }
+  .step-title{ font-family:var(--font-head); font-weight:600; font-size:clamp(18px,2.4vw,24px); margin:0; }
+  .step-desc{ color:var(--muted); font-size:14.5px; line-height:1.6; max-width:70ch; margin:6px 0 0; }
+  .step-desc b{ color:var(--text); font-weight:600; }
+  .shape-chip{ font-family:var(--font-mono); font-size:13px; background:var(--panel-2); border:1px solid var(--line); padding:9px 14px; border-radius:10px; color:var(--text); }
+  .shape-chip b{ color:var(--viu); font-weight:600; }
+  #stage{ display:flex; flex-direction:column; align-items:center; gap:16px; padding:6px 2px; }
+  #stage > *{ width:100%; }
+
+  footer{ flex:0 0 auto; display:flex; justify-content:center; gap:14px; flex-wrap:wrap; padding:4px clamp(16px,4vw,40px) calc(18px + env(safe-area-inset-bottom,0px)); }
+  .nav-btn{ font-family:var(--font-body); font-weight:500; font-size:14.5px; background:var(--panel); border:1px solid var(--line); color:var(--text); padding:11px 22px; border-radius:10px; cursor:pointer; transition:border-color .15s,transform .1s; }
+  .nav-btn:hover{ border-color:var(--viu); } .nav-btn:active{ transform:scale(.97); }
+  .nav-btn:disabled{ opacity:.35; cursor:default; } .nav-btn:disabled:hover{ border-color:var(--line); }
+  .nav-btn.primary{ background:var(--viu-dim); border-color:var(--viu); color:var(--viu); }
+
+  .viz-row{ display:flex; align-items:flex-start; justify-content:center; gap:clamp(18px,3vw,36px); flex-wrap:wrap; width:100%; }
+  .viz-col{ display:flex; flex-direction:column; align-items:center; gap:10px; flex:1 1 280px; min-width:0; }
+  .viz-label{ font-family:var(--font-mono); font-size:12px; color:var(--muted); text-align:center; line-height:1.4; }
+  .viz-label b{ color:var(--text); font-weight:600; }
+
+  .formula{ font-family:var(--font-mono); font-size:13.5px; background:var(--panel-2); border:1px solid var(--line); border-radius:10px; padding:12px 16px; min-height:44px; display:block; text-align:center; color:var(--text); max-width:760px; margin:0 auto; line-height:1.7; }
+  .formula b{ color:var(--cyan); } .formula .ok{ color:var(--viu); font-weight:600; } .formula .no{ color:var(--pink); font-weight:600; }
+  .formula.win{ border-color:var(--viu); }
+  .formula.bad{ border-color:var(--pink); }
+  .pad-note{ font-size:13px; color:var(--muted); text-align:center; max-width:74ch; margin:0 auto; line-height:1.6; }
+  .pad-note b{ color:var(--text); font-weight:600; }
+  .bio-text{ max-width:74ch; margin:0 auto; }
+  .bio-text p{ font-size:13.8px; line-height:1.65; color:var(--text); margin:0 0 10px; }
+  .bio-text b{ color:var(--viu); font-weight:600; } .bio-text i{ color:var(--cyan); font-style:normal; }
+
+  .qgrid{ display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:10px; }
+  .qcard{ background:var(--panel-2); border:1px solid var(--line); border-radius:12px; padding:14px 16px; cursor:pointer; transition:border-color .15s; }
+  .qcard:hover{ border-color:var(--viu); }
+  .qcard .n{ font-family:var(--font-mono); font-size:11.5px; color:var(--viu); }
+  .qcard h3{ font-family:var(--font-head); font-size:15px; margin:4px 0 6px; font-weight:600; }
+  .qcard p{ margin:0; font-size:12.5px; color:var(--muted); line-height:1.5; }
+
+  .btn-row{ display:flex; gap:8px; justify-content:center; flex-wrap:wrap; }
+  .toggle-btn{ font-family:var(--font-mono); font-size:11.5px; background:var(--panel-2); border:1px solid var(--line); color:var(--muted); padding:8px 13px; border-radius:999px; cursor:pointer; transition:all .15s; }
+  .toggle-btn:hover{ color:var(--text); border-color:#3a4a6b; }
+  .toggle-btn.active{ background:var(--viu-dim); border-color:var(--viu); color:var(--viu); }
+  .toggle-btn.good{ background:var(--viu-dim); border-color:var(--viu); color:var(--viu); }
+  .toggle-btn.bad{ background:var(--pink-dim); border-color:var(--pink); color:var(--pink); }
+
+  .stats{ display:flex; gap:10px; flex-wrap:wrap; justify-content:center; }
+  .stat{ background:var(--panel-2); border:1px solid var(--line); border-radius:10px; padding:8px 14px; text-align:center; min-width:120px; }
+  .stat .l{ font-family:var(--font-mono); font-size:10.5px; color:var(--muted); display:block; margin-bottom:3px; }
+  .stat .v{ font-family:var(--font-mono); font-size:15px; font-weight:600; color:var(--text); }
+  .stat.c1 .v{ color:var(--viu); } .stat.c2 .v{ color:var(--cyan); } .stat.c3 .v{ color:var(--pink); }
+  .panel-title{ font-family:var(--font-head); font-weight:600; font-size:13.5px; color:var(--text); text-align:center; margin:0 0 2px; }
+  .panel-title.c1{ color:var(--viu); } .panel-title.c2{ color:var(--cyan); } .panel-title.c3{ color:var(--pink); }
+
+  pre.code{ margin:0; background:#0E1626; border:1px solid var(--line); border-radius:10px; padding:12px 14px; font-family:var(--font-mono); font-size:12.3px; line-height:1.6; color:var(--text); overflow-x:auto; text-align:left; }
+  pre.code .cm{ color:#6b7a99; } pre.code .kw{ color:var(--pink); }
+
+  table.dt{ border-collapse:collapse; font-family:var(--font-mono); font-size:12.5px; margin:0 auto; }
+  table.dt th,table.dt td{ border:1px solid var(--line); padding:6px 11px; text-align:center; }
+  table.dt th{ background:var(--panel-2); color:var(--muted); font-weight:500; }
+  table.dt th.res{ background:var(--viu-dim); color:var(--viu); }
+  table.dt tr.hl td{ background:rgba(94,234,212,.12); }
+  table.dt tr.bad td{ background:rgba(244,114,182,.14); }
+  table.dt td.okc{ color:var(--viu); font-weight:600; } table.dt td.noc{ color:var(--pink); font-weight:600; }
+  .tbl-wrap{ overflow-x:auto; max-width:100%; }
+
+  .qrow{ background:var(--panel-2); border:1px solid var(--line); border-radius:12px; padding:12px 14px; display:flex; gap:12px; align-items:center; justify-content:space-between; flex-wrap:wrap; }
+  .qrow .tx{ flex:1 1 280px; font-size:14px; line-height:1.5; }
+  .qrow .opts{ display:flex; gap:6px; flex-wrap:wrap; }
+  .qrow .fb{ flex:1 1 100%; font-size:12.5px; color:var(--muted); line-height:1.5; }
+  .qrow .fb b.ok{ color:var(--viu); } .qrow .fb b.no{ color:var(--pink); }
+  .qrow.done{ border-color:#3a4a6b; }
+
+  select{ font-family:var(--font-mono); font-size:13px; background:var(--panel-2); color:var(--text); border:1px solid var(--line); border-radius:8px; padding:8px 10px; max-width:100%; }
+  select:focus,button:focus-visible,input:focus-visible{ outline:2px solid var(--cyan); outline-offset:1px; }
+
+  .cards6{ display:grid; grid-template-columns:repeat(auto-fit,minmax(230px,1fr)); gap:10px; width:100%; }
+  .ccard{ background:var(--panel-2); border:1px solid var(--line); border-radius:12px; padding:12px 14px; display:flex; flex-direction:column; gap:6px; }
+  .ccard .sym{ font-family:var(--font-mono); font-size:19px; color:var(--viu); font-weight:600; }
+  .ccard .nm{ font-family:var(--font-head); font-weight:600; font-size:14px; }
+  .ccard .rd{ font-size:12.5px; color:var(--muted); line-height:1.5; }
+  .ccard .sent{ font-size:13px; line-height:1.5; color:var(--text); border-top:1px dashed var(--line); padding-top:6px; }
+  .ccard:nth-child(3n+2) .sym{ color:var(--cyan); } .ccard:nth-child(3n+3) .sym{ color:var(--pink); }
+
+  .flow{ display:flex; flex-wrap:wrap; gap:8px; align-items:center; justify-content:center; }
+  .fnode{ background:var(--panel-2); border:1px solid var(--line); border-radius:10px; padding:8px 12px; font-family:var(--font-mono); font-size:12px; cursor:pointer; transition:border-color .15s; }
+  .fnode:hover{ border-color:var(--viu); } .fnode small{ display:block; color:var(--muted); font-size:10.5px; }
+  .farrow{ color:var(--muted); }
+
+  /* matrices dibujadas con tablas */
+  table.mx{ border-collapse:separate; border-spacing:0; font-family:var(--font-mono); font-size:13px; border-left:2px solid var(--muted); border-right:2px solid var(--muted); border-radius:7px; margin:0 auto; }
+  table.mx td{ padding:5px 9px; text-align:center; min-width:34px; color:var(--text); }
+  table.mx td.dg{ color:var(--viu); font-weight:600; } table.mx td.sp{ color:var(--cyan); font-weight:600; } table.mx td.z{ color:#56637f; }
+  table.mx td.b0{ background:rgba(229,80,21,.16); } table.mx td.b1{ background:rgba(94,234,212,.14); } table.mx td.b2{ background:rgba(244,114,182,.16); }
+  table.mx td.hot{ background:rgba(229,80,21,.30); color:#fff; }
+  table.edt td{ padding:3px 4px; min-width:0; }
+  input.mi{ width:64px; font-family:var(--font-mono); font-size:13px; background:var(--panel-2); color:var(--text); border:1px solid var(--line); border-radius:7px; padding:6px 4px; text-align:center; }
+  input.mi.bad{ border-color:var(--pink); color:var(--pink); }
+  input.mi.w2{ width:110px; }
+  .mrow{ display:flex; flex-wrap:wrap; gap:12px 18px; align-items:center; justify-content:center; }
+  .mcell{ display:flex; flex-direction:column; align-items:center; gap:6px; }
+  .mcell .cap{ font-family:var(--font-mono); font-size:11.5px; color:var(--muted); text-align:center; }
+  .op{ font-family:var(--font-mono); font-size:18px; color:var(--muted); }
+  .lbl-in{ font-family:var(--font-mono); font-size:12px; color:var(--muted); display:flex; align-items:center; gap:6px; }
+  input[type=range]{ accent-color:var(--viu); width:180px; max-width:100%; }
+  .legend{ display:flex; gap:14px; flex-wrap:wrap; justify-content:center; font-family:var(--font-mono); font-size:11.5px; color:var(--muted); }
+  .legend i{ display:inline-block; width:11px; height:11px; border-radius:3px; margin-right:5px; vertical-align:-1px; }
+  canvas.cv{ width:100%; max-width:340px; height:auto; border:1px solid var(--line); border-radius:10px; background:#0B1220; }
+
+  svg text{ font-family:var(--font-mono); }
+  @media (max-width:640px){ .viz-row{ gap:16px; } table.dt th,table.dt td{ padding:5px 7px; } input.mi{ width:54px; } }
+  @media (prefers-reduced-motion:reduce){ *{ transition:none !important; } }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="headline-row">
+    <h1>Matrices simétricas, definidas positivas y <span>forma de Jordan</span></h1>
+    <span class="net-tag">02MIAR · Matemáticas para la IA · Sesión 7</span>
+  </div>
+  <div class="trail" id="trail"></div>
+</header>
+
+<main>
+  <div class="card">
+    <div class="step-meta">
+      <div>
+        <p class="step-count" id="stepCount"></p>
+        <h2 class="step-title" id="stepTitle"></h2>
+        <p class="step-desc" id="stepDesc"></p>
+      </div>
+      <div class="shape-chip" id="shapeChip"></div>
+    </div>
+    <div id="stage"></div>
+  </div>
+</main>
+
+<footer>
+  <button class="nav-btn" id="prevBtn">← Anterior</button>
+  <button class="nav-btn primary" id="nextBtn">Siguiente →</button>
+</footer>
+
+<script>
+/* =========================================================
+   MATEMÁTICAS (sin DOM): fracciones exactas, rangos, determinantes, Jacobi
+========================================================= */
+//#MATH-BEGIN
+function gcdB(a, b){ a = a < 0n ? -a : a; b = b < 0n ? -b : b; while(b){ [a, b] = [b, a % b]; } return a; }
+class Fr{
+  constructor(n, d = 1n){
+    n = BigInt(n); d = BigInt(d);
+    if(d === 0n) throw new Error('división por cero');
+    if(d < 0n){ n = -n; d = -d; }
+    const g = gcdB(n, d) || 1n; this.n = n / g; this.d = d / g;
+  }
+  add(o){ return new Fr(this.n * o.d + o.n * this.d, this.d * o.d); }
+  sub(o){ return new Fr(this.n * o.d - o.n * this.d, this.d * o.d); }
+  mul(o){ return new Fr(this.n * o.n, this.d * o.d); }
+  div(o){ return new Fr(this.n * o.d, this.d * o.n); }
+  neg(){ return new Fr(-this.n, this.d); }
+  isZero(){ return this.n === 0n; }
+  sign(){ return this.n > 0n ? 1 : (this.n < 0n ? -1 : 0); }
+  num(){ return Number(this.n) / Number(this.d); }
+  str(){ return this.d === 1n ? String(this.n) : this.n + '/' + this.d; }
+}
+const Z = new Fr(0), O = new Fr(1);
+const F = (n, d = 1) => new Fr(n, d);
+const MINUS = '−';
+const fs = x => x.str().replace('-', MINUS);
+const fl = (x, d = 4) => { let r = Math.round(x * 10 ** d) / 10 ** d; if(r === 0) r = 0; return String(parseFloat(r.toFixed(d))).replace('-', MINUS); };
+function pyf(x, d = 4){ let r = Math.round(x * 10 ** d) / 10 ** d; if(r === 0) r = 0; let s = String(parseFloat(r.toFixed(d))); if(!/[.e]/.test(s)) s += '.0'; return s; }
+const sup = n => String(n).split('').map(c => '⁰¹²³⁴⁵⁶⁷⁸⁹'[+c]).join('');
+
+function parseFr(s){
+  s = String(s).trim().replace(/−/g, '-').replace(',', '.');
+  let m;
+  if((m = s.match(/^([+-]?\d+)\s*\/\s*(\d+)$/))){ if(BigInt(m[2]) === 0n) return null; return new Fr(BigInt(m[1]), BigInt(m[2])); }
+  if((m = s.match(/^([+-]?)(\d*)\.?(\d*)$/)) && (m[2] + m[3]).length){
+    const frac = m[3] || ''; const n = BigInt((m[1] === '-' ? '-' : '') + ((m[2] || '0') + frac)); return new Fr(n, 10n ** BigInt(frac.length));
+  }
+  return null;
+}
+
+const mFrom = A => A.map(r => r.map(x => (x instanceof Fr ? x : new Fr(x))));
+const mId = n => Array.from({ length:n }, (_, i) => Array.from({ length:n }, (_, j) => (i === j ? O : Z)));
+const mMul = (A, B) => A.map(r => B[0].map((_, j) => r.reduce((s, v, k) => s.add(v.mul(B[k][j])), Z)));
+const mSub = (A, B) => A.map((r, i) => r.map((v, j) => v.sub(B[i][j])));
+const mAddScaled = (A, c) => A.map((r, i) => r.map((v, j) => v.add(i === j ? c : Z)));   // A + cI
+const mScale = (A, c) => A.map(r => r.map(v => v.mul(c)));
+const mT = A => A[0].map((_, j) => A.map(r => r[j]));
+const mIsZero = A => A.every(r => r.every(v => v.isZero()));
+const mEq = (A, B) => A.every((r, i) => r.every((v, j) => v.sub(B[i][j]).isZero()));
+function mPow(A, k){ let R = mId(A.length); for(let i = 0; i < k; i++) R = mMul(R, A); return R; }
+function mRank(A){
+  const M = A.map(r => r.slice()), rows = M.length, cols = M[0].length; let rk = 0;
+  for(let c = 0; c < cols && rk < rows; c++){
+    let p = -1; for(let r = rk; r < rows; r++) if(!M[r][c].isZero()){ p = r; break; }
+    if(p < 0) continue; [M[rk], M[p]] = [M[p], M[rk]];
+    for(let r = rk + 1; r < rows; r++){ if(M[r][c].isZero()) continue; const f = M[r][c].div(M[rk][c]); for(let k = c; k < cols; k++) M[r][k] = M[r][k].sub(f.mul(M[rk][k])); }
+    rk++;
+  }
+  return rk;
+}
+function mDet(A){
+  const n = A.length, M = A.map(r => r.slice()); let det = O;
+  for(let c = 0; c < n; c++){
+    let p = -1; for(let r = c; r < n; r++) if(!M[r][c].isZero()){ p = r; break; }
+    if(p < 0) return Z;
+    if(p !== c){ [M[c], M[p]] = [M[p], M[c]]; det = det.neg(); }
+    det = det.mul(M[c][c]);
+    for(let r = c + 1; r < n; r++){ if(M[r][c].isZero()) continue; const f = M[r][c].div(M[c][c]); for(let k = c; k < n; k++) M[r][k] = M[r][k].sub(f.mul(M[c][k])); }
+  }
+  return det;
+}
+function mInv(A){
+  const n = A.length, M = A.map((r, i) => r.concat(mId(n)[i]));
+  for(let c = 0; c < n; c++){
+    let p = -1; for(let r = c; r < n; r++) if(!M[r][c].isZero()){ p = r; break; }
+    if(p < 0) return null; [M[c], M[p]] = [M[p], M[c]];
+    const d = M[c][c]; M[c] = M[c].map(v => v.div(d));
+    for(let r = 0; r < n; r++){ if(r === c || M[r][c].isZero()) continue; const f = M[r][c]; M[r] = M[r].map((v, k) => v.sub(f.mul(M[c][k]))); }
+  }
+  return M.map(r => r.slice(n));
+}
+const isSym = A => A.every((r, i) => r.every((v, j) => v.sub(A[j][i]).isZero()));
+
+/* menores principales (exactos) y clasificación de una simétrica */
+function domMinors(M){ const out = []; for(let k = 1; k <= M.length; k++) out.push(mDet(M.slice(0, k).map(r => r.slice(0, k)))); return out; }
+function allPrincipal(M){
+  const n = M.length, out = [];
+  for(let mask = 1; mask < (1 << n); mask++){
+    const idx = []; for(let i = 0; i < n; i++) if(mask & (1 << i)) idx.push(i);
+    out.push({ idx, k:idx.length, v:mDet(idx.map(i => idx.map(j => M[i][j]))) });
+  }
+  return out.sort((a, b) => a.k - b.k || a.idx.join().localeCompare(b.idx.join()));
+}
+const NAMES = { dp:'definida positiva', sp:'semidefinida positiva (no definida)', dn:'definida negativa', sn:'semidefinida negativa (no definida)', ind:'indefinida', zero:'nula (semidefinida positiva y negativa)' };
+function symInfo(M){
+  const dom = domMinors(M), pr = allPrincipal(M), Mn = mScale(M, F(-1));
+  const pd = dom.every(x => x.sign() > 0), psd = pr.every(p => p.v.sign() >= 0);
+  const nd = domMinors(Mn).every(x => x.sign() > 0), nsd = allPrincipal(Mn).every(p => p.v.sign() >= 0);
+  const cls = pd ? 'dp' : nd ? 'dn' : (psd && nsd) ? 'zero' : psd ? 'sp' : nsd ? 'sn' : 'ind';
+  return { dom, pr, pd, psd, nd, nsd, cls, domGe0:dom.every(x => x.sign() >= 0) };
+}
+
+/* Jacobi cíclico: autovalores (ascendentes) y autovectores ortonormales de una simétrica real */
+function jacobi(A0){
+  const n = A0.length, A = A0.map(r => r.slice()), V = Array.from({ length:n }, (_, i) => Array.from({ length:n }, (_, j) => (i === j ? 1 : 0)));
+  for(let sweep = 0; sweep < 100; sweep++){
+    let off = 0; for(let i = 0; i < n; i++) for(let j = i + 1; j < n; j++) off += A[i][j] * A[i][j];
+    if(off < 1e-26) break;
+    for(let p = 0; p < n - 1; p++) for(let q = p + 1; q < n; q++){
+      if(Math.abs(A[p][q]) < 1e-300) continue;
+      const theta = (A[q][q] - A[p][p]) / (2 * A[p][q]);
+      const t = (theta >= 0 ? 1 : -1) / (Math.abs(theta) + Math.sqrt(theta * theta + 1));
+      const c = 1 / Math.sqrt(t * t + 1), s = t * c;
+      for(let k = 0; k < n; k++){ const akp = A[k][p], akq = A[k][q]; A[k][p] = c * akp - s * akq; A[k][q] = s * akp + c * akq; }
+      for(let k = 0; k < n; k++){ const apk = A[p][k], aqk = A[q][k]; A[p][k] = c * apk - s * aqk; A[q][k] = s * apk + c * aqk; }
+      for(let k = 0; k < n; k++){ const vkp = V[k][p], vkq = V[k][q]; V[k][p] = c * vkp - s * vkq; V[k][q] = s * vkp + c * vkq; }
+    }
+  }
+  const order = [...Array(n).keys()].sort((a, b) => A[a][a] - A[b][b]);
+  const vals = order.map(i => A[i][i]);
+  const P = Array.from({ length:n }, (_, r) => order.map(c => V[r][c]));
+  for(let c = 0; c < n; c++){
+    let k = 0; while(k < n - 1 && Math.abs(P[k][c]) < 1e-12) k++;
+    if(P[k][c] < 0) for(let r = 0; r < n; r++) P[r][c] = -P[r][c];
+    for(let r = 0; r < n; r++) if(Math.abs(P[r][c]) < 1e-13) P[r][c] = 0;
+  }
+  return { vals, P };
+}
+const fMul = (A, B) => A.map(r => B[0].map((_, j) => r.reduce((s, v, k) => s + v * B[k][j], 0)));
+const fT = A => A[0].map((_, j) => A.map(r => r[j]));
+const fId = n => Array.from({ length:n }, (_, i) => Array.from({ length:n }, (_, j) => (i === j ? 1 : 0)));
+const fMaxDiff = (A, B) => Math.max(...A.map((r, i) => Math.max(...r.map((v, j) => Math.abs(v - B[i][j])))));
+const toNum = M => M.map(r => r.map(x => x.num()));
+function cholesky(M){
+  const n = M.length, L = Array.from({ length:n }, () => Array(n).fill(0));
+  for(let i = 0; i < n; i++) for(let j = 0; j <= i; j++){
+    let s = M[i][j]; for(let k = 0; k < j; k++) s -= L[i][k] * L[j][k];
+    if(i === j){ if(s <= 1e-12) return { fail:i, pivot:s }; L[i][i] = Math.sqrt(s); } else L[i][j] = s / L[j][j];
+  }
+  return { L };
+}
+function eig2(a, b, c, d){   // autovalores de [[a,b],[c,d]] (reales o complejos)
+  const t = a + d, det = a * d - b * c, disc = t * t / 4 - det;
+  if(disc >= 0){ const s = Math.sqrt(disc); return { real:true, l:[t / 2 - s, t / 2 + s], disc:disc * 4 }; }
+  return { real:false, re:t / 2, im:Math.sqrt(-disc), disc:disc * 4 };
+}
+function eigvec2(a, b, c, d, lam){
+  const r1 = [a - lam, b], r2 = [c, d - lam], n1 = Math.hypot(...r1), n2 = Math.hypot(...r2), r = n1 >= n2 ? r1 : r2;
+  if(Math.max(n1, n2) < 1e-12) return null;
+  const v = [r[1], -r[0]], nn = Math.hypot(...v); return v.map(x => x / nn);
+}
+
+/* ---------- Jordan: análisis exacto por núcleos de potencias ---------- */
+function analyzeLam(A, lam){
+  const n = A.length, N = mAddScaled(A, lam.neg()), ds = [0], pows = []; let P = mId(n);
+  for(let k = 1; k <= n + 1; k++){
+    P = mMul(P, N); pows.push(P);
+    const d = n - mRank(P); ds.push(d);
+    if(d === ds[k - 1]) break;
+  }
+  const last = ds.length - 1, s = last - 1, alg = ds[last], geo = ds[1] || 0;
+  const counts = []; for(let k = 1; k <= s; k++) counts.push((ds[k] - ds[k - 1]) - ((k + 1 <= last ? ds[k + 1] : ds[last]) - ds[k]));
+  const blocks = []; for(let k = s; k >= 1; k--) for(let c = 0; c < counts[k - 1]; c++) blocks.push(k);
+  const nilp = s >= 1 && pows[s - 1] && mIsZero(pows[s - 1]);
+  return { N, ds, pows, alg, geo, maxk:s, counts, blocks, nilp };
+}
+function jordanMatrix(groups){
+  const n = groups.reduce((s, g) => s + g.sizes.reduce((a, b) => a + b, 0), 0), J = Array.from({ length:n }, () => Array(n).fill(Z)), tag = Array.from({ length:n }, () => Array(n).fill(-1)); let o = 0;
+  groups.forEach((g, gi) => g.sizes.forEach(sz => {
+    for(let i = 0; i < sz; i++){ J[o + i][o + i] = g.lam; for(let j = 0; j < sz; j++) tag[o + i][o + j] = gi; if(i < sz - 1) J[o + i][o + i + 1] = O; }
+    o += sz;
+  }));
+  return { J, tag, n };
+}
+function polyFactors(groups){
+  return { p:groups.map(g => ({ lam:g.lam, e:g.sizes.reduce((a, b) => a + b, 0) })), m:groups.map(g => ({ lam:g.lam, e:Math.max(...g.sizes) })) };
+}
+function factorStr(lam, e, v = 'x'){
+  const base = lam.isZero() ? v : `(${v} ${lam.sign() < 0 ? '+' : MINUS} ${fs(lam.sign() < 0 ? lam.neg() : lam)})`;
+  return e === 1 ? base : base + sup(e);
+}
+const polyStr = fl_ => fl_.filter(f => f.e > 0).length ? fl_.filter(f => f.e > 0).map(f => factorStr(f.lam, f.e)).join(' · ') : '1';
+function evalPoly(J, fl_){ let R = mId(J.length); fl_.forEach(f => { if(f.e > 0) R = mMul(R, mPow(mAddScaled(J, f.lam.neg()), f.e)); }); return R; }
+//#MATH-END
+
+/* =========================================================
+   Utilidades de interfaz
+========================================================= */
+const $ = s => document.querySelector(s);
+let timers = [];
+function clearTimers(){ timers.forEach(t => clearInterval(t)); timers = []; }
+function el(tag, cls, html){ const e = document.createElement(tag); if(cls) e.className = cls; if(html != null) e.innerHTML = html; return e; }
+const V = x => x ? 1 : 0;
+const ck = (ok, yes = '✔', no = '✘') => `<span class="${ok ? 'ok' : 'no'}">${ok ? yes : no}</span>`;
+
+function py(code){
+  return code.replace(/&/g, '&amp;').replace(/</g, '&lt;').split('\n').map(l => {
+    const k = l.indexOf('#'); let body = l, cm = '';
+    if(k >= 0){ body = l.slice(0, k); cm = '<span class="cm">' + l.slice(k) + '</span>'; }
+    body = body.replace(/\b(import|from|as|print|def|return|not|and|or|for|in)\b/g, '<span class="kw">$1</span>');
+    return body + cm;
+  }).join('\n');
+}
+function codeBox(code){ const p = el('pre', 'code'); p.innerHTML = py(code); return p; }
+const chipBtn = (label, on, cb) => { const b = el('button', 'toggle-btn' + (on ? ' active' : ''), label); b.type = 'button'; b.addEventListener('click', () => cb(b)); return b; };
+const setActive = (row, pred) => row.querySelectorAll('button').forEach(b => b.classList.toggle('active', pred(b)));
+
+function mxHTML(M, o = {}){
+  const f = o.fmt || fs;
+  return `<table class="mx${o.cls ? ' ' + o.cls : ''}">` + M.map((r, i) => '<tr>' + r.map((v, j) => `<td class="${o.cell ? o.cell(i, j, v) : ''}">${f(v)}</td>`).join('') + '</tr>').join('') + '</table>';
+}
+const mcell = (html, cap) => `<div class="mcell">${html}${cap ? `<div class="cap">${cap}</div>` : ''}</div>`;
+const op = s => `<span class="op">${s}</span>`;
+const mrow = parts => `<div class="mrow">${parts.join('')}</div>`;
+
+/* editor de matrices: celdas de texto (enteros, decimales o fracciones a/b); mirror = mantiene la simetría */
+function matEditor(o){
+  const wrap = el('div', 'tbl-wrap'); let n = o.n, inputs = [];
+  function build(vals){
+    wrap.innerHTML = ''; const t = el('table', 'mx edt'); inputs = [];
+    for(let i = 0; i < n; i++){
+      const tr = el('tr'), row = [];
+      for(let j = 0; j < n; j++){
+        const td = el('td'), inp = el('input', 'mi'); inp.type = 'text'; inp.inputMode = 'decimal'; inp.value = String(vals[i][j]).replace('-', MINUS); inp.setAttribute('aria-label', `fila ${i + 1}, columna ${j + 1}`);
+        inp.addEventListener('input', () => { if(o.mirror && i !== j){ inputs[j][i].value = inp.value; } o.onChange(); });
+        td.appendChild(inp); tr.appendChild(td); row.push(inp);
+      }
+      t.appendChild(tr); inputs.push(row);
+    }
+    wrap.appendChild(t);
+  }
+  build(o.vals);
+  return {
+    el:wrap, getN:() => n,
+    set(nn, vals){ n = nn; build(vals); },
+    read(){
+      let ok = true; const M = inputs.map(r => r.map(inp => { const f = parseFr(inp.value); inp.classList.toggle('bad', !f); if(!f) ok = false; return f || Z; }));
+      return { ok, M };
+    }
+  };
+}
+function textIn(val, w2, cb){ const i = el('input', 'mi' + (w2 ? ' w2' : '')); i.type = 'text'; i.value = val; i.addEventListener('input', cb); return i; }
+
+function tfQuiz(items){
+  const box = el('div', 'viz-col'); box.style.width = '100%';
+  items.forEach(it => {
+    const row = el('div', 'qrow'); const tx = el('div', 'tx', it.q); const opts = el('div', 'opts'); const fb = el('div', 'fb');
+    [['Verdadero', true], ['Falso', false]].forEach(([lab, val]) => {
+      const b = el('button', 'toggle-btn', lab); b.type = 'button';
+      b.addEventListener('click', () => {
+        const ok = val === it.ans;
+        opts.querySelectorAll('button').forEach(x => x.classList.remove('good', 'bad'));
+        b.classList.add(ok ? 'good' : 'bad');
+        fb.innerHTML = (ok ? '<b class="ok">✔ Correcto.</b> ' : '<b class="no">✘ Casi.</b> ') + it.why;
+        row.classList.add('done');
+      });
+      opts.appendChild(b);
+    });
+    row.append(tx, opts, fb); box.appendChild(row);
+  });
+  return box;
+}
+
+const steps = [];
+function goStep(i){ goTo(i); }
+function qcards(list){
+  const g = el('div', 'qgrid');
+  list.forEach(([n, h, p, to]) => { const c = el('div', 'qcard', `<div class="n">${n}</div><h3>${h}</h3><p>${p}</p>`); c.tabIndex = 0; c.addEventListener('click', () => goStep(to)); c.addEventListener('keydown', e => { if(e.key === 'Enter') goStep(to); }); g.appendChild(c); });
+  return g;
+}
+const QUESTIONS = [
+  ['PREGUNTA 1', '¿Qué tienen de especial las simétricas?', 'Autovalores reales, autovectores ortogonales y A = P D Pᵗ.', 1],
+  ['PREGUNTA 2', '¿Cuándo una matriz es «positiva»?', 'La forma cuadrática vᵗAv, los menores y el criterio de Sylvester.', 3],
+  ['PREGUNTA 3', '¿Y si no se puede diagonalizar?', 'La forma de Jordan, el polinomio mínimo y los núcleos de potencias.', 7]
+];
+const ex = f => (typeof f === 'function' ? f() : f);
+
+/* ---------- datos reutilizados ---------- */
+const A_TRI = [[2, -1, 0], [-1, 2, -1], [0, -1, 2]];
+const A_4 = [[4, 1, 1, 1], [1, 3, 1, 1], [1, 1, 2, 1], [1, 1, 1, 1]];
+const A_NS = [[7, -10], [5, -8]];
+const B_EX = [[1, 0, 3], [0, 4, 5], [3, 5, 6]];
+const J22 = [[3, 1, 0, 0], [0, 3, 0, 0], [0, 0, 3, 1], [0, 0, 0, 3]];
+const J31 = [[3, 1, 0, 0], [0, 3, 1, 0], [0, 0, 3, 0], [0, 0, 0, 3]];
+
+/* ---------- PASO 0 ---------- */
+steps.push({
+  name:'Antes de empezar: matrices con estructura', short:'0 Contexto', shape:null,
+  desc:'Hoy vemos tres ideas que se usan en el <b>aprendizaje automático</b>: las matrices <b>simétricas</b> (covarianzas, hessianas, núcleos) se diagonalizan siempre y de forma ortogonal; las <b>definidas positivas</b> son las que «curvan hacia arriba» (mínimos, Cholesky); y cuando una matriz <b>no</b> se diagonaliza, la forma de <b>Jordan</b> dice qué hace en su lugar.',
+  render(stage){
+    const t = el('div', 'bio-text');
+    t.innerHTML = `<p><b>La idea de fondo.</b> Diagonalizar es elegir unos ejes donde la matriz solo <i>estira</i>. Para una simétrica esos ejes pueden elegirse perpendiculares entre sí. Para una matriz cualquiera a veces no existen suficientes ejes, y lo mejor que se consigue es una forma casi diagonal: la de Jordan.</p>
+    <p><b>Cómo funciona esta página.</b> Cada paso tiene una explicación corta y un widget. Todo lo que ves en las matrices, los determinantes y las tablas lo <b>calcula el JavaScript</b> en el momento (con fracciones exactas cuando se puede): si cambias un dato, cambian los resultados.</p>`;
+    stage.appendChild(t);
+    const flow = el('div', 'flow');
+    [['Simétricas', 'Aᵗ = A', 1], ['Espectral', 'A = P D Pᵗ', 2], ['vᵗAv', 'forma cuadrática', 3], ['Sylvester', 'menores', 4], ['Jordan', 'bloques', 7], ['Polinomio mínimo', 'm_A(x)', 9]].forEach(([n, s, to], i, a) => {
+      const f = el('div', 'fnode', `${n}<small>${s}</small>`); f.tabIndex = 0; f.addEventListener('click', () => goStep(to)); f.addEventListener('keydown', e => { if(e.key === 'Enter') goStep(to); });
+      flow.appendChild(f); if(i < a.length - 1) flow.appendChild(el('span', 'farrow', '→'));
+    });
+    stage.appendChild(flow);
+    stage.appendChild(el('p', 'pad-note', 'Haz clic en cualquier cuadro o pregunta para saltar a ese paso. También funcionan las flechas ← → del teclado (salvo mientras escribes en una casilla).'));
+    stage.appendChild(qcards(QUESTIONS));
+  }
+});
+
+/* ---------- PASO 1: simétricas ---------- */
+steps.push({
+  name:'Matrices simétricas y dos teoremas', short:'1 Simétricas', shape:'Aᵗ = A',
+  desc:'Una matriz <b>A ∈ ℝⁿˣⁿ es simétrica</b> si Aᵗ = A (a<sub>ij</sub> = a<sub>ji</sub>). Teorema 1: todas las raíces del polinomio característico de una simétrica son <b>reales</b>. Teorema 2: autovectores de autovalores <b>distintos</b> son <b>ortogonales</b>. Edita una matriz 2×2 y compruébalo: con b ≠ c ninguna de las dos garantías está asegurada.',
+  render(stage){
+    const pick = el('div', 'btn-row'), out = el('div', 'formula'), vis = el('div');
+    const ed = matEditor({ n:2, vals:[[2, 1], [1, 2]], mirror:false, onChange:upd });
+    const P = [['simétrica [[2,1],[1,2]]', [[2, 1], [1, 2]]], ['simétrica [[3,2],[2,0]]', [[3, 2], [2, 0]]], ['no simétrica [[1,1],[0,2]]', [[1, 1], [0, 2]]], ['no simétrica: giro [[0,−1],[1,0]]', [[0, -1], [1, 0]]]];
+    P.forEach(([l, m]) => pick.appendChild(chipBtn(l, false, () => { ed.set(2, m); upd(); })));
+    function upd(){
+      const { ok, M } = ed.read();
+      if(!ok){ out.innerHTML = '<span class="no">Escribe números (enteros, decimales o fracciones a/b).</span>'; out.className = 'formula bad'; vis.innerHTML = ''; return; }
+      const [[a, b], [c, d]] = toNum(M), sym = isSym(M), t = M[0][0].add(M[1][1]), det = mDet(M);
+      const disc = M[0][0].sub(M[1][1]); const D = disc.mul(disc).add(F(4).mul(M[0][1]).mul(M[1][0]));
+      const ev = eig2(a, b, c, d);
+      let h = `p<sub>A</sub>(λ) = λ² ${t.sign() >= 0 ? MINUS : '+'} ${fs(t.sign() >= 0 ? t : t.neg())}λ ${det.sign() >= 0 ? '+' : MINUS} ${fs(det.sign() >= 0 ? det : det.neg())}<br>`;
+      h += `Discriminante Δ = (a−d)² + 4bc = <b>${fs(D)}</b>`;
+      if(sym) h += ` = (a−d)² + 4b² ≥ 0 <span class="ok">⇒ raíces siempre reales</span><br>`; else h += D.sign() < 0 ? ` <span class="no">< 0 ⇒ raíces complejas</span><br>` : `<br>`;
+      let cls = 'formula';
+      if(!ev.real){ h += `Autovalores: <span class="no">${fl(ev.re)} ± ${fl(ev.im)}·i</span> (no reales: la matriz no es simétrica)`; cls += ' bad'; }
+      else {
+        h += `Autovalores: <b>${fl(ev.l[0])}</b> y <b>${fl(ev.l[1])}</b>`;
+        if(Math.abs(ev.l[1] - ev.l[0]) < 1e-12) h += `<br>Autovalor doble: no hay dos autovalores distintos que comparar${sym ? ' (aquí A = λI y todo vector es autovector)' : ''}.`;
+        else {
+          const u = eigvec2(a, b, c, d, ev.l[0]), w = eigvec2(a, b, c, d, ev.l[1]), dot = u[0] * w[0] + u[1] * w[1];
+          h += `<br>Autovectores unitarios: u = (${fl(u[0])}, ${fl(u[1])}), w = (${fl(w[0])}, ${fl(w[1])})<br>u · w = <span class="${Math.abs(dot) < 1e-9 ? 'ok' : 'no'}">${fl(dot)}</span> ${Math.abs(dot) < 1e-9 ? '⇒ ortogonales ✔' : '⇒ NO ortogonales (A no es simétrica)'}`;
+        }
+      }
+      out.innerHTML = h; out.className = cls + (sym ? ' win' : '');
+      vis.innerHTML = mrow([mcell(mxHTML(M), 'A'), op('→ transpuesta'), mcell(mxHTML(mT(M)), 'Aᵗ'), `<div class="viz-label"><b>${sym ? 'A = Aᵗ: simétrica ✔' : 'A ≠ Aᵗ: NO simétrica'}</b></div>`]);
+    }
+    stage.append(pick, el('div', 'mrow'), vis, ed.el, out);
+    stage.querySelector('.mrow').appendChild(el('div', 'viz-label', 'Edita las casillas (el giro de 90° tiene autovalores ±i: sin simetría no hay garantía de autovalores reales).'));
+    /* ejercicio det(4AB) */
+    stage.appendChild(el('div', 'panel-title c2', 'Ejercicio de la clase: calcula det(4AB)'));
+    const A3 = mFrom([[2, 0, 0], [0, 3, 0], [0, 0, 5]]), B3 = mFrom(B_EX), dA = mDet(A3), dB = mDet(B3), direct = mDet(mScale(mMul(A3, B3), F(4))), prop = F(4).mul(F(4)).mul(F(4)).mul(dA).mul(dB);
+    stage.appendChild(el('div', 'formula' + (direct.sub(prop).isZero() ? ' win' : ' bad'),
+      mrow([mcell(mxHTML(A3), 'A (diagonal)'), mcell(mxHTML(B3), `B (simétrica: ${isSym(B3) ? 'sí' : 'no'})`)]) +
+      `det A = ${fs(dA)} · det B = ${fs(dB)}<br>Para n = 3: det(4AB) = 4³ · det A · det B = 64 · ${fs(dA)} · (${fs(dB)}) = <b>${fs(prop)}</b><br>Calculado directamente con la matriz 4AB: <b>${fs(direct)}</b> ${ck(direct.sub(prop).isZero())}<br><span style="color:var(--muted)">Cuidado: det(kM) = kⁿ det M, no k · det M.</span>`));
+    stage.appendChild(el('p', 'pad-note', '<b>Por qué el Teorema 2:</b> si A u = λ₁u y A w = λ₂w con A = Aᵗ, entonces λ₁(u·w) = (Au)·w = u·(Aw) = λ₂(u·w); como λ₁ ≠ λ₂, resulta u·w = 0.'));
+    upd();
+  }
+});
+
+/* ---------- PASO 2: teorema espectral ---------- */
+steps.push({
+  name:'Teorema espectral: toda simétrica se diagonaliza ortogonalmente', short:'2 Espectral', shape:'PᵗP = I · PᵗAP = D',
+  desc:'<b>Teorema.</b> Si A ∈ ℝⁿˣⁿ es simétrica, existe una matriz <b>P ortogonal</b> (Pᵗ = P⁻¹) tal que <b>PᵗAP = D</b> diagonal real. Y es un «si y solo si»: las matrices ortogonalmente diagonalizables son exactamente las simétricas. Si hay autovalores repetidos, los autovectores de un mismo autoespacio pueden salir no ortogonales y se ortogonalizan con <b>Gram–Schmidt</b>.',
+  render(stage){
+    const pick = el('div', 'btn-row'), out = el('div'), msg = el('div', 'formula');
+    const ed = matEditor({ n:3, vals:[[2, 1, 1], [1, 2, 1], [1, 1, 2]], mirror:true, onChange:upd });
+    [['2×2 [[2,1],[1,2]]', 2, [[2, 1], [1, 2]]], ['3×3 con autovalor repetido', 3, [[2, 1, 1], [1, 2, 1], [1, 1, 2]]], ['3×3 matriz B del ejercicio', 3, B_EX], ['3×3 tridiagonal', 3, A_TRI]].forEach(([l, n, m]) => pick.appendChild(chipBtn(l, false, () => { ed.set(n, m); upd(); })));
+    function upd(){
+      const { ok, M } = ed.read();
+      if(!ok){ msg.innerHTML = '<span class="no">Escribe números válidos.</span>'; msg.className = 'formula bad'; out.innerHTML = ''; return; }
+      const A = toNum(M), { vals, P } = jacobi(A), n = A.length, D = vals.map((v, i) => vals.map((_, j) => (i === j ? v : 0)));
+      const PtP = fMul(fT(P), P), PtAP = fMul(fMul(fT(P), A), P), eP = fMaxDiff(PtP, fId(n)), eD = fMaxDiff(PtAP, D), eR = fMaxDiff(fMul(fMul(P, D), fT(P)), A);
+      const good = eP < 1e-9 && eD < 1e-9;
+      const groups = []; vals.forEach(v => { const g = groups.find(x => Math.abs(x.v - v) < 1e-8); if(g) g.m++; else groups.push({ v, m:1 }); });
+      const f = x => fl(x, 4), cellD = (i, j) => (i === j ? 'dg' : 'z');
+      out.innerHTML = mrow([mcell(mxHTML(M), 'A'), op('→'), mcell(mxHTML(P, { fmt:f }), 'P (columnas = autovectores unitarios)'), mcell(mxHTML(D, { fmt:f, cell:cellD }), 'D = diag(autovalores)')]) +
+        '<div style="height:8px"></div>' + mrow([mcell(mxHTML(PtP, { fmt:f, cell:cellD }), 'PᵗP'), mcell(mxHTML(PtAP, { fmt:f, cell:cellD }), 'PᵗAP')]);
+      msg.innerHTML = `Autovalores: ${groups.map(g => `<b>${fl(g.v)}</b>${g.m > 1 ? ` (multiplicidad ${g.m})` : ''}`).join(', ')}<br>máx|PᵗP − I| = ${eP.toExponential(1)} · máx|PᵗAP − D| = ${eD.toExponential(1)} · máx|PDPᵗ − A| = ${eR.toExponential(1)}<br>${good ? '<span class="ok">PᵗP = I y PᵗAP = D ✔ (P ortogonal)</span>' : '<span class="no">no se verifica</span>'}${groups.some(g => g.m > 1) ? '<br>Autovalor repetido: P sigue siendo ortogonal porque dentro de ese autoespacio se eligen vectores ortonormales (Gram–Schmidt).' : ''}`;
+      msg.className = 'formula' + (good ? ' win' : ' bad');
+    }
+    stage.append(pick, ed.el, out, msg);
+
+    /* Gram–Schmidt en un autoespacio repetido */
+    stage.appendChild(el('div', 'panel-title c2', 'Gram–Schmidt en un autoespacio: A = [[2,1,1],[1,2,1],[1,1,2]], λ = 1 (doble)'));
+    const AG = mFrom([[2, 1, 1], [1, 2, 1], [1, 1, 2]]); const U = [['1', '-1', '0'], ['1', '0', '-1']];
+    const gsBox = el('div', 'formula'), gsIn = el('div', 'mrow');
+    const ins = U.map((u, k) => { const r = el('div', 'lbl-in', `u${k + 1} = `); const inp = u.map(x => textIn(x.replace('-', MINUS), false, gs)); inp.forEach(i => r.appendChild(i)); gsIn.appendChild(r); return inp; });
+    const dot = (p, q) => p.reduce((s, v, i) => s.add(v.mul(q[i])), Z), mv = (M, v) => M.map(r => dot(r, v)), vs = v => '(' + v.map(fs).join(', ') + ')';
+    function gs(){
+      const vv = ins.map(r => r.map(i => parseFr(i.value))); if(vv.some(r => r.some(x => !x))){ gsBox.innerHTML = '<span class="no">Escribe números válidos.</span>'; return; }
+      const [u1, u2] = vv, isEv = v => v.some(x => !x.isZero()) && mEq(mv(AG, v).map(x => [x]), v.map(x => [x]));
+      const lines = [`A u₁ = ${vs(mv(AG, u1))} ${isEv(u1) ? '= 1·u₁ ✔' : '≠ 1·u₁ ✘ (no es autovector de λ = 1)'}`, `A u₂ = ${vs(mv(AG, u2))} ${isEv(u2) ? '= 1·u₂ ✔' : '≠ 1·u₂ ✘ (no es autovector de λ = 1)'}`, `u₁ · u₂ = <b>${fs(dot(u1, u2))}</b> ${dot(u1, u2).isZero() ? '(ya ortogonales)' : '≠ 0: no ortogonales'}`];
+      if(isEv(u1) && isEv(u2) && !dot(u1, u1).isZero()){
+        const c = dot(u2, u1).div(dot(u1, u1)), w2 = u2.map((x, i) => x.sub(c.mul(u1[i]))), indep = w2.some(x => !x.isZero());
+        if(!indep) lines.push('<span class="no">u₁ y u₂ son proporcionales: no generan el autoespacio de dimensión 2.</span>');
+        else {
+          lines.push(`w₁ = u₁;  w₂ =u₂ − (u₂·w₁ / w₁·w₁)·w₁ = u₂ − (${fs(c)})·u₁ = <b>${vs(w2)}</b>`);
+          lines.push(`w₁ · w₂ = <b>${fs(dot(u1, w2))}</b> ${ck(dot(u1, w2).isZero())} · A w₂ = ${vs(mv(AG, w2))} ${isEv(w2) ? '= 1·w₂ ✔ (sigue siendo autovector)' : ''}`);
+          const e3 = [O, O, O].map(() => O); lines.push(`Tercer autovector (λ = 4): (1, 1, 1): A·(1,1,1) = ${vs(mv(AG, e3))} = 4·(1,1,1) ${ck(mEq(mv(AG, e3).map(x => [x]), e3.map(x => [x.mul(F(4))])))} · w₁·(1,1,1) = ${fs(dot(u1, e3))}, w₂·(1,1,1) = ${fs(dot(w2, e3))} (autovalores distintos ⇒ ortogonales)`);
+        }
+      }
+      gsBox.innerHTML = lines.join('<br>');
+    }
+    stage.append(gsIn, gsBox);
+    stage.appendChild(el('p', 'pad-note', '<b>Recuerda:</b> el recíproco también es cierto. Si A = PDPᵗ con P ortogonal y D real, entonces Aᵗ = (PDPᵗ)ᵗ = PDPᵗ = A. Por eso «simétrica» y «diagonalizable con base ortonormal» son lo mismo.'));
+    upd(); gs();
+  }
+});
+
+/* ---------- PASO 3: forma cuadrática ---------- */
+steps.push({
+  name:'Definida y semidefinida positiva: la forma cuadrática vᵗAv', short:'3 Forma cuadrática', shape:'q(v) = vᵗAv',
+  desc:'Una simétrica A es <b>definida positiva</b> si vᵗAv > 0 para todo v ≠ 0, y <b>semidefinida positiva</b> si vᵗAv ≥ 0. Es (semi)definida <b>negativa</b> si −A es (semi)definida positiva. Aquí ves q(v) = vᵗAv sobre el plano: <b>cian</b> donde q > 0, <b>rosa</b> donde q < 0, y las bandas son curvas de nivel. A la derecha, q sobre la circunferencia unidad.',
+  render(stage){
+    let vx = 1, vy = 1;
+    const pick = el('div', 'btn-row'), box = el('div', 'viz-row'), out = el('div', 'formula');
+    const ed = matEditor({ n:2, vals:[[2, 1], [1, 2]], mirror:false, onChange:draw });
+    const PRE = [['I₂', [[1, 0], [0, 1]]], ['0₂', [[0, 0], [0, 0]]], ['definida [[2,1],[1,2]]', [[2, 1], [1, 2]]], ['semidefinida [[1,1],[1,1]]', [[1, 1], [1, 1]]], ['indefinida [[1,2],[2,1]]', [[1, 2], [2, 1]]], ['diag(0, −1)', [[0, 0], [0, -1]]], ['no simétrica [[7,−10],[5,−8]]', A_NS]];
+    PRE.forEach(([l, m]) => pick.appendChild(chipBtn(l, false, () => { ed.set(2, m); if(l.startsWith('no sim')){ vx = 1; vy = 1; sx.value = 1; sy.value = 1; } draw(); })));
+    const sx = el('input'), sy = el('input'); [sx, sy].forEach(s => { s.type = 'range'; s.min = -2; s.max = 2; s.step = 0.05; }); sx.value = 1; sy.value = 1;
+    sx.addEventListener('input', () => { vx = parseFloat(sx.value); draw(); }); sy.addEventListener('input', () => { vy = parseFloat(sy.value); draw(); });
+    const sl = el('div', 'mrow'); const l1 = el('label', 'lbl-in', 'v₁ '), l2 = el('label', 'lbl-in', 'v₂ '); l1.appendChild(sx); l2.appendChild(sy); sl.append(l1, l2);
+    const cv = el('canvas', 'cv'); cv.width = 340; cv.height = 340; cv.setAttribute('role', 'img'); cv.setAttribute('aria-label', 'Signo de la forma cuadrática en el plano');
+    const c1 = el('div', 'viz-col'), c2 = el('div', 'viz-col'); const plot = el('div');
+    c1.append(cv, el('div', 'legend', '<span><i style="background:#5EEAD4"></i>q > 0</span><span><i style="background:#F472B6"></i>q < 0</span><span><i style="background:#3a4a6b"></i>q = 0</span><span><i style="background:#E55015"></i>v</span>'));
+    c2.append(plot); box.append(c1, c2);
+    function draw(){
+      const { ok, M } = ed.read(); if(!ok){ out.innerHTML = '<span class="no">Escribe números válidos.</span>'; out.className = 'formula bad'; return; }
+      const [[a, b], [c, d]] = toNum(M), S = [[M[0][0], M[0][1].add(M[1][0]).div(F(2))], [M[0][1].add(M[1][0]).div(F(2)), M[1][1]]], info = symInfo(S), sym = isSym(M);
+      const q = (x, y) => a * x * x + (b + c) * x * y + d * y * y, s0 = toNum(S), lm = jacobi(s0).vals, lo = lm[0], hi = lm[1];
+      /* mapa de signo con bandas */
+      const ctx = cv.getContext('2d'), W = cv.width, H = cv.height, img = ctx.createImageData(W, H), R = 2, qs = Math.max(Math.abs(lo), Math.abs(hi), 1e-9) < 1e-9 ? 1 : Math.max(Math.abs(lo), Math.abs(hi)) * 4;
+      for(let py_ = 0; py_ < H; py_++) for(let px = 0; px < W; px++){
+        const x = (px / (W - 1) * 2 - 1) * R, y = (1 - py_ / (H - 1) * 2) * R, val = q(x, y), t = val / qs, o = (py_ * W + px) * 4; let col = [58, 74, 107], al = 0.55;
+        if(Math.abs(val) > 1e-9){ col = val > 0 ? [94, 234, 212] : [244, 114, 182]; al = (0.10 + 0.5 * Math.min(1, Math.abs(t))) * (Math.floor(Math.abs(t) * 6) % 2 ? 0.7 : 1); }
+        img.data[o] = 11 + (col[0] - 11) * al; img.data[o + 1] = 18 + (col[1] - 18) * al; img.data[o + 2] = 32 + (col[2] - 32) * al; img.data[o + 3] = 255;
+      }
+      ctx.putImageData(img, 0, 0);
+      const X = x => (x / R + 1) / 2 * (W - 1), Y = y => (1 - y / R) / 2 * (H - 1);
+      ctx.strokeStyle = 'rgba(139,150,173,.55)'; ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(0, Y(0)); ctx.lineTo(W, Y(0)); ctx.moveTo(X(0), 0); ctx.lineTo(X(0), H); ctx.stroke();
+      ctx.setLineDash([5, 4]); ctx.strokeStyle = '#E7ECF5'; ctx.beginPath(); ctx.arc(X(0), Y(0), X(1) - X(0), 0, 7); ctx.stroke(); ctx.setLineDash([]);
+      ctx.strokeStyle = '#E55015'; ctx.fillStyle = '#E55015'; ctx.lineWidth = 2.5; ctx.beginPath(); ctx.moveTo(X(0), Y(0)); ctx.lineTo(X(vx), Y(vy)); ctx.stroke(); ctx.beginPath(); ctx.arc(X(vx), Y(vy), 5, 0, 7); ctx.fill();
+      /* q sobre la circunferencia unidad */
+      const pw = 340, ph = 210, mg = 34, yr = Math.max(1, Math.abs(lo), Math.abs(hi)) * 1.2, PX = t => mg + t / 360 * (pw - mg - 8), PY = v => ph / 2 - v / yr * (ph / 2 - 14);
+      let pts = ''; for(let t = 0; t <= 360; t += 2){ const r = t * Math.PI / 180; pts += `${PX(t).toFixed(1)},${PY(q(Math.cos(r), Math.sin(r))).toFixed(1)} `; }
+      const hl = (v, colr, nm) => `<line x1="${mg}" x2="${pw - 8}" y1="${PY(v)}" y2="${PY(v)}" stroke="${colr}" stroke-dasharray="4 4" stroke-width="1.3"/><text x="${pw - 10}" y="${PY(v) - 4}" font-size="10.5" fill="${colr}" text-anchor="end">${nm}=${fl(v, 3)}</text>`;
+      plot.innerHTML = `<svg viewBox="0 0 ${pw} ${ph}" width="100%" style="max-width:${pw}px" role="img" aria-label="q sobre la circunferencia unidad"><rect x="${mg}" y="${PY(0)}" width="${pw - mg - 8}" height="${Math.max(0, ph - 14 - PY(0))}" fill="rgba(244,114,182,.10)"/><rect x="${mg}" y="14" width="${pw - mg - 8}" height="${Math.max(0, PY(0) - 14)}" fill="rgba(94,234,212,.08)"/><line x1="${mg}" x2="${pw - 8}" y1="${PY(0)}" y2="${PY(0)}" stroke="#8B96AD" stroke-width="1.5"/>${hl(hi, '#5EEAD4', 'máx')}${hl(lo, '#F472B6', 'mín')}<polyline points="${pts}" fill="none" stroke="#E55015" stroke-width="2.4"/><text x="${mg}" y="${ph - 2}" font-size="10.5" fill="#8B96AD">θ: 0°</text><text x="${pw - 8}" y="${ph - 2}" font-size="10.5" fill="#8B96AD" text-anchor="end">360°</text><text x="4" y="${PY(0) + 4}" font-size="10.5" fill="#8B96AD">q=0</text></svg><div class="viz-label">q(cos θ, sin θ): su mínimo y máximo son los autovalores${sym ? ' de A' : ' de la parte simétrica S'}</div>`;
+      const qv = q(vx, vy);
+      let h = `v = (${fl(vx, 2)}, ${fl(vy, 2)}) · vᵗAv = ${fl(a, 2)}·${fl(vx * vx, 3)} + ${fl(b + c, 2)}·${fl(vx * vy, 3)} + ${fl(d, 2)}·${fl(vy * vy, 3)} = <span class="${qv > 1e-9 ? 'ok' : qv < -1e-9 ? 'no' : ''}"><b>${fl(qv, 4)}</b></span><br>`;
+      if(sym) h += `A es simétrica: <b>${NAMES[info.cls]}</b> (autovalores ${fl(lo)} y ${fl(hi)}; mínimo de q en la circunferencia = ${fl(lo)})`;
+      else h += `<span class="no">A NO es simétrica</span>: «definida positiva» solo se define para simétricas. La forma vᵗAv solo ve la parte simétrica S = (A+Aᵗ)/2 = [[${fs(S[0][0])}, ${fs(S[0][1])}], [${fs(S[1][0])}, ${fs(S[1][1])}]], que es <b>${NAMES[info.cls]}</b>.${qv < -1e-9 ? ' Con este v, vᵗAv < 0.' : ''}`;
+      out.innerHTML = h; out.className = 'formula' + (sym ? ' win' : ' bad');
+    }
+    stage.append(pick, ed.el, sl, box, out);
+    stage.appendChild(el('p', 'pad-note', '<b>Ejemplos de la clase:</b> Iₙ es definida positiva (vᵗIv = ‖v‖² > 0), 0ₙ es semidefinida positiva (vᵗ0v = 0). La matriz [[7,−10],[5,−8]] con v = (1,1) da vᵗAv = 7−10+5−8 = −6 < 0 (pulsa su botón): pero <b>no es simétrica</b>, así que no se clasifica como «definida»; solo muestra que su parte simétrica es indefinida.'));
+    stage.appendChild(el('div', 'panel-title c2', 'Comprueba lo aprendido'));
+    const sinfo = A => symInfo(mFrom(A));
+    stage.appendChild(tfQuiz([
+      { q:'Iₙ es definida positiva para todo n', ans:true, why:'vᵗIv = vᵗv = ‖v‖² > 0 si v ≠ 0.' },
+      { q:'0ₙ es definida positiva', ans:false, why:'vᵗ0v = 0 para todo v: solo es semidefinida positiva.' },
+      { q:'[[1,1],[1,1]] es definida positiva', ans:sinfo([[1, 1], [1, 1]]).pd, why:'vᵗAv = (v₁+v₂)² ≥ 0, pero vale 0 en v = (1, −1) ≠ 0: es semidefinida, no definida.' },
+      { q:'Para A = [[7,−10],[5,−8]], el valor −6 en v = (1,1) prueba que A es definida negativa', ans:false, why:'A no es simétrica, y además un solo valor negativo solo descarta «semidefinida positiva».' }
+    ]));
+    draw();
+  }
+});
+
+/* ---------- PASO 4: Sylvester ---------- */
+steps.push({
+  name:'Menores principales dominantes y criterio de Sylvester', short:'4 Sylvester', shape:'A_k > 0  ∀k  ⇔  definida positiva',
+  desc:'El <b>menor principal dominante</b> A_k es el determinante de la submatriz de las primeras k filas y columnas. <b>Criterio de Sylvester:</b> una simétrica es definida positiva ⇔ <b>todos los A_k > 0</b>. Para <b>semidefinida</b> no basta con los dominantes: hay que usar <b>todos los menores principales</b> (los de cualquier conjunto de índices) y exigir que sean ≥ 0.',
+  render(stage){
+    const pick = el('div', 'btn-row'), out = el('div'), msg = el('div', 'formula');
+    const ed = matEditor({ n:4, vals:A_4, mirror:true, onChange:upd });
+    [['4×4 de la clase', 4, A_4], ['3×3 tridiagonal', 3, A_TRI], ['diag(0, −1) (contraejemplo)', 2, [[0, 0], [0, -1]]], ['[[1,1],[1,1]]', 2, [[1, 1], [1, 1]]], ['indefinida [[1,2],[2,1]]', 2, [[1, 2], [2, 1]]], ['definida negativa −I₂', 2, [[-1, 0], [0, -1]]]].forEach(([l, n, m]) => pick.appendChild(chipBtn(l, false, () => { ed.set(n, m); upd(); })));
+    function upd(){
+      const { ok, M } = ed.read(); if(!ok){ msg.innerHTML = '<span class="no">Escribe números válidos.</span>'; msg.className = 'formula bad'; out.innerHTML = ''; return; }
+      const n = M.length, I = symInfo(M);
+      let t = `<table class="dt"><tr><th>k</th><th>submatriz</th><th class="res">A_k</th><th>¿> 0?</th></tr>`;
+      I.dom.forEach((v, i) => { t += `<tr><td>${i + 1}</td><td>A(1:${i + 1}, 1:${i + 1})</td><td><b>${fs(v)}</b></td><td class="${v.sign() > 0 ? 'okc' : 'noc'}">${v.sign() > 0 ? '✔' : '✘'}</td></tr>`; });
+      t += '</table>';
+      let t2 = `<table class="dt"><tr><th>orden</th><th>menores principales (índices : valor)</th><th>¿todos ≥ 0?</th></tr>`;
+      for(let k = 1; k <= n; k++){ const g = I.pr.filter(p => p.k === k); t2 += `<tr><td>${k}</td><td style="text-align:left">${g.map(p => `{${p.idx.map(i => i + 1).join(',')}}: <b>${fs(p.v)}</b>`).join(' · ')}</td><td class="${g.every(p => p.v.sign() >= 0) ? 'okc' : 'noc'}">${g.every(p => p.v.sign() >= 0) ? '✔' : '✘'}</td></tr>`; }
+      t2 += '</table>';
+      out.innerHTML = `<div class="viz-row"><div class="viz-col"><div class="panel-title c1">Menores dominantes</div><div class="tbl-wrap">${t}</div></div><div class="viz-col"><div class="panel-title c2">Todos los menores principales</div><div class="tbl-wrap">${t2}</div></div></div>`;
+      let h = `Sylvester (dominantes): ${I.dom.every(x => x.sign() > 0) ? '<span class="ok">todos > 0 ⇒ definida positiva</span>' : '<span class="no">alguno ≤ 0 ⇒ NO definida positiva</span>'}<br>`;
+      h += `Todos los menores principales ≥ 0: ${I.psd ? '<span class="ok">sí ⇒ semidefinida positiva</span>' : '<span class="no">no ⇒ NO semidefinida positiva</span>'}<br>`;
+      if(I.domGe0 && !I.psd) h += '<span class="no">¡Trampa!</span> Todos los dominantes son ≥ 0 y, sin embargo, <b>no</b> es semidefinida: algún otro menor principal es negativo.<br>';
+      h += `Clasificación: <b>${NAMES[I.cls]}</b>`; msg.innerHTML = h; msg.className = 'formula' + (I.pd ? ' win' : (I.psd ? '' : ' bad'));
+    }
+    stage.append(pick, ed.el, out, msg);
+    const T4 = symInfo(mFrom(A_4)), TT = symInfo(mFrom(A_TRI)), TD = symInfo(mFrom([[0, 0], [0, -1]]));
+    stage.appendChild(el('div', 'panel-title c2', 'Comprueba lo aprendido'));
+    stage.appendChild(tfQuiz([
+      { q:`Los menores dominantes de la matriz 4×4 de la clase son ${T4.dom.map(fs).join(', ')}, así que es definida positiva`, ans:T4.pd, why:'Todos son > 0 (4, 11, 17 y 6): se cumple el criterio de Sylvester.' },
+      { q:`La tridiagonal [[2,−1,0],[−1,2,−1],[0,−1,2]] tiene dominantes ${TT.dom.map(fs).join(', ')}: es definida positiva`, ans:TT.pd, why:'Sus autovalores 2−√2, 2 y 2+√2 son todos positivos.' },
+      { q:'diag(0, −1) tiene dominantes 0 y 0 (ambos ≥ 0), luego es semidefinida positiva', ans:TD.psd, why:'Falso: el menor principal {2} vale −1 < 0 (y vᵗAv = −v₂² < 0 con v = (0,1)). Los dominantes ≥ 0 no bastan.' }
+    ]));
+    stage.appendChild(el('p', 'pad-note', '<b>Cómo se corrige el .tex:</b> la diapositiva da los dominantes 18 y 24 para la matriz 4×4; los correctos son 4, 11, <b>17</b> y <b>6</b>. Prueba a cambiar un valor y mira cómo se recalculan.'));
+    upd();
+  }
+});
+
+/* ---------- PASO 5: equivalencias ---------- */
+steps.push({
+  name:'Tres criterios equivalentes: menores, autovalores y vᵗAv', short:'5 Equivalencias', shape:'vᵗAv = Σ λᵢ yᵢ²',
+  desc:'Para una simétrica A son equivalentes: <b>(1)</b> A es definida positiva, <b>(2)</b> todos los A_k > 0, <b>(3)</b> todos los autovalores son > 0 (para semidefinida: todos los menores principales ≥ 0 y autovalores ≥ 0). La razón: con A = PDPᵗ y y = Pᵗv, <b>vᵗAv = Σ λᵢ yᵢ²</b>. La tercera columna prueba muchos vectores v (es evidencia numérica, no una demostración).',
+  render(stage){
+    const pick = el('div', 'btn-row'), out = el('div'), msg = el('div', 'formula'); let seed = 7;
+    const ed = matEditor({ n:3, vals:A_TRI, mirror:true, onChange:upd });
+    [['3×3 tridiagonal', 3, A_TRI], ['4×4 de la clase', 4, A_4], ['semidefinida [[1,1],[1,1]]', 2, [[1, 1], [1, 1]]], ['semidefinida 3×3 [[1,1,0],[1,1,0],[0,0,2]]', 3, [[1, 1, 0], [1, 1, 0], [0, 0, 2]]], ['indefinida [[1,2],[2,1]]', 2, [[1, 2], [2, 1]]], ['diag(0, −1)', 2, [[0, 0], [0, -1]]]].forEach(([l, n, m]) => pick.appendChild(chipBtn(l, false, () => { ed.set(n, m); upd(); })));
+    const rnd = () => { seed = (seed * 1664525 + 1013904223) % 4294967296; return seed / 4294967296; };
+    function sample(A, n){
+      let mn = Infinity; const q = v => { let s = 0; for(let i = 0; i < n; i++) for(let j = 0; j < n; j++) s += v[i] * A[i][j] * v[j]; return s; };
+      if(n === 2){ for(let t = 0; t < 3600; t++){ const r = t / 3600 * 2 * Math.PI; mn = Math.min(mn, q([Math.cos(r), Math.sin(r)])); } }
+      else { let s2 = 12345; const r2 = () => { s2 = (s2 * 1664525 + 1013904223) % 4294967296; return s2 / 4294967296; };
+        for(let t = 0; t < 30000; t++){ const v = Array.from({ length:n }, () => Math.sqrt(-2 * Math.log(r2() + 1e-12)) * Math.cos(2 * Math.PI * r2())), nn = Math.hypot(...v); mn = Math.min(mn, q(v.map(x => x / nn))); }
+        for(let i = 0; i < n; i++) mn = Math.min(mn, A[i][i]); }
+      return mn;
+    }
+    function upd(){
+      const { ok, M } = ed.read(); if(!ok){ msg.innerHTML = '<span class="no">Escribe números válidos.</span>'; msg.className = 'formula bad'; out.innerHTML = ''; return; }
+      const n = M.length, I = symInfo(M), A = toNum(M), { vals, P } = jacobi(A), lmin = vals[0], qmin = sample(A, n), tol = 1e-9, tolS = n === 2 ? tol : 1e-3 * Math.max(1, Math.abs(vals[n - 1]));  // el muestreo aleatorio (n ≥ 3) no distingue λ_mín = 0 de λ_mín ≈ 0: tolerancia mayor
+      const c = b => `<td class="${b ? 'okc' : 'noc'}">${b ? '✔' : '✘'}</td>`;
+      out.innerHTML = `<div class="tbl-wrap"><table class="dt"><tr><th></th><th>(2) Sylvester / menores</th><th>(3) autovalores</th><th>(1) muestreo de vᵗAv sobre ‖v‖ = 1</th></tr>
+        <tr><td style="text-align:left">¿definida positiva?</td>${c(I.pd)}${c(lmin > tol)}${c(qmin > tolS)}</tr>
+        <tr><td style="text-align:left">¿semidefinida positiva?</td>${c(I.psd)}${c(lmin > -tol)}${c(qmin > -tolS)}</tr></table></div>`;
+      const agreeD = (I.pd === (lmin > tol)) && (I.pd === (qmin > tolS)), agreeS = (I.psd === (lmin > -tol)) && (I.psd === (qmin > -tolS));
+      msg.innerHTML = `Autovalores: <b>${vals.map(v => fl(v)).join(', ')}</b> · mínimo de vᵗAv muestreado: <b>${fl(qmin)}</b> (el mínimo teórico es λ_mín = ${fl(lmin)})<br>Clasificación: <b>${NAMES[I.cls]}</b> · las tres columnas ${agreeD && agreeS ? '<span class="ok">coinciden ✔</span>' : '<span class="no">no coinciden</span>'}<div id="idn" style="margin-top:8px"></div>`;
+      msg.className = 'formula' + (I.pd ? ' win' : '');
+      const idn = msg.querySelector('#idn'), btn = chipBtn('Probar con otro v', false, show); const holder = el('div'); idn.append(btn, holder);
+      function show(){
+        let v = Array.from({ length:n }, () => Math.round((rnd() * 4 - 2) * 10) / 10); if(v.every(x => x === 0)) v[0] = 1;
+        const y = fMul(fT(P), v.map(x => [x])).map(r => r[0]), q1 = v.reduce((s, vi, i) => s + vi * A[i].reduce((t, aij, j) => t + aij * v[j], 0), 0), q2 = vals.reduce((s, l, i) => s + l * y[i] * y[i], 0);
+        holder.innerHTML = `<br>v = (${v.map(x => fl(x, 1)).join(', ')}) · y = Pᵗv = (${y.map(x => fl(x, 3)).join(', ')})<br>vᵗAv = <b>${fl(q1, 5)}</b> · Σ λᵢ yᵢ² = <b>${fl(q2, 5)}</b> ${ck(Math.abs(q1 - q2) < 1e-9)}`;
+      }
+      show();
+    }
+    stage.append(pick, ed.el, out, msg);
+    stage.appendChild(el('p', 'pad-note', '<b>Idea clave:</b> en los ejes propios la forma cuadrática es una suma de cuadrados con pesos λᵢ. Si todos los pesos son positivos, la suma es positiva salvo en y = 0 (es decir, v = 0). Si algún λᵢ ≤ 0, el vector propio correspondiente da vᵗAv = λᵢ‖v‖² ≤ 0.'));
+    upd();
+  }
+});
+
+/* ---------- PASO 6: otras descomposiciones ---------- */
+steps.push({
+  name:'Otras descomposiciones matriciales y la de Cholesky', short:'6 Otras descomp.', shape:'A = L Lᵗ',
+  desc:'No todas las matrices son diagonalizables en ℝ. La <b>forma de Jordan</b> trata las cuadradas no diagonalizables; la <b>SVD</b> sirve para cualquier matriz rectangular (y es la base del <b>PCA</b>); y hay factorizaciones prácticas: <b>LU</b>, <b>Cholesky</b> y <b>QR</b>. Cholesky existe precisamente para las simétricas <b>definidas positivas</b>: pruébalo.',
+  render(stage){
+    const cards = el('div', 'cards6');
+    [['A = C J C⁻¹', 'Forma de Jordan', 'A cuadrada (sobre ℂ). J casi diagonal por bloques.', 'Sistemas lineales, ecuaciones diferenciales, estabilidad.'],
+     ['A = U Σ Vᵗ', 'SVD', 'Cualquier A ∈ ℝᵐˣⁿ. U, V ortogonales y Σ ≥ 0 diagonal.', 'PCA, compresión, pseudoinversa.'],
+     ['A = L U', 'LU', 'A = LU si los menores dominantes A_k son no nulos; en general (A invertible) PA = LU con pivoteo. Es la eliminación de Gauss.', 'Resolver sistemas Ax = b y calcular determinantes.'],
+     ['A = L Lᵗ', 'Cholesky', 'A simétrica definida positiva; L triangular inferior con diagonal positiva.', 'Mínimos cuadrados (ecuaciones normales), Monte Carlo.'],
+     ['A = Q R', 'QR', 'A ∈ ℝᵐˣⁿ con columnas independientes: Q de columnas ortonormales, R triangular superior.', 'Mínimos cuadrados estables (Gram–Schmidt).']].forEach(([s, n, r, u]) => cards.appendChild(el('div', 'ccard', `<div class="sym">${s}</div><div class="nm">${n}</div><div class="rd">${r}</div><div class="sent">${u}</div>`)));
+    stage.appendChild(cards);
+    stage.appendChild(el('div', 'panel-title c1', 'Cholesky: A = L Lᵗ solo existe si A es definida positiva'));
+    const pick = el('div', 'btn-row'), out = el('div'), msg = el('div', 'formula');
+    const ed = matEditor({ n:3, vals:A_TRI, mirror:true, onChange:upd });
+    [['3×3 tridiagonal', 3, A_TRI], ['4×4 de la clase', 4, A_4], ['semidefinida [[1,1],[1,1]]', 2, [[1, 1], [1, 1]]], ['diag(0, −1)', 2, [[0, 0], [0, -1]]], ['indefinida [[1,2],[2,1]]', 2, [[1, 2], [2, 1]]]].forEach(([l, n, m]) => pick.appendChild(chipBtn(l, false, () => { ed.set(n, m); upd(); })));
+    function upd(){
+      const { ok, M } = ed.read(); if(!ok){ msg.innerHTML = '<span class="no">Escribe números válidos.</span>'; msg.className = 'formula bad'; out.innerHTML = ''; return; }
+      const A = toNum(M), I = symInfo(M), r = cholesky(A), f = x => fl(x, 4), cellL = (i, j, v) => (i === j ? 'dg' : (v === 0 && j > i ? 'z' : ''));
+      if(r.fail != null){
+        out.innerHTML = ''; msg.innerHTML = `El pivote ${r.fail + 1} vale ${fl(r.pivot)} ≤ 0: <span class="no">no existe Cholesky con diagonal de L positiva</span> (A es ${NAMES[I.cls]}, no definida positiva; si es semidefinida, A = LLᵗ puede existir pero con ceros en la diagonal de L y sin unicidad).<br>Coincide con Sylvester: ${I.pd ? '' : 'algún A_k ≤ 0'}.`; msg.className = 'formula bad';
+      } else {
+        const L = r.L, LLt = fMul(L, fT(L)), e = fMaxDiff(LLt, A);
+        out.innerHTML = mrow([mcell(mxHTML(M), 'A'), op('='), mcell(mxHTML(L, { fmt:f, cell:cellL }), 'L'), op('·'), mcell(mxHTML(fT(L), { fmt:f, cell:(i, j, v) => (i === j ? 'dg' : (v === 0 && j < i ? 'z' : '')) }), 'Lᵗ')]);
+        msg.innerHTML = `máx|LLᵗ − A| = ${e.toExponential(1)} ${ck(e < 1e-9)} · la diagonal de L (${L.map((r_, i) => fl(r_[i])).join(', ')}) es positiva: A es ${NAMES[I.cls]}`; msg.className = 'formula win';
+      }
+    }
+    stage.append(pick, ed.el, out, msg);
+    stage.appendChild(el('p', 'pad-note', 'Si el algoritmo de Cholesky llega a una raíz de un número ≤ 0, A no es definida positiva: es un test práctico y barato de definición positiva, equivalente a Sylvester.'));
+    upd();
+  }
+});
+
+/* ---------- PASO 7: bloque de Jordan ---------- */
+steps.push({
+  name:'Bloque de Jordan y forma de Jordan', short:'7 Bloque de Jordan', shape:'J_k(λ) = λI + N',
+  desc:'Un <b>bloque de Jordan</b> J_k(λ) tiene λ en la diagonal y 1 justo encima. Una matriz está en <b>forma de Jordan</b> si es diagonal por bloques J = diag(J₁, …, J_r) con cada J_i un bloque. <b>Teorema:</b> toda A ∈ ℂⁿˣⁿ (en particular real) es semejante a una J: existe C invertible con C⁻¹AC = J, y J es única salvo el orden de los bloques (C no es única).',
+  render(stage){
+    let k = 3; const lamIn = textIn('6', false, upd), kRow = el('div', 'btn-row'), jEl = el('div'), msg = el('div', 'formula'); let jj = 1;
+    const lr = el('label', 'lbl-in', 'λ = '); lr.appendChild(lamIn);
+    [1, 2, 3, 4, 5].forEach(x => kRow.appendChild(chipBtn('k = ' + x, x === 3, () => { k = x; jj = Math.min(jj, 6); setActive(kRow, b => b.textContent === 'k = ' + k); upd(); })));
+    const pRow = el('div', 'btn-row'); for(let p = 1; p <= 5; p++) pRow.appendChild(chipBtn('Nᵖ con p = ' + p, p === 1, () => { jj = p; setActive(pRow, b => b.textContent.endsWith('= ' + jj)); upd(); }));
+    function upd(){
+      const lam = parseFr(lamIn.value); lamIn.classList.toggle('bad', !lam); if(!lam){ msg.innerHTML = '<span class="no">λ debe ser un número.</span>'; msg.className = 'formula bad'; jEl.innerHTML = ''; return; }
+      const { J, tag } = jordanMatrix([{ lam, sizes:[k] }]), N = mSub(J, mScale(mId(k), lam)), Np = mPow(N, jj);
+      const dims = []; for(let p = 1; p <= k + 1; p++) dims.push(k - mRank(mPow(N, p)));
+      const dgCell = (i, j) => (i === j ? 'dg' : (j === i + 1 ? 'sp' : 'z'));
+      jEl.innerHTML = mrow([mcell(mxHTML(J, { cell:dgCell }), `J<sub>${k}</sub>(${fs(lam)})`), op('→ N = J − λI'), mcell(mxHTML(N, { cell:dgCell }), 'N'), op(`→ N<sup>${jj}</sup>`), mcell(mxHTML(Np, { cell:(i, j, v) => (v.isZero() ? 'z' : 'hot') }), `N<sup>${jj}</sup> ${mIsZero(Np) ? '= 0' : '≠ 0'}`)]);
+      const C = Array.from({ length:k }, (_, i) => Array.from({ length:k }, (_, j) => (i === j ? O : (j === i - 1 ? O : Z)))), Ci = mInv(C), A = mMul(mMul(C, J), Ci), back = mMul(mMul(Ci, A), C);
+      msg.innerHTML = `dim ker Nᵖ para p = 1…${k + 1}: <b>${dims.join(', ')}</b> (crece de uno en uno hasta ${k} y se detiene ⇒ un único bloque de tamaño ${k})<br>N<sup>${k - 1 || 0}</sup> ${k > 1 ? (mIsZero(mPow(N, k - 1)) ? '= 0' : '≠ 0') : '= I (k = 1)'} y N<sup>${k}</sup> = 0: ${ck(mIsZero(mPow(N, k)))}<br>multiplicidad algebraica de λ = ${k}, geométrica = ${dims[0]}`;
+      msg.className = 'formula win';
+      jEl.innerHTML += `<div style="height:10px"></div>` + `<div class="viz-label">Una matriz «disfrazada» con esta forma de Jordan: A = C J C⁻¹ con C = I + (subdiagonal de unos)</div>` + mrow([mcell(mxHTML(C), 'C'), op('→'), mcell(mxHTML(A), 'A = C J C⁻¹'), op(`C⁻¹AC = J: ${mEq(back, J) ? '✔' : '✘'}`)]);
+    }
+    stage.append(el('div', 'btn-row').appendChild(lr).parentNode, kRow, pRow, jEl, msg);
+    stage.appendChild(el('div', 'panel-title c2', 'Diagonal por bloques: un ejemplo con tres autovalores'));
+    const g = [{ lam:F(2), sizes:[2] }, { lam:F(-3), sizes:[2] }, { lam:F(4), sizes:[2] }], jb = jordanMatrix(g), ids = jb.J.map((r, i) => r[i]);
+    stage.appendChild(el('div', 'formula', mrow([mcell(mxHTML(jb.J, { cell:(i, j) => 'b' + jb.tag[i][j] + (i === j ? ' dg' : (jb.tag[i][j] >= 0 && j === i + 1 && jb.J[i][j].sign() ? ' sp' : '')) }), 'J = diag(J₂(2), J₂(−3), J₂(4))')]) +
+      `Matriz triangular ⇒ autovalores en la diagonal: <b>${[...new Set(ids.map(fs))].join(', ')}</b>, cada uno con multiplicidad algebraica 2 y geométrica 1 (un bloque por autovalor).<br>Cualquier matriz semejante a J tiene esos tres autovalores.`));
+    stage.appendChild(el('p', 'pad-note', '<b>Diagonalizable ⇔ todos los bloques son de tamaño 1.</b> Los 1 de la superdiagonal señalan cadenas de vectores propios generalizados: son lo que impide diagonalizar. La forma de Jordan se usa en sistemas lineales, ecuaciones diferenciales y análisis de estabilidad.'));
+    upd();
+  }
+});
+
+/* ---------- PASO 8: ejemplos de Jordan ---------- */
+const JEX = [
+  { id:'B', name:'B 3×3 (un bloque de tamaño 3)', A:[[6, 2, 1], [0, 6, 1], [0, 0, 6]], lams:[6] },
+  { id:'A3', name:'A 3×3 (4 y −2)', A:[[-3, 1, -1], [-7, 5, -1], [-6, 6, -2]], lams:[4, -2] },
+  { id:'A2', name:'[[5,4],[2,3]] (7 y 1)', A:[[5, 4], [2, 3]], lams:[7, 1] }
+];
+steps.push({
+  name:'Ejemplos: calcular la forma de Jordan', short:'8 Ejemplos', shape:'dim ker (A−λI)ᵏ',
+  desc:'Para cada autovalor λ, la página calcula N = A − λI y las dimensiones de ker Nᵏ con eliminación exacta. De ahí salen la multiplicidad geométrica, la algebraica y los <b>tamaños de bloque</b>; con ellos se construye J. Compruébalo con los tres ejemplos de la clase. Ojo: en el .tex la forma de Jordan de [[5,4],[2,3]] aparece mal escrita.',
+  render(stage){
+    const pick = el('div', 'btn-row'), out = el('div');
+    JEX.forEach((e, i) => pick.appendChild(chipBtn(e.name, i === 2, () => { show(i); setActive(pick, b => b.textContent === e.name); })));
+    function show(i){
+      const e = JEX[i], A = mFrom(e.A), n = A.length, rs = e.lams.map(l => ({ lam:F(l), an:analyzeLam(A, F(l)) })), tot = rs.reduce((s, r) => s + r.an.alg, 0);
+      const groups = rs.map(r => ({ lam:r.lam, sizes:r.an.blocks })), complete = tot === n, diag = rs.every(r => r.an.maxk === 1);
+      let t = `<table class="dt"><tr><th>λ</th><th>rango(A−λI)</th><th>geométrica = n − rango</th><th>dim ker (A−λI)ᵏ</th><th>algebraica</th><th>bloques</th></tr>`;
+      rs.forEach(r => { t += `<tr><td><b>${fs(r.lam)}</b></td><td>${n - r.an.ds[1]}</td><td>${r.an.geo}</td><td>${r.an.ds.slice(1).join(', ')}</td><td>${r.an.alg}</td><td>${r.an.blocks.map(b => `J<sub>${b}</sub>(${fs(r.lam)})`).join(' ⊕ ')}</td></tr>`; });
+      t += '</table>';
+      let html = mrow([mcell(mxHTML(A), 'A')]) + `<div class="tbl-wrap">${t}</div>`;
+      const msg = el('div', 'formula' + (complete ? ' win' : ' bad'));
+      if(!complete){ msg.innerHTML = `<span class="no">Las multiplicidades suman ${tot} < ${n}: falta algún autovalor.</span>`; out.innerHTML = html; out.appendChild(msg); return; }
+      const jb = jordanMatrix(groups), pf = polyFactors(groups);
+      html += mrow([mcell(mxHTML(jb.J, { cell:(a, b) => 'b' + jb.tag[a][b] + (a === b ? ' dg' : (jb.J[a][b].sign() && b === a + 1 ? ' sp' : '')) }), 'J = forma de Jordan de A')]);
+      out.innerHTML = html;
+      const tr = A.reduce((s, r, i) => s.add(r[i]), Z), trJ = jb.J.reduce((s, r, i) => s.add(r[i]), Z), dA = mDet(A), dJ = mDet(jb.J);
+      msg.innerHTML = `Multiplicidades algebraicas: ${rs.map(r => r.an.alg).join(' + ')} = ${n} ${ck(true)}<br>Autovalores de J (diagonal) ⇒ tr A = ${fs(tr)} = tr J = ${fs(trJ)} ${ck(tr.sub(trJ).isZero())} · det A = ${fs(dA)} = det J = ${fs(dJ)} ${ck(dA.sub(dJ).isZero())}<br>p<sub>A</sub>(x) = ${polyStr(pf.p)} · m<sub>A</sub>(x) = ${polyStr(pf.m)}<br><b>${diag ? 'A es diagonalizable (todos los bloques de tamaño 1)' : 'A NO es diagonalizable (hay un bloque de tamaño ≥ 2)'}</b>`;
+      out.appendChild(msg);
+      if(e.id === 'A2'){ const w = el('div', 'formula', `Corrección del .tex: los autovalores 7 y 1 son <b>distintos</b>, así que A es diagonalizable y J = diag(7, 1). La matriz [[7,1],[0,1]] que aparece en las diapositivas no está en forma de Jordan (un 1 sobre la diagonal exige el mismo autovalor a ambos lados).`); w.style.marginTop = '10px'; out.appendChild(w); }
+      if(e.id === 'B'){ const N = rs[0].an.N, w = el('div', 'formula', mrow([mcell(mxHTML(N), 'N = B − 6I'), mcell(mxHTML(rs[0].an.pows[1]), 'N²'), mcell(mxHTML(rs[0].an.pows[2] || mPow(N, 3)), 'N³')]) + `N² ${mIsZero(rs[0].an.pows[1]) ? '= 0' : '≠ 0'} y N³ ${mIsZero(mPow(N, 3)) ? '= 0' : '≠ 0'} ⇒ el menor k con Nᵏ = 0 es ${rs[0].an.maxk}: un solo bloque de tamaño 3.`); w.style.marginTop = '10px'; out.appendChild(w); }
+    }
+    stage.append(pick, out);
+    stage.appendChild(el('p', 'pad-note', 'En A (3×3) los dos autovalores (4 y −2) se verifican porque las multiplicidades algebraicas calculadas suman n = 3. Si falta algún autovalor, la suma sería menor que n.'));
+    show(2);
+  }
+});
+
+/* ---------- PASO 9: polinomio mínimo ---------- */
+steps.push({
+  name:'Polinomio mínimo y estructura de bloques', short:'9 Polinomio mínimo', shape:'m_A(x) | p_A(x)',
+  desc:'El <b>polinomio mínimo</b> m_A es el polinomio mónico de menor grado con m_A(A) = 0. Es único, <b>divide</b> al característico p_A, tiene las <b>mismas raíces</b> (los autovalores) y el exponente de (x−λ) es el <b>tamaño del bloque más grande</b> de λ. Indica los bloques de cada autovalor y comprueba p_A, m_A y que m_A(J) = 0.',
+  render(stage){
+    const rowsDef = [['3', '2,2'], ['', ''], ['', '']];
+    const rows = rowsDef.map(([l, s]) => ({ l:textIn(l, false, upd), s:textIn(s, true, upd) })), box = el('div'), msg = el('div', 'formula'), pre = el('div', 'btn-row');
+    const wrap = el('div', 'viz-col');
+    rows.forEach((r, i) => { const d = el('div', 'lbl-in'); d.append(`autovalor ${i + 1}: λ = `, r.l, ' tamaños de bloque: ', r.s); wrap.appendChild(d); });
+    const PR = [['4×4, λ=3: bloques 2+2', [['3', '2,2']]], ['4×4, λ=3: bloques 3+1', [['3', '3,1']]], ['3×3 de la clase: λ=2 (2), λ=5 (1)', [['2', '2'], ['5', '1']]], ['A 3×3: λ=4 (1), λ=−2 (2)', [['4', '1'], ['-2', '2']]], ['Nota 2: 6×6 con 2, −3, 4', [['2', '2'], ['-3', '2'], ['4', '2']]], ['B: λ=6 (3)', [['6', '3']]]];
+    PR.forEach(([l, d]) => pre.appendChild(chipBtn(l, false, () => { rows.forEach((r, i) => { r.l.value = d[i] ? d[i][0].replace('-', MINUS) : ''; r.s.value = d[i] ? d[i][1] : ''; }); upd(); })));
+    function upd(){
+      const groups = []; let err = '';
+      rows.forEach((r, i) => {
+        if(!r.l.value.trim() && !r.s.value.trim()) return;
+        const lam = parseFr(r.l.value), sz = r.s.value.split(/[\s,;+]+/).filter(Boolean).map(Number);
+        if(!lam || !sz.length || sz.some(x => !Number.isInteger(x) || x < 1 || x > 6)){ err = `Fila ${i + 1}: λ numérico y tamaños enteros entre 1 y 6, separados por comas.`; return; }
+        if(groups.some(g => g.lam.sub(lam).isZero())){ err = `El autovalor ${fs(lam)} aparece dos veces: junta todos sus bloques en una sola fila.`; return; }
+        groups.push({ lam, sizes:sz.slice().sort((a, b) => b - a) });
+      });
+      const n = groups.reduce((s, g) => s + g.sizes.reduce((a, b) => a + b, 0), 0);
+      if(!err && (!groups.length)) err = 'Escribe al menos un autovalor con sus bloques.';
+      if(!err && n > 8) err = `La matriz sería ${n}×${n}: usa como máximo n = 8.`;
+      if(err){ msg.innerHTML = `<span class="no">${err}</span>`; msg.className = 'formula bad'; box.innerHTML = ''; return; }
+      const { J, tag } = jordanMatrix(groups), pf = polyFactors(groups), mJ = evalPoly(J, pf.m), pJ = evalPoly(J, pf.p);
+      box.innerHTML = mrow([mcell(mxHTML(J, { cell:(i, j) => 'b' + tag[i][j] + (i === j ? ' dg' : (J[i][j].sign() && j === i + 1 ? ' sp' : '')) }), `J (${n}×${n})`)]);
+      let h = groups.map(g => `λ = <b>${fs(g.lam)}</b>: bloques ${g.sizes.join(' + ')} ⇒ algebraica ${g.sizes.reduce((a, b) => a + b, 0)}, geométrica ${g.sizes.length}, mayor bloque ${g.sizes[0]}`).join('<br>');
+      h += `<br>p<sub>A</sub>(x) = <b>${polyStr(pf.p)}</b> (grado ${n})<br>m<sub>A</sub>(x) = <b>${polyStr(pf.m)}</b> (grado ${pf.m.reduce((s, f) => s + f.e, 0)} ≤ ${n})<br>`;
+      const dvd = pf.p.every((f, i) => pf.m[i].e <= f.e);
+      h += `m_A divide a p_A ${ck(dvd)} · m_A(J) = 0 ${ck(mIsZero(mJ))} · p_A(J) = 0 ${ck(mIsZero(pJ))}<br>`;
+      h += pf.m.map((f, i) => { const red = pf.m.map((g, k) => ({ lam:g.lam, e:g.e - (k === i ? 1 : 0) })); return `quitar un factor de (x ${f.lam.sign() < 0 ? '+' : MINUS} ${fs(f.lam.sign() < 0 ? f.lam.neg() : f.lam)}) ⇒ el producto sobre J ${mIsZero(evalPoly(J, red)) ? '= 0 (¡no debería!)' : '≠ 0 ✔'}`; }).join('<br>');
+      h += `<br><b>${pf.m.every(f => f.e === 1) ? 'm_A tiene todas sus raíces simples ⇒ A es diagonalizable' : 'm_A tiene una raíz múltiple ⇒ A no es diagonalizable'}</b>`;
+      msg.innerHTML = h; msg.className = 'formula' + (mIsZero(mJ) && dvd ? ' win' : ' bad');
+    }
+    stage.append(pre, wrap, box, msg);
+    /* misma multiplicidad algebraica y geométrica, distinto m */
+    stage.appendChild(el('div', 'panel-title c3', 'λ = 3 con multiplicidad algebraica 4: ¿basta la geométrica?'));
+    const parts = [[4], [3, 1], [2, 2], [2, 1, 1], [1, 1, 1, 1]];
+    let t = '<table class="dt"><tr><th>bloques</th><th>geométrica</th><th>p_A</th><th>m_A</th><th>grado m_A</th></tr>';
+    parts.forEach(sz => { const g = [{ lam:F(3), sizes:sz }], pf = polyFactors(g); t += `<tr class="${sz.length === 2 ? 'hl' : ''}"><td>${sz.join(' + ')}</td><td>${sz.length}</td><td>${polyStr(pf.p)}</td><td>${polyStr(pf.m)}</td><td>${pf.m[0].e}</td></tr>`; });
+    t += '</table>';
+    stage.appendChild(el('div', 'tbl-wrap', t));
+    stage.appendChild(el('p', 'pad-note', '<b>Moraleja (corrige el .tex):</b> álgebraica 4 y geométrica 2 <b>no determinan</b> la forma de Jordan: 3 + 1 y 2 + 2 tienen los mismos p_A y la misma multiplicidad geométrica 2, pero distinto m_A [(x−3)³ frente a (x−3)²]. El polinomio mínimo depende del tamaño del bloque mayor, no solo del número de bloques.'));
+    upd();
+  }
+});
+
+/* ---------- PASO 10: núcleos de potencias ---------- */
+steps.push({
+  name:'Método del núcleo de potencias', short:'10 Núcleos', shape:'ker N ⊂ ker N² ⊂ … estabiliza',
+  desc:'Con N = A − λI se calculan dim ker N, dim ker N², … hasta que <b>dejan de crecer</b> (ker Nᵏ = ker Nᵏ⁺¹). Entonces: nº de bloques = dim ker N · tamaño del mayor = primer k que estabiliza · dim estabilizada = multiplicidad algebraica. El incremento dim ker Nᵏ − dim ker Nᵏ⁻¹ cuenta los bloques de tamaño ≥ k. Edita la matriz (nilpotente con λ = 0, o cualquier A con su λ).',
+  render(stage){
+    const pick = el('div', 'btn-row'), out = el('div'), lamIn = textIn('0', false, upd), lr = el('label', 'lbl-in', 'λ = '); lr.appendChild(lamIn);
+    const ed = matEditor({ n:4, vals:[[0, 1, 0, 0], [0, 0, 1, 0], [0, 0, 0, 0], [0, 0, 0, 0]], mirror:false, onChange:upd });
+    const PR = [['nilpotente 4×4: bloques 3+1', 4, [[0, 1, 0, 0], [0, 0, 1, 0], [0, 0, 0, 0], [0, 0, 0, 0]], 0], ['nilpotente 4×4: bloques 2+2', 4, [[0, 1, 0, 0], [0, 0, 0, 0], [0, 0, 0, 1], [0, 0, 0, 0]], 0], ['nilpotente 4×4: un bloque de 4', 4, [[0, 0, 0, 0], [1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0]], 0], ['nilpotente [[1,−1],[1,−1]]', 2, [[1, -1], [1, -1]], 0], ['J 4×4 (λ=3, 2+2)', 4, J22, 3], ['J 4×4 (λ=3, 3+1)', 4, J31, 3], ['B, λ = 6', 3, JEX[0].A, 6], ['A 3×3, λ = −2', 3, JEX[1].A, -2], ['A 3×3, λ = 4', 3, JEX[1].A, 4], ['[[5,4],[2,3]], λ = 7', 2, JEX[2].A, 7]];
+    PR.forEach(([l, n, m, lam]) => pick.appendChild(chipBtn(l, false, () => { ed.set(n, m); lamIn.value = String(lam).replace('-', MINUS); upd(); })));
+    function upd(){
+      const { ok, M } = ed.read(), lam = parseFr(lamIn.value); lamIn.classList.toggle('bad', !lam);
+      if(!ok || !lam){ out.innerHTML = '<div class="formula bad"><span class="no">Escribe números válidos (enteros, decimales o fracciones a/b).</span></div>'; return; }
+      const n = M.length, an = analyzeLam(M, lam), s = an.maxk;
+      let t = `<table class="dt"><tr><th>k</th><th>rango(Nᵏ)</th><th class="res">dim ker Nᵏ</th><th>incremento</th><th>bloques de tamaño ≥ k</th><th>bloques de tamaño exacto k</th></tr>`;
+      for(let k = 1; k < an.ds.length; k++){
+        const inc = an.ds[k] - an.ds[k - 1], stable = k === an.ds.length - 1;
+        t += `<tr class="${stable ? 'hl' : ''}"><td>${k}</td><td>${n - an.ds[k]}</td><td><b>${an.ds[k]}</b></td><td>${inc}</td><td>${stable ? '—' : inc}</td><td>${stable ? 'no crece: parar' : an.counts[k - 1]}</td></tr>`;
+      }
+      t += '</table>';
+      const mats = an.pows.slice(0, Math.min(an.pows.length, 4)).map((P, i) => mcell(mxHTML(P, { cell:(a, b, v) => (v.isZero() ? 'z' : '') }), `N${i ? '<sup>' + (i + 1) + '</sup>' : ''}${mIsZero(P) ? ' = 0' : ''}`));
+      let msg = '';
+      if(an.alg === 0) msg = `<span class="no">λ = ${fs(lam)} no es autovalor</span> (A − λI es invertible: dim ker N = 0).`;
+      else {
+        msg = `Nº de bloques = dim ker N = <b>${an.geo}</b> · tamaño del bloque mayor = primer k con ker Nᵏ = ker Nᵏ⁺¹ = <b>${s}</b> · multiplicidad algebraica = <b>${an.alg}</b><br>Bloques de λ = ${fs(lam)}: <b>${an.blocks.map(b => `J<sub>${b}</sub>`).join(' ⊕ ')}</b> (suman ${an.blocks.reduce((a, b) => a + b, 0)} = ${an.alg} ${ck(an.blocks.reduce((a, b) => a + b, 0) === an.alg)})<br>exponente de (x − ${fs(lam)}) en m_A: <b>${s}</b>`;
+        if(an.alg < n) msg += `<br><span style="color:var(--muted)">Hay otros autovalores (suman ${n - an.alg} más): por eso Nᵏ nunca llega a ser 0, pero el núcleo sí se estabiliza. «El menor k con Nᵏ = 0» solo sirve si λ es el único autovalor.</span>`;
+        else msg += `<br><span style="color:var(--muted)">λ es el único autovalor: N es nilpotente y su índice de nilpotencia (menor k con Nᵏ = 0) coincide con ${s}.</span>`;
+      }
+      out.innerHTML = mrow([mcell(mxHTML(M), 'A'), op('−'), mcell(`<div class="op" style="font-size:15px">${fs(lam)}·I</div>`, ''), op('=')].concat(mcell(mxHTML(an.N, { cell:(a, b, v) => (v.isZero() ? 'z' : '') }), 'N = A − λI'))) + '<div style="height:8px"></div>' + mrow(mats) + '<div style="height:8px"></div><div class="tbl-wrap">' + t + '</div>' + `<div class="formula ${an.alg ? 'win' : 'bad'}" style="margin-top:10px">${msg}</div>`;
+    }
+    stage.append(pick, el('div', 'btn-row').appendChild(lr).parentNode, ed.el, out);
+    stage.appendChild(el('p', 'pad-note', 'Cada fila de la tabla usa eliminación gaussiana con <b>fracciones exactas</b> (sin errores de redondeo). Prueba a cambiar un 1 por un 0 en la matriz nilpotente y mira cómo cambian los bloques.'));
+    upd();
+  }
+});
+
+/* ---------- PASO 11: resumen ---------- */
+steps.push({
+  name:'Resumen y código', short:'11 Resumen', shape:null,
+  desc:'Simétrica ⇒ diagonalizable ortogonalmente con autovalores reales. Definida positiva ⇔ A_k > 0 ⇔ autovalores > 0. Cualquier matriz cuadrada tiene forma de Jordan sobre ℂ, y sus bloques salen de los núcleos de las potencias de A − λI. Los resultados de abajo los calcula la página.',
+  render(stage){
+    const T = el('div', 'tbl-wrap');
+    T.innerHTML = `<table class="dt"><tr><th>Idea</th><th>Enunciado correcto</th></tr>
+      <tr><td>Espectral</td><td style="text-align:left">A = Aᵗ real ⇔ existe P ortogonal con PᵗAP = D real</td></tr>
+      <tr><td>Sylvester</td><td style="text-align:left">definida positiva ⇔ todos los A_k > 0 · semidefinida ⇔ todos los menores principales ≥ 0</td></tr>
+      <tr><td>Jordan</td><td style="text-align:left">C⁻¹AC = J, única salvo el orden de bloques · nº bloques de λ = dim ker(A−λI)</td></tr>
+      <tr><td>Polinomio mínimo</td><td style="text-align:left">m_A | p_A · exponente de (x−λ) = bloque mayor · diagonalizable ⇔ m_A tiene raíces simples</td></tr></table>`;
+    stage.appendChild(T);
+    stage.appendChild(el('div', 'panel-title c1', 'En Python: espectral, Sylvester, Cholesky y bloques de Jordan'));
+    stage.appendChild(codeBox(`import numpy as np
+
+A = np.array([[2, -1, 0], [-1, 2, -1], [0, -1, 2]])
+w, P = np.linalg.eigh(A)                    # simétrica: autovalores reales, P ortogonal
+print([round(float(x), 4) for x in w])
+print(bool(np.allclose(P.T @ P, np.eye(3))), bool(np.allclose(P.T @ A @ P, np.diag(w))))
+print([round(np.linalg.det(A[:k, :k])) for k in (1, 2, 3)])   # menores dominantes
+L = np.linalg.cholesky(A)                   # solo existe si A es definida positiva
+print(bool(np.allclose(L @ L.T, A)))
+
+B = np.array([[6, 2, 1], [0, 6, 1], [0, 0, 6]])
+N = B - 6 * np.eye(3, dtype=int)            # N = B - 6I
+print([3 - int(np.linalg.matrix_rank(np.linalg.matrix_power(N, k))) for k in (1, 2, 3)])   # dim ker N^k
+
+M = np.array([[5, 4], [2, 3]])
+print(sorted(round(float(x), 4) for x in np.linalg.eigvals(M)))   # 7 y 1: distintos, diagonalizable
+
+J22 = np.array([[3, 1, 0, 0], [0, 3, 0, 0], [0, 0, 3, 1], [0, 0, 0, 3]])
+J31 = np.array([[3, 1, 0, 0], [0, 3, 1, 0], [0, 0, 3, 0], [0, 0, 0, 3]])
+def indice(N):                              # menor k con N^k = 0 (λ es el único autovalor)
+    return next(k for k in range(1, 5) if not np.linalg.matrix_power(N, k).any())
+print(indice(J22 - 3 * np.eye(4, dtype=int)), indice(J31 - 3 * np.eye(4, dtype=int)))`));
+    stage.appendChild(el('div', 'viz-label', 'Salida del programa (calculada aquí con las mismas reglas):'));
+    const Af = toNum(mFrom(A_TRI)), jc = jacobi(Af), PtP = fMul(fT(jc.P), jc.P), D = jc.vals.map((v, i) => jc.vals.map((_, j) => (i === j ? v : 0))), PtAP = fMul(fMul(fT(jc.P), Af), jc.P);
+    const l1 = '[' + jc.vals.map(x => pyf(x, 4)).join(', ') + ']', l2 = (fMaxDiff(PtP, fId(3)) < 1e-9 ? 'True' : 'False') + ' ' + (fMaxDiff(PtAP, D) < 1e-9 ? 'True' : 'False');
+    const l3 = '[' + domMinors(mFrom(A_TRI)).map(x => fs(x).replace(MINUS, '-')).join(', ') + ']', ch = cholesky(Af), l4 = ch.L && fMaxDiff(fMul(ch.L, fT(ch.L)), Af) < 1e-9 ? 'True' : 'False';
+    const l5 = '[' + analyzeLam(mFrom(JEX[0].A), F(6)).ds.slice(1, 4).join(', ') + ']', e2 = eig2(5, 4, 2, 3), l6 = '[' + e2.l.map(x => pyf(x, 4)).join(', ') + ']';
+    const idx = Jm => analyzeLam(mFrom(Jm), F(3)).maxk, mkN = Jm => mAddScaled(mFrom(Jm), F(-3)), nilIdx = Jm => { let k = 1; while(!mIsZero(mPow(mkN(Jm), k))) k++; return k; };
+    stage.appendChild(codeBox([l1, l2, l3, l4, l5, l6, nilIdx(J22) + ' ' + nilIdx(J31)].join('\n')));
+    stage.appendChild(el('div', 'panel-title c3', 'Errores frecuentes'));
+    const errs = el('div', 'bio-text'); errs.innerHTML = `<p><b>1.</b> Usar solo los menores dominantes para la <i>semidefinida</i>: diag(0, −1) tiene A₁ = A₂ = 0 y no es semidefinida. Hay que mirar <i>todos</i> los menores principales (≥ 0).</p>
+      <p><b>2.</b> Hablar de «definida positiva» para una matriz no simétrica, como [[7,−10],[5,−8]]: la definición es para simétricas.</p>
+      <p><b>3.</b> Calcular mal los menores dominantes de la 4×4 [[4,1,1,1],…]: son 4, 11, 17 y 6 (no 18 y 24).</p>
+      <p><b>4.</b> Escribir J = [[7,1],[0,1]] para [[5,4],[2,3]]: con autovalores distintos 7 y 1 es diagonalizable y J = diag(7, 1).</p>
+      <p><b>5.</b> Buscar «el menor k con (A−λI)ᵏ = 0»: solo funciona si λ es el único autovalor. En general, el tamaño del bloque mayor es el menor k con ker Nᵏ = ker Nᵏ⁺¹.</p>
+      <p><b>6.</b> Creer que (algebraica, geométrica) = (4, 2) fija la forma de Jordan: valen los bloques 2+2 y 3+1, con polinomios mínimos distintos.</p>
+      <p><b>7.</b> Enunciar solo una implicación del criterio de diagonalización: A es diagonalizable <b>si y solo si</b> geo = alg en cada autovalor (y, sobre ℝ, además las raíces reales suman n con su multiplicidad).</p>`;
+    stage.appendChild(errs); stage.appendChild(qcards(QUESTIONS));
+  }
+});
+
+/* =========================================================
+   Motor de navegación (idéntico en todas las actividades)
+========================================================= */
+let current = 0;
+function renderTrail(){
+  const tr = $('#trail'); tr.innerHTML = '';
+  steps.forEach((s, i) => { const b = el('button', null, s.short); b.type = 'button'; b.addEventListener('click', () => goTo(i)); tr.appendChild(b); });
+}
+function goTo(i){
+  current = i;
+  clearTimers();
+  const s = steps[current];
+  $('#stepCount').textContent = current === 0 ? 'Introducción' : `Paso ${current} de ${steps.length - 1}`;
+  $('#stepTitle').textContent = s.name;
+  $('#stepDesc').innerHTML = s.desc;
+  const chip = $('#shapeChip');
+  if(s.shape){ chip.style.display = ''; chip.innerHTML = `<b>${s.shape}</b>`; } else chip.style.display = 'none';
+  const stage = $('#stage'); stage.innerHTML = '';
+  s.render(stage);
+  const btns = document.querySelectorAll('.trail button');
+  btns.forEach((b, idx) => b.classList.toggle('active', idx === current));
+  if(btns[current]) btns[current].scrollIntoView({ block:'nearest', inline:'center' });
+  $('#prevBtn').disabled = current === 0;
+  $('#nextBtn').textContent = current === steps.length - 1 ? 'Volver al inicio ↺' : 'Siguiente →';
+  window.scrollTo(0, 0);
+}
+$('#prevBtn').addEventListener('click', () => { if(current > 0) goTo(current - 1); });
+$('#nextBtn').addEventListener('click', () => goTo(current === steps.length - 1 ? 0 : current + 1));
+document.addEventListener('keydown', e => {
+  if(e.target && (e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT' || e.target.tagName === 'TEXTAREA')) return;
+  if(e.key === 'ArrowRight') $('#nextBtn').click();
+  if(e.key === 'ArrowLeft') $('#prevBtn').click();
+});
+renderTrail(); goTo(0);
+</script>
+</body>
+</html>
