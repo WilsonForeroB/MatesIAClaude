@@ -1,0 +1,2144 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="generator" content="Generado con asistencia de IA (Claude) - revisar por el responsable antes de su uso">
+<title>Pizarra matemática</title>
+<!-- MatIA · Pizarra matemática. Generado con asistencia de IA (Claude) para Mercanza; pendiente de revisión por el desarrollador responsable.
+     Dependencias externas: MathLive 0.108.2 (licencia MIT) desde cdn.jsdelivr.net y fuentes IBM Plex Sans, JetBrains Mono y Source Serif 4 desde Google Fonts (solución temporal).
+     Sin credenciales ni datos personales. El estado se guarda solo en el navegador (localStorage) o en un archivo .json que exporta quien la usa. -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;600&family=Source+Serif+4:wght@400;600&display=swap">
+<script defer src="https://cdn.jsdelivr.net/npm/mathlive@0.108.2/mathlive.min.js"></script>
+<style>
+/* ===== MatIA · tokens.css (Apéndice A) ===== */
+:root, [data-theme="light"] {
+  --surface:#f7faf6; --surface-raised:#ffffff; --surface-sunken:#ebf1ea; --ink:#14201a; --ink-muted:#46554c;
+  --border:#d5e0d4; --border-strong:#76867b; --brand:#0f5a3a; --on-brand:#ffffff; --brand-soft:#e2f0e7; --focus-ring:#0f7a4d;
+  --mod-math:#1d58c9; --mod-math-soft:#e3ebfa; --on-mod:#ffffff;
+  --data-1:#009b71; --data-2:#0072b2; --data-3:#b87f00; --data-4:#bc6f9a; --data-5:#d55e00; --data-6:#4590ba; --data-7:#7b5ea7; --data-8:#8f8f00;
+  --warning:#a8480c; --pio-tile:#fff6d6;
+  color-scheme: light;
+}
+[data-theme="dark"] {
+  --surface:#0e1612; --surface-raised:#151f1a; --surface-sunken:#0a110e; --ink:#e8f1ea; --ink-muted:#a6b8ac;
+  --border:#25352d; --border-strong:#6c8074; --brand:#6fd3a0; --on-brand:#08140e; --brand-soft:#123324; --focus-ring:#7fe0ae;
+  --mod-math:#7fa8f5; --mod-math-soft:#14274a; --on-mod:#0b1220;
+  --data-1:#2fc79a; --data-2:#4aa3df; --data-3:#f5b62e; --data-4:#e59ac3; --data-5:#f0824a; --data-6:#7cc8f2; --data-7:#a58bd4; --data-8:#d6d34a;
+  --warning:#f2a068; --pio-tile:#fff6d6;
+  color-scheme: dark;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --surface:#0e1612; --surface-raised:#151f1a; --surface-sunken:#0a110e; --ink:#e8f1ea; --ink-muted:#a6b8ac;
+    --border:#25352d; --border-strong:#6c8074; --brand:#6fd3a0; --on-brand:#08140e; --brand-soft:#123324; --focus-ring:#7fe0ae;
+    --mod-math:#7fa8f5; --mod-math-soft:#14274a; --on-mod:#0b1220;
+    --data-1:#2fc79a; --data-2:#4aa3df; --data-3:#f5b62e; --data-4:#e59ac3; --data-5:#f0824a; --data-6:#7cc8f2; --data-7:#a58bd4; --data-8:#d6d34a;
+    --warning:#f2a068; --pio-tile:#fff6d6;
+    color-scheme: dark;
+  }
+}
+:root {
+  --font-sans:"IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono:"JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+  --font-serif:"Source Serif 4", "Iowan Old Style", Palatino, Georgia, serif;
+  --space-1:4px; --space-2:8px; --space-3:12px; --space-4:16px; --space-5:24px; --space-6:32px; --space-7:48px; --space-8:64px;
+  --radius-sm:4px; --radius-md:8px; --radius-lg:14px; --radius-pill:999px;
+  --duration-fast:150ms; --duration-base:220ms; --duration-slow:320ms; --duration-demo:600ms;
+  --ease-standard:cubic-bezier(0.2, 0, 0, 1); --ease-out:cubic-bezier(0.16, 1, 0.3, 1); --ease-in-out:cubic-bezier(0.45, 0, 0.55, 1);
+  --border-width-thin:1px; --border-width-medium:2px; --border-width-thick:3px;
+  --scale:1.4;
+}
+
+/* ===== MatIA · matia.css (Apéndice C, componentes usados) ===== */
+.mi-scope,[data-module]{--accent:var(--brand);--on-accent:var(--on-brand);--accent-soft:var(--brand-soft)}
+[data-module="math"]{--accent:var(--mod-math);--on-accent:var(--on-mod);--accent-soft:var(--mod-math-soft)}
+.mi-btn,.mi-seg button,.mi-field input,.mi-field select{font-family:var(--font-sans)}
+.mi-btn:focus-visible,.mi-seg button:focus-visible,.mi-field input:focus-visible,.sw:focus-visible,.tb-btn:focus-visible{outline:var(--border-width-medium) solid var(--focus-ring);outline-offset:2px}
+.mi-btn{display:inline-flex;align-items:center;justify-content:center;gap:var(--space-2);font-size:14px;line-height:20px;font-weight:500;padding:8px 16px;cursor:pointer;
+  color:var(--ink);background:var(--surface-raised);border:var(--border-width-thin) solid var(--border-strong);border-radius:var(--radius-md);white-space:nowrap;
+  transition:background-color var(--duration-fast) var(--ease-standard),border-color var(--duration-fast) var(--ease-standard),color var(--duration-fast) var(--ease-standard),transform var(--duration-fast) var(--ease-standard),filter var(--duration-fast) var(--ease-standard)}
+.mi-btn:hover{background:var(--accent-soft);border-color:var(--accent)}
+.mi-btn:active{transform:translateY(1px)}
+.mi-btn--primary{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
+.mi-btn--primary:hover{background:var(--accent);border-color:var(--accent);filter:brightness(1.1)}
+.mi-btn--ghost{background:transparent;border-color:transparent;color:var(--accent)}
+.mi-btn--ghost:hover{background:var(--accent-soft);border-color:transparent}
+.mi-btn--sm{padding:5px 12px;font-size:13px;line-height:18px}
+.mi-btn[aria-pressed="true"]{background:var(--accent-soft);border-color:var(--accent);box-shadow:inset 0 0 0 var(--border-width-thin) var(--accent)}
+.mi-btn:disabled{opacity:.45;cursor:default;transform:none;filter:none}
+.mi-seg{display:inline-flex;border:var(--border-width-thin) solid var(--border-strong);border-radius:var(--radius-md);overflow:hidden;background:var(--surface-raised);flex:none}
+.mi-seg button{border:0;background:transparent;color:var(--ink-muted);padding:6px 12px;font-size:14px;line-height:20px;cursor:pointer;white-space:nowrap;
+  transition:background-color var(--duration-fast) var(--ease-standard),color var(--duration-fast) var(--ease-standard)}
+.mi-seg button+button{border-left:var(--border-width-thin) solid var(--border-strong)}
+.mi-seg button:hover{color:var(--ink);background:var(--accent-soft)}
+.mi-seg button[aria-pressed="true"]{background:var(--accent);color:var(--on-accent)}
+.mi-field{display:grid;grid-template-columns:1fr auto;gap:0 8px;align-items:center;font:400 13px/18px var(--font-sans);color:var(--ink)}
+.mi-field output{font:600 13px var(--font-mono);color:var(--ink)}
+.mi-field input[type=range]{grid-column:1/-1;width:100%;accent-color:var(--accent);margin:2px 0}
+.mi-callout{background:var(--surface-raised);color:var(--ink);border:var(--border-width-thin) solid var(--border);border-radius:var(--radius-md);padding:var(--space-3) var(--space-4);font:400 16px/26px var(--font-serif)}
+.mi-callout .mi-label{display:block;font:600 12px/18px var(--font-sans);letter-spacing:.04em;text-transform:uppercase;color:var(--accent);margin-bottom:var(--space-1)}
+.mi-callout p{margin:0}
+.mi-callout--nota{background:var(--surface-sunken);border-color:var(--border)}
+.mi-callout--nota .mi-label{color:var(--ink-muted)}
+.mi-callout--aviso{border-color:var(--warning)}
+.mi-callout--aviso .mi-label{color:var(--warning)}
+.mi-callout--pio{display:grid;grid-template-columns:auto 1fr;gap:var(--space-4);align-items:center;background:var(--accent-soft);border-color:var(--accent)}
+.mi-pio{width:72px;height:72px;border-radius:50%;background:var(--pio-tile);display:grid;place-items:center;border:var(--border-width-thin) solid var(--border);animation:mi-pop var(--duration-slow) var(--ease-out) both}
+.mi-pio img{width:60px;height:60px;object-fit:contain;display:block}
+@keyframes mi-rise{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+@keyframes mi-pop{from{opacity:0;transform:scale(.9) translateY(6px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;scroll-behavior:auto!important}}
+
+/* ===== Pizarra ===== */
+*{box-sizing:border-box}
+html,body{height:100%;margin:0}
+body{background:var(--surface);color:var(--ink);font-family:var(--font-sans);display:flex;flex-direction:column;overflow:hidden}
+kbd,.keys td:first-child{font-variant-ligatures:none}
+kbd{font:600 .85em var(--font-mono);background:var(--surface-sunken);border:var(--border-width-thin) solid var(--border);border-radius:var(--radius-sm);padding:0 5px}
+
+.top{display:flex;align-items:center;gap:var(--space-3);padding:var(--space-2) var(--space-4);border-bottom:var(--border-width-thin) solid var(--border);background:var(--surface-raised);flex:none;overflow-x:auto;scrollbar-width:thin}
+.brand{display:flex;align-items:baseline;gap:var(--space-2);flex:none;margin-right:var(--space-2)}
+.brand b{font:600 20px/28px var(--font-sans);color:var(--brand)}
+.brand span{font:500 14px/20px var(--font-sans);color:var(--ink-muted)}
+.pages{display:flex;align-items:center;gap:var(--space-1);flex:none}
+.pages output{font:600 13px var(--font-mono);color:var(--ink);min-width:52px;text-align:center}
+.spacer{flex:1 1 auto}
+.top .mi-field{width:150px;flex:none}
+.icon-btn{padding:6px 10px;min-width:36px}
+
+.toolbar{display:flex;flex-wrap:wrap;align-items:center;gap:var(--space-2);padding:var(--space-2) var(--space-4);border-bottom:var(--border-width-thin) solid var(--border);background:var(--surface);flex:none}
+@media (max-width:720px){.toolbar{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:thin}}
+.grp{display:flex;align-items:center;gap:var(--space-1);flex:none;padding-right:var(--space-2);border-right:var(--border-width-thin) solid var(--border)}
+.grp:last-child{border-right:0;padding-right:0}
+.grp-push{margin-left:auto}
+.tb-btn{font:400 16px/20px var(--font-serif);min-width:36px;height:34px;padding:0 8px;display:inline-flex;align-items:center;justify-content:center;gap:4px;cursor:pointer;
+  color:var(--ink);background:var(--surface-raised);border:var(--border-width-thin) solid var(--border-strong);border-radius:var(--radius-md);white-space:nowrap;
+  transition:background-color var(--duration-fast) var(--ease-standard),border-color var(--duration-fast) var(--ease-standard)}
+.tb-btn:hover{background:var(--accent-soft);border-color:var(--accent)}
+.tb-btn:active{transform:translateY(1px)}
+.tb-btn.txt{font:500 13px/18px var(--font-sans)}
+.tb-btn .caret{font-size:10px;color:var(--ink-muted)}
+.sw{width:30px;height:30px;border-radius:50%;border:var(--border-width-thin) solid var(--border-strong);background:var(--surface-raised);display:grid;place-items:center;cursor:pointer;padding:0}
+.sw::before{content:"";width:18px;height:18px;border-radius:50%;background:var(--sw)}
+.sw[aria-pressed="true"]{border:var(--border-width-medium) solid var(--accent);box-shadow:inset 0 0 0 2px var(--surface-raised)}
+body[data-mode="write"] .only-draw,body[data-mode="draw"] .only-write{display:none}
+
+.wrap{flex:1 1 auto;overflow:auto;padding:var(--space-4);position:relative}
+.sheet{position:relative;max-width:1400px;margin:0 auto;background:var(--surface-raised);border:var(--border-width-thin) solid var(--border);border-radius:var(--radius-lg);min-height:100%;padding:var(--space-5) var(--space-5) var(--space-8)}
+#ink{position:absolute;left:0;top:0;pointer-events:none;z-index:2;border-radius:var(--radius-lg)}
+body[data-mode="draw"] #ink{pointer-events:auto;cursor:crosshair;touch-action:none}
+body[data-mode="draw"] .sheet{cursor:crosshair}
+#blocks{position:relative;z-index:1;display:flex;flex-direction:column;gap:var(--space-1)}
+
+.blk{display:flex;align-items:flex-start;gap:var(--space-2);border:var(--border-width-thin) solid transparent;border-radius:var(--radius-md);padding:2px 4px;transition:border-color var(--duration-fast) var(--ease-standard),background-color var(--duration-fast) var(--ease-standard)}
+.blk:hover{border-color:var(--border)}
+.blk.is-active{border-color:var(--accent);background:color-mix(in srgb,var(--accent-soft) 35%,transparent)}
+.blk.drop-before{box-shadow:0 -3px 0 var(--accent)}
+.blk.drop-after{box-shadow:0 3px 0 var(--accent)}
+.blk-handle{flex:none;width:22px;align-self:stretch;min-height:34px;border:0;background:transparent;color:var(--ink-muted);cursor:grab;border-radius:var(--radius-sm);font:600 14px/1 var(--font-mono);opacity:0;transition:opacity var(--duration-fast) var(--ease-standard)}
+.blk:hover .blk-handle,.blk.is-active .blk-handle,.blk-handle:focus-visible{opacity:1}
+.blk-handle:hover{background:var(--accent-soft);color:var(--ink)}
+.blk-body{flex:1 1 auto;min-width:0;display:flex;justify-content:flex-start;overflow-x:auto;scrollbar-width:thin}
+.blk[data-align="center"] .blk-body{justify-content:center}
+.blk[data-align="right"] .blk-body{justify-content:flex-end}
+.blk.is-boxed math-field,.blk.is-boxed .blk-text{border:var(--border-width-medium) solid var(--accent);border-radius:var(--radius-md);padding:2px 10px}
+.blk.is-result math-field{background:var(--surface-sunken);border-radius:var(--radius-md)}
+math-field{font-size:calc(24px * var(--scale));min-width:3em;max-width:100%;background:transparent;border:0;outline:none;color:var(--ink);padding:2px 4px;
+  --caret-color:var(--accent);--primary:var(--ink);--selection-background-color:var(--accent-soft);--selection-color:var(--ink);
+  --contains-highlight-background-color:color-mix(in srgb,var(--accent-soft) 60%,transparent);--placeholder-color:var(--ink-muted);--smart-fence-color:var(--ink-muted);
+  --keyboard-zindex:200}
+math-field:focus-within{outline:none}
+math-field::part(menu-toggle),math-field::part(virtual-keyboard-toggle){display:none}
+.blk-text{font:400 calc(19px * var(--scale))/1.5 var(--font-serif);color:var(--ink);min-width:6em;max-width:100%;outline:none;padding:4px 6px;white-space:pre-wrap;overflow-wrap:anywhere}
+.blk-text:empty::before{content:attr(data-ph);color:var(--ink-muted)}
+.empty-pio{max-width:620px;margin:var(--space-5) 0 0 30px;animation:mi-rise var(--duration-base) var(--ease-out) both}
+
+.pop{position:fixed;z-index:100;background:var(--surface-raised);border:var(--border-width-thin) solid var(--border-strong);border-radius:var(--radius-md);padding:var(--space-3);display:flex;flex-direction:column;gap:var(--space-3);min-width:200px;animation:mi-rise var(--duration-base) var(--ease-out) both}
+.pop[hidden]{display:none}
+.pop h4{margin:0;font:600 12px/18px var(--font-sans);letter-spacing:.04em;text-transform:uppercase;color:var(--ink-muted)}
+.grid-pick{display:grid;grid-template-columns:repeat(6,24px);gap:3px}
+.grid-pick button{width:24px;height:24px;border:var(--border-width-thin) solid var(--border-strong);border-radius:var(--radius-sm);background:var(--surface-raised);cursor:pointer;padding:0}
+.grid-pick button.on{background:var(--accent-soft);border-color:var(--accent)}
+.grid-pick button:focus-visible{outline:var(--border-width-medium) solid var(--focus-ring);outline-offset:1px}
+.pick-out{font:600 13px var(--font-mono);color:var(--ink)}
+.menu-list{display:flex;flex-direction:column;gap:2px}
+.menu-list .mi-btn{justify-content:flex-start;border-color:transparent;background:transparent}
+.menu-list .mi-btn:hover{border-color:transparent;background:var(--accent-soft)}
+.menu-list hr{border:0;border-top:var(--border-width-thin) solid var(--border);margin:4px 0;width:100%}
+
+#toast{position:fixed;left:50%;bottom:var(--space-5);transform:translateX(-50%);z-index:150;max-width:min(640px,calc(100vw - 32px));font-size:15px;line-height:23px}
+#toast:empty{display:none}
+#toast .mi-callout{animation:mi-rise var(--duration-base) var(--ease-out) both}
+
+.show-chrome{position:fixed;top:var(--space-2);right:var(--space-2);z-index:120;display:none}
+body.chrome-off .top,body.chrome-off .toolbar{display:none}
+body.chrome-off .show-chrome{display:inline-flex}
+
+dialog{border:var(--border-width-thin) solid var(--border-strong);border-radius:var(--radius-lg);background:var(--surface-raised);color:var(--ink);padding:0;max-width:min(860px,calc(100vw - 32px));max-height:calc(100vh - 48px);width:100%}
+dialog::backdrop{background:color-mix(in srgb,var(--surface) 70%,transparent)}
+.dlg-head{display:flex;align-items:center;justify-content:space-between;padding:var(--space-4) var(--space-5);border-bottom:var(--border-width-thin) solid var(--border);position:sticky;top:0;background:var(--surface-raised)}
+.dlg-head h2{margin:0;font:600 20px/28px var(--font-sans)}
+.dlg-body{padding:var(--space-4) var(--space-5) var(--space-5);display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:var(--space-5)}
+.dlg-body h3{font:600 14px/22px var(--font-sans);margin:0 0 var(--space-2);color:var(--accent)}
+.keys{width:100%;border-collapse:collapse;font:400 14px/22px var(--font-sans)}
+.keys td{padding:4px 0;border-bottom:var(--border-width-thin) solid var(--border);vertical-align:top}
+.keys td:first-child{white-space:nowrap;padding-right:var(--space-3);font-family:var(--font-mono);font-size:13px}
+
+#print-root{display:none}
+@media print{
+  @page{margin:14mm}
+  body{display:block;overflow:visible;background:#fff}
+  body>*:not(#print-root){display:none!important}
+  #print-root{display:block}
+  .print-page{position:relative;break-after:page;padding:0}
+  .print-page:last-child{break-after:auto}
+  .print-page .blk{border:0;padding:2px 0}
+  .print-page .blk-handle{display:none}
+  .print-page img.print-ink{position:absolute;left:0;top:0;pointer-events:none}
+}
+@media (max-width:640px){
+  .wrap{padding:var(--space-2)}
+  .sheet{padding:var(--space-4) var(--space-2) var(--space-8)}
+  .top .mi-field{width:120px}
+  .empty-pio{margin-left:0}
+}
+</style>
+</head>
+<body class="mi-scope" data-mode="write">
+
+<header class="top" id="top">
+  <div class="brand"><b>MatIA</b><span>Pizarra</span></div>
+  <div class="mi-seg" role="group" aria-label="Modo">
+    <button type="button" data-mode="write" aria-pressed="true" title="Escribir fórmulas (Alt+D alterna)">Escribir</button>
+    <button type="button" data-mode="draw" aria-pressed="false" title="Dibujar a mano alzada (Alt+D alterna)">Dibujar</button>
+  </div>
+  <div class="pages" role="group" aria-label="Páginas">
+    <button type="button" class="mi-btn mi-btn--ghost icon-btn" id="pgPrev" aria-label="Página anterior" title="Página anterior (Alt+RePág)">◀</button>
+    <output id="pgOut" aria-live="polite">1 / 1</output>
+    <button type="button" class="mi-btn mi-btn--ghost icon-btn" id="pgNext" aria-label="Página siguiente" title="Página siguiente (Alt+AvPág)">▶</button>
+    <button type="button" class="mi-btn mi-btn--sm" id="pgAdd" title="Añadir una página en blanco detrás de esta">+ Página</button>
+  </div>
+  <div class="spacer"></div>
+  <label class="mi-field">Tamaño <output id="scaleOut">140 %</output><input type="range" id="scale" min="80" max="260" step="10" value="140" aria-label="Tamaño de la letra"></label>
+  <button type="button" class="mi-btn mi-btn--sm" id="fsBtn" title="Pantalla completa (F)">Pantalla completa</button>
+  <button type="button" class="mi-btn mi-btn--sm" id="viewBtn" aria-haspopup="true" aria-expanded="false">Vista <span aria-hidden="true">▾</span></button>
+  <button type="button" class="mi-btn mi-btn--sm" id="fileBtn" aria-haspopup="true" aria-expanded="false">Archivo <span aria-hidden="true">▾</span></button>
+  <button type="button" class="mi-btn mi-btn--sm icon-btn" id="helpBtn" title="Atajos y ayuda (?)" aria-label="Atajos y ayuda">?</button>
+</header>
+
+<div class="toolbar" id="toolbar" role="toolbar" aria-label="Herramientas">
+  <div class="grp only-write">
+    <button type="button" class="tb-btn txt" data-pop="matPop" title="Insertar matriz (Alt+M)">Matriz <span class="caret">▾</span></button>
+    <button type="button" class="tb-btn txt" data-pop="sysPop" title="Insertar sistema de ecuaciones (Alt+S)">Sistema <span class="caret">▾</span></button>
+    <button type="button" class="tb-btn txt" data-tpl="aligned" title="Desarrollo alineado por el signo = (Alt+L)">Alineado</button>
+    <button type="button" class="tb-btn txt" data-cmd="addRowAfter" title="Añadir fila a la matriz o al sistema (Mayús+Intro)">+ Fila</button>
+    <button type="button" class="tb-btn txt" data-cmd="addColumnAfter" title="Añadir columna a la matriz (Ctrl+Intro)">+ Columna</button>
+  </div>
+  <div class="grp only-write" aria-label="Símbolos">
+    <button type="button" class="tb-btn" data-tpl="pow" title="Potencia (escribe ^)">x²</button>
+    <button type="button" class="tb-btn" data-tpl="sub" title="Subíndice (escribe _)">xₙ</button>
+    <button type="button" class="tb-btn" data-tpl="frac" title="Fracción (escribe /)">a⁄b</button>
+    <button type="button" class="tb-btn" data-tpl="sqrt" title="Raíz cuadrada (escribe sqrt)">√</button>
+    <button type="button" class="tb-btn" data-tpl="nroot" title="Raíz n-ésima">ⁿ√</button>
+    <button type="button" class="tb-btn" data-tpl="sum" title="Sumatorio">Σ</button>
+    <button type="button" class="tb-btn" data-tpl="lim" title="Límite">lím</button>
+    <button type="button" class="tb-btn" data-tpl="int" title="Integral definida">∫</button>
+    <button type="button" class="tb-btn txt" data-tpl="vec" title="Vector">vector</button>
+    <button type="button" class="tb-btn" data-tpl="norm" title="Norma">‖v‖</button>
+    <button type="button" class="tb-btn" data-tpl="T" title="Traspuesta">Aᵀ</button>
+    <button type="button" class="tb-btn" data-tpl="inv" title="Inversa">A⁻¹</button>
+    <button type="button" class="tb-btn" data-tpl="cdot" title="Producto (escribe *)">·</button>
+    <button type="button" class="tb-btn txt" data-tpl="arrow" title="Flecha con texto encima, para indicar operaciones entre pasos">→ paso</button>
+    <button type="button" class="tb-btn" data-tpl="implies" title="Implica">⇒</button>
+    <button type="button" class="tb-btn" data-tpl="iff" title="Equivale">⇔</button>
+    <button type="button" class="tb-btn" data-tpl="R" title="Números reales (escribe RR)">ℝ</button>
+    <button type="button" class="tb-btn" data-tpl="lambda" title="Lambda">λ</button>
+  </div>
+
+  <div class="grp only-draw" aria-label="Herramienta de dibujo">
+    <div class="mi-seg" role="group" aria-label="Herramienta" id="toolSeg">
+      <button type="button" data-tool="pen" aria-pressed="true" title="Lápiz (P)">Lápiz</button>
+      <button type="button" data-tool="hl" aria-pressed="false" title="Rotulador fluorescente (R)">Rotulador</button>
+      <button type="button" data-tool="arrow" aria-pressed="false" title="Flecha recta (A)">Flecha</button>
+      <button type="button" data-tool="eraser" aria-pressed="false" title="Goma: borra trazos completos (E)">Goma</button>
+    </div>
+  </div>
+  <div class="grp only-draw">
+    <label class="mi-field" style="width:130px">Grosor <output id="widthOut">3 px</output><input type="range" id="penWidth" min="1" max="12" step="1" value="3" aria-label="Grosor del trazo"></label>
+  </div>
+
+  <div class="grp" aria-label="Color" id="swatches">
+    <button type="button" class="sw" data-color="ink" style="--sw:var(--ink)" aria-pressed="true" aria-label="Tinta" title="Tinta (Alt+1)"></button>
+    <button type="button" class="sw" data-color="data-1" style="--sw:var(--data-1)" aria-pressed="false" aria-label="Verde" title="Verde (Alt+2)"></button>
+    <button type="button" class="sw" data-color="data-2" style="--sw:var(--data-2)" aria-pressed="false" aria-label="Azul" title="Azul (Alt+3)"></button>
+    <button type="button" class="sw" data-color="data-3" style="--sw:var(--data-3)" aria-pressed="false" aria-label="Ámbar" title="Ámbar (Alt+4)"></button>
+    <button type="button" class="sw" data-color="data-4" style="--sw:var(--data-4)" aria-pressed="false" aria-label="Rosa" title="Rosa (Alt+5)"></button>
+    <button type="button" class="sw" data-color="data-5" style="--sw:var(--data-5)" aria-pressed="false" aria-label="Bermellón" title="Bermellón (Alt+6)"></button>
+  </div>
+
+  <div class="grp only-write" aria-label="Línea">
+    <div class="mi-seg" role="group" aria-label="Alineación de la línea" id="alignSeg">
+      <button type="button" data-align="left" aria-pressed="true" title="Alinear a la izquierda">Izq.</button>
+      <button type="button" data-align="center" aria-pressed="false" title="Centrar">Centro</button>
+      <button type="button" data-align="right" aria-pressed="false" title="Alinear a la derecha">Der.</button>
+    </div>
+    <button type="button" class="tb-btn txt" id="boxBtn" title="Recuadrar la línea (resultado final)">Recuadrar</button>
+    <button type="button" class="tb-btn txt" id="textBtn" title="Añadir una línea de texto normal (Alt+T)">Texto</button>
+    <button type="button" class="tb-btn txt" id="kbdBtn" title="Mostrar u ocultar el teclado matemático en pantalla">Teclado</button>
+    <button type="button" class="tb-btn txt" id="delBtn" title="Borrar la línea activa (Alt+Supr)">Borrar línea</button>
+  </div>
+
+  <div class="grp only-draw">
+    <button type="button" class="mi-btn mi-btn--sm" id="undoBtn" title="Deshacer el último trazo (Ctrl+Z)">Deshacer</button>
+    <button type="button" class="mi-btn mi-btn--sm" id="clearInkBtn" title="Borrar todos los trazos de esta página">Borrar dibujo</button>
+  </div>
+
+  <div class="grp grp-push only-write" aria-label="Calcular">
+    <button type="button" class="mi-btn mi-btn--sm" id="gaussBtn" title="Escalonar por Gauss paso a paso (matriz o sistema)">Gauss</button>
+    <button type="button" class="mi-btn mi-btn--sm" id="gjBtn" title="Reducir por Gauss-Jordan paso a paso">Gauss-Jordan</button>
+    <button type="button" class="mi-btn mi-btn--primary mi-btn--sm" id="calcBtn" title="Calcular la línea activa (Ctrl+=)">Calcular</button>
+  </div>
+</div>
+
+<main class="wrap" id="wrap">
+  <div class="sheet" id="sheet">
+    <canvas id="ink" role="img" aria-label="Capa de dibujo a mano alzada de la página"></canvas>
+    <div id="blocks"></div>
+  </div>
+</main>
+
+<button type="button" class="mi-btn mi-btn--sm show-chrome" id="showChrome" title="Mostrar las barras (H)">Mostrar barras</button>
+<div id="toast" role="status" aria-live="polite"></div>
+
+<div class="pop" id="matPop" hidden role="dialog" aria-label="Insertar matriz">
+  <h4>Tamaño</h4>
+  <div class="grid-pick" id="matGrid" aria-label="Elige filas y columnas"></div>
+  <output class="pick-out" id="matOut">2 × 2</output>
+  <h4>Tipo</h4>
+  <div class="mi-seg" role="group" aria-label="Tipo de matriz" id="matType">
+    <button type="button" data-env="pmatrix" aria-pressed="true" title="Paréntesis">( )</button>
+    <button type="button" data-env="bmatrix" aria-pressed="false" title="Corchetes">[ ]</button>
+    <button type="button" data-env="vmatrix" aria-pressed="false" title="Determinante">| |</button>
+    <button type="button" data-env="aug" aria-pressed="false" title="Matriz ampliada (A|b)">(A|b)</button>
+  </div>
+  <div class="menu-list">
+    <button type="button" class="mi-btn mi-btn--sm" data-chain="\cdot" title="Dos matrices del tamaño elegido multiplicadas">Insertar A · B =</button>
+    <button type="button" class="mi-btn mi-btn--sm" data-chain="+" title="Dos matrices del tamaño elegido sumadas">Insertar A + B =</button>
+  </div>
+</div>
+
+<div class="pop" id="sysPop" hidden role="dialog" aria-label="Insertar sistema">
+  <h4>Número de ecuaciones</h4>
+  <div class="mi-row" style="display:flex;gap:6px">
+    <button type="button" class="mi-btn mi-btn--sm" data-sys="2">2</button>
+    <button type="button" class="mi-btn mi-btn--sm" data-sys="3">3</button>
+    <button type="button" class="mi-btn mi-btn--sm" data-sys="4">4</button>
+  </div>
+  <p style="margin:0;font:400 13px/20px var(--font-sans);color:var(--ink-muted);max-width:240px">Escribe cada ecuación en su hueco, por ejemplo <kbd>2x+y=3</kbd>, y pulsa <b>Gauss</b> para resolverlo.</p>
+</div>
+
+<div class="pop" id="viewPop" hidden role="dialog" aria-label="Vista">
+  <h4>Tema</h4>
+  <div class="mi-seg" role="group" aria-label="Tema" id="themeSeg">
+    <button type="button" data-theme-set="light" aria-pressed="true">Claro</button>
+    <button type="button" data-theme-set="dark" aria-pressed="false">Oscuro</button>
+  </div>
+  <h4>Acento</h4>
+  <div class="mi-seg" role="group" aria-label="Color de acento">
+    <button type="button" data-accent="" aria-pressed="true" title="Verde MatIA">Verde</button>
+    <button type="button" data-accent="math" aria-pressed="false" title="Azul del módulo Mates para la IA">Azul</button>
+  </div>
+  <div class="menu-list">
+    <button type="button" class="mi-btn mi-btn--sm" id="hideBtn" title="Ocultar las barras (H)">Ocultar barras</button>
+  </div>
+</div>
+
+<div class="pop" id="filePop" hidden role="menu" aria-label="Archivo">
+  <div class="menu-list">
+    <button type="button" class="mi-btn mi-btn--sm" id="saveFile" role="menuitem">Guardar archivo (.json)</button>
+    <button type="button" class="mi-btn mi-btn--sm" id="openFile" role="menuitem">Abrir archivo…</button>
+    <button type="button" class="mi-btn mi-btn--sm" id="printBtn" role="menuitem">Imprimir o PDF</button>
+    <hr>
+    <button type="button" class="mi-btn mi-btn--sm" id="clearPage" role="menuitem">Vaciar esta página</button>
+    <button type="button" class="mi-btn mi-btn--sm" id="delPage" role="menuitem">Eliminar esta página</button>
+    <button type="button" class="mi-btn mi-btn--sm" id="newBoard" role="menuitem">Nueva pizarra</button>
+  </div>
+  <input type="file" id="fileIn" accept=".json,application/json" hidden>
+</div>
+
+<dialog id="help" aria-labelledby="helpTitle">
+  <div class="dlg-head"><h2 id="helpTitle">Atajos de la pizarra</h2><button type="button" class="mi-btn mi-btn--sm" id="helpClose">Cerrar</button></div>
+  <div class="dlg-body">
+    <section>
+      <h3>Escribir fórmulas</h3>
+      <table class="keys"><tbody>
+        <tr><td>x^2</td><td>Potencia; <kbd>→</kbd> para salir del exponente</td></tr>
+        <tr><td>x_1</td><td>Subíndice</td></tr>
+        <tr><td>1/2</td><td>Fracción</td></tr>
+        <tr><td>sqrt</td><td>Raíz cuadrada</td></tr>
+        <tr><td>*</td><td>Producto ·</td></tr>
+        <tr><td>&lt;= &gt;= !=</td><td>≤ ≥ ≠</td></tr>
+        <tr><td>=&gt;  &lt;=&gt;</td><td>⇒ ⇔</td></tr>
+        <tr><td>RR  lam</td><td>ℝ y λ</td></tr>
+        <tr><td>\</td><td>Escribe cualquier orden LaTeX (\det, \alpha…)</td></tr>
+        <tr><td>Tab</td><td>Salta al siguiente hueco</td></tr>
+      </tbody></table>
+    </section>
+    <section>
+      <h3>Líneas y matrices</h3>
+      <table class="keys"><tbody>
+        <tr><td>Intro</td><td>Nueva línea debajo</td></tr>
+        <tr><td>↑ ↓</td><td>Cambiar de línea</td></tr>
+        <tr><td>Retroceso</td><td>En una línea vacía, la borra</td></tr>
+        <tr><td>Alt+↑ Alt+↓</td><td>Mover la línea (también arrastrando ⋮⋮)</td></tr>
+        <tr><td>Mayús+Intro</td><td>Nueva fila en matriz o sistema</td></tr>
+        <tr><td>Ctrl+Intro</td><td>Nueva columna en la matriz</td></tr>
+        <tr><td>Alt+M Alt+S Alt+L</td><td>Matriz 2×2, sistema 2×2, desarrollo alineado</td></tr>
+        <tr><td>Alt+T</td><td>Línea de texto</td></tr>
+        <tr><td>Alt+1 … Alt+6</td><td>Color de lo seleccionado o de lo que escribas</td></tr>
+      </tbody></table>
+    </section>
+    <section>
+      <h3>Calcular</h3>
+      <table class="keys"><tbody>
+        <tr><td>A = (matriz)</td><td>Guarda la matriz A para usarla en otras líneas de la página</td></tr>
+        <tr><td>Ctrl+=</td><td>Calcular: A+B, A·B, 2A, A^2, A^T, A^{-1}, det A, tr A, rg A, fracciones</td></tr>
+        <tr><td>Gauss</td><td>Escalona paso a paso una matriz, una ampliada (A|b) o un sistema y lo clasifica</td></tr>
+        <tr><td>Gauss-Jordan</td><td>Igual, hasta la forma reducida</td></tr>
+      </tbody></table>
+      <p style="font:400 13px/20px var(--font-sans);color:var(--ink-muted);margin:var(--space-2) 0 0">Los resultados son exactos: verás fracciones como 1/3 y no decimales.</p>
+    </section>
+    <section>
+      <h3>Dibujar y clase</h3>
+      <table class="keys"><tbody>
+        <tr><td>Alt+D</td><td>Alternar Escribir / Dibujar</td></tr>
+        <tr><td>P R A E</td><td>Lápiz, rotulador, flecha, goma (en modo Dibujar)</td></tr>
+        <tr><td>Ctrl+Z</td><td>Deshacer trazo (en modo Dibujar)</td></tr>
+        <tr><td>Lápiz digital</td><td>Dibuja siempre, aunque estés en modo Escribir</td></tr>
+        <tr><td>Alt+RePág/AvPág</td><td>Página anterior / siguiente</td></tr>
+        <tr><td>F  H</td><td>Pantalla completa; ocultar barras</td></tr>
+      </tbody></table>
+      <p style="font:400 13px/20px var(--font-sans);color:var(--ink-muted);margin:var(--space-2) 0 0">La pizarra se guarda sola en este navegador. Para llevarla a otro ordenador usa Archivo → Guardar archivo.</p>
+    </section>
+  </div>
+</dialog>
+
+<div id="print-root" data-theme="light"></div>
+
+<script>
+/*ENGINE-START*/
+/* Motor de cálculo exacto: fracciones con BigInt, matrices, Gauss y sistemas lineales.
+   Lee el LaTeX que produce MathLive; no depende del DOM. */
+const ME = (() => {
+  class MErr extends Error {}
+  const abs = (a) => (a < 0n ? -a : a);
+  const gcd = (a, b) => { a = abs(a); b = abs(b); while (b) { [a, b] = [b, a % b]; } return a; };
+  function F(n, d = 1n) {
+    if (typeof n !== 'bigint') n = BigInt(n);
+    if (typeof d !== 'bigint') d = BigInt(d);
+    if (d === 0n) throw new MErr('División por cero.');
+    if (d < 0n) { n = -n; d = -d; }
+    const g = gcd(n, d) || 1n;
+    return { n: n / g, d: d / g };
+  }
+  const ZERO = F(0), ONE = F(1);
+  const add = (a, b) => F(a.n * b.d + b.n * a.d, a.d * b.d);
+  const sub = (a, b) => F(a.n * b.d - b.n * a.d, a.d * b.d);
+  const mul = (a, b) => F(a.n * b.n, a.d * b.d);
+  const div = (a, b) => { if (b.n === 0n) throw new MErr('División por cero.'); return F(a.n * b.d, a.d * b.n); };
+  const neg = (a) => F(-a.n, a.d);
+  const isZ = (a) => a.n === 0n;
+  const isInt = (a) => a.d === 1n;
+  const isUnit = (a) => a.d === 1n && abs(a.n) === 1n;
+  function fromDec(s) {
+    if (s.includes('.')) {
+      const [i, f = ''] = s.split('.');
+      const p = 10n ** BigInt(f.length);
+      return F(BigInt(i || '0') * p + BigInt(f || '0'), p);
+    }
+    return F(BigInt(s));
+  }
+  function fLatex(a) {
+    if (a.d === 1n) return a.n.toString();
+    return (a.n < 0n ? '-' : '') + '\\frac{' + abs(a.n) + '}{' + a.d + '}';
+  }
+
+  const S = (v) => ({ t: 's', v });
+  const M = (a, aug = null) => ({ t: 'm', a, r: a.length, c: a[0].length, aug });
+  const dim = (m) => m.r + '×' + m.c;
+  const copy = (a) => a.map((r) => r.slice());
+  const ident = (n) => Array.from({ length: n }, (_, i) => Array.from({ length: n }, (_, j) => (i === j ? ONE : ZERO)));
+
+  function opAdd(x, y, sign) {
+    const f = sign > 0 ? add : sub;
+    if (x.t === 's' && y.t === 's') return S(f(x.v, y.v));
+    if (x.t === 'm' && y.t === 'm') {
+      if (x.r !== y.r || x.c !== y.c)
+        throw new MErr('No se pueden ' + (sign > 0 ? 'sumar' : 'restar') + ' matrices de distinto tamaño: ' + dim(x) + ' y ' + dim(y) + '.');
+      return M(x.a.map((row, i) => row.map((v, j) => f(v, y.a[i][j]))));
+    }
+    throw new MErr('No se puede ' + (sign > 0 ? 'sumar' : 'restar') + ' un número y una matriz.');
+  }
+  function opMul(x, y) {
+    if (x.t === 's' && y.t === 's') return S(mul(x.v, y.v));
+    if (x.t === 's') return M(y.a.map((r) => r.map((v) => mul(x.v, v))));
+    if (y.t === 's') return M(x.a.map((r) => r.map((v) => mul(v, y.v))));
+    if (x.c !== y.r)
+      throw new MErr('No se pueden multiplicar ' + dim(x) + ' · ' + dim(y) + ': las columnas de la primera (' + x.c + ') deben coincidir con las filas de la segunda (' + y.r + ').');
+    const out = [];
+    for (let i = 0; i < x.r; i++) {
+      out.push([]);
+      for (let j = 0; j < y.c; j++) {
+        let s = ZERO;
+        for (let k = 0; k < x.c; k++) s = add(s, mul(x.a[i][k], y.a[k][j]));
+        out[i].push(s);
+      }
+    }
+    return M(out);
+  }
+  function opDiv(x, y) {
+    if (y.t !== 's') throw new MErr('No se puede dividir entre una matriz; usa la inversa (A^{-1}).');
+    if (isZ(y.v)) throw new MErr('División por cero.');
+    return opMul(x, S(div(ONE, y.v)));
+  }
+  function needSquare(m, what) {
+    if (m.t !== 'm') throw new MErr('El ' + what + ' solo tiene sentido para matrices.');
+    if (m.r !== m.c) throw new MErr('El ' + what + ' solo existe para matrices cuadradas y esta es ' + dim(m) + '.');
+  }
+  function det(m) {
+    needSquare(m, 'determinante');
+    const a = copy(m.a), n = m.r;
+    let d = ONE;
+    for (let c = 0; c < n; c++) {
+      let p = c;
+      while (p < n && isZ(a[p][c])) p++;
+      if (p === n) return S(ZERO);
+      if (p !== c) { [a[p], a[c]] = [a[c], a[p]]; d = neg(d); }
+      d = mul(d, a[c][c]);
+      for (let i = c + 1; i < n; i++) {
+        if (isZ(a[i][c])) continue;
+        const k = div(a[i][c], a[c][c]);
+        for (let j = c; j < n; j++) a[i][j] = sub(a[i][j], mul(k, a[c][j]));
+      }
+    }
+    return S(d);
+  }
+  function rref(a0, ncols) {
+    const a = copy(a0), rows = a.length, cols = a[0].length;
+    ncols = ncols == null ? cols : ncols;
+    const piv = [];
+    let r = 0;
+    for (let c = 0; c < ncols && r < rows; c++) {
+      let p = r;
+      while (p < rows && isZ(a[p][c])) p++;
+      if (p === rows) continue;
+      [a[p], a[r]] = [a[r], a[p]];
+      const pv = a[r][c];
+      a[r] = a[r].map((v) => div(v, pv));
+      for (let i = 0; i < rows; i++) {
+        if (i === r || isZ(a[i][c])) continue;
+        const k = a[i][c];
+        a[i] = a[i].map((v, j) => sub(v, mul(k, a[r][j])));
+      }
+      piv.push(c);
+      r++;
+    }
+    return { a, piv };
+  }
+  function rank(m) { return S(F(rref(m.a).piv.length)); }
+  function inv(m) {
+    needSquare(m, 'inversa');
+    const n = m.r;
+    const aug = m.a.map((row, i) => row.concat(ident(n)[i]));
+    const { a, piv } = rref(aug, n);
+    if (piv.length < n) throw new MErr('La matriz no tiene inversa: su determinante es 0.');
+    return M(a.map((row) => row.slice(n)));
+  }
+  function transpose(m) {
+    if (m.t !== 'm') return m;
+    return M(m.a[0].map((_, j) => m.a.map((row) => row[j])));
+  }
+  function trace(m) {
+    needSquare(m, 'traza');
+    let s = ZERO;
+    for (let i = 0; i < m.r; i++) s = add(s, m.a[i][i]);
+    return S(s);
+  }
+  function pow(x, e) {
+    if (e.t !== 's' || !isInt(e.v)) throw new MErr('Solo calculo potencias con exponente entero.');
+    let k = e.v.n;
+    if (x.t === 's') {
+      if (k < 0n) { if (isZ(x.v)) throw new MErr('División por cero.'); x = S(div(ONE, x.v)); k = -k; }
+      if (k > 4096n) throw new MErr('Exponente demasiado grande.');
+      let r = ONE;
+      for (let i = 0n; i < k; i++) r = mul(r, x.v);
+      return S(r);
+    }
+    needSquare(x, 'cálculo de potencias');
+    if (k < 0n) { x = inv(x); k = -k; }
+    if (k > 512n) throw new MErr('Exponente demasiado grande.');
+    let r = M(ident(x.r)), b = x;
+    while (k > 0n) { if (k & 1n) r = opMul(r, b); b = opMul(b, b); k >>= 1n; }
+    return r;
+  }
+  function sqrtExact(x) {
+    if (x.t !== 's') throw new MErr('No sé calcular la raíz de una matriz.');
+    const root = (n) => { if (n < 0n) return null; if (n < 2n) return n; let r = BigInt(Math.floor(Math.sqrt(Number(n)))); while (r * r > n) r--; while ((r + 1n) * (r + 1n) <= n) r++; return r * r === n ? r : null; };
+    const a = root(x.v.n), b = root(x.v.d);
+    if (a === null || b === null) throw new MErr('Solo calculo raíces exactas (cuadrados perfectos).');
+    return S(F(a, b));
+  }
+
+  /* ---------- LaTeX → tokens ---------- */
+  const SKIP = new Set([',', ';', '!', ':', ' ', 'quad', 'qquad', 'displaystyle', 'textstyle', 'left', 'right', 'big', 'Big', 'bigl', 'bigr', 'Bigl', 'Bigr', 'limits', 'mathstrut']);
+  const GREEK = new Set(['alpha', 'beta', 'gamma', 'delta', 'epsilon', 'varepsilon', 'lambda', 'mu', 'nu', 'theta', 'sigma', 'tau', 'phi', 'varphi', 'psi', 'omega', 'rho', 'kappa', 'eta', 'xi', 'zeta', 'chi', 'Gamma', 'Delta', 'Lambda', 'Sigma', 'Phi', 'Psi', 'Omega', 'Theta']);
+  const FUNCS = { det: 'det', tr: 'tr', traza: 'tr', rg: 'rg', rang: 'rg', rank: 'rg', rango: 'rg' };
+
+  function unwrap(src) {
+    // \textcolor{c}{X} → X ; \boxed{X} → X ; \mathbf{X} → X ; \color{c} → ''; \operatorname{tr} → \tr
+    const group = (s, i) => { // s[i] === '{'
+      let d = 0;
+      for (let j = i; j < s.length; j++) {
+        if (s[j] === '\\') { j++; continue; }
+        if (s[j] === '{') d++;
+        else if (s[j] === '}' && --d === 0) return j;
+      }
+      return s.length - 1;
+    };
+    let out = '', i = 0;
+    while (i < src.length) {
+      const m = /^\\([a-zA-Z]+)\s*/.exec(src.slice(i));
+      if (!m) { out += src[i++]; continue; }
+      const name = m[1], after = i + m[0].length;
+      if ((name === 'textcolor' || name === 'colorbox') && src[after] === '{') {
+        const e1 = group(src, after);
+        i = e1 + 1;
+        continue; // el segundo grupo se queda como {X}
+      }
+      if (name === 'color' && src[after] === '{') { i = group(src, after) + 1; continue; }
+      if (name === 'placeholder') throw new MErr('Hay huecos sin rellenar.');
+      if (['boxed', 'mathbf', 'mathrm', 'mathit', 'mathsf', 'boldsymbol', 'bm', 'operatorname', 'mathop', 'text', 'textrm', 'textbf'].includes(name) && src[after] === '{') {
+        const e = group(src, after);
+        const inner = src.slice(after + 1, e).trim();
+        if (FUNCS[inner]) out += '\\' + inner + ' ';
+        else if (/^text/.test(name)) out += '\\text{' + inner + '}';
+        else out += '{' + inner + '}';
+        i = e + 1;
+        continue;
+      }
+      out += src.slice(i, after);
+      i = after;
+    }
+    return out;
+  }
+  function tokenize(src) {
+    src = unwrap(src).replace(/(\d)\{,\}(\d)/g, '$1.$2');
+    const t = [];
+    let i = 0;
+    while (i < src.length) {
+      const c = src[i];
+      if (/\s/.test(c)) { i++; continue; }
+      if (c === '\\') {
+        if (src[i + 1] === '\\') { t.push({ k: 'row' }); i += 2; continue; }
+        const m = /^\\([a-zA-Z]+|.)/.exec(src.slice(i));
+        const name = m[1];
+        i += m[0].length;
+        if (SKIP.has(name)) continue;
+        if (name === '{' || name === 'lbrace') { t.push({ k: 'op', v: '(' }); continue; }
+        if (name === '}' || name === 'rbrace') { t.push({ k: 'op', v: ')' }); continue; }
+        if (name === 'lbrack') { t.push({ k: 'op', v: '[' }); continue; }
+        if (name === 'rbrack') { t.push({ k: 'op', v: ']' }); continue; }
+        if (name === 'vert' || name === 'lvert' || name === 'rvert' || name === '|') { t.push({ k: 'op', v: '|' }); continue; }
+        if (name === 'text') { // \text{...} se ignora para el cálculo
+          if (src[i] === '{') { let d = 0; for (; i < src.length; i++) { if (src[i] === '{') d++; else if (src[i] === '}' && --d === 0) { i++; break; } } }
+          continue;
+        }
+        t.push({ k: 'cmd', v: name });
+        continue;
+      }
+      if (/[0-9.]/.test(c)) {
+        const m = /^(\d+\.?\d*|\.\d+)/.exec(src.slice(i));
+        if (!m) { t.push({ k: 'op', v: c }); i++; continue; }
+        t.push({ k: 'num', v: m[0] });
+        i += m[0].length;
+        continue;
+      }
+      if (/[a-zA-Z]/.test(c)) { t.push({ k: 'id', v: c }); i++; continue; }
+      if (c === '&') { t.push({ k: 'amp' }); i++; continue; }
+      if (c === '{' || c === '}') { t.push({ k: c }); i++; continue; }
+      t.push({ k: 'op', v: c });
+      i++;
+    }
+    return t;
+  }
+  const isOp = (t, v) => t && t.k === 'op' && t.v === v;
+  const isCmd = (t, v) => t && t.k === 'cmd' && (v === undefined || t.v === v);
+
+  // Divide la lista de tokens por '=' de nivel superior.
+  function splitEq(toks) {
+    const segs = [[]];
+    let d = 0;
+    for (const t of toks) {
+      if (t.k === '{' || isCmd(t, 'begin')) d++;
+      if (t.k === '}' || isCmd(t, 'end')) d--;
+      if (d === 0 && isOp(t, '=')) { segs.push([]); continue; }
+      segs[segs.length - 1].push(t);
+    }
+    // \begin y \end abren y cierran además un grupo {nombre}: el balance se compensa en ambos sentidos
+    return segs;
+  }
+
+  // Lee un nombre (A, A_1, A_{12}, \lambda) a partir de pos; devuelve {key, latex, end} o null
+  function readName(toks, pos) {
+    const t = toks[pos];
+    let base;
+    if (t && t.k === 'id') base = t.v;
+    else if (t && t.k === 'cmd' && GREEK.has(t.v)) base = '\\' + t.v;
+    else return null;
+    let end = pos + 1, sub = '';
+    if (isOp(toks[end], '_')) {
+      const n = toks[end + 1];
+      if (n && n.k === '{') {
+        let d = 0, j = end + 1;
+        for (; j < toks.length; j++) { if (toks[j].k === '{') d++; else if (toks[j].k === '}' && --d === 0) break; }
+        sub = toks.slice(end + 2, j).map((x) => (x.k === 'cmd' ? '\\' + x.v : x.v)).join('');
+        end = j + 1;
+      } else if (n) { sub = n.k === 'cmd' ? '\\' + n.v : n.v; end += 2; }
+    }
+    const latex = sub ? base + '_{' + sub + '}' : base;
+    return { key: latex, latex, end };
+  }
+  function isPureName(seg) { const n = readName(seg, 0); return !!n && n.end === seg.length; }
+
+  /* ---------- Parser y evaluador ---------- */
+  function evaluate(toks, env) {
+    let pos = 0, absDepth = 0;
+    const peek = () => toks[pos];
+    const next = () => toks[pos++];
+    const expect = (k, v) => {
+      const t = next();
+      if (!t || t.k !== k || (v !== undefined && t.v !== v)) throw new MErr('La expresión está incompleta o mal escrita.');
+      return t;
+    };
+    const startsPrimary = (t) => {
+      if (!t) return false;
+      if (t.k === 'num' || t.k === 'id' || t.k === '{') return true;
+      if (t.k === 'op') return t.v === '(' || t.v === '[' || (t.v === '|' && absDepth === 0);
+      if (t.k === 'cmd') return ['frac', 'dfrac', 'tfrac', 'begin', 'sqrt'].includes(t.v) || !!FUNCS[t.v] || GREEK.has(t.v);
+      return false;
+    };
+    function expr() {
+      let v = unary();
+      for (;;) {
+        const t = peek();
+        if (isOp(t, '+')) { next(); v = opAdd(v, term(), 1); }
+        else if (isOp(t, '-')) { next(); v = opAdd(v, term(), -1); }
+        else return v;
+      }
+    }
+    function unary() {
+      if (isOp(peek(), '-')) { next(); return opMul(S(F(-1)), term()); }
+      if (isOp(peek(), '+')) { next(); return term(); }
+      return term();
+    }
+    function term() {
+      let v = postfix();
+      for (;;) {
+        const t = peek();
+        if (isCmd(t, 'cdot') || isCmd(t, 'times') || isOp(t, '*')) { next(); v = opMul(v, postfix()); }
+        else if (isCmd(t, 'div') || isOp(t, '/') || isOp(t, ':')) { next(); v = opDiv(v, postfix()); }
+        else if (startsPrimary(t)) v = opMul(v, postfix());
+        else return v;
+      }
+    }
+    function postfix() {
+      let v = primary();
+      for (;;) {
+        if (isOp(peek(), '^')) {
+          next();
+          let et;
+          if (peek() && peek().k === '{') {
+            next();
+            const start = pos;
+            let d = 1;
+            while (pos < toks.length && d > 0) { if (toks[pos].k === '{') d++; else if (toks[pos].k === '}') d--; pos++; }
+            et = toks.slice(start, pos - 1);
+          } else et = [next()];
+          if (et.length === 1 && ((et[0].k === 'id' && (et[0].v === 'T' || et[0].v === 't')) || (et[0].k === 'cmd' && (et[0].v === 'top' || et[0].v === 'intercal' || et[0].v === 'mathsf')))) { v = transpose(v); continue; }
+          if (et.length === 2 && et[0].k === 'cmd' && et[0].v === 'mathsf') { v = transpose(v); continue; }
+          if (et.length === 1 && isOp(et[0], "'")) { v = transpose(v); continue; }
+          const e = evaluate(et, env);
+          if (v.t === 'm' && e.t === 's' && isInt(e.v) && e.v.n === -1n) { v = inv(v); continue; }
+          v = pow(v, e);
+        } else if (isOp(peek(), "'")) { next(); v = transpose(v); }
+        else return v;
+      }
+    }
+    function group() {
+      expect('{');
+      const v = expr();
+      expect('}');
+      return v;
+    }
+    function primary() {
+      const t = peek();
+      if (!t) throw new MErr('Falta un operando.');
+      if (t.k === 'num') { next(); return S(fromDec(t.v)); }
+      if (t.k === '{') return group();
+      if (isOp(t, '(') || isOp(t, '[')) {
+        next();
+        let v = expr();
+        if (isCmd(peek(), 'middle')) {
+          // (A | b) escrito como \left( A \middle| b \right): matriz ampliada
+          next();
+          const braced = peek() && peek().k === '{';
+          if (braced) next();
+          if (!isOp(next(), '|')) throw new MErr('Falta la barra de la matriz ampliada.');
+          if (braced) expect('}');
+          const w = expr();
+          if (v.t !== 'm' || w.t !== 'm' || v.r !== w.r) throw new MErr('Las dos partes de la matriz ampliada deben tener las mismas filas.');
+          v = M(v.a.map((r, i) => r.concat(w.a[i])), v.c);
+        }
+        const c = next();
+        if (!c || !(isOp(c, ')') || isOp(c, ']'))) throw new MErr('Falta cerrar un paréntesis.');
+        return v;
+      }
+      if (isOp(t, '|') && absDepth === 0) {
+        next(); absDepth++;
+        const v = expr();
+        absDepth--;
+        if (!isOp(next(), '|')) throw new MErr('Falta cerrar la barra |.');
+        if (v.t === 'm') return det(v);
+        return S(v.v.n < 0n ? neg(v.v) : v.v);
+      }
+      if (t.k === 'cmd') {
+        if (t.v === 'frac' || t.v === 'dfrac' || t.v === 'tfrac') { next(); const a = group(); const b = group(); return opDiv(a, b); }
+        if (t.v === 'sqrt') { next(); if (isOp(peek(), '[')) throw new MErr('Solo calculo raíces cuadradas.'); return sqrtExact(group()); }
+        if (t.v === 'begin') return env_();
+        if (FUNCS[t.v]) {
+          next();
+          const arg = postfix();
+          const f = FUNCS[t.v];
+          if (f === 'det') return det(arg);
+          if (f === 'tr') return trace(arg);
+          if (arg.t !== 'm') throw new MErr('El rango solo tiene sentido para matrices.');
+          return rank(arg);
+        }
+      }
+      const nm = readName(toks, pos);
+      if (nm) {
+        pos = nm.end;
+        if (!(nm.key in env)) throw new MErr('No conozco «' + nm.key + '». Defínela antes en otra línea, por ejemplo ' + nm.key + ' = (matriz).');
+        return env[nm.key];
+      }
+      throw new MErr('No sé interpretar «' + (t.k === 'cmd' ? '\\' + t.v : t.v || t.k) + '».');
+    }
+    function readEnvName() {
+      expect('{');
+      let s = '';
+      while (peek() && peek().k !== '}') { const x = next(); s += x.v || ''; }
+      expect('}');
+      return s;
+    }
+    function env_() {
+      next(); // \begin
+      const name = readEnvName();
+      let aug = null;
+      if (name === 'array') {
+        expect('{');
+        let cols = 0;
+        while (peek() && peek().k !== '}') {
+          const x = next();
+          if (x.k === 'id' && /[lcr]/.test(x.v)) cols++;
+          if (isOp(x, '|') && cols > 0) aug = cols;
+        }
+        expect('}');
+      } else if (isOp(peek(), '[')) {
+        // \begin{pmatrix}[cc|c]: formato de columnas con barra (matriz ampliada)
+        next();
+        let cols = 0;
+        while (peek() && !isOp(peek(), ']')) {
+          const x = next();
+          if (x.k === 'id') cols += x.v.replace(/[^lcr]/g, '').length || 0;
+          if (isOp(x, '|') && cols > 0) aug = cols;
+        }
+        next();
+      }
+      const MATS = ['pmatrix', 'bmatrix', 'Bmatrix', 'matrix', 'smallmatrix', 'vmatrix', 'Vmatrix', 'array', 'pmatrix*', 'bmatrix*'];
+      if (!MATS.includes(name)) {
+        if (name === 'cases') throw new MErr('Para resolver un sistema usa el botón Gauss.');
+        throw new MErr('No sé calcular con el entorno «' + name + '».');
+      }
+      const rows = [[]];
+      const atEnd = () => isCmd(peek(), 'end');
+      while (!atEnd()) {
+        if (!peek()) throw new MErr('La matriz está incompleta.');
+        if (peek().k === 'amp') { next(); continue; }
+        if (peek().k === 'row') { next(); rows.push([]); continue; }
+        const save = absDepth;
+        absDepth = 0;
+        const v = expr();
+        absDepth = save;
+        if (v.t !== 's') throw new MErr('Dentro de una matriz solo puede haber números.');
+        rows[rows.length - 1].push(v.v);
+        const p = peek();
+        if (p && p.k !== 'amp' && p.k !== 'row' && !isCmd(p, 'end')) throw new MErr('No entiendo una de las celdas de la matriz.');
+      }
+      next(); // \end
+      readEnvName();
+      while (rows.length && rows[rows.length - 1].length === 0) rows.pop();
+      if (!rows.length) throw new MErr('La matriz está vacía.');
+      const c = rows[0].length;
+      if (rows.some((r) => r.length !== c)) throw new MErr('Hay filas con distinto número de elementos (o huecos vacíos).');
+      const m = M(rows, aug !== null && aug < c ? aug : null);
+      if (name === 'vmatrix') return det(m);
+      return m;
+    }
+    const v = expr();
+    if (pos < toks.length) {
+      const t = toks[pos];
+      throw new MErr('No sé interpretar «' + (t.k === 'cmd' ? '\\' + t.v : t.v || t.k) + '».');
+    }
+    return v;
+  }
+
+  /* ---------- Salida LaTeX ---------- */
+  function matLatex(a, aug, env = 'pmatrix') {
+    const body = a.map((r) => r.map(fLatex).join(' & ')).join('\\\\ ');
+    if (aug != null) {
+      const c = a[0].length;
+      const L = a.map((r) => r.slice(0, aug).map(fLatex).join(' & ')).join('\\\\ ');
+      const R = a.map((r) => r.slice(aug).map(fLatex).join(' & ')).join('\\\\ ');
+      return '\\left(\\begin{matrix}' + L + '\\end{matrix}\\,\\middle|\\,\\begin{matrix}' + R + '\\end{matrix}\\right)';
+    }
+    return '\\begin{' + env + '}' + body + '\\end{' + env + '}';
+  }
+  const toLatex = (v) => (v.t === 's' ? fLatex(v.v) : matLatex(v.a, null));
+
+  /* ---------- Entorno de definiciones (A = ...) ---------- */
+  function definitions(latexList) {
+    const env = {};
+    for (const L of latexList) {
+      try {
+        const segs = splitEq(tokenize(L));
+        if (segs.length < 2 || !isPureName(segs[0]) || !segs[1].length) continue;
+        const nm = readName(segs[0], 0);
+        env[nm.key] = evaluate(segs[1], env);
+      } catch (e) { /* línea que no es una definición válida */ }
+    }
+    return env;
+  }
+
+  // Calcula lo escrito en una línea. Devuelve {latex (línea completa nueva) | info}
+  function compute(L, env) {
+    const toks = tokenize(L);
+    const segs = splitEq(toks);
+    const trailing = segs.length > 1 && segs[segs.length - 1].length === 0;
+    const idx = trailing ? segs.length - 2 : segs.length - 1;
+    const target = segs[idx];
+    if (!target.length) throw new MErr('Escribe primero una operación, por ejemplo A\\cdot B.');
+    const v = evaluate(target, env);
+    const res = toLatex(v);
+    if (!trailing && segs.length >= 2 && segs[idx - 1].length) {
+      try { if (toLatex(evaluate(segs[idx - 1], env)) === res) return { info: 'Esta línea ya está calculada.' }; } catch (e) { /* el lado anterior no es calculable */ }
+    }
+    if (segs.length === 2 && !trailing && isPureName(segs[0])) {
+      const literal = target.length > 0 && (target[0].k === 'num' || isCmd(target[0], 'begin')) &&
+        target.filter((t) => isCmd(t, 'begin')).length <= 1 &&
+        !target.some((t, i) => i > 0 && t.k === 'op' && ['+', '-', '*', '/', '^'].includes(t.v) && depthAt(target, i) === 0);
+      if (literal) {
+        const nm = readName(segs[0], 0);
+        return { info: nm.key + ' queda guardada' + (v.t === 'm' ? ' (matriz ' + dim(v) + ')' : '') + '. Ya puedes usarla en otras líneas.' };
+      }
+    }
+    const base = L.replace(/\s+$/, '');
+    return { latex: (trailing ? base : base + '=') + res, value: v };
+  }
+  function depthAt(toks, i) {
+    let d = 0;
+    for (let j = 0; j < i; j++) {
+      if (toks[j].k === '{' || isCmd(toks[j], 'begin')) d++;
+      if (toks[j].k === '}' || isCmd(toks[j], 'end')) d--;
+    }
+    return d;
+  }
+
+  /* ---------- Gauss paso a paso ---------- */
+  function termLatex(coef, sym, first) {
+    // coef·sym con signo: "+2F_1", "-F_1", "+\frac{1}{2}F_1"
+    if (isZ(coef)) return '';
+    const s = coef.n < 0n ? '-' : first ? '' : '+';
+    const a = F(abs(coef.n), coef.d);
+    const c = a.n === 1n && a.d === 1n && sym ? '' : fLatex(a);
+    return s + c + sym;
+  }
+  function gauss(a0, opts = {}) {
+    const jordan = !!opts.jordan;
+    const a = copy(a0), rows = a.length, cols = a[0].length;
+    const ncols = opts.aug != null ? opts.aug : cols;
+    const steps = [];
+    const allInt = () => a.every((r) => r.every(isInt));
+    const Fn = (i) => 'F_{' + (i + 1) + '}';
+    let r = 0;
+    for (let c = 0; c < ncols && r < rows; c++) {
+      const cand = [];
+      for (let i = r; i < rows; i++) if (!isZ(a[i][c])) cand.push(i);
+      if (!cand.length) continue;
+      let p = r;
+      if (isZ(a[r][c]) || !isUnit(a[r][c])) {
+        const u = cand.find((i) => isUnit(a[i][c]));
+        p = u !== undefined ? u : isZ(a[r][c]) ? cand[0] : r;
+      }
+      if (p !== r) {
+        [a[p], a[r]] = [a[r], a[p]];
+        steps.push({ ops: [Fn(r) + '\\leftrightarrow ' + Fn(p)], a: copy(a) });
+      }
+      if (jordan && !(isInt(a[r][c]) && a[r][c].n === 1n)) {
+        const k = div(ONE, a[r][c]);
+        a[r] = a[r].map((v) => mul(v, k));
+        steps.push({ ops: [Fn(r) + '\\to ' + termLatex(k, Fn(r), true)], a: copy(a) });
+      }
+      const ops = [];
+      for (let i = 0; i < rows; i++) {
+        if (i === r || (!jordan && i < r) || isZ(a[i][c])) continue;
+        const pv = a[r][c], v = a[i][c];
+        const k = div(v, pv);
+        if (jordan || isInt(k) || !allInt()) {
+          a[i] = a[i].map((x, j) => sub(x, mul(k, a[r][j])));
+          ops.push(Fn(i) + termLatex(neg(k), Fn(r), false));
+        } else {
+          const g = gcd(pv.n, v.n);
+          let al = pv.n / g, be = v.n / g;
+          if (al < 0n) { al = -al; be = -be; }
+          a[i] = a[i].map((x, j) => sub(mul(F(al), x), mul(F(be), a[r][j])));
+          ops.push(termLatex(F(al), Fn(i), true) + termLatex(F(-be), Fn(r), false));
+        }
+      }
+      if (ops.length) steps.push({ ops, a: copy(a) });
+      r++;
+    }
+    return { steps, a, rank: rref(a0, ncols).piv.length };
+  }
+  function arrowLatex(ops) {
+    if (ops.length <= 1) return '\\xrightarrow{' + ops.join('') + '}';
+    const h = Math.ceil(ops.length / 2);
+    return '\\xrightarrow[' + ops.slice(h).join(',\\ ') + ']{' + ops.slice(0, h).join(',\\ ') + '}';
+  }
+
+  /* ---------- Sistemas lineales ---------- */
+  function linear(seg) {
+    // Devuelve {coef: Map(nombre → Frac), k: Frac}
+    const coef = new Map();
+    let k = ZERO, pos = 0;
+    const peek = () => seg[pos];
+    if (!seg.length) throw new MErr('Hay una ecuación con un lado vacío.');
+    while (pos < seg.length) {
+      let sign = ONE;
+      while (isOp(peek(), '+') || isOp(peek(), '-')) { if (isOp(seg[pos], '-')) sign = neg(sign); pos++; }
+      let c = null;
+      const t = peek();
+      if (t && t.k === 'num') { c = fromDec(t.v); pos++; }
+      else if (isCmd(t, 'frac') || isCmd(t, 'dfrac')) {
+        pos++;
+        const grab = () => {
+          if (!seg[pos] || seg[pos].k !== '{') throw new MErr('Fracción mal escrita.');
+          let d = 0;
+          const s = pos;
+          for (; pos < seg.length; pos++) { if (seg[pos].k === '{') d++; else if (seg[pos].k === '}' && --d === 0) break; }
+          pos++;
+          return evaluate(seg.slice(s + 1, pos - 1), {});
+        };
+        const n = grab(), d = grab();
+        c = div(n.v, d.v);
+      }
+      if (isCmd(peek(), 'cdot') || isCmd(peek(), 'times')) pos++;
+      const nm = readName(seg, pos);
+      if (nm) {
+        pos = nm.end;
+        const cc = mul(sign, c || ONE);
+        coef.set(nm.key, add(coef.get(nm.key) || ZERO, cc));
+      } else if (c) {
+        k = add(k, mul(sign, c));
+      } else {
+        throw new MErr('Solo sé resolver sistemas lineales: revisa «' + (t ? (t.k === 'cmd' ? '\\' + t.v : t.v || t.k) : '') + '».');
+      }
+    }
+    return { coef, k };
+  }
+  function orderVars(names) {
+    const pref = 'xyzwtuv';
+    const sub = (s) => { const m = /_\{(\d+)\}$/.exec(s); return m ? +m[1] : null; };
+    return names.slice().sort((a, b) => {
+      const sa = sub(a), sb = sub(b);
+      if (sa !== null && sb !== null && a.split('_')[0] === b.split('_')[0]) return sa - sb;
+      const ia = pref.indexOf(a), ib = pref.indexOf(b);
+      if (ia >= 0 && ib >= 0) return ia - ib;
+      return names.indexOf(a) - names.indexOf(b);
+    });
+  }
+  function parseSystem(L) {
+    const toks = tokenize(L);
+    let i = toks.findIndex((t) => isCmd(t, 'begin'));
+    let body;
+    if (i >= 0) {
+      // salta \begin{nombre}
+      let j = i + 1;
+      while (j < toks.length && toks[j].k !== '}') j++;
+      const start = j + 1;
+      let d = 0, end = start;
+      for (; end < toks.length; end++) {
+        if (isCmd(toks[end], 'begin')) d++;
+        if (isCmd(toks[end], 'end')) { if (d === 0) break; d--; }
+      }
+      body = toks.slice(start, end);
+    } else body = toks;
+    const rows = [[]];
+    let d = 0;
+    for (const t of body) {
+      if (t.k === '{' || isCmd(t, 'begin')) d++;
+      if (t.k === '}' || isCmd(t, 'end')) d--;
+      if (d === 0 && t.k === 'row') { rows.push([]); continue; }
+      if (t.k === 'amp') continue;
+      rows[rows.length - 1].push(t);
+    }
+    const eqs = rows.filter((r) => r.length).map((r) => {
+      const s = splitEq(r);
+      if (s.length !== 2) throw new MErr('Cada ecuación debe tener exactamente un signo =.');
+      const L1 = linear(s[0]), R1 = linear(s[1]);
+      const coef = new Map(L1.coef);
+      for (const [n, v] of R1.coef) coef.set(n, sub(coef.get(n) || ZERO, v));
+      return { coef, k: sub(R1.k, L1.k) };
+    });
+    if (!eqs.length) throw new MErr('No encuentro ecuaciones.');
+    const seen = [];
+    for (const e of eqs) for (const n of e.coef.keys()) if (!seen.includes(n)) seen.push(n);
+    if (!seen.length) throw new MErr('No encuentro incógnitas en el sistema.');
+    const vars = orderVars(seen);
+    const a = eqs.map((e) => vars.map((v) => e.coef.get(v) || ZERO).concat([e.k]));
+    return { vars, a };
+  }
+  function linLatex(k, terms) {
+    let s = isZ(k) ? '' : fLatex(k);
+    for (const [c, sym] of terms) s += termLatex(c, sym, s === '');
+    return s || '0';
+  }
+  function solve(a, vars) {
+    const n = vars.length;
+    const { a: R, piv } = rref(a, n);
+    const rA = piv.length;
+    const inconsistent = R.some((row) => row.slice(0, n).every(isZ) && !isZ(row[n]));
+    const rAb = inconsistent ? rA + 1 : rA;
+    if (inconsistent) return { kind: 'SI', rA, rAb, latex: '\\operatorname{rg}(A)=' + rA + '\\neq\\operatorname{rg}(A|b)=' + rAb + '\\Rightarrow\\text{Sistema incompatible: no tiene solución}' };
+    const free = vars.map((_, j) => j).filter((j) => !piv.includes(j));
+    const P = ['\\lambda', '\\mu', '\\alpha', '\\beta', '\\gamma', '\\delta'];
+    const params = {};
+    free.forEach((j, i) => { params[j] = P[i] || 't_{' + (i + 1) + '}'; });
+    const parts = [];
+    vars.forEach((v, j) => {
+      if (j in params) { parts.push(v + '=' + params[j]); return; }
+      const r = piv.indexOf(j);
+      parts.push(v + '=' + linLatex(R[r][n], free.map((f) => [neg(R[r][f]), params[f]])));
+    });
+    const head = '\\operatorname{rg}(A)=\\operatorname{rg}(A|b)=' + rA + (free.length ? '<' : '=') + n + '=\\text{ n.º de incógnitas}';
+    const kind = free.length ? 'SCI' : 'SCD';
+    const label = free.length ? '\\text{Compatible indeterminado}' : '\\text{Compatible determinado}';
+    return { kind, rA, rAb, latex: head + '\\Rightarrow' + label, sol: parts.join(',\\quad ') + (free.length ? ',\\quad ' + free.map((f) => params[f]).join(',') + '\\in\\mathbb{R}' : '') };
+  }
+
+  // Se queda con lo que hay tras la última flecha (\xrightarrow{..}, \sim, \to, \Rightarrow) de nivel superior
+  function afterArrows(toks) {
+    const ARR = ['xrightarrow', 'sim', 'to', 'rightarrow', 'Rightarrow', 'longrightarrow', 'Longrightarrow', 'approx'];
+    let d = 0, start = 0;
+    for (let i = 0; i < toks.length; i++) {
+      const t = toks[i];
+      if (t.k === '{' || isCmd(t, 'begin')) d++;
+      if (t.k === '}' || isCmd(t, 'end')) d--;
+      if (d !== 0 || !(t.k === 'cmd' && ARR.includes(t.v))) continue;
+      let j = i + 1;
+      if (t.v === 'xrightarrow') {
+        if (isOp(toks[j], '[')) { while (j < toks.length && !isOp(toks[j], ']')) j++; j++; }
+        if (toks[j] && toks[j].k === '{') { let e = 0; for (; j < toks.length; j++) { if (toks[j].k === '{') e++; else if (toks[j].k === '}' && --e === 0) break; } j++; }
+      }
+      start = j;
+      i = j - 1;
+    }
+    return toks.slice(start);
+  }
+
+  // Punto de entrada del botón Gauss: devuelve la lista de líneas LaTeX a insertar
+  function gaussLines(L, env, jordan) {
+    const toks = tokenize(L);
+    const hasCases = /\\begin\{(cases|dcases|rcases|aligned)\}/.test(L);
+    let a, aug = null, vars = null;
+    if (hasCases) {
+      const s = parseSystem(L);
+      a = s.a; vars = s.vars; aug = vars.length;
+    } else {
+      const segs = splitEq(afterArrows(toks)).filter((s) => s.length);
+      if (!segs.length) throw new MErr('Escribe una matriz o un sistema en la línea.');
+      const v = evaluate(segs[segs.length - 1], env);
+      if (v.t !== 'm') throw new MErr('Gauss necesita una matriz o un sistema de ecuaciones.');
+      a = v.a; aug = v.aug;
+      if (aug != null) {
+        const X = ['x', 'y', 'z', 't'];
+        vars = aug <= 4 ? X.slice(0, aug) : Array.from({ length: aug }, (_, i) => 'x_{' + (i + 1) + '}');
+      }
+    }
+    const lines = [];
+    if (hasCases) lines.push(matLatex(a, aug));
+    const g = gauss(a, { jordan, aug });
+    for (const s of g.steps) lines.push(arrowLatex(s.ops) + matLatex(s.a, aug));
+    if (!g.steps.length) lines.push('\\text{La matriz ya está ' + (jordan ? 'reducida' : 'escalonada') + '}');
+    if (vars) {
+      const r = solve(a, vars);
+      lines.push(r.latex);
+      if (r.sol) lines.push(r.sol);
+    } else {
+      lines.push('\\operatorname{rg}=' + g.rank);
+    }
+    return lines;
+  }
+
+  return { MErr, F, fLatex, tokenize, splitEq, evaluate, definitions, compute, gauss, gaussLines, parseSystem, solve, toLatex, matLatex, det, inv };
+})();
+/*ENGINE-END*/
+</script>
+<script>
+(() => {
+  'use strict';
+  const $ = (s, r = document) => r.querySelector(s);
+  const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
+  const KEY = 'matia-pizarra-v1';
+  const ML_VERSION = '0.108.2';
+  const root = document.documentElement;
+  const body = document.body;
+  const sheet = $('#sheet'), blocksEl = $('#blocks'), wrap = $('#wrap'), cv = $('#ink');
+
+  const PIO_SVG = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200"><rect x="104" y="18" width="92" height="106" rx="6" fill="#b9803f" stroke="#0f3d28" stroke-width="4"/><rect x="111" y="25" width="78" height="92" rx="3" fill="#0b4a2f"/><path d="M120 44 L132 44 M138 44 L144 44 M150 44 L170 44" stroke="#f7faf6" stroke-width="3" stroke-linecap="round" opacity=".9"/><path d="M122 106 L122 58 M122 106 L180 106" stroke="#f7faf6" stroke-width="2.5" stroke-linecap="round" fill="none"/><path d="M126 98 L178 66" stroke="#F7CB4A" stroke-width="3" stroke-linecap="round"/><g fill="#f7faf6"><circle cx="134" cy="94" r="3"/><circle cx="146" cy="82" r="3"/><circle cx="154" cy="84" r="3"/><circle cx="166" cy="70" r="3"/><circle cx="172" cy="74" r="3"/></g><path d="M114 124 L108 170 M186 124 L192 170" stroke="#0f3d28" stroke-width="4" stroke-linecap="round"/><rect x="108" y="124" width="84" height="6" rx="2" fill="#b9803f" stroke="#0f3d28" stroke-width="3"/><g transform="translate(0,52) scale(.6)"><path d="M84 166 L84 178 M78 178 L90 178 M116 166 L116 178 M110 178 L122 178" stroke="#E8782A" stroke-width="5" stroke-linecap="round" fill="none"/><ellipse cx="32" cy="118" rx="13" ry="21" transform="rotate(14 32 118)" fill="#F2B933" stroke="#0f3d28" stroke-width="4"/><ellipse cx="168" cy="118" rx="13" ry="21" transform="rotate(-14 168 118)" fill="#F2B933" stroke="#0f3d28" stroke-width="4"/><ellipse cx="100" cy="110" rx="70" ry="64" fill="#F7CB4A" stroke="#0f3d28" stroke-width="4"/><ellipse cx="100" cy="136" rx="40" ry="26" fill="#FFE59A"/><circle cx="82" cy="106" r="7.5" fill="#14201a"/><circle cx="126" cy="106" r="7.5" fill="#14201a"/><circle cx="84.5" cy="103" r="2.6" fill="#fff"/><circle cx="128.5" cy="103" r="2.6" fill="#fff"/><circle cx="60" cy="124" r="8" fill="#F59A8B" opacity=".75"/><circle cx="140" cy="124" r="8" fill="#F59A8B" opacity=".75"/><path d="M90 118 Q100 110 110 118 Q100 134 90 118 Z" fill="#F28A2E" stroke="#0f3d28" stroke-width="3" stroke-linejoin="round"/><path d="M70 62 L70 78 Q100 94 130 78 L130 62 Z" fill="#0b4a2f" stroke="#0f3d28" stroke-width="4" stroke-linejoin="round"/><path d="M100 30 L164 54 L100 76 L36 54 Z" fill="#0f5a3a" stroke="#0f3d28" stroke-width="4" stroke-linejoin="round"/><circle cx="100" cy="53" r="4" fill="#F7CB4A"/><path d="M158 56 L158 82" stroke="#F7CB4A" stroke-width="4" stroke-linecap="round"/><circle cx="158" cy="86" r="5" fill="#F7CB4A" stroke="#0f3d28" stroke-width="2.5"/></g><path d="M94 148 L132 64" stroke="#E8782A" stroke-width="4" stroke-linecap="round"/><ellipse cx="92" cy="150" rx="11" ry="17" transform="rotate(-24 92 150)" fill="#F2B933" stroke="#0f3d28" stroke-width="4"/><path d="M10 168 L196 168" stroke="#0f5a3a" stroke-width="3" opacity=".25" stroke-linecap="round"/></svg>';
+  const PIO_SRC = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(PIO_SVG);
+
+  /* ---------------- Estado ---------------- */
+  let uidN = 0;
+  const uid = () => 'b' + Date.now().toString(36) + (uidN++).toString(36);
+  const newBlock = (type = 'math', v = '', extra = {}) => Object.assign({ id: uid(), type, v, align: 'left', boxed: false }, extra);
+  const newPage = () => ({ blocks: [newBlock()], strokes: [], minH: 0 });
+  const defaults = () => ({ v: 1, pages: [newPage()], cur: 0, theme: null, accent: '', scale: 140, color: 'ink', tool: 'pen', width: 3 });
+
+  function load() {
+    try {
+      const raw = localStorage.getItem(KEY);
+      if (!raw) return null;
+      return sanitize(JSON.parse(raw));
+    } catch (e) { return null; }
+  }
+  function sanitize(b) {
+    if (!b || !Array.isArray(b.pages) || !b.pages.length) return null;
+    const d = defaults();
+    const out = Object.assign(d, {
+      theme: b.theme === 'dark' || b.theme === 'light' ? b.theme : null,
+      accent: b.accent === 'math' ? 'math' : '',
+      scale: Math.min(260, Math.max(80, +b.scale || 140)),
+      color: typeof b.color === 'string' && /^(ink|data-[1-6])$/.test(b.color) ? b.color : 'ink',
+      tool: ['pen', 'hl', 'arrow', 'eraser'].includes(b.tool) ? b.tool : 'pen',
+      width: Math.min(12, Math.max(1, +b.width || 3)),
+    });
+    out.pages = b.pages.map((p) => ({
+      blocks: (Array.isArray(p.blocks) && p.blocks.length ? p.blocks : [newBlock()]).map((x) => ({
+        id: uid(), type: x.type === 'text' ? 'text' : 'math', v: typeof x.v === 'string' ? x.v : '',
+        align: ['left', 'center', 'right'].includes(x.align) ? x.align : 'left', boxed: !!x.boxed, result: !!x.result,
+      })),
+      strokes: Array.isArray(p.strokes) ? p.strokes.filter((s) => s && Array.isArray(s.pts)) : [],
+      minH: +p.minH || 0,
+    }));
+    out.cur = Math.min(out.pages.length - 1, Math.max(0, +b.cur || 0));
+    return out;
+  }
+  let board = load() || defaults();
+  const page = () => board.pages[board.cur];
+
+  let saveT = null;
+  function save() {
+    clearTimeout(saveT);
+    saveT = setTimeout(() => {
+      try { localStorage.setItem(KEY, JSON.stringify(board)); } catch (e) { /* sin almacenamiento: la pizarra funciona igual */ }
+    }, 350);
+  }
+
+  /* ---------------- Avisos ---------------- */
+  let toastT = null;
+  function toast(text, kind = 'nota') {
+    const t = $('#toast');
+    const label = kind === 'aviso' ? 'Aviso' : 'Nota';
+    t.innerHTML = '';
+    const box = document.createElement('div');
+    box.className = 'mi-callout mi-callout--' + kind;
+    box.innerHTML = '<span class="mi-label">' + label + '</span><p></p>';
+    box.querySelector('p').textContent = text;
+    t.appendChild(box);
+    clearTimeout(toastT);
+    toastT = setTimeout(() => { t.innerHTML = ''; }, kind === 'aviso' ? 6500 : 4000);
+  }
+
+  /* ---------------- Ajustes visuales ---------------- */
+  function applySettings() {
+    if (board.theme) root.setAttribute('data-theme', board.theme); else root.removeAttribute('data-theme');
+    if (board.accent) body.setAttribute('data-module', board.accent); else body.removeAttribute('data-module');
+    $$('[data-accent]').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.accent === board.accent)));
+    root.style.setProperty('--scale', String(board.scale / 100));
+    $('#scale').value = board.scale;
+    $('#scaleOut').textContent = board.scale + ' %';
+    $$('[data-theme-set]').forEach((b) => b.setAttribute('aria-pressed', String((b.dataset.themeSet === 'dark') === isDark())));
+    $$('.sw').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.color === board.color)));
+    $$('#toolSeg button').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.tool === board.tool)));
+    $('#penWidth').value = board.width;
+    $('#widthOut').textContent = board.width + ' px';
+  }
+  const isDark = () => board.theme ? board.theme === 'dark' : matchMedia('(prefers-color-scheme: dark)').matches;
+  const cssVar = (name) => getComputedStyle(body).getPropertyValue('--' + name).trim();
+  const COLOR_NAMES = ['ink', 'data-1', 'data-2', 'data-3', 'data-4', 'data-5'];
+
+  /* ---------------- Bloques ---------------- */
+  let activeId = null;
+  let mlReady = false;
+  const blockById = (id) => page().blocks.find((b) => b.id === id);
+  const elById = (id) => blocksEl.querySelector('.blk[data-id="' + id + '"]');
+  const fieldOf = (el) => el && (el.querySelector('math-field') || el.querySelector('.blk-text'));
+
+  function configureField(mf) {
+    mf.smartFence = true;
+    mf.smartSuperscript = true;
+    mf.mathVirtualKeyboardPolicy = 'manual';
+    mf.popoverPolicy = 'auto';
+    mf.colorMap = (name) => (COLOR_NAMES.includes(name) ? cssVar(name) : undefined);
+    try {
+      mf.inlineShortcuts = Object.assign({}, mf.inlineShortcuts, {
+        RR: '\\mathbb{R}', NN: '\\mathbb{N}', ZZ: '\\mathbb{Z}', QQ: '\\mathbb{Q}', CC: '\\mathbb{C}', lam: '\\lambda',
+      });
+    } catch (e) { /* opción no disponible */ }
+  }
+
+  function makeBlockEl(b) {
+    const el = document.createElement('div');
+    el.className = 'blk';
+    el.dataset.id = b.id;
+    el.dataset.align = b.align;
+    el.classList.toggle('is-boxed', !!b.boxed);
+    el.classList.toggle('is-result', !!b.result);
+    const h = document.createElement('button');
+    h.type = 'button';
+    h.className = 'blk-handle';
+    h.draggable = true;
+    h.textContent = '⋮⋮';
+    h.setAttribute('aria-label', 'Mover línea: arrastra o usa Alt+flechas');
+    h.title = 'Arrastra para mover la línea';
+    el.appendChild(h);
+    const bd = document.createElement('div');
+    bd.className = 'blk-body';
+    el.appendChild(bd);
+    if (b.type === 'text') {
+      const t = document.createElement('div');
+      t.className = 'blk-text';
+      t.contentEditable = 'true';
+      t.setAttribute('role', 'textbox');
+      t.setAttribute('aria-label', 'Línea de texto');
+      t.dataset.ph = 'Escribe un texto…';
+      t.textContent = b.v;
+      t.addEventListener('input', () => { b.v = t.innerText.replace(/\n$/, ''); hidePio(); save(); });
+      bd.appendChild(t);
+    } else if (mlReady) {
+      const mf = document.createElement('math-field');
+      mf.setAttribute('aria-label', 'Línea de fórmula');
+      configureField(mf);
+      bd.appendChild(mf);
+      mf.value = b.v;
+      mf.addEventListener('input', () => { b.v = mf.getValue('latex'); b.result = false; el.classList.remove('is-result'); hidePio(); save(); });
+      mf.addEventListener('move-out', (e) => {
+        const d = e.detail.direction;
+        if (d === 'upward' || d === 'backward') { if (focusSibling(b.id, -1, d === 'backward' ? 'end' : 'end')) e.preventDefault(); }
+        else if (d === 'downward' || d === 'forward') { if (focusSibling(b.id, 1, 'start')) e.preventDefault(); }
+      });
+    } else {
+      const t = document.createElement('div');
+      t.className = 'blk-text';
+      t.textContent = b.v;
+      bd.appendChild(t);
+    }
+    bd.addEventListener('mousedown', (e) => {
+      if (e.target === bd) { e.preventDefault(); focusBlock(b.id, 'end'); }
+    });
+    return el;
+  }
+
+  function renderPage() {
+    blocksEl.innerHTML = '';
+    for (const b of page().blocks) blocksEl.appendChild(makeBlockEl(b));
+    maybePio();
+    $('#pgOut').textContent = (board.cur + 1) + ' / ' + board.pages.length;
+    $('#pgPrev').disabled = board.cur === 0;
+    $('#pgNext').disabled = board.cur === board.pages.length - 1;
+    undoStack = [];
+    requestAnimationFrame(() => { sizeCanvas(); });
+    const first = page().blocks[0];
+    if (first) setActive(first.id);
+  }
+
+  function isPageEmpty() {
+    const p = page();
+    return p.blocks.length === 1 && !p.blocks[0].v && !p.strokes.length;
+  }
+  function maybePio() {
+    hidePio();
+    if (!isPageEmpty()) return;
+    const box = document.createElement('div');
+    box.className = 'mi-callout mi-callout--pio empty-pio';
+    box.innerHTML = '<div class="mi-pio"><img alt="Pío explicando en la pizarra"></div><div><span class="mi-label">Pío dice</span><p>Escribe aquí tu primera fórmula: prueba <kbd>x^2</kbd> o pulsa <b>Matriz</b>. Con <kbd>Intro</kbd> pasas a la línea siguiente y con <kbd>?</kbd> ves todos los atajos.</p></div>';
+    box.querySelector('img').src = PIO_SRC;
+    blocksEl.appendChild(box);
+  }
+  function hidePio() { const p = blocksEl.querySelector('.empty-pio'); if (p) p.remove(); }
+
+  function setActive(id) {
+    activeId = id;
+    $$('.blk', blocksEl).forEach((e) => e.classList.toggle('is-active', e.dataset.id === id));
+    const b = blockById(id);
+    if (b) {
+      $$('#alignSeg button').forEach((x) => x.setAttribute('aria-pressed', String(x.dataset.align === b.align)));
+      $('#boxBtn').setAttribute('aria-pressed', String(!!b.boxed));
+    }
+  }
+  function focusBlock(id, where = 'end') {
+    const el = elById(id);
+    const f = fieldOf(el);
+    if (!f) return false;
+    setActive(id);
+    if (f.tagName === 'MATH-FIELD') {
+      f.focus();
+      try { f.position = where === 'start' ? 0 : f.lastOffset; } catch (e) { /* */ }
+    } else {
+      f.focus();
+      const r = document.createRange();
+      r.selectNodeContents(f);
+      r.collapse(where === 'start');
+      const s = getSelection(); s.removeAllRanges(); s.addRange(r);
+    }
+    el.scrollIntoView({ block: 'nearest' });
+    return true;
+  }
+  function focusSibling(id, dir, where) {
+    const bl = page().blocks;
+    const i = bl.findIndex((b) => b.id === id);
+    const j = i + dir;
+    if (j < 0 || j >= bl.length) return false;
+    return focusBlock(bl[j].id, where);
+  }
+  function addBlockAfter(id, b, focus = true) {
+    const bl = page().blocks;
+    const i = id ? bl.findIndex((x) => x.id === id) : bl.length - 1;
+    bl.splice(i + 1, 0, b);
+    const el = makeBlockEl(b);
+    const ref = id ? elById(id) : null;
+    if (ref && ref.nextSibling) blocksEl.insertBefore(el, ref.nextSibling); else if (ref) blocksEl.appendChild(el); else blocksEl.appendChild(el);
+    hidePio();
+    save();
+    if (focus) focusBlock(b.id, 'end');
+    requestAnimationFrame(sizeCanvas);
+    return b;
+  }
+  function deleteBlock(id, focusPrev = true) {
+    const bl = page().blocks;
+    const i = bl.findIndex((b) => b.id === id);
+    if (i < 0) return;
+    if (bl.length === 1) {
+      bl[0].v = '';
+      bl[0].type = 'math'; bl[0].boxed = false; bl[0].result = false;
+      renderPage();
+      save();
+      focusBlock(bl[0].id);
+      return;
+    }
+    bl.splice(i, 1);
+    const el = elById(id);
+    if (el) el.remove();
+    save();
+    const t = bl[Math.max(0, i - 1)];
+    if (focusPrev && t) focusBlock(t.id, 'end');
+    requestAnimationFrame(sizeCanvas);
+  }
+  function moveBlock(id, dir) {
+    const bl = page().blocks;
+    const i = bl.findIndex((b) => b.id === id);
+    const j = i + dir;
+    if (i < 0 || j < 0 || j >= bl.length) return;
+    [bl[i], bl[j]] = [bl[j], bl[i]];
+    const el = elById(id), other = elById(bl[i].id);
+    if (dir < 0) blocksEl.insertBefore(el, other); else blocksEl.insertBefore(other, el);
+    save();
+    focusBlock(id);
+  }
+
+  function activeBlock() { return activeId ? blockById(activeId) : null; }
+  // Devuelve el math-field activo; si la línea activa es texto o no hay ninguna, crea una línea de fórmula
+  function activeField() {
+    let b = activeBlock();
+    if (!b || b.type !== 'math') {
+      b = addBlockAfter(b ? b.id : null, newBlock(), false);
+      setActive(b.id);
+    }
+    return fieldOf(elById(b.id));
+  }
+
+  /* ---------------- Teclado dentro de las líneas ---------------- */
+  blocksEl.addEventListener('keydown', (e) => {
+    const el = e.target.closest && e.target.closest('.blk');
+    if (!el) return;
+    const id = el.dataset.id, b = blockById(id);
+    const mf = e.target.tagName === 'MATH-FIELD' ? e.target : null;
+    const isText = !mf && e.target.classList.contains('blk-text');
+    if (e.altKey && (e.key === 'ArrowUp' || e.key === 'ArrowDown')) { e.preventDefault(); e.stopPropagation(); moveBlock(id, e.key === 'ArrowUp' ? -1 : 1); return; }
+    if (e.altKey && (e.key === 'Delete' || e.key === 'Backspace')) { e.preventDefault(); e.stopPropagation(); deleteBlock(id); return; }
+    if (e.key === 'Enter') {
+      if (mf && mf.mode === 'latex') return;
+      if (mf && e.shiftKey) { e.preventDefault(); e.stopPropagation(); mf.executeCommand('addRowAfter'); return; }
+      if (mf && (e.ctrlKey || e.metaKey)) { e.preventDefault(); e.stopPropagation(); mf.executeCommand('addColumnAfter'); return; }
+      if (isText && e.shiftKey) return;
+      if (e.altKey) return;
+      e.preventDefault(); e.stopPropagation();
+      addBlockAfter(id, newBlock('math', '', { align: b ? b.align : 'left' }));
+      return;
+    }
+    if (e.key === 'Backspace' && !e.altKey) {
+      const empty = mf ? !mf.getValue('latex') : isText ? !e.target.textContent : false;
+      if (empty) { e.preventDefault(); e.stopPropagation(); deleteBlock(id); }
+      return;
+    }
+    if (isText && (e.key === 'ArrowUp' || e.key === 'ArrowDown')) {
+      const s = getSelection();
+      const atStart = s.anchorOffset === 0, atEnd = s.anchorOffset >= (s.anchorNode.textContent || '').length;
+      if (e.key === 'ArrowUp' && atStart && focusSibling(id, -1, 'end')) e.preventDefault();
+      if (e.key === 'ArrowDown' && atEnd && focusSibling(id, 1, 'start')) e.preventDefault();
+    }
+  }, true);
+  blocksEl.addEventListener('focusin', (e) => {
+    const el = e.target.closest && e.target.closest('.blk');
+    if (el) setActive(el.dataset.id);
+  });
+
+  /* ---------------- Arrastrar líneas ---------------- */
+  let dragId = null;
+  blocksEl.addEventListener('dragstart', (e) => {
+    const h = e.target.closest && e.target.closest('.blk-handle');
+    if (!h) { e.preventDefault(); return; }
+    dragId = h.closest('.blk').dataset.id;
+    e.dataTransfer.effectAllowed = 'move';
+    try { e.dataTransfer.setData('text/plain', dragId); } catch (x) { /* */ }
+  });
+  blocksEl.addEventListener('dragover', (e) => {
+    if (!dragId) return;
+    const el = e.target.closest && e.target.closest('.blk');
+    $$('.drop-before,.drop-after', blocksEl).forEach((x) => x.classList.remove('drop-before', 'drop-after'));
+    if (!el || el.dataset.id === dragId) return;
+    e.preventDefault();
+    const r = el.getBoundingClientRect();
+    el.classList.add(e.clientY < r.top + r.height / 2 ? 'drop-before' : 'drop-after');
+  });
+  blocksEl.addEventListener('drop', (e) => {
+    const el = e.target.closest && e.target.closest('.blk');
+    if (!dragId || !el) return;
+    e.preventDefault();
+    const before = el.classList.contains('drop-before');
+    const bl = page().blocks;
+    const from = bl.findIndex((b) => b.id === dragId);
+    const [m] = bl.splice(from, 1);
+    let to = bl.findIndex((b) => b.id === el.dataset.id);
+    if (!before) to++;
+    bl.splice(to, 0, m);
+    const dEl = elById(dragId);
+    if (before) blocksEl.insertBefore(dEl, el); else blocksEl.insertBefore(dEl, el.nextSibling);
+    save();
+  });
+  blocksEl.addEventListener('dragend', () => {
+    dragId = null;
+    $$('.drop-before,.drop-after', blocksEl).forEach((x) => x.classList.remove('drop-before', 'drop-after'));
+  });
+
+  /* ---------------- Plantillas ---------------- */
+  const ph = '#?';
+  function matrixLatex(r, c, env) {
+    const row = Array(c).fill(ph).join('&');
+    const rows = Array(r).fill(row).join('\\\\');
+    if (env === 'aug') {
+      const a = Math.max(1, c - 1);
+      const L = Array(r).fill(Array(a).fill(ph).join('&')).join('\\\\');
+      const R = Array(r).fill(Array(Math.max(1, c - a)).fill(ph).join('&')).join('\\\\');
+      return '\\left(\\begin{matrix}' + L + '\\end{matrix}\\,\\middle|\\,\\begin{matrix}' + R + '\\end{matrix}\\right)';
+    }
+    return '\\begin{' + env + '}' + rows + '\\end{' + env + '}';
+  }
+  const TPL = {
+    pow: '#@^{#?}', sub: '#@_{#?}', frac: '\\frac{#@}{#?}', sqrt: '\\sqrt{#@}', nroot: '\\sqrt[#?]{#@}',
+    sum: '\\sum_{#?}^{#?}#?', lim: '\\lim_{#?\\to#?}#?', int: '\\int_{#?}^{#?}#?\\,d#?',
+    vec: '\\vec{#@}', norm: '\\left\\lVert#@\\right\\rVert', T: '#@^{T}', inv: '#@^{-1}', cdot: '\\cdot ',
+    arrow: '\\xrightarrow{#?}', implies: '\\Rightarrow ', iff: '\\Leftrightarrow ', R: '\\mathbb{R}', lambda: '\\lambda ',
+    aligned: '\\begin{aligned}#?&=#?\\\\&=#?\\end{aligned}',
+  };
+  function insertLatex(latex) {
+    if (body.dataset.mode !== 'write') setMode('write');
+    const mf = activeField();
+    if (!mf || mf.tagName !== 'MATH-FIELD') { toast('El editor de fórmulas aún no está listo.', 'aviso'); return; }
+    mf.focus();
+    mf.insert(latex, { format: 'latex', selectionMode: 'placeholder', focus: true });
+    const b = activeBlock();
+    if (b) { b.v = mf.getValue('latex'); save(); }
+    hidePio();
+  }
+  const systemLatex = (n) => '\\begin{cases}' + Array(n).fill(ph).join('\\\\') + '\\end{cases}';
+
+  /* ---------------- Ventanas emergentes ---------------- */
+  let openPop = null;
+  function showPop(id, anchor) {
+    closePop();
+    const p = $('#' + id);
+    p.hidden = false;
+    const r = anchor.getBoundingClientRect();
+    const w = p.offsetWidth;
+    p.style.left = Math.max(8, Math.min(r.left, innerWidth - w - 8)) + 'px';
+    p.style.top = (r.bottom + 6) + 'px';
+    anchor.setAttribute('aria-expanded', 'true');
+    openPop = { p, anchor };
+    const f = p.querySelector('button');
+    if (f && id !== 'matPop') f.focus();
+  }
+  function closePop() {
+    if (!openPop) return;
+    openPop.p.hidden = true;
+    openPop.anchor.setAttribute('aria-expanded', 'false');
+    openPop = null;
+  }
+  document.addEventListener('pointerdown', (e) => {
+    if (openPop && !openPop.p.contains(e.target) && !openPop.anchor.contains(e.target)) closePop();
+  });
+
+  // Selector de tamaño de matriz
+  let matR = 2, matC = 2, matEnv = 'pmatrix';
+  const grid = $('#matGrid');
+  for (let i = 1; i <= 6; i++) for (let j = 1; j <= 6; j++) {
+    const c = document.createElement('button');
+    c.type = 'button';
+    c.dataset.r = i; c.dataset.c = j;
+    c.setAttribute('aria-label', i + ' filas por ' + j + ' columnas');
+    grid.appendChild(c);
+  }
+  function paintGrid(r, c) {
+    $$('button', grid).forEach((b) => b.classList.toggle('on', +b.dataset.r <= r && +b.dataset.c <= c));
+    $('#matOut').textContent = r + ' × ' + c;
+  }
+  grid.addEventListener('pointerover', (e) => { const b = e.target.closest('button'); if (b) paintGrid(+b.dataset.r, +b.dataset.c); });
+  grid.addEventListener('focusin', (e) => { const b = e.target.closest('button'); if (b) paintGrid(+b.dataset.r, +b.dataset.c); });
+  grid.addEventListener('pointerleave', () => paintGrid(matR, matC));
+  grid.addEventListener('click', (e) => {
+    const b = e.target.closest('button');
+    if (!b) return;
+    matR = +b.dataset.r; matC = +b.dataset.c;
+    closePop();
+    insertLatex(matrixLatex(matR, matC, matEnv));
+  });
+  $('#matType').addEventListener('click', (e) => {
+    const b = e.target.closest('button');
+    if (!b) return;
+    matEnv = b.dataset.env;
+    $$('#matType button').forEach((x) => x.setAttribute('aria-pressed', String(x === b)));
+  });
+  $$('[data-chain]').forEach((b) => b.addEventListener('click', () => {
+    const env = matEnv === 'aug' || matEnv === 'vmatrix' ? 'pmatrix' : matEnv;
+    closePop();
+    insertLatex(matrixLatex(matR, matC, env) + b.dataset.chain + matrixLatex(b.dataset.chain === '+' ? matR : matC, matC, env) + '=');
+  }));
+  $$('[data-sys]').forEach((b) => b.addEventListener('click', () => { closePop(); insertLatex(systemLatex(+b.dataset.sys)); }));
+  paintGrid(matR, matC);
+
+  /* ---------------- Barra de herramientas ---------------- */
+  // Los botones no roban el foco a la fórmula activa
+  $('#toolbar').addEventListener('mousedown', (e) => { if (e.target.closest('button')) e.preventDefault(); });
+  $('#toolbar').addEventListener('click', (e) => {
+    const b = e.target.closest('button');
+    if (!b) return;
+    if (b.dataset.pop) { if (openPop && openPop.p.id === b.dataset.pop) closePop(); else showPop(b.dataset.pop, b); return; }
+    if (b.dataset.tpl) { insertLatex(TPL[b.dataset.tpl]); return; }
+    if (b.dataset.cmd) {
+      const mf = activeField();
+      if (mf && mf.executeCommand) { mf.focus(); mf.executeCommand(b.dataset.cmd); const ab = activeBlock(); if (ab) { ab.v = mf.getValue('latex'); save(); } }
+      return;
+    }
+    if (b.dataset.color) { setColor(b.dataset.color); return; }
+    if (b.dataset.align) { setAlign(b.dataset.align); return; }
+    if (b.dataset.tool) { board.tool = b.dataset.tool; applySettings(); save(); }
+  });
+  function setColor(name) {
+    board.color = name;
+    applySettings();
+    save();
+    if (body.dataset.mode === 'write') {
+      const b = activeBlock();
+      const mf = b && b.type === 'math' ? fieldOf(elById(b.id)) : null;
+      if (mf && mf.applyStyle) {
+        mf.focus();
+        mf.applyStyle({ color: name === 'ink' ? 'none' : name });
+        b.v = mf.getValue('latex');
+        save();
+      }
+    }
+  }
+  function setAlign(a) {
+    const b = activeBlock();
+    if (!b) return;
+    b.align = a;
+    elById(b.id).dataset.align = a;
+    setActive(b.id);
+    save();
+    focusBlock(b.id);
+  }
+  $('#boxBtn').addEventListener('click', () => {
+    const b = activeBlock();
+    if (!b) return;
+    b.boxed = !b.boxed;
+    elById(b.id).classList.toggle('is-boxed', b.boxed);
+    setActive(b.id);
+    save();
+  });
+  $('#textBtn').addEventListener('click', () => { const b = activeBlock(); addBlockAfter(b ? b.id : null, newBlock('text')); });
+  $('#delBtn').addEventListener('click', () => { if (activeId) deleteBlock(activeId); });
+  $('#kbdBtn').addEventListener('click', () => {
+    const kb = window.mathVirtualKeyboard;
+    if (!kb) return;
+    const mf = activeField();
+    if (mf) mf.focus();
+    if (kb.visible) kb.hide(); else kb.show();
+  });
+
+  /* ---------------- Calcular y Gauss ---------------- */
+  function otherDefs(exceptId) {
+    return ME.definitions(page().blocks.filter((b) => b.type === 'math' && b.id !== exceptId).map((b) => b.v));
+  }
+  function syncActive() {
+    const b = activeBlock();
+    if (b && b.type === 'math') { const mf = fieldOf(elById(b.id)); if (mf && mf.getValue) b.v = mf.getValue('latex'); }
+    return b;
+  }
+  function runCalc() {
+    const b = syncActive();
+    if (!b || b.type !== 'math' || !b.v.trim()) { toast('Escribe una operación en una línea, por ejemplo A·B = o 3/4 + 1/6 =, y pulsa Calcular.'); return; }
+    try {
+      const r = ME.compute(b.v, otherDefs(b.id));
+      if (r.info) { toast(r.info); return; }
+      const mf = fieldOf(elById(b.id));
+      mf.value = r.latex;
+      b.v = r.latex;
+      save();
+      focusBlock(b.id, 'end');
+    } catch (e) {
+      toast(e instanceof ME.MErr ? e.message : 'No he podido calcular esta línea.', 'aviso');
+    }
+  }
+  function runGauss(jordan) {
+    const b = syncActive();
+    if (!b || b.type !== 'math' || !b.v.trim()) { toast('Coloca el cursor en una línea con una matriz o un sistema y pulsa Gauss.'); return; }
+    try {
+      const lines = ME.gaussLines(b.v, otherDefs(b.id), jordan);
+      let last = b.id;
+      lines.forEach((L, i) => { last = addBlockAfter(last, newBlock('math', L, { align: b.align, result: true }), i === lines.length - 1).id; });
+    } catch (e) {
+      toast(e instanceof ME.MErr ? e.message : 'No he podido aplicar Gauss a esta línea.', 'aviso');
+    }
+  }
+  $('#calcBtn').addEventListener('click', runCalc);
+  $('#gaussBtn').addEventListener('click', () => runGauss(false));
+  $('#gjBtn').addEventListener('click', () => runGauss(true));
+
+  /* ---------------- Modo, páginas y ajustes ---------------- */
+  function setMode(m) {
+    body.dataset.mode = m;
+    $$('[data-mode]', $('#top')).forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.mode === m)));
+    if (m === 'draw' && document.activeElement && document.activeElement.blur) document.activeElement.blur();
+  }
+  $$('button[data-mode]').forEach((b) => b.addEventListener('click', () => setMode(b.dataset.mode)));
+  function goPage(i) {
+    if (i < 0 || i >= board.pages.length) return;
+    board.cur = i;
+    renderPage();
+    save();
+  }
+  $('#pgPrev').addEventListener('click', () => goPage(board.cur - 1));
+  $('#pgNext').addEventListener('click', () => goPage(board.cur + 1));
+  $('#pgAdd').addEventListener('click', () => { board.pages.splice(board.cur + 1, 0, newPage()); goPage(board.cur + 1); });
+  $('#scale').addEventListener('input', (e) => { board.scale = +e.target.value; applySettings(); save(); requestAnimationFrame(sizeCanvas); });
+  $$('[data-accent]').forEach((b) => b.addEventListener('click', () => { board.accent = b.dataset.accent; applySettings(); save(); }));
+  $$('[data-theme-set]').forEach((b) => b.addEventListener('click', () => { board.theme = b.dataset.themeSet; applySettings(); refreshColors(); save(); }));
+  $('#viewBtn').addEventListener('click', (e) => { if (openPop && openPop.p.id === 'viewPop') closePop(); else showPop('viewPop', e.currentTarget); });
+  matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => { if (!board.theme) { applySettings(); refreshColors(); } });
+  function refreshColors() {
+    // Vuelve a pintar las fórmulas con colores y los trazos con los tonos del tema actual
+    $$('math-field', blocksEl).forEach((mf) => { if (/\\textcolor|\\color/.test(mf.value)) { const v = mf.value; mf.value = ''; mf.value = v; } });
+    redraw();
+  }
+  function toggleFull() {
+    if (document.fullscreenElement) document.exitFullscreen();
+    else if (root.requestFullscreen) root.requestFullscreen().catch(() => toast('Tu navegador no permite pantalla completa aquí.', 'aviso'));
+  }
+  $('#fsBtn').addEventListener('click', toggleFull);
+  document.addEventListener('fullscreenchange', () => { $('#fsBtn').textContent = document.fullscreenElement ? 'Salir de pantalla completa' : 'Pantalla completa'; requestAnimationFrame(sizeCanvas); });
+  const toggleChrome = () => { body.classList.toggle('chrome-off'); requestAnimationFrame(sizeCanvas); };
+  $('#hideBtn').addEventListener('click', () => { closePop(); toggleChrome(); });
+  $('#showChrome').addEventListener('click', toggleChrome);
+  const help = $('#help');
+  $('#helpBtn').addEventListener('click', () => help.showModal());
+  $('#helpClose').addEventListener('click', () => help.close());
+  $('#fileBtn').addEventListener('click', (e) => { if (openPop && openPop.p.id === 'filePop') closePop(); else showPop('filePop', e.currentTarget); });
+
+  /* ---------------- Archivo ---------------- */
+  $('#saveFile').addEventListener('click', () => {
+    closePop();
+    const blob = new Blob([JSON.stringify(board, null, 1)], { type: 'application/json' });
+    const a = document.createElement('a');
+    const d = new Date();
+    a.href = URL.createObjectURL(blob);
+    a.download = 'pizarra-' + d.toISOString().slice(0, 10) + '.json';
+    document.body.appendChild(a);
+    a.click();
+    setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 1000);
+  });
+  $('#openFile').addEventListener('click', () => { $('#fileIn').click(); });
+  $('#fileIn').addEventListener('change', (e) => {
+    const f = e.target.files && e.target.files[0];
+    closePop();
+    if (!f) return;
+    const rd = new FileReader();
+    rd.onload = () => {
+      try {
+        const b = sanitize(JSON.parse(String(rd.result)));
+        if (!b) throw new Error('vacío');
+        board = b;
+        applySettings();
+        renderPage();
+        save();
+        toast('Pizarra abierta: ' + board.pages.length + (board.pages.length === 1 ? ' página.' : ' páginas.'));
+      } catch (x) { toast('Ese archivo no es una pizarra válida.', 'aviso'); }
+    };
+    rd.readAsText(f);
+    e.target.value = '';
+  });
+  $('#clearPage').addEventListener('click', () => {
+    closePop();
+    if (!confirm('¿Vaciar esta página? Se borran sus líneas y su dibujo.')) return;
+    board.pages[board.cur] = newPage();
+    renderPage();
+    save();
+  });
+  $('#delPage').addEventListener('click', () => {
+    closePop();
+    if (board.pages.length === 1) { $('#clearPage').click(); return; }
+    if (!confirm('¿Eliminar la página ' + (board.cur + 1) + '?')) return;
+    board.pages.splice(board.cur, 1);
+    board.cur = Math.min(board.cur, board.pages.length - 1);
+    renderPage();
+    save();
+  });
+  $('#newBoard').addEventListener('click', () => {
+    closePop();
+    if (!confirm('¿Empezar una pizarra nueva? Guarda antes un archivo si quieres conservar la actual.')) return;
+    const keep = { theme: board.theme, accent: board.accent, scale: board.scale };
+    board = Object.assign(defaults(), keep);
+    applySettings();
+    renderPage();
+    save();
+  });
+  $('#printBtn').addEventListener('click', () => { closePop(); printAll(); });
+
+  function printAll() {
+    const pr = $('#print-root');
+    pr.innerHTML = '';
+    const width = sheet.clientWidth;
+    pr.style.width = width + 'px';
+    const pages = board.pages;
+    const imgs = [];
+    pages.forEach((p, idx) => {
+      const pg = document.createElement('div');
+      pg.className = 'print-page';
+      pg.style.width = width + 'px';
+      pg.style.setProperty('--scale', String(Math.min(board.scale, 140) / 100));
+      for (const b of p.blocks) {
+        const el = document.createElement('div');
+        el.className = 'blk' + (b.boxed ? ' is-boxed' : '');
+        el.dataset.align = b.align;
+        const bd = document.createElement('div');
+        bd.className = 'blk-body';
+        if (b.type === 'math' && mlReady) {
+          const mf = document.createElement('math-field');
+          mf.setAttribute('read-only', '');
+          configureField(mf);
+          bd.appendChild(mf);
+          mf.value = b.v;
+        } else {
+          const t = document.createElement('div');
+          t.className = 'blk-text';
+          t.textContent = b.v;
+          bd.appendChild(t);
+        }
+        el.appendChild(bd);
+        pg.appendChild(el);
+      }
+      if (p.strokes.length) {
+        const h = Math.max(p.minH || 0, ...p.strokes.flatMap((s) => s.pts.map((q) => q[1] + 20)));
+        const c = document.createElement('canvas');
+        c.width = width * 2; c.height = h * 2;
+        const x = c.getContext('2d');
+        x.scale(2, 2);
+        const light = (n) => ({ ink: '#14201a', 'data-1': '#009b71', 'data-2': '#0072b2', 'data-3': '#b87f00', 'data-4': '#bc6f9a', 'data-5': '#d55e00' })[n] || '#14201a';
+        p.strokes.forEach((s) => drawStroke(x, s, light));
+        const im = new Image();
+        im.className = 'print-ink';
+        im.src = c.toDataURL('image/png');
+        im.style.width = width + 'px';
+        im.style.height = h + 'px';
+        pg.style.minHeight = h + 'px';
+        pg.appendChild(im);
+        imgs.push(im);
+      }
+      pr.appendChild(pg);
+      void idx;
+    });
+    setTimeout(() => window.print(), 600);
+  }
+  window.addEventListener('afterprint', () => { $('#print-root').innerHTML = ''; });
+
+  /* ---------------- Dibujo ---------------- */
+  const ctx = cv.getContext('2d');
+  let dpr = 1, undoStack = [], cur = null;
+  function sizeCanvas() {
+    const p = page();
+    const contentH = blocksEl.offsetTop + blocksEl.offsetHeight + 120;
+    const need = Math.max(wrap.clientHeight - 32, contentH, p.minH || 0);
+    sheet.style.minHeight = need + 'px';
+    const w = sheet.clientWidth, h = sheet.clientHeight;
+    dpr = window.devicePixelRatio || 1;
+    if (cv.width !== Math.round(w * dpr) || cv.height !== Math.round(h * dpr)) {
+      cv.width = Math.round(w * dpr); cv.height = Math.round(h * dpr);
+      cv.style.width = w + 'px'; cv.style.height = h + 'px';
+    }
+    redraw();
+  }
+  new ResizeObserver(() => sizeCanvas()).observe(wrap);
+  new ResizeObserver(() => sizeCanvas()).observe(blocksEl);
+
+  function drawStroke(c, s, colorOf = cssVar) {
+    const col = colorOf(s.color) || colorOf('ink');
+    const pts = s.pts;
+    if (!pts.length) return;
+    c.save();
+    c.lineCap = 'round';
+    c.lineJoin = 'round';
+    c.strokeStyle = col;
+    c.fillStyle = col;
+    if (s.tool === 'hl') {
+      c.globalAlpha = 0.32;
+      c.lineWidth = s.w * 5;
+      c.lineCap = 'butt';
+      c.beginPath();
+      c.moveTo(pts[0][0], pts[0][1]);
+      for (let i = 1; i < pts.length; i++) c.lineTo(pts[i][0], pts[i][1]);
+      c.stroke();
+    } else if (s.tool === 'arrow') {
+      const [a, b] = [pts[0], pts[pts.length - 1]];
+      c.lineWidth = s.w;
+      c.beginPath(); c.moveTo(a[0], a[1]); c.lineTo(b[0], b[1]); c.stroke();
+      const ang = Math.atan2(b[1] - a[1], b[0] - a[0]), L = 10 + s.w * 3;
+      c.beginPath();
+      c.moveTo(b[0], b[1]);
+      c.lineTo(b[0] - L * Math.cos(ang - 0.45), b[1] - L * Math.sin(ang - 0.45));
+      c.lineTo(b[0] - L * Math.cos(ang + 0.45), b[1] - L * Math.sin(ang + 0.45));
+      c.closePath(); c.fill();
+    } else {
+      if (pts.length === 1) { c.beginPath(); c.arc(pts[0][0], pts[0][1], s.w * pts[0][2] / 2, 0, Math.PI * 2); c.fill(); }
+      for (let i = 1; i < pts.length; i++) {
+        const p0 = pts[i - 1], p1 = pts[i];
+        c.lineWidth = s.w * (p0[2] + p1[2]) / 2;
+        c.beginPath();
+        if (i > 1) {
+          const pm = pts[i - 2];
+          c.moveTo((pm[0] + p0[0]) / 2, (pm[1] + p0[1]) / 2);
+          c.quadraticCurveTo(p0[0], p0[1], (p0[0] + p1[0]) / 2, (p0[1] + p1[1]) / 2);
+        } else { c.moveTo(p0[0], p0[1]); c.lineTo((p0[0] + p1[0]) / 2, (p0[1] + p1[1]) / 2); }
+        c.stroke();
+      }
+      const l = pts[pts.length - 1], pl = pts[pts.length - 2];
+      if (pl) { c.lineWidth = s.w * l[2]; c.beginPath(); c.moveTo((pl[0] + l[0]) / 2, (pl[1] + l[1]) / 2); c.lineTo(l[0], l[1]); c.stroke(); }
+    }
+    c.restore();
+  }
+  let rafPending = false;
+  function redraw() {
+    rafPending = false;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.clearRect(0, 0, cv.width, cv.height);
+    for (const s of page().strokes) drawStroke(ctx, s);
+    if (cur && cur.tool !== 'eraser') drawStroke(ctx, cur);
+  }
+  const scheduleRedraw = () => { if (!rafPending) { rafPending = true; requestAnimationFrame(redraw); } };
+  function sheetPoint(e) {
+    const r = sheet.getBoundingClientRect();
+    const pr = e.pointerType === 'pen' ? 0.35 + (e.pressure || 0.5) * 1.3 : 1;
+    return [Math.round((e.clientX - r.left) * 10) / 10, Math.round((e.clientY - r.top) * 10) / 10, Math.round(pr * 100) / 100];
+  }
+  function distSeg(p, a, b) {
+    const dx = b[0] - a[0], dy = b[1] - a[1];
+    const l2 = dx * dx + dy * dy;
+    let t = l2 ? ((p[0] - a[0]) * dx + (p[1] - a[1]) * dy) / l2 : 0;
+    t = Math.max(0, Math.min(1, t));
+    const x = a[0] + t * dx - p[0], y = a[1] + t * dy - p[1];
+    return Math.sqrt(x * x + y * y);
+  }
+  function eraseAt(p) {
+    const st = page().strokes;
+    const removed = [];
+    for (let i = st.length - 1; i >= 0; i--) {
+      const s = st[i];
+      const tol = 10 + (s.tool === 'hl' ? s.w * 2.5 : s.w);
+      const pts = s.tool === 'arrow' ? [s.pts[0], s.pts[s.pts.length - 1]] : s.pts;
+      let hit = pts.length === 1 ? Math.hypot(pts[0][0] - p[0], pts[0][1] - p[1]) < tol : false;
+      for (let k = 1; k < pts.length && !hit; k++) if (distSeg(p, pts[k - 1], pts[k]) < tol) hit = true;
+      if (hit) { removed.push({ s, i }); st.splice(i, 1); }
+    }
+    if (removed.length) { cur.erased.push(...removed); scheduleRedraw(); }
+  }
+  sheet.addEventListener('pointerdown', (e) => {
+    const drawing = body.dataset.mode === 'draw' || e.pointerType === 'pen';
+    if (!drawing || e.button > 0) return;
+    if (e.target.closest('.blk-handle')) return;
+    e.preventDefault();
+    e.stopPropagation();
+    if (document.activeElement && document.activeElement.blur && body.dataset.mode === 'draw') document.activeElement.blur();
+    try { sheet.setPointerCapture(e.pointerId); } catch (x) { /* */ }
+    const tool = e.pointerType === 'pen' && e.button === 5 ? 'eraser' : board.tool;
+    const p = sheetPoint(e);
+    cur = { tool, color: board.color, w: board.width, pts: [p], erased: [], pid: e.pointerId };
+    if (tool === 'eraser') eraseAt(p);
+    hidePio();
+    scheduleRedraw();
+  }, true);
+  sheet.addEventListener('pointermove', (e) => {
+    if (!cur || e.pointerId !== cur.pid) return;
+    e.preventDefault();
+    const evs = e.getCoalescedEvents ? e.getCoalescedEvents() : [e];
+    for (const ev of evs.length ? evs : [e]) {
+      const p = sheetPoint(ev);
+      if (cur.tool === 'eraser') { eraseAt(p); continue; }
+      if (cur.tool === 'arrow') { cur.pts[1] = p; continue; }
+      const l = cur.pts[cur.pts.length - 1];
+      if (Math.hypot(p[0] - l[0], p[1] - l[1]) >= 1.5) cur.pts.push(p);
+    }
+    const y = cur.pts[cur.pts.length - 1][1];
+    const pg = page();
+    if (y > sheet.clientHeight - 160) { pg.minH = sheet.clientHeight + 400; sizeCanvas(); }
+    scheduleRedraw();
+  }, true);
+  function endStroke(e) {
+    if (!cur || (e && e.pointerId !== cur.pid)) return;
+    const s = cur;
+    cur = null;
+    if (s.tool === 'eraser') {
+      if (s.erased.length) undoStack.push({ type: 'erase', items: s.erased });
+    } else if (!(s.tool === 'arrow' && s.pts.length < 2)) {
+      delete s.erased; delete s.pid;
+      page().strokes.push(s);
+      undoStack.push({ type: 'add', s });
+    }
+    save();
+    scheduleRedraw();
+  }
+  sheet.addEventListener('pointerup', endStroke, true);
+  sheet.addEventListener('pointercancel', endStroke, true);
+  function undo() {
+    const a = undoStack.pop();
+    if (!a) { toast('No hay trazos que deshacer en esta página.'); return; }
+    const st = page().strokes;
+    if (a.type === 'add') { const i = st.lastIndexOf(a.s); if (i >= 0) st.splice(i, 1); }
+    else a.items.slice().reverse().forEach(({ s, i }) => st.splice(Math.min(i, st.length), 0, s));
+    save();
+    scheduleRedraw();
+  }
+  $('#undoBtn').addEventListener('click', undo);
+  $('#clearInkBtn').addEventListener('click', () => {
+    const st = page().strokes;
+    if (!st.length) return;
+    undoStack.push({ type: 'erase', items: st.map((s, i) => ({ s, i })).reverse() });
+    page().strokes = [];
+    save();
+    scheduleRedraw();
+  });
+  $('#penWidth').addEventListener('input', (e) => { board.width = +e.target.value; applySettings(); save(); });
+
+  /* ---------------- Atajos globales ---------------- */
+  document.addEventListener('keydown', (e) => {
+    const editing = e.target.closest && e.target.closest('math-field,[contenteditable="true"],input,select,textarea');
+    const k = e.key;
+    if (e.altKey && !e.ctrlKey && !e.metaKey) {
+      const code = e.code;
+      if (code === 'KeyD') { e.preventDefault(); setMode(body.dataset.mode === 'draw' ? 'write' : 'draw'); return; }
+      if (code === 'KeyM') { e.preventDefault(); insertLatex(matrixLatex(2, 2, 'pmatrix')); return; }
+      if (code === 'KeyS') { e.preventDefault(); insertLatex(systemLatex(2)); return; }
+      if (code === 'KeyL') { e.preventDefault(); insertLatex(TPL.aligned); return; }
+      if (code === 'KeyT') { e.preventDefault(); $('#textBtn').click(); return; }
+      if (/^Digit[1-6]$/.test(code)) { e.preventDefault(); setColor(COLOR_NAMES[+code.slice(5) - 1]); return; }
+      if (k === 'PageDown') { e.preventDefault(); goPage(board.cur + 1); return; }
+      if (k === 'PageUp') { e.preventDefault(); goPage(board.cur - 1); return; }
+    }
+    if ((e.ctrlKey || e.metaKey) && (k === '=' || e.code === 'Equal') && !e.altKey) { e.preventDefault(); runCalc(); return; }
+    if ((e.ctrlKey || e.metaKey) && k.toLowerCase() === 'z' && body.dataset.mode === 'draw' && !editing) { e.preventDefault(); undo(); return; }
+    if (editing || e.ctrlKey || e.metaKey || e.altKey) return;
+    if (k === 'Escape') { closePop(); if (body.dataset.mode === 'draw') setMode('write'); return; }
+    if (k === '?') { e.preventDefault(); help.showModal(); return; }
+    if (k === 'h' || k === 'H') { toggleChrome(); return; }
+    if (k === 'f' || k === 'F') { toggleFull(); return; }
+    if (body.dataset.mode === 'draw') {
+      const map = { p: 'pen', r: 'hl', a: 'arrow', e: 'eraser' };
+      if (map[k.toLowerCase()]) { board.tool = map[k.toLowerCase()]; applySettings(); save(); return; }
+    }
+    if (k === 'd' || k === 'D') { setMode(body.dataset.mode === 'draw' ? 'write' : 'draw'); return; }
+    if (k === 'PageDown') { goPage(board.cur + 1); return; }
+    if (k === 'PageUp') { goPage(board.cur - 1); return; }
+    if (k === 'Enter' && body.dataset.mode === 'write' && activeId) { e.preventDefault(); focusBlock(activeId); }
+  }, true);
+
+  /* ---------------- Arranque ---------------- */
+  applySettings();
+  function start() {
+    mlReady = true;
+    const MFE = window.MathfieldElement;
+    try {
+      MFE.fontsDirectory = 'https://cdn.jsdelivr.net/npm/mathlive@' + ML_VERSION + '/fonts';
+      MFE.soundsDirectory = null;
+      MFE.plonkSound = null;
+      MFE.keypressSound = null;
+    } catch (e) { /* */ }
+    renderPage();
+    requestAnimationFrame(() => { const f = page().blocks[0]; if (f) focusBlock(f.id); });
+  }
+  let started = false;
+  const go = () => { if (!started) { started = true; start(); } };
+  if (window.customElements) {
+    customElements.whenDefined('math-field').then(go);
+  }
+  window.addEventListener('load', () => {
+    setTimeout(() => {
+      if (!started && !customElements.get('math-field')) {
+        renderPage();
+        toast('No se ha podido cargar el editor de fórmulas (¿sin conexión?). Puedes dibujar y escribir texto; recarga la página cuando tengas red.', 'aviso');
+      }
+    }, 4000);
+  });
+})();
+</script>
+</body>
+</html>
