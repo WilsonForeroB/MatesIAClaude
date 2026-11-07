@@ -71,6 +71,7 @@ Tipos de bloque:
 | `table` | Tabla de Ruffini, de verdad o de valores. |
 | `graph` | Gráfica 2D de una o varias funciones, con `marks` opcionales (máximos, mínimos, inflexión, absolutos). |
 | `graph3d` | Superficie z = f(x, y) con su rango, su vista (`az`, `el`, `zoom`) y `marks` opcionales (mínimos, máximos, puntos de silla). |
+| `venn` | Diagrama de Venn: `n` (2 o 3), `expr` (expresión sombreada) o `shade` (zonas elegidas a mano, como máscaras A = 1, B = 2, C = 4) y `showEls`. |
 | `net` | Grafo: `nodes` (con `label`, `x`, `y` y tipo de capa), `edges` (con peso opcional `w`), `directed` y rótulos de capa `caps`. |
 
 `strokes` guarda el dibujo a mano alzada de cada página. Los archivos antiguos sin `app` ni `formato` también se abren.
@@ -94,13 +95,14 @@ Pulsa **?** dentro de la pizarra para ver todos los atajos.
 | Aritmética | Simplificar y operar fracciones, m.c.d. y m.c.m. (factores primos y Euclides), descomposición en factores primos. |
 | Polinomios | Desarrollar, Ruffini o división larga, raíces y factorización. |
 | Combinatoria | n!, combinaciones, variaciones y permutaciones; triángulo de Pascal. |
-| Lógica y conjuntos | Tabla de verdad con su clasificación; unión, intersección, diferencia, complementario, partes y producto cartesiano. |
+| Lógica y conjuntos | Tabla de verdad con su clasificación; unión, intersección, diferencia, complementario, partes y producto cartesiano; **diagrama de Venn** de la expresión de la línea. |
 | Cálculo | Derivada con las reglas aplicadas; **máximos y mínimos de f(x)** (puntos críticos, clasificación con f″ o con el signo de f′, puntos de inflexión, tabla de crecimiento, extremos absolutos en ±∞ o en un intervalo `x∈[a,b]` y gráfica con los puntos marcados); **extremos de f(x, y)** (gradiente, puntos críticos, hessiana y clasificación en mínimo, máximo o punto de silla, con la superficie 3D marcada); gráfica de funciones y tabla de valores. |
 
 - **Gráficos ▾**:
   - **Gráfica 2D**: funciones y = f(x); usa la función de la línea activa y admite varias separadas por `;`. Se acerca con la rueda y se mueve arrastrando.
   - **Gráfica 3D**: superficies z = f(x, y), coloreadas de bajo a alto. Se gira arrastrando, se acerca con la rueda y se cambian la función y los rangos de x e y.
   - **Grafo**: herramientas Mover, Nodo (clic en un hueco), Arista (arrastrar de un nodo a otro) y Borrar. Doble clic para renombrar un nodo o poner peso a una arista. Puede ser dirigido o no, y el botón **Matriz de adyacencia** añade la matriz y los grados debajo.
+  - **Diagrama de Venn**: 2 o 3 conjuntos (A, B, C) dentro del universal U. Escribe la expresión (A ∩ B, A ∪ B, A ∖ B, Aᶜ, (A ∪ B)ᶜ, A Δ B…) con el teclado o con sus botones y se sombrea su zona, con color y rayado. Si en la página has definido `A = {…}`, `B = {…}`, `C = {…}` o `U = {…}`, cada elemento aparece en su zona y debajo sale el conjunto resultado. Con un clic en una zona la sombreas o la quitas a mano.
   - **Asistente de red neuronal**: escribe las neuronas por capa (por ejemplo `3, 4, 4, 2`) y monta el grafo por capas: entradas x₁…, ocultas h¹₁… y salidas ŷ₁…, con sesgo (+1) y pesos w opcionales. También está en el grafo, con el botón «Red neuronal…».
 - **Dibujar** (Alt+D): lápiz, rotulador, flecha y goma. Un lápiz digital dibuja siempre, aunque estés en modo Escribir.
 - **Modo proyector**: pantalla completa (icono de la cabecera o tecla F), tamaño de letra, tema claro u oscuro y ocultar barras (H).

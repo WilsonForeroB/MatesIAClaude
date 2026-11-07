@@ -331,6 +331,24 @@ body.picking .dcell.pick-hover,body.picking .dnote.pick-hover{background:var(--a
 .g3d canvas:active{cursor:grabbing}
 .g3d .g-cap{font:400 14px/20px var(--font-serif);color:var(--ink)}
 /* Grafos */
+/* Diagramas de Venn */
+.venn{display:flex;flex-direction:column;gap:var(--space-2);width:min(100%,760px);outline:none}
+.venn svg{width:100%;height:auto;background:var(--surface-sunken);border:var(--border-width-thin) solid var(--border);border-radius:var(--radius-md);cursor:pointer;user-select:none}
+.venn .v-uni{fill:var(--surface-raised);stroke:var(--ink);stroke-width:2}
+.venn .v-circle{fill:none;stroke:var(--ink);stroke-width:2.2}
+.venn .v-shade{fill:var(--accent);fill-opacity:.42}
+.venn .v-hatch line{stroke:var(--accent);stroke-width:2}
+.venn .v-name{fill:var(--ink);font:600 22px var(--font-serif);font-style:italic}
+.venn .v-el{fill:var(--ink);font:400 17px var(--font-serif);text-anchor:middle;dominant-baseline:central;pointer-events:none}
+.venn .v-res{font:400 calc(16px * var(--scale)) / 1.5 var(--font-serif);color:var(--ink);margin:0}
+.venn .v-res b{font-weight:600}
+.venn .v-ctrl{display:flex;flex-wrap:wrap;align-items:center;gap:var(--space-2) var(--space-3);font:400 13px/20px var(--font-sans);color:var(--ink-muted)}
+.venn .v-ctrl input[type=text]{flex:1 1 220px;min-width:0;font:400 15px var(--font-serif);color:var(--ink);background:var(--surface-raised);border:var(--border-width-thin) solid var(--border-strong);border-radius:var(--radius-md);padding:5px 10px}
+.venn .v-ctrl input[type=text]:focus-visible{outline:var(--border-width-medium) solid var(--focus-ring);outline-offset:2px}
+.venn .v-keys{display:flex;gap:3px;flex-wrap:wrap}
+.venn .v-keys button{min-width:32px;height:30px;border:var(--border-width-thin) solid var(--border-strong);border-radius:var(--radius-sm);background:var(--surface-raised);color:var(--ink);font:400 16px var(--font-serif);cursor:pointer}
+.venn .v-keys button:hover{background:var(--accent-soft);border-color:var(--accent)}
+.venn .v-err{color:var(--warning);font:400 13px/20px var(--font-sans)}
 .net{display:flex;flex-direction:column;gap:var(--space-2);width:min(100%,760px);position:relative;outline:none}
 .net svg{width:100%;height:auto;background:var(--surface-sunken);border:var(--border-width-thin) solid var(--border);border-radius:var(--radius-md);touch-action:none;user-select:none}
 .net-bar{display:flex;flex-wrap:wrap;align-items:center;gap:var(--space-2)}
@@ -506,6 +524,7 @@ body.picking .dcell.pick-hover,body.picking .dnote.pick-hover{background:var(--a
   <button type="button" class="graf-opt" data-graf="2d"><svg viewBox="0 0 40 40" aria-hidden="true"><path d="M4 34H37M6 37V3" stroke="currentColor" stroke-width="2" fill="none"/><path d="M7 30C13 4 19 4 23 20S31 34 36 8" stroke="var(--data-1)" stroke-width="2.5" fill="none" stroke-linecap="round"/></svg><span><b>Gráfica 2D</b><small>Funciones y = f(x). Usa la función de la línea activa; puedes poner varias separadas por punto y coma.</small></span></button>
   <button type="button" class="graf-opt" data-graf="3d"><svg viewBox="0 0 40 40" aria-hidden="true"><path d="M6 28L20 35L34 28L20 21Z" fill="var(--data-2)" opacity=".35" stroke="currentColor" stroke-width="1.5"/><path d="M6 28C10 14 15 10 20 15S30 18 34 28" stroke="var(--data-3)" stroke-width="2.5" fill="none"/><path d="M20 21V4" stroke="currentColor" stroke-width="1.5"/></svg><span><b>Gráfica 3D</b><small>Superficies z = f(x, y). Arrastra para girarla y usa la rueda para acercar.</small></span></button>
   <button type="button" class="graf-opt" data-graf="net"><svg viewBox="0 0 40 40" aria-hidden="true"><g stroke="currentColor" stroke-width="1.4"><path d="M8 10L20 20M8 30L20 20M20 20L32 12M20 20L32 28M8 10L32 12"/></g><circle cx="8" cy="10" r="4" fill="var(--data-2)"/><circle cx="8" cy="30" r="4" fill="var(--data-2)"/><circle cx="20" cy="20" r="4" fill="var(--data-1)"/><circle cx="32" cy="12" r="4" fill="var(--data-5)"/><circle cx="32" cy="28" r="4" fill="var(--data-5)"/></svg><span><b>Grafo</b><small>Nodos y aristas: dirigido o no, con pesos y matriz de adyacencia.</small></span></button>
+  <button type="button" class="graf-opt" data-graf="venn"><svg viewBox="0 0 40 40" aria-hidden="true"><rect x="2" y="5" width="36" height="30" rx="4" fill="none" stroke="currentColor" stroke-width="1.4"/><circle cx="16" cy="20" r="9" fill="var(--data-2)" opacity=".3" stroke="currentColor" stroke-width="1.4"/><circle cx="24" cy="20" r="9" fill="var(--data-5)" opacity=".3" stroke="currentColor" stroke-width="1.4"/></svg><span><b>Diagrama de Venn</b><small>2 o 3 conjuntos: sombrea A ∩ B, A ∪ B, A ∖ B, Aᶜ, (A ∪ B)ᶜ… y coloca los elementos si los has definido.</small></span></button>
   <div class="graf-sub"><button type="button" class="mi-btn mi-btn--sm" data-graf="nn">Asistente de red neuronal…</button><small>Monta un grafo por capas: entrada, ocultas y salida.</small></div>
 </div>
 
@@ -675,7 +694,8 @@ body.picking .dcell.pick-hover,body.picking .dnote.pick-hover{background:var(--a
         <tr><td>Aritmética</td><td>Fracciones, m.c.d. y m.c.m., factores primos</td></tr>
         <tr><td>Polinomios</td><td>Desarrollar, Ruffini y división larga, raíces</td></tr>
         <tr><td>Cálculo</td><td>Derivadas, máximos y mínimos de f(x) (también en un intervalo x∈[a,b]), extremos y puntos de silla de f(x,y), gráficas y tabla de valores</td></tr>
-        <tr><td>Más</td><td>Combinatoria, Pascal, tabla de verdad y conjuntos</td></tr>
+        <tr><td>Conjuntos</td><td>Operar conjuntos y diagrama de Venn (2 o 3 conjuntos): sombrea A ∩ B, (A ∪ B)ᶜ, A ∖ B, A Δ B… y coloca los elementos de A, B, C y U definidos en la página. Clic en las zonas para sombrear a mano</td></tr>
+        <tr><td>Más</td><td>Combinatoria, Pascal y tabla de verdad</td></tr>
       </tbody></table>
       <p style="font:400 13px/20px var(--font-sans);color:var(--ink-muted);margin:var(--space-2) 0 0">Todo se calcula en el navegador, sin conexión. Pon el cursor en la línea con los datos y elige la operación.</p>
     </section>
@@ -2978,6 +2998,50 @@ const OPS = ((ME) => {
     }
     return env;
   }
+  /* --- Diagramas de Venn: zonas como máscaras de bits (A = 1, B = 2, C = 4) --- */
+  function normSetText(t) {
+    return String(t)
+      .replace(/∩/g, '\\cap ').replace(/∪/g, '\\cup ').replace(/∖/g, '\\setminus ').replace(/[Δ△]/g, '\\triangle ')
+      .replace(/ᶜ/g, '^c').replace(/∅/g, '\\emptyset ').replace(/\^\{\\complement\}|\\complement/g, '^c')
+      .replace(/\\(?=[A-Z](?![a-zA-Z]))/g, '\\setminus ')
+      .replace(/([A-Z)'c}\s])\s*-\s*(?=[A-Z(\\])/g, '$1\\setminus ');
+  }
+  function vennEval(expr, names, nHint) {
+    const toks = setTokens(normSetText(expr));
+    const used = [...new Set(toks.filter((t) => t.k === 'name' && t.v !== 'U').map((t) => t.v))];
+    for (const u of used) if (!names.includes(u)) throw new MErr('En el diagrama solo hay los conjuntos ' + names.join(', ') + ' (y U): «' + u + '» no está.');
+    if (toks.some((t) => t.k === 'el' || t.k === 'times' || t.k === 'P' || t.k === '|')) throw new MErr('En el diagrama de Venn usa solo nombres de conjuntos y ∪ ∩ ∖ Δ ᶜ.');
+    const n = nHint || (used.includes(names[2]) ? 3 : 2);
+    const all = Array.from({ length: 1 << n }, (_, i) => i);
+    let pos = 0;
+    const peek = () => toks[pos], next = () => toks[pos++];
+    const S = (arr) => new Set(arr);
+    function expr_() { let a = term(); while (peek() && ['cup', 'minus', 'sym'].includes(peek().k)) { const o = next().k, b = term(); a = o === 'cup' ? S([...a, ...b]) : o === 'minus' ? S([...a].filter((x) => !b.has(x))) : S([...a].filter((x) => !b.has(x)).concat([...b].filter((x) => !a.has(x)))); } return a; }
+    function term() { let a = post(); while (peek() && peek().k === 'cap') { next(); const b = post(); a = S([...a].filter((x) => b.has(x))); } return a; }
+    function post() { let a = prim(); while (peek() && peek().k === 'comp') { next(); a = S(all.filter((x) => !a.has(x))); } return a; }
+    function prim() {
+      const t = next();
+      if (!t) throw new MErr('Expresión incompleta.');
+      if (t.k === '(') { const a = expr_(); if (!peek() || peek().k !== ')') throw new MErr('Falta cerrar un paréntesis.'); next(); return a; }
+      if (t.k === '{') { if (peek() && peek().k === '}') { next(); return S([]); } throw new MErr('En el diagrama de Venn usa nombres de conjuntos, no elementos.'); }
+      if (t.k === 'name') { if (t.v === 'U') return S(all); const k = names.indexOf(t.v); if (k >= n) throw new MErr('Este diagrama tiene ' + n + ' conjuntos.'); return S(all.filter((m) => m & (1 << k))); }
+      throw new MErr('No esperaba «' + (t.v || t.k) + '» en la expresión.');
+    }
+    const r = expr_();
+    if (pos < toks.length) throw new MErr('Sobra algo al final de la expresión.');
+    return { n, masks: [...r].sort((a, b) => a - b) };
+  }
+  // Elementos de los conjuntos definidos en la página, con su zona
+  function vennElements(lines, names, n) {
+    const env = setDefs(lines);
+    const sets = names.slice(0, n).map((k) => env[k]);
+    if (!sets.some(Boolean)) return null;
+    const key = (x) => setKey(x);
+    const uni = env.U ? env.U.set.slice() : [];
+    for (const st of sets) if (st) for (const e of st.set) if (!uni.some((u) => key(u) === key(e))) uni.push(e);
+    const els = uni.map((e) => ({ v: e, txt: setKey(e), mask: sets.reduce((m, st, k) => (st && st.set.some((y) => key(y) === key(e)) ? m | (1 << k) : m), 0) }));
+    return { els, hasU: !!env.U, missing: names.slice(0, n).filter((k, i) => !sets[i]) };
+  }
   function setOperate(latex, lines) {
     const env = setDefs(lines);
     const seg = latex.replace(/=\s*$/, '');
@@ -3371,7 +3435,7 @@ const OPS = ((ME) => {
   }
 
   return {
-    extrema1, extrema2,
+    extrema1, extrema2, vennEval, vennElements, normSetText,
     P, parseExpr, L, simpAll, D, evalNum, compileFn, rationalRoots, sqrtSimp, splitEquation,
     inverseSteps, detSarrus, detCofactor, detGauss, cramer, productDeveloped, paramDiscussion, eigen,
     vecDot, vecCross, vecNorm, vecAngle, vecProj,
@@ -3462,6 +3526,9 @@ const OPS = ((ME) => {
         if (x.type === 'graph3d') {
           const num = (v, d) => (Number.isFinite(+v) ? +v : d);
           return Object.assign(base, { type: 'graph3d', marks: cleanMarks(x.marks, true), fn: typeof x.fn === 'string' ? x.fn : 'z=x^2-y^2', xmin: num(x.xmin, -3), xmax: num(x.xmax, 3), ymin: num(x.ymin, -3), ymax: num(x.ymax, 3), az: num(x.az, -0.8), el: num(x.el, 0.55), zoom: num(x.zoom, 1) });
+        }
+        if (x.type === 'venn') {
+          return Object.assign(base, { type: 'venn', n: x.n === 3 ? 3 : 2, expr: typeof x.expr === 'string' ? x.expr.slice(0, 200) : '', shade: (Array.isArray(x.shade) ? x.shade : []).map(Number).filter((m) => Number.isInteger(m) && m >= 0 && m < 8), showEls: x.showEls !== false });
         }
         if (x.type === 'net') {
           const nodes = (Array.isArray(x.nodes) ? x.nodes : []).filter((n) => n && Number.isFinite(+n.x) && Number.isFinite(+n.y)).slice(0, 120)
@@ -3582,7 +3649,7 @@ const OPS = ((ME) => {
     x.type = 'button';
     x.className = 'x-del blk-del';
     x.textContent = '×';
-    const xl = b.type === 'deriv' ? 'Borrar todo el desarrollo' : b.type === 'table' ? 'Borrar la tabla' : b.type === 'graph' || b.type === 'graph3d' ? 'Borrar la gráfica' : b.type === 'net' ? 'Borrar el grafo' : 'Borrar esta línea';
+    const xl = b.type === 'deriv' ? 'Borrar todo el desarrollo' : b.type === 'table' ? 'Borrar la tabla' : b.type === 'graph' || b.type === 'graph3d' ? 'Borrar la gráfica' : b.type === 'net' ? 'Borrar el grafo' : b.type === 'venn' ? 'Borrar el diagrama' : 'Borrar esta línea';
     x.title = xl;
     x.setAttribute('aria-label', xl);
     x.addEventListener('mousedown', (e) => e.preventDefault());
@@ -3596,6 +3663,8 @@ const OPS = ((ME) => {
       buildGraph3d(b, bd, false);
     } else if (b.type === 'net') {
       buildNet(b, bd, false);
+    } else if (b.type === 'venn') {
+      buildVenn(b, bd, false);
     } else if (b.type === 'deriv') {
       el.classList.add('blk-deriv');
       el.classList.remove('is-boxed');
@@ -3976,7 +4045,7 @@ const OPS = ((ME) => {
     const empty = gone.type === 'math' || gone.type === 'text' ? !gone.v : gone.type === 'deriv' ? gone.rows.every((r) => !r.l && !r.r && !r.note) : false;
     if (!empty) {
       const pg = board.cur, only = bl.length === 1;
-      toast((gone.type === 'deriv' ? 'Desarrollo borrado.' : gone.type === 'table' ? 'Tabla borrada.' : gone.type === 'graph' || gone.type === 'graph3d' ? 'Gráfica borrada.' : gone.type === 'net' ? 'Grafo borrado.' : 'Línea borrada.'), 'nota', { label: 'Deshacer', fn: () => {
+      toast((gone.type === 'deriv' ? 'Desarrollo borrado.' : gone.type === 'table' ? 'Tabla borrada.' : gone.type === 'graph' || gone.type === 'graph3d' ? 'Gráfica borrada.' : gone.type === 'net' ? 'Grafo borrado.' : gone.type === 'venn' ? 'Diagrama borrado.' : 'Línea borrada.'), 'nota', { label: 'Deshacer', fn: () => {
         if (board.cur !== pg) { board.cur = pg; }
         const blocks = page().blocks;
         gone.id = uid();
@@ -4035,7 +4104,7 @@ const OPS = ((ME) => {
 
   /* ---------------- Teclado dentro de las líneas ---------------- */
   blocksEl.addEventListener('keydown', (e) => {
-    if (e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT' || e.target.tagName === 'svg' || e.target.closest('.net,.g3d,.graph')) return;
+    if (e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT' || e.target.tagName === 'svg' || e.target.closest('.net,.g3d,.graph,.venn')) return;
     const el = e.target.closest && e.target.closest('.blk');
     if (!el) return;
     const id = el.dataset.id, b = blockById(id);
@@ -4755,6 +4824,142 @@ const OPS = ((ME) => {
     if (ro) setTimeout(draw, 50);
   }
 
+  /* ---------------- Diagramas de Venn ---------------- */
+  const VENN_NAMES = ['A', 'B', 'C'];
+  const VENN_LAYOUT = {
+    2: { circles: [[290, 215, 140], [430, 215, 140]], names: [[170, 92], [530, 92]], anchors: { 0: [78, 368], 1: [222, 215], 2: [498, 215], 3: [360, 215] } },
+    3: { circles: [[300, 168, 118], [420, 168, 118], [360, 272, 118]], names: [[190, 70], [510, 70], [500, 385]], anchors: { 0: [72, 372], 1: [252, 128], 2: [468, 128], 4: [360, 330], 3: [360, 112], 5: [290, 244], 6: [430, 244], 7: [360, 203] } },
+  };
+  const setPretty = (t) => String(t).replace(/\\left|\\right/g, '').replace(/\\cap\s*/g, ' ∩ ').replace(/\\cup\s*/g, ' ∪ ').replace(/\\setminus\s*/g, ' ∖ ').replace(/\\backslash\s*/g, ' ∖ ')
+    .replace(/\\triangle\s*/g, ' Δ ').replace(/\\Delta\s*/g, ' Δ ').replace(/\^\{c\}|\^c|\^\{\\complement\}/g, 'ᶜ').replace(/\\emptyset\s*/g, '∅').replace(/[{}]/g, '').replace(/\s+/g, ' ').trim();
+  function vennExprFrom(src) {
+    let t = String(src || '').trim().replace(/=\s*$/, '');
+    const i = t.lastIndexOf('=');
+    if (i >= 0) t = t.slice(i + 1);
+    if (!t.trim()) throw new ME.MErr('Escribe una expresión de conjuntos, por ejemplo A ∩ B o (A ∪ B)ᶜ.');
+    return t.trim();
+  }
+  function pageLines() {
+    const out = [];
+    for (const x of page().blocks) { if (x.type === 'math' || x.type === 'text') out.push(x.v); if (x.type === 'deriv') x.rows.forEach((r) => { if (r.l && r.r) out.push(r.l + '=' + r.r); }); }
+    return out;
+  }
+  function buildVenn(b, bd, ro) {
+    const box = document.createElement('div');
+    box.className = 'venn';
+    box.tabIndex = 0;
+    const W = 720, H = 420, uid0 = 'v' + Math.random().toString(36).slice(2, 8);
+    const svg = document.createElementNS(SVGNS, 'svg');
+    svg.setAttribute('viewBox', '0 0 ' + W + ' ' + H);
+    svg.setAttribute('role', 'img');
+    const res = document.createElement('p');
+    res.className = 'v-res';
+    const err = document.createElement('div');
+    err.className = 'v-err';
+    const mk = (tag, attrs, cls, parent) => { const e = document.createElementNS(SVGNS, tag); for (const k in attrs) e.setAttribute(k, attrs[k]); if (cls) e.setAttribute('class', cls); (parent || svg).appendChild(e); return e; };
+    let lastMasks = [];
+    function render() {
+      svg.textContent = ''; err.textContent = '';
+      const n = b.n === 3 ? 3 : 2, Lo = VENN_LAYOUT[n];
+      let masks = [], manual = !b.expr;
+      if (!manual) {
+        try { const r = OPS.vennEval(b.expr, VENN_NAMES, n); masks = r.masks; }
+        catch (e) { err.textContent = 'Aviso: ' + (e.message || 'expresión no válida'); masks = []; }
+      } else masks = b.shade.filter((m) => m < (1 << n));
+      lastMasks = masks;
+      const defs = mk('defs', {});
+      Lo.circles.forEach(([cx, cy, r], k) => { const cp = mk('clipPath', { id: uid0 + 'c' + k }, '', defs); mk('circle', { cx, cy, r }, '', cp); });
+      const hatch = mk('pattern', { id: uid0 + 'h', width: 10, height: 10, patternUnits: 'userSpaceOnUse', patternTransform: 'rotate(45)' }, 'v-hatch', defs);
+      mk('line', { x1: 0, y1: 0, x2: 0, y2: 10 }, '', hatch);
+      mk('rect', { x: 20, y: 20, width: W - 40, height: H - 40, rx: 14 }, 'v-uni');
+      const t = mk('text', { x: 36, y: 50 }, 'v-name'); t.textContent = 'U';
+      for (const m of masks) {
+        const msk = mk('mask', { id: uid0 + 'm' + m }, '', defs);
+        mk('rect', { x: 0, y: 0, width: W, height: H, fill: 'white' }, '', msk);
+        Lo.circles.forEach(([cx, cy, r], k) => { if (!(m & (1 << k))) mk('circle', { cx, cy, r, fill: 'black' }, '', msk); });
+        let g = svg;
+        Lo.circles.forEach((_, k) => { if (m & (1 << k)) g = mk('g', { 'clip-path': 'url(#' + uid0 + 'c' + k + ')' }, '', g); });
+        mk('rect', { x: 20, y: 20, width: W - 40, height: H - 40, rx: 14, mask: 'url(#' + uid0 + 'm' + m + ')' }, 'v-shade', g);
+        mk('rect', { x: 20, y: 20, width: W - 40, height: H - 40, rx: 14, mask: 'url(#' + uid0 + 'm' + m + ')', fill: 'url(#' + uid0 + 'h)' }, '', g);
+      }
+      Lo.circles.forEach(([cx, cy, r]) => mk('circle', { cx, cy, r }, 'v-circle'));
+      Lo.names.forEach(([x, y], k) => { const tt = mk('text', { x, y, 'text-anchor': 'middle' }, 'v-name'); tt.textContent = VENN_NAMES[k]; });
+      // elementos
+      let info = null;
+      try { info = b.showEls ? OPS.vennElements(pageLines(), VENN_NAMES, n) : null; } catch (e) { info = null; }
+      if (info) {
+        const byMask = {};
+        for (const e of info.els) (byMask[e.mask] = byMask[e.mask] || []).push(e.txt);
+        for (const m in byMask) {
+          const list = byMask[m], [ax, ay] = Lo.anchors[m];
+          const shown = list.slice(0, 9), cols = Math.min(3, Math.ceil(Math.sqrt(shown.length)));
+          shown.forEach((txt, i) => { const cx = ax + ((i % cols) - (cols - 1) / 2) * 30, cy = ay + (Math.floor(i / cols) - (Math.ceil(shown.length / cols) - 1) / 2) * 24; const tt = mk('text', { x: cx, y: cy }, 'v-el'); tt.textContent = txt.length > 4 ? txt.slice(0, 4) + '…' : txt; });
+          if (list.length > 9) { const tt = mk('text', { x: ax, y: ay + 52 }, 'v-el'); tt.textContent = '+' + (list.length - 9); }
+        }
+      }
+      // texto de resultado
+      const exprTxt = manual ? 'zona elegida a mano' : setPretty(b.expr);
+      svg.setAttribute('aria-label', 'Diagrama de Venn de ' + n + ' conjuntos con la zona ' + exprTxt + ' sombreada');
+      res.textContent = '';
+      const bb = document.createElement('b'); bb.textContent = manual ? (masks.length ? 'Sombreado a mano' : 'Haz clic en las zonas para sombrearlas') : exprTxt;
+      res.appendChild(bb);
+      if (info && masks.length !== undefined && (!manual || masks.length)) {
+        const els = info.els.filter((e) => masks.includes(e.mask)).map((e) => e.txt);
+        res.appendChild(document.createTextNode(' = {' + els.join(', ') + '}' + (els.length ? '' : ' = ∅') + (info.missing.length ? '   (sin definir: ' + info.missing.join(', ') + ')' : '') + (!info.hasU && masks.includes(0) ? '   (define U para ver los elementos de fuera)' : '')));
+      }
+    }
+    function maskAt(e) {
+      const r = svg.getBoundingClientRect();
+      const x = (e.clientX - r.left) / r.width * W, y = (e.clientY - r.top) / r.height * H;
+      if (x < 20 || x > W - 20 || y < 20 || y > H - 20) return -1;
+      const n = b.n === 3 ? 3 : 2;
+      return VENN_LAYOUT[n].circles.reduce((m, [cx, cy, rr], k) => (Math.hypot(x - cx, y - cy) <= rr ? m | (1 << k) : m), 0);
+    }
+    box.appendChild(svg);
+    box.appendChild(res);
+    box.appendChild(err);
+    if (!ro) {
+      const ctrl = document.createElement('div');
+      ctrl.className = 'v-ctrl';
+      const seg = document.createElement('div');
+      seg.className = 'mi-seg'; seg.setAttribute('role', 'group'); seg.setAttribute('aria-label', 'Número de conjuntos');
+      [[2, '2 conjuntos'], [3, '3 conjuntos']].forEach(([k, l]) => { const bt = document.createElement('button'); bt.type = 'button'; bt.textContent = l; bt.setAttribute('aria-pressed', String(b.n === k)); bt.addEventListener('click', () => { b.n = k; $$('button', seg).forEach((x) => x.setAttribute('aria-pressed', String(x === bt))); save(); render(); }); seg.appendChild(bt); });
+      const inp = document.createElement('input');
+      inp.type = 'text'; inp.value = setPretty(b.expr); inp.placeholder = 'Expresión: A ∩ B, (A ∪ B)ᶜ, A ∖ B…';
+      inp.setAttribute('aria-label', 'Expresión de conjuntos para sombrear');
+      const apply = () => { const v = inp.value.trim(); b.expr = v; if (v) { try { const r0 = OPS.vennEval(v, VENN_NAMES); if (r0.n === 3 && b.n !== 3) { b.n = 3; $$('button', seg).forEach((x, i) => x.setAttribute('aria-pressed', String(i === 1))); } } catch (e) { /* se muestra el aviso */ } } save(); render(); };
+      inp.addEventListener('change', apply);
+      inp.addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); apply(); } });
+      const keys = document.createElement('div');
+      keys.className = 'v-keys';
+      for (const [sym, title] of [['∪', 'Unión'], ['∩', 'Intersección'], ['∖', 'Diferencia'], ['ᶜ', 'Complementario'], ['Δ', 'Diferencia simétrica'], ['(', 'Abrir paréntesis'], [')', 'Cerrar paréntesis'], ['A', 'Conjunto A'], ['B', 'Conjunto B'], ['C', 'Conjunto C'], ['U', 'Universal']]) {
+        const kb = document.createElement('button'); kb.type = 'button'; kb.textContent = sym; kb.title = title;
+        kb.addEventListener('mousedown', (e) => e.preventDefault());
+        kb.addEventListener('click', () => { const a = inp.selectionStart ?? inp.value.length, z = inp.selectionEnd ?? a; const ins = /[∪∩∖Δ]/.test(sym) ? ' ' + sym + ' ' : sym; inp.value = inp.value.slice(0, a) + ins + inp.value.slice(z); inp.focus(); inp.selectionStart = inp.selectionEnd = a + ins.length; apply(); });
+        keys.appendChild(kb);
+      }
+      const els = document.createElement('label'); els.className = 'mi-check'; els.innerHTML = '<input type="checkbox"> Elementos';
+      const ec = els.querySelector('input'); ec.checked = b.showEls; ec.addEventListener('change', () => { b.showEls = ec.checked; save(); render(); });
+      const clr = document.createElement('button'); clr.type = 'button'; clr.className = 'mi-btn mi-btn--sm'; clr.textContent = 'Limpiar';
+      clr.title = 'Quita el sombreado para colorear las zonas a mano';
+      clr.addEventListener('click', () => { b.expr = ''; b.shade = []; inp.value = ''; save(); render(); });
+      ctrl.append(seg, inp, els, clr);
+      box.append(ctrl, keys);
+      svg.addEventListener('pointerdown', (e) => {
+        if (body.dataset.mode === 'draw' || e.pointerType === 'pen') return;
+        e.stopPropagation();
+        const m = maskAt(e);
+        if (m < 0) return;
+        // al tocar una zona se pasa a modo manual partiendo de lo que ya estaba sombreado
+        if (b.expr) { b.shade = lastMasks.slice(); b.expr = ''; inp.value = ''; }
+        b.shade = b.shade.includes(m) ? b.shade.filter((x) => x !== m) : b.shade.concat([m]);
+        save(); render();
+      });
+    }
+    bd.appendChild(box);
+    render();
+  }
+
   /* ---------------- Grafos ---------------- */
   const SUB = '₀₁₂₃₄₅₆₇₈₉', SUP = '⁰¹²³⁴⁵⁶⁷⁸⁹';
   const sub = (n) => String(n).split('').map((d) => SUB[+d] || d).join('');
@@ -5004,6 +5209,11 @@ const OPS = ((ME) => {
       void W;
       insertSpecs(after, [{ type: 'net', nodes, edges: E, caps: [], directed: false, h: 420 }], b);
       toast('Grafo de ejemplo: añade nodos con un clic y aristas con la herramienta «Arista». Doble clic para renombrar.');
+    } else if (k === 'venn') {
+      let expr = 'A\\cap B', n = 2;
+      if (src) { try { const ex = vennExprFrom(src); const r0 = OPS.vennEval(ex, VENN_NAMES); expr = ex; n = r0.n; } catch (err) { /* la línea no es una expresión de conjuntos */ } }
+      insertSpecs(after, [{ type: 'venn', n, expr, shade: [], showEls: true }], b);
+      if (expr === 'A\\cap B' && !/\\cap|∩/.test(src)) toast('Escribe la expresión en el campo del diagrama o haz clic en las zonas para sombrearlas.');
     } else if (k === 'nn') {
       const r = await openNN();
       if (!r) return;
@@ -5054,6 +5264,7 @@ const OPS = ((ME) => {
     ]],
     ['Lógica y conjuntos', [
       ['truth', 'Tabla de verdad', 'Fórmula con ¬ ∧ ∨ ⊻ ⇒ ⇔ y letras p, q, r…: dice si es tautología, contradicción o contingencia.'],
+      ['venn', 'Diagrama de Venn', 'Una expresión con A, B, C y U (A ∩ B, (A ∪ B)ᶜ, A ∖ B, A Δ B…): dibuja el diagrama con la zona sombreada y, si has definido los conjuntos, sus elementos.'],
       ['sets', 'Operar conjuntos', 'Define A = {1,2,3}, B = {…} (y U para el complementario) en otras líneas y escribe A ∪ B, A ∩ B, A ∖ B, Aᶜ, 𝒫(A), A × B o |A|.'],
     ]],
     ['Cálculo', [
@@ -5213,6 +5424,7 @@ const OPS = ((ME) => {
         case 'pascal': specs = OPS.pascal(src || ''); break;
         case 'truth': specs = OPS.truthTable(full); break;
         case 'sets': specs = OPS.setOperate(full, lines); break;
+        case 'venn': { const ex = vennExprFrom(full); const r0 = OPS.vennEval(ex, VENN_NAMES); specs = [{ type: 'venn', n: r0.n, expr: ex, shade: [], showEls: true }]; break; }
         case 'deriv': specs = OPS.derivative(full); break;
         case 'extr1': specs = OPS.extrema1(full); break;
         case 'extr2': specs = OPS.extrema2(full); break;
@@ -5671,6 +5883,8 @@ const OPS = ((ME) => {
           buildGraph3d(b, bd, true);
         } else if (b.type === 'net') {
           buildNet(b, bd, true);
+        } else if (b.type === 'venn') {
+          buildVenn(b, bd, true);
         } else if (b.type === 'math' && mlReady) {
           const mf = document.createElement('math-field');
           mf.setAttribute('read-only', '');
