@@ -202,6 +202,16 @@ math-field::part(menu-toggle),math-field::part(virtual-keyboard-toggle){display:
 .grid-pick button{width:24px;height:24px;border:var(--border-width-thin) solid var(--border-strong);border-radius:var(--radius-sm);background:var(--surface-raised);cursor:pointer;padding:0}
 .grid-pick button.on{background:var(--accent-soft);border-color:var(--accent)}
 .grid-pick button:focus-visible{outline:var(--border-width-medium) solid var(--focus-ring);outline-offset:1px}
+.pop-sym{width:min(440px,calc(100vw - 16px));max-height:min(70vh,560px);overflow-y:auto;gap:var(--space-2)}
+.pop-sym h4{margin-top:var(--space-1)}
+.sym-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(38px,1fr));gap:4px}
+.sym-grid.wide{grid-template-columns:repeat(auto-fill,minmax(84px,1fr))}
+.sym{height:36px;min-width:38px;padding:0 4px;border:var(--border-width-thin) solid var(--border-strong);border-radius:var(--radius-sm);background:var(--surface-raised);color:var(--ink);font:400 18px/1 var(--font-serif);cursor:pointer;white-space:nowrap;
+  transition:background-color var(--duration-fast) var(--ease-standard),border-color var(--duration-fast) var(--ease-standard)}
+.sym-grid.wide .sym{font-size:15px}
+.sym:hover{background:var(--accent-soft);border-color:var(--accent)}
+.sym:active{transform:translateY(1px)}
+.sym:focus-visible{outline:var(--border-width-medium) solid var(--focus-ring);outline-offset:1px}
 .pick-out{font:600 13px var(--font-mono);color:var(--ink)}
 .menu-list{display:flex;flex-direction:column;gap:2px}
 .menu-list .mi-btn{justify-content:flex-start;border-color:transparent;background:transparent}
@@ -277,24 +287,23 @@ dialog::backdrop{background:color-mix(in srgb,var(--surface) 70%,transparent)}
     <button type="button" class="tb-btn txt" data-cmd="addColumnAfter" title="Añadir columna a la matriz (Ctrl+Intro)">+ Columna</button>
   </div>
   <div class="grp only-write" aria-label="Símbolos">
+    <button type="button" class="tb-btn txt" data-pop="symPop" title="Todos los símbolos: lógica, conjuntos, relaciones, flechas, griegas…">Símbolos <span class="caret">▾</span></button>
+    <button type="button" class="tb-btn txt" data-pop="calcPop" title="Derivadas, integrales y límites">Cálculo <span class="caret">▾</span></button>
     <button type="button" class="tb-btn" data-tpl="pow" title="Potencia (escribe ^)">x²</button>
     <button type="button" class="tb-btn" data-tpl="sub" title="Subíndice (escribe _)">xₙ</button>
     <button type="button" class="tb-btn" data-tpl="frac" title="Fracción (escribe /)">a⁄b</button>
     <button type="button" class="tb-btn" data-tpl="sqrt" title="Raíz cuadrada (escribe sqrt)">√</button>
-    <button type="button" class="tb-btn" data-tpl="nroot" title="Raíz n-ésima">ⁿ√</button>
-    <button type="button" class="tb-btn" data-tpl="sum" title="Sumatorio">Σ</button>
-    <button type="button" class="tb-btn" data-tpl="lim" title="Límite">lím</button>
-    <button type="button" class="tb-btn" data-tpl="int" title="Integral definida">∫</button>
-    <button type="button" class="tb-btn txt" data-tpl="vec" title="Vector">vector</button>
-    <button type="button" class="tb-btn" data-tpl="norm" title="Norma">‖v‖</button>
+    <button type="button" class="tb-btn" data-tpl="dydx" title="Derivada dy/dx">d⁄dx</button>
+    <button type="button" class="tb-btn" data-tpl="prime" title="Derivada f′(x) (escribe ')">f′</button>
+    <button type="button" class="tb-btn" data-tpl="in" title="Pertenece (escribe in)">∈</button>
+    <button type="button" class="tb-btn" data-tpl="exists" title="Existe (escribe EE)">∃</button>
+    <button type="button" class="tb-btn" data-tpl="forall" title="Para todo (escribe AA)">∀</button>
     <button type="button" class="tb-btn" data-tpl="T" title="Traspuesta">Aᵀ</button>
     <button type="button" class="tb-btn" data-tpl="inv" title="Inversa">A⁻¹</button>
     <button type="button" class="tb-btn" data-tpl="cdot" title="Producto (escribe *)">·</button>
     <button type="button" class="tb-btn txt" data-tpl="arrow" title="Flecha con texto encima, para indicar operaciones entre pasos">→ paso</button>
-    <button type="button" class="tb-btn" data-tpl="implies" title="Implica">⇒</button>
-    <button type="button" class="tb-btn" data-tpl="iff" title="Equivale">⇔</button>
+    <button type="button" class="tb-btn" data-tpl="implies" title="Implica (escribe =>)">⇒</button>
     <button type="button" class="tb-btn" data-tpl="R" title="Números reales (escribe RR)">ℝ</button>
-    <button type="button" class="tb-btn" data-tpl="lambda" title="Lambda">λ</button>
   </div>
 
   <div class="grp only-draw" aria-label="Herramienta de dibujo">
@@ -370,6 +379,9 @@ dialog::backdrop{background:color-mix(in srgb,var(--surface) 70%,transparent)}
   </div>
 </div>
 
+<div class="pop pop-sym" id="symPop" hidden role="dialog" aria-label="Símbolos"></div>
+<div class="pop pop-sym" id="calcPop" hidden role="dialog" aria-label="Derivadas, integrales y límites"></div>
+
 <div class="pop" id="sysPop" hidden role="dialog" aria-label="Insertar sistema">
   <h4>Número de ecuaciones</h4>
   <div class="mi-row" style="display:flex;gap:6px">
@@ -425,6 +437,20 @@ dialog::backdrop{background:color-mix(in srgb,var(--surface) 70%,transparent)}
         <tr><td>RR  lam</td><td>ℝ y λ</td></tr>
         <tr><td>\</td><td>Escribe cualquier orden LaTeX (\det, \alpha…)</td></tr>
         <tr><td>Tab</td><td>Salta al siguiente hueco</td></tr>
+      </tbody></table>
+    </section>
+    <section>
+      <h3>Símbolos al escribir</h3>
+      <table class="keys"><tbody>
+        <tr><td>in  !in</td><td>∈ pertenece, ∉ no pertenece</td></tr>
+        <tr><td>EE  !exists  AA</td><td>∃ existe, ∄ no existe, ∀ para todo</td></tr>
+        <tr><td>oo  +-</td><td>∞ infinito, ± más menos</td></tr>
+        <tr><td>-&gt;  xx  ...</td><td>→ flecha, × por, … puntos</td></tr>
+        <tr><td>NN ZZ QQ CC</td><td>ℕ ℤ ℚ ℂ</td></tr>
+        <tr><td>pp  nabla</td><td>∂ parcial, ∇ gradiente</td></tr>
+        <tr><td>f'</td><td>Derivada f′ (escribe el apóstrofo)</td></tr>
+        <tr><td>Símbolos ▾</td><td>Lógica, conjuntos, relaciones, flechas, griegas…</td></tr>
+        <tr><td>Cálculo ▾</td><td>Derivadas, integrales y límites con huecos</td></tr>
       </tbody></table>
     </section>
     <section>
@@ -1389,7 +1415,7 @@ const ME = (() => {
     mf.colorMap = (name) => (COLOR_NAMES.includes(name) ? cssVar(name) : undefined);
     try {
       mf.inlineShortcuts = Object.assign({}, mf.inlineShortcuts, {
-        RR: '\\mathbb{R}', NN: '\\mathbb{N}', ZZ: '\\mathbb{Z}', QQ: '\\mathbb{Q}', CC: '\\mathbb{C}', lam: '\\lambda',
+        RR: '\\mathbb{R}', NN: '\\mathbb{N}', ZZ: '\\mathbb{Z}', QQ: '\\mathbb{Q}', CC: '\\mathbb{C}', lam: '\\lambda', pp: '\\partial',
       });
     } catch (e) { /* opción no disponible */ }
   }
@@ -1956,16 +1982,107 @@ const ME = (() => {
     sum: '\\sum_{#?}^{#?}#?', lim: '\\lim_{#?\\to#?}#?', int: '\\int_{#?}^{#?}#?\\,d#?',
     vec: '\\vec{#@}', norm: '\\left\\lVert#@\\right\\rVert', T: '#@^{T}', inv: '#@^{-1}', cdot: '\\cdot ',
     arrow: '\\xrightarrow{#?}', implies: '\\Rightarrow ', iff: '\\Leftrightarrow ', R: '\\mathbb{R}', lambda: '\\lambda ',
+    dydx: '\\frac{d#?}{d#?}', prime: "#@'(#?)", in: '\\in ', exists: '\\exists ', forall: '\\forall ',
   };
   function insertLatex(latex) {
     if (body.dataset.mode !== 'write') setMode('write');
     const mf = activeField();
     if (!mf || mf.tagName !== 'MATH-FIELD') { toast('El editor de fórmulas aún no está listo.', 'aviso'); return; }
-    mf.focus();
+    if (!mf.hasFocus || !mf.hasFocus()) mf.focus();
     mf.insert(latex, { format: 'latex', selectionMode: 'placeholder', focus: true });
     syncBlock(activeBlock());
     hidePio();
   }
+  // Paneles de símbolos: [título, ancho, [[etiqueta, LaTeX, nombre (atajo)]…]]
+  const SYM_GROUPS = [
+    ['Lógica', false, [
+      ['∀', '\\forall ', 'Para todo (AA)'], ['∃', '\\exists ', 'Existe (EE)'], ['∄', '\\nexists ', 'No existe (!exists)'], ['∃!', '\\exists! ', 'Existe un único'],
+      ['¬', '\\neg ', 'Negación'], ['∧', '\\land ', 'Y (conjunción)'], ['∨', '\\lor ', 'O (disyunción)'], ['⊻', '\\veebar ', 'O exclusivo'],
+      ['⇒', '\\Rightarrow ', 'Implica (=>)'], ['⇐', '\\Leftarrow ', 'Se deduce de'], ['⇔', '\\Leftrightarrow ', 'Si y solo si (<=>)'], ['∴', '\\therefore ', 'Por tanto'],
+      ['∵', '\\because ', 'Porque'], ['⊢', '\\vdash ', 'Deduce'], ['⊨', '\\models ', 'Modela'], ['⊤', '\\top ', 'Verdadero'], ['⊥', '\\bot ', 'Falso / contradicción'],
+    ]],
+    ['Conjuntos', false, [
+      ['∈', '\\in ', 'Pertenece (in)'], ['∉', '\\notin ', 'No pertenece (!in)'], ['∋', '\\ni ', 'Contiene al elemento'], ['⊂', '\\subset ', 'Subconjunto'],
+      ['⊆', '\\subseteq ', 'Subconjunto o igual'], ['⊄', '\\not\\subset ', 'No es subconjunto'], ['⊃', '\\supset ', 'Contiene'], ['⊇', '\\supseteq ', 'Contiene o igual'],
+      ['∪', '\\cup ', 'Unión'], ['∩', '\\cap ', 'Intersección'], ['∖', '\\setminus ', 'Diferencia'], ['∅', '\\emptyset ', 'Conjunto vacío'],
+      ['Aᶜ', '#@^{c}', 'Complementario'], ['A×B', '\\times ', 'Producto cartesiano'], ['𝒫(A)', '\\mathcal{P}(#?)', 'Partes de A'], ['|A|', '\\left|#@\\right|', 'Cardinal / valor absoluto'],
+      ['{ | }', '\\left\\lbrace #?\\mid #?\\right\\rbrace', 'Conjunto por comprensión'], ['{ }', '\\left\\lbrace #?\\right\\rbrace', 'Conjunto por extensión'], ['⋃', '\\bigcup_{#?}^{#?}', 'Unión indexada'], ['⋂', '\\bigcap_{#?}^{#?}', 'Intersección indexada'],
+    ]],
+    ['Números', false, [
+      ['ℕ', '\\mathbb{N}', 'Naturales (NN)'], ['ℤ', '\\mathbb{Z}', 'Enteros (ZZ)'], ['ℚ', '\\mathbb{Q}', 'Racionales (QQ)'], ['ℝ', '\\mathbb{R}', 'Reales (RR)'],
+      ['ℂ', '\\mathbb{C}', 'Complejos (CC)'], ['ℝⁿ', '\\mathbb{R}^{#?}', 'Espacio ℝⁿ'], ['∞', '\\infty ', 'Infinito (oo)'], ['±', '\\pm ', 'Más menos (+-)'],
+      ['∓', '\\mp ', 'Menos más'], ['π', '\\pi ', 'Pi'], ['e', '\\mathrm{e}', 'Número e'], ['i', '\\mathrm{i}', 'Unidad imaginaria'],
+    ]],
+    ['Relaciones', false, [
+      ['≠', '\\neq ', 'Distinto (!=)'], ['≤', '\\leq ', 'Menor o igual (<=)'], ['≥', '\\geq ', 'Mayor o igual (>=)'], ['<', '<', 'Menor'], ['>', '>', 'Mayor'],
+      ['≈', '\\approx ', 'Aproximadamente'], ['≡', '\\equiv ', 'Equivalente / congruente'], ['∼', '\\sim ', 'Equivalente (matrices)'], ['≅', '\\cong ', 'Isomorfo'], ['∝', '\\propto ', 'Proporcional'],
+      ['≪', '\\ll ', 'Mucho menor'], ['≫', '\\gg ', 'Mucho mayor'], ['∣', '\\mid ', 'Divide'], ['∤', '\\nmid ', 'No divide'], ['⊥', '\\perp ', 'Perpendicular'], ['∥', '\\parallel ', 'Paralelo'],
+    ]],
+    ['Operaciones', false, [
+      ['·', '\\cdot ', 'Producto (*)'], ['×', '\\times ', 'Por / producto vectorial (xx)'], ['÷', '\\div ', 'Dividido'], ['∘', '\\circ ', 'Composición'],
+      ['⊗', '\\otimes ', 'Producto tensorial'], ['⊕', '\\oplus ', 'Suma directa'], ['ⁿ√', '\\sqrt[#?]{#@}', 'Raíz n-ésima'], ['|x|', '\\left|#@\\right|', 'Valor absoluto'],
+      ['⌊x⌋', '\\left\\lfloor #@\\right\\rfloor', 'Parte entera'], ['⌈x⌉', '\\left\\lceil #@\\right\\rceil', 'Techo'], ['n!', '#@!', 'Factorial'], ['(ⁿₖ)', '\\binom{#?}{#?}', 'Número combinatorio'],
+      ['Σ', '\\sum_{#?}^{#?}#?', 'Sumatorio (sum)'], ['∏', '\\prod_{#?}^{#?}#?', 'Productorio (prod)'], ['mod', '\\bmod ', 'Módulo'], ['%', '\\%', 'Porcentaje'],
+      ['v⃗', '\\vec{#@}', 'Vector'], ['‖v‖', '\\left\\lVert #@\\right\\rVert', 'Norma'], ['⟨u,v⟩', '\\langle #?,#?\\rangle', 'Producto escalar'], ['x̄', '\\overline{#@}', 'Conjugado / media'],
+    ]],
+    ['Flechas', false, [
+      ['→', '\\to ', 'Tiende a / aplicación (->)'], ['←', '\\leftarrow ', 'Izquierda'], ['↔', '\\leftrightarrow ', 'Doble'], ['↦', '\\mapsto ', 'Se transforma en'],
+      ['⟶', '\\longrightarrow ', 'Flecha larga'], ['↑', '\\uparrow ', 'Crece'], ['↓', '\\downarrow ', 'Decrece'], ['⇄', '\\rightleftarrows ', 'Ida y vuelta'],
+      ['f:A→B', 'f\\colon #?\\to #?', 'Función de A en B'], ['x↦', '#?\\mapsto #?', 'Regla de la función'],
+    ]],
+    ['Letras griegas', false, [
+      ['α', '\\alpha ', 'alfa'], ['β', '\\beta ', 'beta'], ['γ', '\\gamma ', 'gamma'], ['δ', '\\delta ', 'delta'], ['ε', '\\varepsilon ', 'épsilon'], ['θ', '\\theta ', 'theta'],
+      ['λ', '\\lambda ', 'lambda (lam)'], ['μ', '\\mu ', 'mu'], ['ρ', '\\rho ', 'rho'], ['σ', '\\sigma ', 'sigma'], ['τ', '\\tau ', 'tau'], ['φ', '\\varphi ', 'fi'],
+      ['ψ', '\\psi ', 'psi'], ['ω', '\\omega ', 'omega'], ['Γ', '\\Gamma ', 'Gamma'], ['Δ', '\\Delta ', 'Delta'], ['Θ', '\\Theta ', 'Theta'], ['Λ', '\\Lambda ', 'Lambda'],
+      ['Σ', '\\Sigma ', 'Sigma'], ['Φ', '\\Phi ', 'Fi'], ['Ω', '\\Omega ', 'Omega'],
+    ]],
+  ];
+  const CALC_GROUPS = [
+    ['Derivadas', true, [
+      ["f′(x)", "#@'(#?)", 'Derivada (escribe la función y luego \u0027)'], ["f″(x)", "#@''(#?)", 'Derivada segunda'], ['f⁽ⁿ⁾(x)', '#@^{(#?)}(#?)', 'Derivada n-ésima'],
+      ['dy/dx', '\\frac{d#?}{d#?}', 'Derivada de Leibniz'], ['d/dx (…)', '\\frac{d}{d#?}\\left(#@\\right)', 'Operador derivada'], ['d²y/dx²', '\\frac{d^2#?}{d#?^2}', 'Derivada segunda (Leibniz)'],
+      ['∂f/∂x', '\\frac{\\partial #?}{\\partial #?}', 'Derivada parcial'], ['∂²f/∂x∂y', '\\frac{\\partial^2 #?}{\\partial #?\\,\\partial #?}', 'Parcial cruzada'], ['∂²f/∂x²', '\\frac{\\partial^2 #?}{\\partial #?^2}', 'Parcial segunda'],
+      ['∇f', '\\nabla #?', 'Gradiente (nabla)'], ['ẋ', '\\dot{#@}', 'Derivada respecto al tiempo'], ['dy/dx|ₐ', '\\left.\\frac{d#?}{d#?}\\right|_{#?}', 'Derivada en un punto'],
+      ['Definición', '\\lim_{h\\to 0}\\frac{#?(#?+h)-#?(#?)}{h}', 'Definición de derivada por límite'], ['dx', '\\,d#?', 'Diferencial'], ['∂', '\\partial ', 'Símbolo de parcial (pp)'],
+    ]],
+    ['Integrales', true, [
+      ['∫ f dx', '\\int #?\\,d#?', 'Integral indefinida'], ['∫ₐᵇ f dx', '\\int_{#?}^{#?}#?\\,d#?', 'Integral definida (int)'], ['∬', '\\iint_{#?}#?\\,d#?\\,d#?', 'Integral doble'],
+      ['∭', '\\iiint_{#?}#?\\,dV', 'Integral triple'], ['∮', '\\oint_{#?}#?\\,d#?', 'Integral de línea cerrada'], ['[F]ₐᵇ', '\\left[#?\\right]_{#?}^{#?}', 'Regla de Barrow'],
+      ['+ C', '+C', 'Constante de integración'],
+    ]],
+    ['Límites', true, [
+      ['lím x→a', '\\lim_{#?\\to #?}#?', 'Límite (lim)'], ['lím x→∞', '\\lim_{#?\\to\\infty}#?', 'Límite en el infinito'], ['lím x→a⁺', '\\lim_{#?\\to #?^{+}}#?', 'Límite por la derecha'],
+      ['lím x→a⁻', '\\lim_{#?\\to #?^{-}}#?', 'Límite por la izquierda'], ['lím sup', '\\limsup_{#?\\to #?}#?', 'Límite superior'], ['lím inf', '\\liminf_{#?\\to #?}#?', 'Límite inferior'],
+      ['Σ serie', '\\sum_{n=#?}^{\\infty}#?', 'Serie'],
+    ]],
+  ];
+  function buildSymPop(id, groups) {
+    const pop = $('#' + id);
+    for (const [title, wide, items] of groups) {
+      const h = document.createElement('h4');
+      h.textContent = title;
+      const g = document.createElement('div');
+      g.className = 'sym-grid' + (wide ? ' wide' : '');
+      g.setAttribute('role', 'group');
+      g.setAttribute('aria-label', title);
+      for (const [label, latex, name] of items) {
+        const bt = document.createElement('button');
+        bt.type = 'button';
+        bt.className = 'sym';
+        bt.textContent = label;
+        bt.title = name;
+        bt.setAttribute('aria-label', name);
+        bt.dataset.ins = latex;
+        g.appendChild(bt);
+      }
+      pop.append(h, g);
+    }
+    // No roban el foco a la fórmula y el panel queda abierto para encadenar símbolos
+    pop.addEventListener('mousedown', (e) => { if (e.target.closest('.sym')) e.preventDefault(); });
+    pop.addEventListener('click', (e) => { const bt = e.target.closest('.sym'); if (bt) insertLatex(bt.dataset.ins); });
+  }
+  buildSymPop('symPop', SYM_GROUPS);
+  buildSymPop('calcPop', CALC_GROUPS);
   const systemLatex = (n) => '\\begin{cases}' + Array(n).fill(ph).join('\\\\') + '\\end{cases}';
 
   /* ---------------- Ventanas emergentes ---------------- */
@@ -2485,6 +2602,7 @@ const ME = (() => {
   document.addEventListener('keydown', (e) => {
     const editing = e.target.closest && e.target.closest('math-field,[contenteditable="true"],input,select,textarea');
     const k = e.key;
+    if (k === 'Escape' && openPop) { e.preventDefault(); e.stopPropagation(); closePop(); return; }
     if (e.altKey && !e.ctrlKey && !e.metaKey) {
       const code = e.code;
       if (code === 'KeyD') { e.preventDefault(); setMode(body.dataset.mode === 'draw' ? 'write' : 'draw'); return; }
