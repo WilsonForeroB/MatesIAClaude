@@ -155,9 +155,11 @@ math-field::part(menu-toggle),math-field::part(virtual-keyboard-toggle){display:
 .blk-text{font:400 calc(19px * var(--scale))/1.5 var(--font-serif);color:var(--ink);min-width:6em;max-width:100%;outline:none;padding:4px 6px;white-space:pre-wrap;overflow-wrap:anywhere}
 .blk-text:empty::before{content:attr(data-ph);color:var(--ink-muted)}
 /* Desarrollo alineado por el = */
-.deriv{display:grid;grid-template-columns:max-content max-content max-content minmax(12em,1fr);align-items:stretch;column-gap:0;row-gap:2px}
+.deriv{display:grid;grid-template-columns:max-content max-content max-content minmax(12em,1fr) auto;align-items:stretch;column-gap:0;row-gap:2px}
 .dcell math-field{display:inline-block;width:auto;min-width:1.2em}
 .drow{display:contents}
+.drow>*{grid-row:var(--gr)}
+.dl{grid-column:1}.deq{grid-column:2}.dr{grid-column:3}.dnote{grid-column:4}.drow-del{grid-column:5}
 .dcell{display:flex;align-items:center;min-height:calc(34px * var(--scale));border:var(--border-width-thin) solid transparent;border-left-width:0;border-right-width:0;padding:0 2px}
 .dcell.dl{padding-left:6px}.dcell.dr{padding-right:6px}
 .dcell.dl{justify-content:flex-end;border-left-width:var(--border-width-thin);border-radius:var(--radius-md) 0 0 var(--radius-md)}
@@ -172,9 +174,24 @@ math-field::part(menu-toggle),math-field::part(virtual-keyboard-toggle){display:
 .dnote:focus{color:var(--ink)}
 .dnote.on{border-left-color:var(--accent)}
 .blk-deriv.is-active{background:transparent}
+/* Botones para borrar: × por paso y × por línea o bloque */
+.x-del{flex:none;align-self:center;width:28px;height:28px;padding:0;display:grid;place-items:center;border:var(--border-width-thin) solid transparent;border-radius:var(--radius-md);background:transparent;color:var(--ink-muted);font:400 18px/1 var(--font-sans);cursor:pointer;opacity:0;
+  transition:opacity var(--duration-fast) var(--ease-standard),background-color var(--duration-fast) var(--ease-standard),color var(--duration-fast) var(--ease-standard)}
+.x-del:hover{background:var(--accent-soft);color:var(--warning);border-color:var(--warning)}
+.x-del:focus-visible{opacity:1;outline:var(--border-width-medium) solid var(--focus-ring);outline-offset:2px}
+.blk:hover>.blk-del,.blk.is-active>.blk-del{opacity:1}
+.drow:hover>.drow-del,.drow-del.on{opacity:1}
+.drow-del{margin-left:var(--space-2)}
+.blk-deriv>.blk-del{align-self:flex-start;margin-top:2px}
+@media (hover:none){.x-del{opacity:.7}}
+#toast .mi-callout{display:flex;align-items:center;gap:var(--space-4)}
+#toast .mi-callout p{flex:1 1 auto}
 @media (max-width:640px){
-  .deriv{grid-template-columns:max-content max-content max-content}
-  .dnote{grid-column:1/-1;margin:0 0 var(--space-2);padding-left:var(--space-3)}
+  .deriv{grid-template-columns:auto max-content max-content max-content}
+  .deriv .dcell,.deriv .drow-del{grid-row:var(--gm)}
+  .deriv .dnote{grid-row:var(--gn);grid-column:2/5;margin:0 0 var(--space-2);padding-left:var(--space-3)}
+  .deriv .drow-del{grid-column:1;margin:0}
+  .deriv .dl{grid-column:2}.deriv .deq{grid-column:3}.deriv .dr{grid-column:4}
 }
 .empty-pio{max-width:620px;margin:var(--space-5) 0 0 30px;animation:mi-rise var(--duration-base) var(--ease-out) both}
 
@@ -218,7 +235,7 @@ dialog::backdrop{background:color-mix(in srgb,var(--surface) 70%,transparent)}
   .print-page{position:relative;break-after:page;padding:0}
   .print-page:last-child{break-after:auto}
   .print-page .blk{border:0;padding:2px 0}
-  .print-page .blk-handle{display:none}
+  .print-page .blk-handle,.print-page .x-del{display:none}
   .print-page img.print-ink{position:absolute;left:0;top:0;pointer-events:none}
 }
 @media (max-width:640px){
@@ -310,7 +327,8 @@ dialog::backdrop{background:color-mix(in srgb,var(--surface) 70%,transparent)}
     <button type="button" class="tb-btn txt" id="boxBtn" title="Recuadrar la línea (resultado final)">Recuadrar</button>
     <button type="button" class="tb-btn txt" id="textBtn" title="Añadir una línea de texto normal (Alt+T)">Texto</button>
     <button type="button" class="tb-btn txt" id="kbdBtn" title="Mostrar u ocultar el teclado matemático en pantalla">Teclado</button>
-    <button type="button" class="tb-btn txt" id="delBtn" title="Borrar la línea activa (Alt+Supr)">Borrar línea</button>
+    <button type="button" class="tb-btn txt" id="delBtn" title="Borrar la línea o el paso activo (Alt+Supr)">Borrar línea</button>
+    <button type="button" class="tb-btn txt" id="delDerivBtn" title="Borrar el desarrollo completo" hidden>Borrar desarrollo</button>
   </div>
 
   <div class="grp only-draw">
@@ -434,6 +452,9 @@ dialog::backdrop{background:color-mix(in srgb,var(--surface) 70%,transparent)}
         <tr><td>Esc</td><td>Sale del desarrollo y sigue con una línea normal</td></tr>
         <tr><td>↑ ↓</td><td>Fila anterior / siguiente</td></tr>
         <tr><td>Recuadrar</td><td>Recuadra la fila activa (resultado)</td></tr>
+        <tr><td>× del paso</td><td>Borra ese paso (también Alt+Supr)</td></tr>
+        <tr><td>× del recuadro</td><td>Borra el desarrollo completo</td></tr>
+        <tr><td>Deshacer</td><td>Aparece unos segundos tras borrar y lo recupera</td></tr>
         <tr><td>Ctrl+=</td><td>Calcula el lado derecho y lo pone como paso nuevo</td></tr>
       </tbody></table>
     </section>
@@ -1313,17 +1334,26 @@ const ME = (() => {
 
   /* ---------------- Avisos ---------------- */
   let toastT = null;
-  function toast(text, kind = 'nota') {
+  function toast(text, kind = 'nota', action = null) {
     const t = $('#toast');
     const label = kind === 'aviso' ? 'Aviso' : 'Nota';
     t.innerHTML = '';
     const box = document.createElement('div');
     box.className = 'mi-callout mi-callout--' + kind;
-    box.innerHTML = '<span class="mi-label">' + label + '</span><p></p>';
+    box.innerHTML = '<div><span class="mi-label">' + label + '</span><p></p></div>';
     box.querySelector('p').textContent = text;
+    if (action) {
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'mi-btn mi-btn--sm';
+      btn.textContent = action.label;
+      btn.addEventListener('mousedown', (e) => e.preventDefault());
+      btn.addEventListener('click', () => { t.innerHTML = ''; action.fn(); });
+      box.appendChild(btn);
+    }
     t.appendChild(box);
     clearTimeout(toastT);
-    toastT = setTimeout(() => { t.innerHTML = ''; }, kind === 'aviso' ? 6500 : 4000);
+    toastT = setTimeout(() => { t.innerHTML = ''; }, action ? 7000 : kind === 'aviso' ? 6500 : 4000);
   }
 
   /* ---------------- Ajustes visuales ---------------- */
@@ -1382,6 +1412,16 @@ const ME = (() => {
     const bd = document.createElement('div');
     bd.className = 'blk-body';
     el.appendChild(bd);
+    const x = document.createElement('button');
+    x.type = 'button';
+    x.className = 'x-del blk-del';
+    x.textContent = '×';
+    const xl = b.type === 'deriv' ? 'Borrar todo el desarrollo' : 'Borrar esta línea';
+    x.title = xl;
+    x.setAttribute('aria-label', xl);
+    x.addEventListener('mousedown', (e) => e.preventDefault());
+    x.addEventListener('click', () => deleteBlock(b.id));
+    el.appendChild(x);
     if (b.type === 'deriv') {
       el.classList.add('blk-deriv');
       el.classList.remove('is-boxed');
@@ -1463,6 +1503,19 @@ const ME = (() => {
         N.addEventListener('input', () => { row.note = N.innerText.replace(/\n$/, ''); save(); });
       }
       rw.append(L, E, R, N);
+      if (!ro) {
+        const X = document.createElement('button');
+        X.type = 'button';
+        X.className = 'x-del drow-del';
+        X.dataset.row = i;
+        X.textContent = '×';
+        X.title = 'Borrar este paso';
+        X.setAttribute('aria-label', 'Borrar el paso ' + (i + 1));
+        X.addEventListener('mousedown', (e) => e.preventDefault());
+        X.addEventListener('click', () => { syncBlock(b); removeRow(b, i); });
+        rw.appendChild(X);
+      }
+      for (const c of rw.children) { c.style.setProperty('--gr', String(i + 1)); c.style.setProperty('--gm', String(2 * i + 1)); c.style.setProperty('--gn', String(2 * i + 2)); }
       g.appendChild(rw);
     });
     bd.appendChild(g);
@@ -1475,9 +1528,9 @@ const ME = (() => {
   }
   const cellEl = (id, row, col) => { const el = elById(id); return el && el.querySelector('[data-row="' + row + '"][data-col="' + col + '"]'); };
   function markRow(id, row) {
-    $$('.dcell.on,.dnote.on', blocksEl).forEach((c) => c.classList.remove('on'));
+    $$('.dcell.on,.dnote.on,.drow-del.on', blocksEl).forEach((c) => c.classList.remove('on'));
     const el = elById(id);
-    if (el) $$('[data-row="' + row + '"]', el).forEach((c) => { if (c.classList.contains('dcell') || c.classList.contains('dnote')) c.classList.add('on'); });
+    if (el) $$('[data-row="' + row + '"]', el).forEach((c) => { if (c.classList.contains('dcell') || c.classList.contains('dnote') || c.classList.contains('drow-del')) c.classList.add('on'); });
   }
   function focusCell(id, row, col, where = 'end') {
     const f = cellEl(id, row, col);
@@ -1510,6 +1563,17 @@ const ME = (() => {
   }
   function removeRow(b, i) {
     if (b.rows.length === 1) { deleteBlock(b.id); return; }
+    const gone = JSON.parse(JSON.stringify(b.rows[i]));
+    const pg = board.cur;
+    toast('Paso ' + (i + 1) + ' borrado.', 'nota', { label: 'Deshacer', fn: () => {
+      if (board.cur !== pg) goPage(pg);
+      const bb = blockById(b.id);
+      if (!bb || bb.type !== 'deriv') return;
+      bb.rows.splice(Math.min(i, bb.rows.length), 0, gone);
+      rebuildDeriv(bb);
+      save();
+      focusCell(bb.id, Math.min(i, bb.rows.length - 1), 'r', 'end');
+    } });
     b.rows.splice(i, 1);
     rebuildDeriv(b);
     save();
@@ -1686,6 +1750,8 @@ const ME = (() => {
     if (b) {
       $$('#alignSeg button').forEach((x) => x.setAttribute('aria-pressed', String(x.dataset.align === b.align)));
       $('#boxBtn').setAttribute('aria-pressed', String(!!b.boxed));
+      $('#delBtn').textContent = b.type === 'deriv' ? 'Borrar paso' : 'Borrar línea';
+      $('#delDerivBtn').hidden = b.type !== 'deriv';
     }
   }
   function focusBlock(id, where = 'end') {
@@ -1732,6 +1798,21 @@ const ME = (() => {
     const bl = page().blocks;
     const i = bl.findIndex((b) => b.id === id);
     if (i < 0) return;
+    const gone = JSON.parse(JSON.stringify(bl[i]));
+    const empty = gone.type === 'math' ? !gone.v : gone.type === 'text' ? !gone.v : gone.rows.every((r) => !r.l && !r.r && !r.note);
+    if (!empty) {
+      const pg = board.cur, only = bl.length === 1;
+      toast((gone.type === 'deriv' ? 'Desarrollo borrado.' : 'Línea borrada.'), 'nota', { label: 'Deshacer', fn: () => {
+        if (board.cur !== pg) { board.cur = pg; }
+        const blocks = page().blocks;
+        gone.id = uid();
+        if (only && blocks.length === 1 && blocks[0].type === 'math' && !blocks[0].v) blocks.splice(0, 1, gone);
+        else blocks.splice(Math.min(i, blocks.length), 0, gone);
+        renderPage();
+        save();
+        focusBlock(gone.id, 'end');
+      } });
+    }
     if (bl.length === 1) {
       bl[0].v = '';
       bl[0].type = 'math'; bl[0].boxed = false; bl[0].result = false;
@@ -2012,6 +2093,7 @@ const ME = (() => {
     if (activeId) deleteBlock(activeId);
   });
   $('#derivBtn').addEventListener('click', startDeriv);
+  $('#delDerivBtn').addEventListener('click', () => { const b = activeBlock(); if (b && b.type === 'deriv') deleteBlock(b.id); });
   $('#kbdBtn').addEventListener('click', () => {
     const kb = window.mathVirtualKeyboard;
     if (!kb) return;
