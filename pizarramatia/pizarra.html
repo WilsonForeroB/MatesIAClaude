@@ -102,6 +102,8 @@ kbd{font:600 .85em var(--font-mono);background:var(--surface-sunken);border:var(
 
 .top{display:flex;align-items:center;gap:var(--space-2);padding:var(--space-2) var(--space-4);border-bottom:var(--border-width-thin) solid var(--border);background:var(--surface-raised);flex:none;overflow-x:auto;scrollbar-width:thin}
 .brand{display:flex;align-items:center;gap:var(--space-2);flex:none;margin-right:var(--space-2)}
+.save-dot{width:8px;height:8px;border-radius:50%;background:var(--on-accent);opacity:0;transition:opacity var(--duration-fast) var(--ease-standard)}
+#saveBtn.dirty .save-dot{opacity:1}
 .pio-badge{flex:none;display:grid;place-items:center;border-radius:50%;background:var(--pio-tile);border:var(--border-width-thin) solid var(--border);width:40px;height:40px}
 .pio-badge img{width:84%;height:84%;object-fit:contain;display:block}
 .pio-badge.pio-logo{width:36px;height:36px;animation:mi-pop var(--duration-slow) var(--ease-out) both}
@@ -357,8 +359,9 @@ body.picking .dcell.pick-hover,body.picking .dnote.pick-hover{background:var(--a
   </div>
   <div class="spacer"></div>
   <label class="mi-field">Tamaño <output id="scaleOut">140 %</output><input type="range" id="scale" min="80" max="260" step="10" value="140" aria-label="Tamaño de la letra"></label>
-  <button type="button" class="mi-btn mi-btn--sm" id="fsBtn" title="Pantalla completa (F)">Pantalla completa</button>
+  <button type="button" class="mi-btn mi-btn--sm icon-btn" id="fsBtn" title="Pantalla completa (F)" aria-label="Pantalla completa"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M2 6V2h4M10 2h4v4M14 10v4h-4M6 14H2v-4"/></svg></button>
   <button type="button" class="mi-btn mi-btn--sm" id="viewBtn" aria-haspopup="true" aria-expanded="false">Vista <span aria-hidden="true">▾</span></button>
+  <button type="button" class="mi-btn mi-btn--primary mi-btn--sm" id="saveBtn" title="Guardar la clase en el historial (Ctrl+S)"><span class="save-dot" aria-hidden="true"></span>Guardar</button>
   <button type="button" class="mi-btn mi-btn--sm" id="histBtn" title="Guardar y abrir clases de la carpeta historial">Historial</button>
   <button type="button" class="mi-btn mi-btn--sm" id="fileBtn" aria-haspopup="true" aria-expanded="false">Archivo <span aria-hidden="true">▾</span></button>
   <button type="button" class="mi-btn mi-btn--sm icon-btn" id="helpBtn" title="Atajos y ayuda (?)" aria-label="Atajos y ayuda">?</button>
@@ -3149,6 +3152,7 @@ const OPS = ((ME) => {
     saveT = setTimeout(() => {
       try { localStorage.setItem(KEY, JSON.stringify(board)); } catch (e) { /* sin almacenamiento: la pizarra funciona igual */ }
       if (window.__histAutoHook) window.__histAutoHook();
+      if (window.__updSaved) window.__updSaved();
     }, 350);
   }
 
@@ -4489,7 +4493,7 @@ const OPS = ((ME) => {
     else if (root.requestFullscreen) root.requestFullscreen().catch(() => toast('Tu navegador no permite pantalla completa aquí.', 'aviso'));
   }
   $('#fsBtn').addEventListener('click', toggleFull);
-  document.addEventListener('fullscreenchange', () => { $('#fsBtn').textContent = document.fullscreenElement ? 'Salir de pantalla completa' : 'Pantalla completa'; requestAnimationFrame(sizeCanvas); });
+  document.addEventListener('fullscreenchange', () => { const fl = document.fullscreenElement ? 'Salir de pantalla completa (F)' : 'Pantalla completa (F)'; $('#fsBtn').title = fl; $('#fsBtn').setAttribute('aria-label', fl); $('#fsBtn').setAttribute('aria-pressed', String(!!document.fullscreenElement)); requestAnimationFrame(sizeCanvas); });
   const toggleChrome = () => { body.classList.toggle('chrome-off'); requestAnimationFrame(sizeCanvas); };
   $('#hideBtn').addEventListener('click', () => { closePop(); toggleChrome(); });
   $('#showChrome').addEventListener('click', toggleChrome);
@@ -4743,7 +4747,19 @@ const OPS = ((ME) => {
   const snap = () => JSON.stringify({ t: board.title || '', p: board.pages });
   const boardEmpty = () => board.pages.every((p) => !p.strokes.length && p.blocks.every((x) => (x.type === 'math' || x.type === 'text' ? !x.v : x.type === 'deriv' ? x.rows.every((r) => !r.l && !r.r && !r.note) : false)));
   const isDirty = () => !boardEmpty() && snap() !== savedSnap;
-  const markSaved = () => { savedSnap = snap(); };
+  const markSaved = () => { savedSnap = snap(); updSaved(); };
+  function updSaved() {
+    const d = isDirty(), bt = $('#saveBtn');
+    bt.classList.toggle('dirty', d);
+    bt.title = (d ? 'Hay cambios sin guardar. ' : 'Todo guardado. ') + 'Guardar la clase en el historial (Ctrl+S)';
+    bt.setAttribute('aria-label', d ? 'Guardar: hay cambios sin guardar' : 'Guardar: todo guardado');
+  }
+  window.__updSaved = updSaved;
+  async function quickSave() {
+    if (await saveToHistory()) updSaved();
+  }
+  $('#saveBtn').addEventListener('click', quickSave);
+  updSaved();
   // Antes de sustituir la pizarra: guardar, seguir sin guardar o cancelar
   async function guardUnsaved(what) {
     if (!isDirty()) return true;
@@ -5075,6 +5091,7 @@ const OPS = ((ME) => {
       if (k === 'PageDown') { e.preventDefault(); goPage(board.cur + 1); return; }
       if (k === 'PageUp') { e.preventDefault(); goPage(board.cur - 1); return; }
     }
+    if ((e.ctrlKey || e.metaKey) && !e.altKey && (k === 's' || k === 'S')) { e.preventDefault(); e.stopPropagation(); quickSave(); return; }
     if ((e.ctrlKey || e.metaKey) && (k === '=' || e.code === 'Equal') && !e.altKey) { e.preventDefault(); runCalc(); return; }
     if ((e.ctrlKey || e.metaKey) && k.toLowerCase() === 'z' && body.dataset.mode === 'draw' && !editing) { e.preventDefault(); undo(); return; }
     if (editing || e.ctrlKey || e.metaKey || e.altKey) return;

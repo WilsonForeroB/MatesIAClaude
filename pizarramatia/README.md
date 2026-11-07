@@ -96,7 +96,8 @@ Pulsa **?** dentro de la pizarra para ver todos los atajos.
 | Cálculo | Derivada con las reglas aplicadas, gráfica de funciones (rueda para acercar, arrastrar para mover) y tabla de valores. |
 
 - **Dibujar** (Alt+D): lápiz, rotulador, flecha y goma. Un lápiz digital dibuja siempre, aunque estés en modo Escribir.
-- **Modo proyector**: pantalla completa, tamaño de letra, tema claro u oscuro y ocultar barras (H).
+- **Modo proyector**: pantalla completa (icono de la cabecera o tecla F), tamaño de letra, tema claro u oscuro y ocultar barras (H).
+- **Guardar** (botón verde de la cabecera o **Ctrl+S**): guarda la clase en el historial. Un punto blanco en el botón indica que hay cambios sin guardar. La primera vez pide la carpeta `historial`; después reescribe siempre el archivo de esa clase. En navegadores sin acceso a carpetas, descarga el JSON.
 - **Páginas**: «+ Página» añade una página detrás de la actual y «− Página» elimina la actual; si es la única, la vacía.
 - **Avisos con Pío**: las confirmaciones (borrar página o clase, pizarra nueva) usan un diálogo propio con los colores de la pizarra, no los avisos del navegador. Si vas a abrir otra clase, empezar una nueva o abrir un archivo con cambios sin guardar, la pizarra ofrece **Guardar y continuar**, **Continuar sin guardar** o **Cancelar**. Al cerrar la pestaña no pregunta nada: la pizarra ya está guardada en el navegador y, con el guardado automático, también en el historial.
 - **Pío** acompaña en la cabecera (logotipo), en la página vacía, en la barra «Elige la línea», en el menú de operaciones, en la ayuda y en el historial.
