@@ -78,7 +78,7 @@ Tipos de bloque:
 Pulsa **?** dentro de la pizarra para ver todos los atajos.
 
 - **Escribir**: `x^2`, `1/2`, `sqrt`, `in` (∈), `EE` (∃), `AA` (∀), `RR` (ℝ)… Intro crea una línea nueva.
-- **Menús**: Matriz, Sistema, Desarrollo, Símbolos y Cálculo (derivadas, integrales y límites).
+- **Menús**: Matriz, Sistema, Desarrollo, **Símbolos ▾** (básicos —potencia, subíndice, fracción, raíz, paréntesis, traspuesta, inversa, flecha de paso—, lógica, conjuntos, números, relaciones, operaciones, flechas y griegas) y **Cálculo ▾** (derivadas, integrales y límites). Los símbolos van todos dentro de los desplegables para que la barra no ocupe espacio.
 - **Desarrollo** (Alt+L): pasos alineados por el «=» con explicación a la derecha. Intro copia la fila anterior para editar solo lo que cambia.
 - **Calcular** (Ctrl+=) actúa sobre la línea en la que escribes.
 - **Operaciones ▾**: al elegir una operación aparece la barra **«Elige la línea»**. Haz clic en la línea o en el paso del desarrollo al que quieres aplicar la operación (se resalta al pasar el ratón). **Intro** usa la línea activa y **Esc** cancela. Así, con varias ecuaciones en la misma página, decides cuál se resuelve.

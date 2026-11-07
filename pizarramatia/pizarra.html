@@ -376,23 +376,8 @@ body.picking .dcell.pick-hover,body.picking .dnote.pick-hover{background:var(--a
     <button type="button" class="tb-btn txt" data-cmd="addColumnAfter" title="Añadir columna a la matriz (Ctrl+Intro)">+ Columna</button>
   </div>
   <div class="grp only-write" aria-label="Símbolos">
-    <button type="button" class="tb-btn txt" data-pop="symPop" title="Todos los símbolos: lógica, conjuntos, relaciones, flechas, griegas…">Símbolos <span class="caret">▾</span></button>
+    <button type="button" class="tb-btn txt" data-pop="symPop" title="Todos los símbolos: potencias, fracciones, raíces, lógica, conjuntos, relaciones, flechas, griegas…">Símbolos <span class="caret">▾</span></button>
     <button type="button" class="tb-btn txt" data-pop="calcPop" title="Derivadas, integrales y límites">Cálculo <span class="caret">▾</span></button>
-    <button type="button" class="tb-btn" data-tpl="pow" title="Potencia (escribe ^)">x²</button>
-    <button type="button" class="tb-btn" data-tpl="sub" title="Subíndice (escribe _)">xₙ</button>
-    <button type="button" class="tb-btn" data-tpl="frac" title="Fracción (escribe /)">a⁄b</button>
-    <button type="button" class="tb-btn" data-tpl="sqrt" title="Raíz cuadrada (escribe sqrt)">√</button>
-    <button type="button" class="tb-btn" data-tpl="dydx" title="Derivada dy/dx">d⁄dx</button>
-    <button type="button" class="tb-btn" data-tpl="prime" title="Derivada f′(x) (escribe ')">f′</button>
-    <button type="button" class="tb-btn" data-tpl="in" title="Pertenece (escribe in)">∈</button>
-    <button type="button" class="tb-btn" data-tpl="exists" title="Existe (escribe EE)">∃</button>
-    <button type="button" class="tb-btn" data-tpl="forall" title="Para todo (escribe AA)">∀</button>
-    <button type="button" class="tb-btn" data-tpl="T" title="Traspuesta">Aᵀ</button>
-    <button type="button" class="tb-btn" data-tpl="inv" title="Inversa">A⁻¹</button>
-    <button type="button" class="tb-btn" data-tpl="cdot" title="Producto (escribe *)">·</button>
-    <button type="button" class="tb-btn txt" data-tpl="arrow" title="Flecha con texto encima, para indicar operaciones entre pasos">→ paso</button>
-    <button type="button" class="tb-btn" data-tpl="implies" title="Implica (escribe =>)">⇒</button>
-    <button type="button" class="tb-btn" data-tpl="R" title="Números reales (escribe RR)">ℝ</button>
   </div>
 
   <div class="grp only-draw" aria-label="Herramienta de dibujo">
@@ -3796,6 +3781,12 @@ const OPS = ((ME) => {
   }
   // Paneles de símbolos: [título, ancho, [[etiqueta, LaTeX, nombre (atajo)]…]]
   const SYM_GROUPS = [
+    ['Básicos', false, [
+      ['x²', '#@^{#?}', 'Potencia (escribe ^)'], ['xₙ', '#@_{#?}', 'Subíndice (escribe _)'], ['a⁄b', '\\frac{#@}{#?}', 'Fracción (escribe /)'], ['√', '\\sqrt{#@}', 'Raíz cuadrada (escribe sqrt)'],
+      ['ⁿ√', '\\sqrt[#?]{#@}', 'Raíz n-ésima'], ['( )', '\\left(#@\\right)', 'Paréntesis'], ['·', '\\cdot ', 'Producto (escribe *)'], ['Aᵀ', '#@^{T}', 'Traspuesta'],
+      ['A⁻¹', '#@^{-1}', 'Inversa'], ['→ paso', '\\xrightarrow{#?}', 'Flecha con texto encima, para indicar la operación entre pasos'], ['⇒', '\\Rightarrow ', 'Implica (=>)'], ['ℝ', '\\mathbb{R}', 'Reales (RR)'],
+      ['∈', '\\in ', 'Pertenece (in)'], ['∃', '\\exists ', 'Existe (EE)'], ['∀', '\\forall ', 'Para todo (AA)'],
+    ]],
     ['Lógica', false, [
       ['∀', '\\forall ', 'Para todo (AA)'], ['∃', '\\exists ', 'Existe (EE)'], ['∄', '\\nexists ', 'No existe (!exists)'], ['∃!', '\\exists! ', 'Existe un único'],
       ['¬', '\\neg ', 'Negación'], ['∧', '\\land ', 'Y (conjunción)'], ['∨', '\\lor ', 'O (disyunción)'], ['⊻', '\\veebar ', 'O exclusivo'],
@@ -3874,6 +3865,7 @@ const OPS = ((ME) => {
         bt.title = name;
         bt.setAttribute('aria-label', name);
         bt.dataset.ins = latex;
+        if (!wide && [...label].length > 4) bt.style.gridColumn = 'span 2';
         g.appendChild(bt);
       }
       pop.append(h, g);
