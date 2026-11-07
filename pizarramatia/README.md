@@ -80,7 +80,8 @@ Pulsa **?** dentro de la pizarra para ver todos los atajos.
 - **Escribir**: `x^2`, `1/2`, `sqrt`, `in` (∈), `EE` (∃), `AA` (∀), `RR` (ℝ)… Intro crea una línea nueva.
 - **Menús**: Matriz, Sistema, Desarrollo, Símbolos y Cálculo (derivadas, integrales y límites).
 - **Desarrollo** (Alt+L): pasos alineados por el «=» con explicación a la derecha. Intro copia la fila anterior para editar solo lo que cambia.
-- **Calcular** (Ctrl+=), **Gauss** y **Gauss-Jordan** sobre la línea activa.
+- **Calcular** (Ctrl+=) actúa sobre la línea en la que escribes.
+- **Operaciones ▾**, **Gauss** y **Gauss-Jordan**: al elegirlos aparece la barra **«Elige la línea»**. Haz clic en la línea o en el paso del desarrollo al que quieres aplicar la operación (se resalta al pasar el ratón). **Intro** usa la línea activa y **Esc** cancela. Así, con varias ecuaciones en la misma página, decides cuál se resuelve.
 - **Operaciones ▾**: todas paso a paso.
 
 | Grupo | Operaciones |
@@ -96,6 +97,7 @@ Pulsa **?** dentro de la pizarra para ver todos los atajos.
 
 - **Dibujar** (Alt+D): lápiz, rotulador, flecha y goma. Un lápiz digital dibuja siempre, aunque estés en modo Escribir.
 - **Modo proyector**: pantalla completa, tamaño de letra, tema claro u oscuro y ocultar barras (H).
+- **Pío** acompaña en la cabecera (logotipo), en la página vacía, en la barra «Elige la línea», en el menú de operaciones, en la ayuda y en el historial.
 
 ## Límites conocidos
 

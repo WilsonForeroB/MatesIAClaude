@@ -101,7 +101,12 @@ kbd,.keys td:first-child{font-variant-ligatures:none}
 kbd{font:600 .85em var(--font-mono);background:var(--surface-sunken);border:var(--border-width-thin) solid var(--border);border-radius:var(--radius-sm);padding:0 5px}
 
 .top{display:flex;align-items:center;gap:var(--space-3);padding:var(--space-2) var(--space-4);border-bottom:var(--border-width-thin) solid var(--border);background:var(--surface-raised);flex:none;overflow-x:auto;scrollbar-width:thin}
-.brand{display:flex;align-items:baseline;gap:var(--space-2);flex:none;margin-right:var(--space-2)}
+.brand{display:flex;align-items:center;gap:var(--space-2);flex:none;margin-right:var(--space-2)}
+.pio-badge{flex:none;display:grid;place-items:center;border-radius:50%;background:var(--pio-tile);border:var(--border-width-thin) solid var(--border);width:40px;height:40px}
+.pio-badge img{width:84%;height:84%;object-fit:contain;display:block}
+.pio-badge.pio-logo{width:36px;height:36px;animation:mi-pop var(--duration-slow) var(--ease-out) both}
+.pio-badge.pio-sm{width:32px;height:32px}
+.pio-badge.pio-lg{width:56px;height:56px}
 .brand b{font:600 20px/28px var(--font-sans);color:var(--brand)}
 .brand span{font:500 14px/20px var(--font-sans);color:var(--ink-muted)}
 .pages{display:flex;align-items:center;gap:var(--space-1);flex:none}
@@ -228,6 +233,9 @@ body.chrome-off .top,body.chrome-off .toolbar{display:none}
 body.chrome-off .show-chrome{display:inline-flex}
 
 dialog{border:var(--border-width-thin) solid var(--border-strong);border-radius:var(--radius-lg);background:var(--surface-raised);color:var(--ink);padding:0;max-width:min(860px,calc(100vw - 32px));max-height:calc(100vh - 48px);width:100%}
+.pio-title{display:flex;align-items:center;gap:var(--space-3)}
+.hist-empty{display:flex;align-items:center;gap:var(--space-3)}
+.ops-head{display:flex;align-items:center;gap:var(--space-3)}
 .hist-body{padding:var(--space-4) var(--space-5) var(--space-5);display:flex;flex-direction:column;gap:var(--space-3)}
 .hist-row{display:flex;flex-wrap:wrap;align-items:center;gap:var(--space-2) var(--space-3)}
 .hist-status{font:600 13px/20px var(--font-mono);color:var(--ink);margin-right:auto}
@@ -256,6 +264,15 @@ dialog::backdrop{background:color-mix(in srgb,var(--surface) 70%,transparent)}
 .keys td{padding:4px 0;border-bottom:var(--border-width-thin) solid var(--border);vertical-align:top}
 .keys td:first-child{white-space:nowrap;padding-right:var(--space-3);font-family:var(--font-mono);font-size:13px}
 
+/* Elegir la línea */
+.pick-bar{position:fixed;left:0;right:0;bottom:var(--space-5);margin:0 auto;z-index:140;width:min(760px,calc(100vw - 32px));display:grid;grid-template-columns:auto 1fr auto;gap:var(--space-3);align-items:center;font-size:15px;line-height:23px;animation:mi-rise var(--duration-base) var(--ease-out) both}
+.pick-bar .pick-acts{display:flex;gap:var(--space-2);flex-wrap:wrap;justify-content:flex-end}
+body.picking .blk{cursor:pointer}
+body.picking .blk math-field,body.picking .blk .blk-text,body.picking .blk .dnote{pointer-events:none}
+body.picking .blk.pick-hover{border-color:var(--accent);border-style:dashed;background:var(--accent-soft)}
+body.picking .dcell.pick-hover,body.picking .dnote.pick-hover{background:var(--accent-soft)}
+.blk.pick-done{border-color:var(--accent);border-width:var(--border-width-medium)}
+@media (max-width:640px){.pick-bar{grid-template-columns:auto 1fr;bottom:var(--space-4)}.pick-bar .pick-acts{grid-column:1/-1}}
 /* Operaciones */
 .pop-ops{width:min(560px,calc(100vw - 16px));max-height:min(75vh,640px);overflow-y:auto;gap:var(--space-2)}
 .pop-ops .ops-hint{margin:0;font:400 13px/20px var(--font-sans);color:var(--ink-muted)}
@@ -312,7 +329,7 @@ dialog::backdrop{background:color-mix(in srgb,var(--surface) 70%,transparent)}
 <body class="mi-scope" data-mode="write">
 
 <header class="top" id="top">
-  <div class="brand"><b>MatIA</b><span>Pizarra</span></div>
+  <div class="brand" data-pio="logo" data-pio-cls="pio-logo" data-pio-alt="Pío, la mascota de MatIA"><b>MatIA</b><span>Pizarra</span></div>
   <div class="mi-seg" role="group" aria-label="Modo">
     <button type="button" data-mode="write" aria-pressed="true" title="Escribir fórmulas (Alt+D alterna)">Escribir</button>
     <button type="button" data-mode="draw" aria-pressed="false" title="Dibujar a mano alzada (Alt+D alterna)">Dibujar</button>
@@ -478,7 +495,7 @@ dialog::backdrop{background:color-mix(in srgb,var(--surface) 70%,transparent)}
 </div>
 
 <dialog id="hist" aria-labelledby="histTitle">
-  <div class="dlg-head"><h2 id="histTitle">Historial de clases</h2><button type="button" class="mi-btn mi-btn--sm" id="histClose">Cerrar</button></div>
+  <div class="dlg-head"><h2 id="histTitle" data-pio="escribiendo" data-pio-alt="Pío escribiendo apuntes" class="pio-title">Historial de clases</h2><button type="button" class="mi-btn mi-btn--sm" id="histClose">Cerrar</button></div>
   <div class="hist-body">
     <div class="hist-row">
       <span class="hist-status" id="histStatus">Carpeta: sin conectar</span>
@@ -498,7 +515,7 @@ dialog::backdrop{background:color-mix(in srgb,var(--surface) 70%,transparent)}
 </dialog>
 
 <dialog id="help" aria-labelledby="helpTitle">
-  <div class="dlg-head"><h2 id="helpTitle">Atajos de la pizarra</h2><button type="button" class="mi-btn mi-btn--sm" id="helpClose">Cerrar</button></div>
+  <div class="dlg-head"><h2 id="helpTitle" data-pio="lectura" data-pio-alt="Pío leyendo" class="pio-title">Atajos de la pizarra</h2><button type="button" class="mi-btn mi-btn--sm" id="helpClose">Cerrar</button></div>
   <div class="dlg-body">
     <section>
       <h3>Escribir fórmulas</h3>
@@ -3026,6 +3043,19 @@ const OPS = ((ME) => {
 
   const PIO_SVG = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200"><rect x="104" y="18" width="92" height="106" rx="6" fill="#b9803f" stroke="#0f3d28" stroke-width="4"/><rect x="111" y="25" width="78" height="92" rx="3" fill="#0b4a2f"/><path d="M120 44 L132 44 M138 44 L144 44 M150 44 L170 44" stroke="#f7faf6" stroke-width="3" stroke-linecap="round" opacity=".9"/><path d="M122 106 L122 58 M122 106 L180 106" stroke="#f7faf6" stroke-width="2.5" stroke-linecap="round" fill="none"/><path d="M126 98 L178 66" stroke="#F7CB4A" stroke-width="3" stroke-linecap="round"/><g fill="#f7faf6"><circle cx="134" cy="94" r="3"/><circle cx="146" cy="82" r="3"/><circle cx="154" cy="84" r="3"/><circle cx="166" cy="70" r="3"/><circle cx="172" cy="74" r="3"/></g><path d="M114 124 L108 170 M186 124 L192 170" stroke="#0f3d28" stroke-width="4" stroke-linecap="round"/><rect x="108" y="124" width="84" height="6" rx="2" fill="#b9803f" stroke="#0f3d28" stroke-width="3"/><g transform="translate(0,52) scale(.6)"><path d="M84 166 L84 178 M78 178 L90 178 M116 166 L116 178 M110 178 L122 178" stroke="#E8782A" stroke-width="5" stroke-linecap="round" fill="none"/><ellipse cx="32" cy="118" rx="13" ry="21" transform="rotate(14 32 118)" fill="#F2B933" stroke="#0f3d28" stroke-width="4"/><ellipse cx="168" cy="118" rx="13" ry="21" transform="rotate(-14 168 118)" fill="#F2B933" stroke="#0f3d28" stroke-width="4"/><ellipse cx="100" cy="110" rx="70" ry="64" fill="#F7CB4A" stroke="#0f3d28" stroke-width="4"/><ellipse cx="100" cy="136" rx="40" ry="26" fill="#FFE59A"/><circle cx="82" cy="106" r="7.5" fill="#14201a"/><circle cx="126" cy="106" r="7.5" fill="#14201a"/><circle cx="84.5" cy="103" r="2.6" fill="#fff"/><circle cx="128.5" cy="103" r="2.6" fill="#fff"/><circle cx="60" cy="124" r="8" fill="#F59A8B" opacity=".75"/><circle cx="140" cy="124" r="8" fill="#F59A8B" opacity=".75"/><path d="M90 118 Q100 110 110 118 Q100 134 90 118 Z" fill="#F28A2E" stroke="#0f3d28" stroke-width="3" stroke-linejoin="round"/><path d="M70 62 L70 78 Q100 94 130 78 L130 62 Z" fill="#0b4a2f" stroke="#0f3d28" stroke-width="4" stroke-linejoin="round"/><path d="M100 30 L164 54 L100 76 L36 54 Z" fill="#0f5a3a" stroke="#0f3d28" stroke-width="4" stroke-linejoin="round"/><circle cx="100" cy="53" r="4" fill="#F7CB4A"/><path d="M158 56 L158 82" stroke="#F7CB4A" stroke-width="4" stroke-linecap="round"/><circle cx="158" cy="86" r="5" fill="#F7CB4A" stroke="#0f3d28" stroke-width="2.5"/></g><path d="M94 148 L132 64" stroke="#E8782A" stroke-width="4" stroke-linecap="round"/><ellipse cx="92" cy="150" rx="11" ry="17" transform="rotate(-24 92 150)" fill="#F2B933" stroke="#0f3d28" stroke-width="4"/><path d="M10 168 L196 168" stroke="#0f5a3a" stroke-width="3" opacity=".25" stroke-linecap="round"/></svg>';
   const PIO_SRC = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(PIO_SVG);
+  // Poses de Pío (sistema de diseño MatIA, apéndice B)
+  const PIO = { pizarra: PIO_SVG, logo: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200"><path d="M84 166 L84 178 M78 178 L90 178 M116 166 L116 178 M110 178 L122 178" stroke="#E8782A" stroke-width="5" stroke-linecap="round" fill="none"/><ellipse cx="32" cy="118" rx="13" ry="21" transform="rotate(14 32 118)" fill="#F2B933" stroke="#0f3d28" stroke-width="4"/><ellipse cx="168" cy="118" rx="13" ry="21" transform="rotate(-14 168 118)" fill="#F2B933" stroke="#0f3d28" stroke-width="4"/><ellipse cx="100" cy="110" rx="70" ry="64" fill="#F7CB4A" stroke="#0f3d28" stroke-width="4"/><ellipse cx="100" cy="136" rx="40" ry="26" fill="#FFE59A"/><circle cx="78" cy="106" r="7.5" fill="#14201a"/><circle cx="122" cy="106" r="7.5" fill="#14201a"/><circle cx="80.5" cy="103" r="2.6" fill="#ffffff"/><circle cx="124.5" cy="103" r="2.6" fill="#ffffff"/><circle cx="60" cy="124" r="8" fill="#F59A8B" opacity="0.75"/><circle cx="140" cy="124" r="8" fill="#F59A8B" opacity="0.75"/><path d="M90 118 Q100 110 110 118 Q100 134 90 118 Z" fill="#F28A2E" stroke="#0f3d28" stroke-width="3" stroke-linejoin="round"/><path d="M70 62 L70 78 Q100 94 130 78 L130 62 Z" fill="#0b4a2f" stroke="#0f3d28" stroke-width="4" stroke-linejoin="round"/><path d="M100 30 L164 54 L100 76 L36 54 Z" fill="#0f5a3a" stroke="#0f3d28" stroke-width="4" stroke-linejoin="round"/><circle cx="100" cy="53" r="4" fill="#F7CB4A"/><path d="M158 56 L158 82" stroke="#F7CB4A" stroke-width="4" stroke-linecap="round"/><circle cx="158" cy="86" r="5" fill="#F7CB4A" stroke="#0f3d28" stroke-width="2.5"/></svg>', lectura: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200"><ellipse cx="100" cy="186" rx="70" ry="7" fill="#0f5a3a" opacity=".14"/><g transform="translate(20,6) scale(.8)"><path d="M84 166 L84 178 M78 178 L90 178 M116 166 L116 178 M110 178 L122 178" stroke="#E8782A" stroke-width="5" stroke-linecap="round" fill="none"/><ellipse cx="100" cy="110" rx="70" ry="64" fill="#F7CB4A" stroke="#0f3d28" stroke-width="4"/><ellipse cx="100" cy="136" rx="40" ry="26" fill="#FFE59A"/><circle cx="78" cy="112" r="7.5" fill="#14201a"/><circle cx="122" cy="112" r="7.5" fill="#14201a"/><circle cx="80.5" cy="110" r="2.6" fill="#fff"/><circle cx="124.5" cy="110" r="2.6" fill="#fff"/><path d="M68 99 Q78 94 88 99 M112 99 Q122 94 132 99" stroke="#0f3d28" stroke-width="3" fill="none" stroke-linecap="round"/><circle cx="60" cy="124" r="8" fill="#F59A8B" opacity=".75"/><circle cx="140" cy="124" r="8" fill="#F59A8B" opacity=".75"/><path d="M90 118 Q100 110 110 118 Q100 134 90 118 Z" fill="#F28A2E" stroke="#0f3d28" stroke-width="3" stroke-linejoin="round"/><path d="M70 62 L70 78 Q100 94 130 78 L130 62 Z" fill="#0b4a2f" stroke="#0f3d28" stroke-width="4" stroke-linejoin="round"/><path d="M100 30 L164 54 L100 76 L36 54 Z" fill="#0f5a3a" stroke="#0f3d28" stroke-width="4" stroke-linejoin="round"/><circle cx="100" cy="53" r="4" fill="#F7CB4A"/><path d="M158 56 L158 82" stroke="#F7CB4A" stroke-width="4" stroke-linecap="round"/><circle cx="158" cy="86" r="5" fill="#F7CB4A" stroke="#0f3d28" stroke-width="2.5"/></g><path d="M42 124 L100 134 L158 124 L158 172 L100 182 L42 172Z" fill="#1d58c9" stroke="#0f3d28" stroke-width="4" stroke-linejoin="round"/><path d="M48 124 Q74 116 100 128 L100 176 Q74 164 48 170Z" fill="#fffdf5" stroke="#0f3d28" stroke-width="3" stroke-linejoin="round"/><path d="M152 124 Q126 116 100 128 L100 176 Q126 164 152 170Z" fill="#fffdf5" stroke="#0f3d28" stroke-width="3" stroke-linejoin="round"/><path d="M58 136 Q74 131 90 139 M58 147 Q74 142 90 150 M58 158 Q74 153 90 161 M142 136 Q126 131 110 139 M142 147 Q126 142 110 150 M142 158 Q126 153 110 161" stroke="#8aa396" stroke-width="2.5" fill="none" stroke-linecap="round"/><ellipse cx="44" cy="138" rx="11" ry="17" transform="rotate(10 44 138)" fill="#F2B933" stroke="#0f3d28" stroke-width="4"/><ellipse cx="156" cy="138" rx="11" ry="17" transform="rotate(-10 156 138)" fill="#F2B933" stroke="#0f3d28" stroke-width="4"/></svg>', escribiendo: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200"><ellipse cx="100" cy="186" rx="70" ry="7" fill="#0f5a3a" opacity=".14"/><g transform="translate(20,2) scale(.8)"><path d="M84 166 L84 178 M78 178 L90 178 M116 166 L116 178 M110 178 L122 178" stroke="#E8782A" stroke-width="5" stroke-linecap="round" fill="none"/><ellipse cx="100" cy="110" rx="70" ry="64" fill="#F7CB4A" stroke="#0f3d28" stroke-width="4"/><ellipse cx="100" cy="136" rx="40" ry="26" fill="#FFE59A"/><circle cx="78" cy="112" r="7.5" fill="#14201a"/><circle cx="122" cy="112" r="7.5" fill="#14201a"/><circle cx="80.5" cy="110" r="2.6" fill="#fff"/><circle cx="124.5" cy="110" r="2.6" fill="#fff"/><path d="M68 99 Q78 94 88 99 M112 99 Q122 94 132 99" stroke="#0f3d28" stroke-width="3" fill="none" stroke-linecap="round"/><circle cx="60" cy="124" r="8" fill="#F59A8B" opacity=".75"/><circle cx="140" cy="124" r="8" fill="#F59A8B" opacity=".75"/><path d="M90 118 Q100 110 110 118 Q100 134 90 118 Z" fill="#F28A2E" stroke="#0f3d28" stroke-width="3" stroke-linejoin="round"/><path d="M70 62 L70 78 Q100 94 130 78 L130 62 Z" fill="#0b4a2f" stroke="#0f3d28" stroke-width="4" stroke-linejoin="round"/><path d="M100 30 L164 54 L100 76 L36 54 Z" fill="#0f5a3a" stroke="#0f3d28" stroke-width="4" stroke-linejoin="round"/><circle cx="100" cy="53" r="4" fill="#F7CB4A"/><path d="M158 56 L158 82" stroke="#F7CB4A" stroke-width="4" stroke-linecap="round"/><circle cx="158" cy="86" r="5" fill="#F7CB4A" stroke="#0f3d28" stroke-width="2.5"/></g><path d="M36 132 L164 132 L172 178 L28 178Z" fill="#fffdf5" stroke="#0f3d28" stroke-width="4" stroke-linejoin="round"/><path d="M44 146 L156 146 M42 158 L158 158 M40 170 L160 170" stroke="#8aa396" stroke-width="2.5" stroke-linecap="round"/><path d="M56 140 L84 140 M56 152 L72 152" stroke="#1d58c9" stroke-width="3" stroke-linecap="round"/><g transform="rotate(35 110 150)"><rect x="104" y="116" width="12" height="46" rx="2" fill="#E8782A" stroke="#0f3d28" stroke-width="3"/><path d="M104 162 L110 174 L116 162Z" fill="#F7CB4A" stroke="#0f3d28" stroke-width="3" stroke-linejoin="round"/><rect x="104" y="116" width="12" height="8" rx="2" fill="#f59a8b" stroke="#0f3d28" stroke-width="3"/></g><ellipse cx="122" cy="140" rx="11" ry="17" transform="rotate(40 122 140)" fill="#F2B933" stroke="#0f3d28" stroke-width="4"/></svg>', idea: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200"><ellipse cx="100" cy="186" rx="70" ry="7" fill="#0f5a3a" opacity=".14"/><g transform="translate(8,18) scale(.8)"><path d="M84 166 L84 178 M78 178 L90 178 M116 166 L116 178 M110 178 L122 178" stroke="#E8782A" stroke-width="5" stroke-linecap="round" fill="none"/><ellipse cx="32" cy="118" rx="13" ry="21" transform="rotate(14 32 118)" fill="#F2B933" stroke="#0f3d28" stroke-width="4"/><ellipse cx="168" cy="118" rx="13" ry="21" transform="rotate(-14 168 118)" fill="#F2B933" stroke="#0f3d28" stroke-width="4"/><ellipse cx="100" cy="110" rx="70" ry="64" fill="#F7CB4A" stroke="#0f3d28" stroke-width="4"/><ellipse cx="100" cy="136" rx="40" ry="26" fill="#FFE59A"/><circle cx="78" cy="106" r="7.5" fill="#14201a"/><circle cx="122" cy="106" r="7.5" fill="#14201a"/><circle cx="80.5" cy="103" r="2.6" fill="#ffffff"/><circle cx="124.5" cy="103" r="2.6" fill="#ffffff"/><circle cx="60" cy="124" r="8" fill="#F59A8B" opacity="0.75"/><circle cx="140" cy="124" r="8" fill="#F59A8B" opacity="0.75"/><path d="M90 118 Q100 110 110 118 Q100 134 90 118 Z" fill="#F28A2E" stroke="#0f3d28" stroke-width="3" stroke-linejoin="round"/><path d="M70 62 L70 78 Q100 94 130 78 L130 62 Z" fill="#0b4a2f" stroke="#0f3d28" stroke-width="4" stroke-linejoin="round"/><path d="M100 30 L164 54 L100 76 L36 54 Z" fill="#0f5a3a" stroke="#0f3d28" stroke-width="4" stroke-linejoin="round"/><circle cx="100" cy="53" r="4" fill="#F7CB4A"/><path d="M158 56 L158 82" stroke="#F7CB4A" stroke-width="4" stroke-linecap="round"/><circle cx="158" cy="86" r="5" fill="#F7CB4A" stroke="#0f3d28" stroke-width="2.5"/></g><g transform="translate(160,40)"><path d="M0 -22 L0 -30 M-20 -14 L-27 -20 M20 -14 L27 -20 M-26 2 L-34 2 M26 2 L34 2" stroke="#E8782A" stroke-width="3.5" stroke-linecap="round"/><path d="M-10 8 Q-18 -2 -14 -10 Q-6 -20 0 -20 Q6 -20 14 -10 Q18 -2 10 8 L10 14 L-10 14Z" fill="#FFE59A" stroke="#0f3d28" stroke-width="3.5" stroke-linejoin="round"/><rect x="-8" y="14" width="16" height="7" rx="2" fill="#aebbb3" stroke="#0f3d28" stroke-width="3"/></g></svg>' };
+  const pioSrc = (k) => 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(PIO[k] || PIO_SVG);
+  function pioBadge(k, cls, alt) {
+    const d = document.createElement('span');
+    d.className = 'pio-badge ' + (cls || '');
+    const im = document.createElement('img');
+    im.src = pioSrc(k);
+    im.alt = alt || '';
+    d.appendChild(im);
+    return d;
+  }
+  $$('[data-pio]').forEach((el) => { el.prepend(pioBadge(el.dataset.pio, el.dataset.pioCls, el.dataset.pioAlt)); });
 
   /* ---------------- Estado ---------------- */
   let uidN = 0;
@@ -4209,8 +4239,11 @@ const OPS = ((ME) => {
     const pop = $('#opsPop');
     const hint = document.createElement('p');
     hint.className = 'ops-hint';
-    hint.textContent = 'Coloca el cursor en la línea con los datos y elige la operación. Pasa el ratón por encima para ver qué escribir.';
-    pop.appendChild(hint);
+    hint.textContent = 'Elige la operación y después haz clic en la línea (o el paso) al que quieres aplicarla. Pasa el ratón por encima de cada botón para ver qué escribir.';
+    const oh = document.createElement('div');
+    oh.className = 'ops-head';
+    oh.append(pioBadge('idea', 'pio-sm', 'Pío con una idea'), hint);
+    pop.appendChild(oh);
     for (const [title, items] of OPS_MENU) {
       const h = document.createElement('h4');
       h.textContent = title;
@@ -4228,7 +4261,7 @@ const OPS = ((ME) => {
       pop.append(h, g);
     }
     pop.addEventListener('mousedown', (e) => { if (e.target.closest('[data-op]')) e.preventDefault(); });
-    pop.addEventListener('click', (e) => { const bt = e.target.closest('[data-op]'); if (bt) { closePop(); runOp(bt.dataset.op); } });
+    pop.addEventListener('click', (e) => { const bt = e.target.closest('[data-op]'); if (bt) { closePop(); startPick(bt.dataset.op, bt.textContent); } });
   })();
   function specToBlock(spec, ref) {
     if (spec.type === 'math') return newBlock('math', spec.v, { align: spec.align || (ref ? ref.align : 'left'), result: true });
@@ -4240,6 +4273,75 @@ const OPS = ((ME) => {
     for (const sp of specs) { lastB = addBlockAfter(last, specToBlock(sp, ref), false); last = lastB.id; }
     if (lastB) { const el = elById(lastB.id); if (el) el.scrollIntoView({ block: 'nearest' }); setActive(lastB.id); }
   }
+  /* Elegir la línea a la que se aplica la operación */
+  const NO_LINE = new Set(['pascal']);
+  let picking = null;
+  const pickBar = document.createElement('div');
+  pickBar.id = 'pickBar';
+  pickBar.className = 'mi-callout mi-callout--pio pick-bar';
+  pickBar.setAttribute('role', 'status');
+  pickBar.hidden = true;
+  pickBar.append(pioBadge('pizarra', 'pio-sm', 'Pío en la pizarra'));
+  const pickTxt = document.createElement('div');
+  pickTxt.innerHTML = '<span class="mi-label">Elige la línea</span><p></p>';
+  pickBar.appendChild(pickTxt);
+  const pickActs = document.createElement('div');
+  pickActs.className = 'pick-acts';
+  const pkUse = document.createElement('button'); pkUse.type = 'button'; pkUse.className = 'mi-btn mi-btn--sm'; pkUse.textContent = 'Usar la línea activa';
+  const pkCancel = document.createElement('button'); pkCancel.type = 'button'; pkCancel.className = 'mi-btn mi-btn--ghost mi-btn--sm'; pkCancel.textContent = 'Cancelar';
+  pickActs.append(pkUse, pkCancel);
+  pickBar.appendChild(pickActs);
+  document.body.appendChild(pickBar);
+  function startPick(key, label) {
+    if (body.dataset.mode !== 'write') setMode('write');
+    if (NO_LINE.has(key)) { runOp(key); return; }
+    picking = { key, label: (label || '').trim() };
+    body.classList.add('picking');
+    pickTxt.querySelector('p').textContent = '«' + picking.label + '»: haz clic en la línea o en el paso del desarrollo al que quieres aplicarla. Intro usa la línea activa y Esc cancela.';
+    pickBar.hidden = false;
+    pkUse.disabled = !activeBlock();
+  }
+  function endPick() { picking = null; body.classList.remove('picking'); pickBar.hidden = true; $$('.pick-hover', blocksEl).forEach((x) => x.classList.remove('pick-hover')); }
+  function pickAndRun(blockEl, rowIdx) {
+    const key = picking.key;
+    endPick();
+    const id = blockEl.dataset.id;
+    const b = blockById(id);
+    if (!b) return;
+    setActive(id);
+    if (b.type === 'deriv') activeCell = { id, row: rowIdx != null ? rowIdx : b.rows.length - 1, col: 'r' };
+    else activeCell = null;
+    if (b.type === 'deriv') markRow(id, activeCell.row);
+    flashBlock(blockEl);
+    runOp(key);
+  }
+  function flashBlock(el) { el.classList.add('pick-done'); setTimeout(() => el.classList.remove('pick-done'), 700); }
+  pkUse.addEventListener('click', () => { const b = activeBlock(); if (!b) return; pickAndRun(elById(b.id), activeCell && activeCell.id === b.id ? activeCell.row : null); });
+  pkCancel.addEventListener('click', endPick);
+  // clic sobre una línea mientras se elige: se aplica la operación y no se edita
+  blocksEl.addEventListener('pointerdown', (e) => {
+    if (!picking) return;
+    const el = e.target.closest('.blk');
+    if (!el || e.target.closest('.x-del,.blk-handle')) return;
+    e.preventDefault();
+    e.stopPropagation();
+    const r = e.target.closest('[data-row]');
+    pickAndRun(el, r ? +r.dataset.row : null);
+  }, true);
+  blocksEl.addEventListener('pointerover', (e) => {
+    if (!picking) return;
+    $$('.pick-hover', blocksEl).forEach((x) => x.classList.remove('pick-hover'));
+    const el = e.target.closest('.blk');
+    if (!el) return;
+    const r = e.target.closest('[data-row]');
+    if (r && el.classList.contains('blk-deriv')) $$('[data-row="' + r.dataset.row + '"]', el).forEach((c) => { if (c.classList.contains('dcell') || c.classList.contains('dnote')) c.classList.add('pick-hover'); });
+    else el.classList.add('pick-hover');
+  });
+  window.addEventListener('keydown', (e) => {
+    if (!picking) return;
+    if (e.key === 'Escape') { e.preventDefault(); e.stopPropagation(); endPick(); }
+    else if (e.key === 'Enter') { e.preventDefault(); e.stopPropagation(); pkUse.click(); }
+  }, true);
   function runOp(key) {
     if (body.dataset.mode !== 'write') setMode('write');
     const b = syncActive();
@@ -4253,9 +4355,11 @@ const OPS = ((ME) => {
     const lines = [];
     for (const x of page().blocks) { if (x.type === 'math' && x.id !== b.id) lines.push(x.v); if (x.type === 'deriv') x.rows.forEach((r) => { if (r.l && r.r) lines.push(r.l + '=' + r.r); }); }
     try {
-      if (!['next', 'check', 'pascal'].includes(key) && !String(src || '').trim()) throw new ME.MErr('La línea está vacía: escribe primero los datos.');
+      if (!['next', 'check', 'pascal', 'gauss', 'gj'].includes(key) && !String(src || '').trim()) throw new ME.MErr('La línea está vacía: escribe primero los datos.');
       let specs = null;
       switch (key) {
+        case 'gauss': runGauss(false); return;
+        case 'gj': runGauss(true); return;
         case 'inv': specs = OPS.inverseSteps(src, env); break;
         case 'detS': specs = OPS.detSarrus(src, env); break;
         case 'detC': specs = OPS.detCofactor(src, env); break;
@@ -4323,8 +4427,8 @@ const OPS = ((ME) => {
       toast(e instanceof ME.MErr ? e.message : 'No he podido hacer esta operación con lo que hay en la línea.', 'aviso');
     }
   }
-  $('#gaussBtn').addEventListener('click', () => runGauss(false));
-  $('#gjBtn').addEventListener('click', () => runGauss(true));
+  $('#gaussBtn').addEventListener('click', () => startPick('gauss', 'Gauss'));
+  $('#gjBtn').addEventListener('click', () => startPick('gj', 'Gauss-Jordan'));
 
   /* ---------------- Modo, páginas y ajustes ---------------- */
   function setMode(m) {
@@ -4393,7 +4497,7 @@ const OPS = ((ME) => {
     $('#histConnect').hidden = !FS_OK;
     $('#histConnect').textContent = histDir ? 'Cambiar carpeta' : 'Conectar carpeta';
     $('#histPickRO').hidden = FS_OK;
-    $('#histSave').textContent = histDir ? 'Guardar en el historial' : 'Descargar para el historial';
+    $('#histSave').textContent = histDir || FS_OK ? 'Guardar en el historial' : 'Descargar para el historial';
     $('#histAuto').disabled = !histDir;
     if (!FS_OK) $('#histHelp').innerHTML = 'Este navegador no permite que la página escriba en una carpeta. Puedes <b>elegir la carpeta historial</b> para ver y abrir lo guardado, y <b>descargar</b> cada clase: después mueve el archivo descargado a <code>pizarramatia/historial</code>. Con Chrome o Edge se guarda directamente.';
   }
@@ -4442,10 +4546,11 @@ const OPS = ((ME) => {
   async function listHist() {
     const list = $('#histList');
     list.textContent = '';
-    if (!histDir && !histRO) { list.innerHTML = '<div class="hist-empty">Conecta la carpeta para ver las clases guardadas.</div>'; return; }
+    const emptyMsg = (t) => { const d = document.createElement('div'); d.className = 'hist-empty'; d.appendChild(pioBadge('lectura', 'pio-lg', 'Pío leyendo')); const sp = document.createElement('span'); sp.textContent = t; d.appendChild(sp); list.appendChild(d); };
+    if (!histDir && !histRO) { emptyMsg('Conecta la carpeta para ver las clases guardadas.'); return; }
     let items;
     try { items = await readEntries(); } catch (e) { list.innerHTML = '<div class="hist-empty">No se puede leer la carpeta. Pulsa «Reconectar» o vuelve a elegirla.</div>'; return; }
-    if (!items.length) { list.innerHTML = '<div class="hist-empty">Todavía no hay clases guardadas en esta carpeta.</div>'; return; }
+    if (!items.length) { emptyMsg('Todavía no hay clases guardadas en esta carpeta. Pulsa «Guardar en el historial».'); return; }
     for (const it of items) {
       const row = document.createElement('div');
       row.className = 'hist-item' + (it.name === sessionFile ? ' cur' : '');
@@ -4499,6 +4604,11 @@ const OPS = ((ME) => {
   $('#histSave').addEventListener('click', async () => {
     board.title = $('#histName').value.trim();
     save();
+    if (!histDir && FS_OK) {
+      // primero se conecta la carpeta y luego se guarda
+      try { await useDir(await window.showDirectoryPicker({ id: 'matia-historial', mode: 'readwrite' })); }
+      catch (e) { if (e && e.name !== 'AbortError') toast('No se ha podido abrir la carpeta: ' + (e.message || e), 'aviso'); return; }
+    }
     if (!histDir) {
       const blob = new Blob([boardJSON()], { type: 'application/json' });
       const a = document.createElement('a');
