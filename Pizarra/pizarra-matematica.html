@@ -154,6 +154,28 @@ math-field:focus-within{outline:none}
 math-field::part(menu-toggle),math-field::part(virtual-keyboard-toggle){display:none}
 .blk-text{font:400 calc(19px * var(--scale))/1.5 var(--font-serif);color:var(--ink);min-width:6em;max-width:100%;outline:none;padding:4px 6px;white-space:pre-wrap;overflow-wrap:anywhere}
 .blk-text:empty::before{content:attr(data-ph);color:var(--ink-muted)}
+/* Desarrollo alineado por el = */
+.deriv{display:grid;grid-template-columns:max-content max-content max-content minmax(12em,1fr);align-items:stretch;column-gap:0;row-gap:2px}
+.dcell math-field{display:inline-block;width:auto;min-width:1.2em}
+.drow{display:contents}
+.dcell{display:flex;align-items:center;min-height:calc(34px * var(--scale));border:var(--border-width-thin) solid transparent;border-left-width:0;border-right-width:0;padding:0 2px}
+.dcell.dl{padding-left:6px}.dcell.dr{padding-right:6px}
+.dcell.dl{justify-content:flex-end;border-left-width:var(--border-width-thin);border-radius:var(--radius-md) 0 0 var(--radius-md)}
+.dcell.dr{justify-content:flex-start;border-right-width:var(--border-width-thin);border-radius:0 var(--radius-md) var(--radius-md) 0}
+.dcell.deq{justify-content:center;font:400 calc(24px * var(--scale))/1 KaTeX_Main,"Times New Roman",var(--font-serif);color:var(--ink);padding:0 calc(4px * var(--scale));user-select:none}
+.dcell.on{background:color-mix(in srgb,var(--accent-soft) 70%,transparent)}
+.dcell.boxed{border-color:var(--accent);border-width:var(--border-width-medium);border-left-width:0;border-right-width:0}
+.dcell.dl.boxed{border-left-width:var(--border-width-medium)}
+.dcell.dr.boxed{border-right-width:var(--border-width-medium)}
+.dnote{align-self:stretch;display:flex;align-items:center;font:400 calc(15px * var(--scale))/1.4 var(--font-serif);color:var(--ink-muted);border-left:var(--border-width-thin) solid var(--border);padding:2px 0 2px var(--space-4);margin-left:var(--space-4);outline:none;min-width:8em;white-space:pre-wrap;overflow-wrap:anywhere}
+.dnote:empty::before{content:attr(data-ph);opacity:.55}
+.dnote:focus{color:var(--ink)}
+.dnote.on{border-left-color:var(--accent)}
+.blk-deriv.is-active{background:transparent}
+@media (max-width:640px){
+  .deriv{grid-template-columns:max-content max-content max-content}
+  .dnote{grid-column:1/-1;margin:0 0 var(--space-2);padding-left:var(--space-3)}
+}
 .empty-pio{max-width:620px;margin:var(--space-5) 0 0 30px;animation:mi-rise var(--duration-base) var(--ease-out) both}
 
 .pop{position:fixed;z-index:100;background:var(--surface-raised);border:var(--border-width-thin) solid var(--border-strong);border-radius:var(--radius-md);padding:var(--space-3);display:flex;flex-direction:column;gap:var(--space-3);min-width:200px;animation:mi-rise var(--duration-base) var(--ease-out) both}
@@ -233,7 +255,7 @@ dialog::backdrop{background:color-mix(in srgb,var(--surface) 70%,transparent)}
   <div class="grp only-write">
     <button type="button" class="tb-btn txt" data-pop="matPop" title="Insertar matriz (Alt+M)">Matriz <span class="caret">▾</span></button>
     <button type="button" class="tb-btn txt" data-pop="sysPop" title="Insertar sistema de ecuaciones (Alt+S)">Sistema <span class="caret">▾</span></button>
-    <button type="button" class="tb-btn txt" data-tpl="aligned" title="Desarrollo alineado por el signo = (Alt+L)">Alineado</button>
+    <button type="button" class="tb-btn txt" id="derivBtn" title="Desarrollo paso a paso alineado por el = con explicación a la derecha (Alt+L). Si la línea activa tiene un =, la convierte.">Desarrollo</button>
     <button type="button" class="tb-btn txt" data-cmd="addRowAfter" title="Añadir fila a la matriz o al sistema (Mayús+Intro)">+ Fila</button>
     <button type="button" class="tb-btn txt" data-cmd="addColumnAfter" title="Añadir columna a la matriz (Ctrl+Intro)">+ Columna</button>
   </div>
@@ -396,9 +418,23 @@ dialog::backdrop{background:color-mix(in srgb,var(--surface) 70%,transparent)}
         <tr><td>Alt+↑ Alt+↓</td><td>Mover la línea (también arrastrando ⋮⋮)</td></tr>
         <tr><td>Mayús+Intro</td><td>Nueva fila en matriz o sistema</td></tr>
         <tr><td>Ctrl+Intro</td><td>Nueva columna en la matriz</td></tr>
-        <tr><td>Alt+M Alt+S Alt+L</td><td>Matriz 2×2, sistema 2×2, desarrollo alineado</td></tr>
+        <tr><td>Alt+M Alt+S</td><td>Matriz 2×2, sistema 2×2</td></tr>
         <tr><td>Alt+T</td><td>Línea de texto</td></tr>
         <tr><td>Alt+1 … Alt+6</td><td>Color de lo seleccionado o de lo que escribas</td></tr>
+      </tbody></table>
+    </section>
+    <section>
+      <h3>Desarrollo alineado por el =</h3>
+      <table class="keys"><tbody>
+        <tr><td>Alt+L</td><td>Nuevo desarrollo, o convierte la línea activa si tiene un =</td></tr>
+        <tr><td>=</td><td>Al final del lado izquierdo, salta al lado derecho</td></tr>
+        <tr><td>Tab  Mayús+Tab</td><td>Izquierda → derecha → explicación, y al revés</td></tr>
+        <tr><td>Intro</td><td>Paso siguiente: copia la fila para que solo cambies lo necesario</td></tr>
+        <tr><td>Alt+Intro</td><td>Paso siguiente en blanco</td></tr>
+        <tr><td>Esc</td><td>Sale del desarrollo y sigue con una línea normal</td></tr>
+        <tr><td>↑ ↓</td><td>Fila anterior / siguiente</td></tr>
+        <tr><td>Recuadrar</td><td>Recuadra la fila activa (resultado)</td></tr>
+        <tr><td>Ctrl+=</td><td>Calcula el lado derecho y lo pone como paso nuevo</td></tr>
       </tbody></table>
     </section>
     <section>
@@ -1224,6 +1260,8 @@ const ME = (() => {
   let uidN = 0;
   const uid = () => 'b' + Date.now().toString(36) + (uidN++).toString(36);
   const newBlock = (type = 'math', v = '', extra = {}) => Object.assign({ id: uid(), type, v, align: 'left', boxed: false }, extra);
+  const newRow = (l = '', r = '', note = '') => ({ l, r, note, boxed: false });
+  const newDeriv = (rows) => ({ id: uid(), type: 'deriv', rows: rows || [newRow()], align: 'left', boxed: false });
   const newPage = () => ({ blocks: [newBlock()], strokes: [], minH: 0 });
   const defaults = () => ({ v: 1, pages: [newPage()], cur: 0, theme: null, accent: '', scale: 140, color: 'ink', tool: 'pen', width: 3 });
 
@@ -1246,10 +1284,16 @@ const ME = (() => {
       width: Math.min(12, Math.max(1, +b.width || 3)),
     });
     out.pages = b.pages.map((p) => ({
-      blocks: (Array.isArray(p.blocks) && p.blocks.length ? p.blocks : [newBlock()]).map((x) => ({
-        id: uid(), type: x.type === 'text' ? 'text' : 'math', v: typeof x.v === 'string' ? x.v : '',
-        align: ['left', 'center', 'right'].includes(x.align) ? x.align : 'left', boxed: !!x.boxed, result: !!x.result,
-      })),
+      blocks: (Array.isArray(p.blocks) && p.blocks.length ? p.blocks : [newBlock()]).map((x) => {
+        const base = { id: uid(), align: ['left', 'center', 'right'].includes(x.align) ? x.align : 'left', boxed: !!x.boxed };
+        if (x.type === 'deriv') {
+          const str = (v) => (typeof v === 'string' ? v : '');
+          const rows = (Array.isArray(x.rows) ? x.rows : []).filter((r) => r && typeof r === 'object')
+            .map((r) => ({ l: str(r.l), r: str(r.r), note: str(r.note), boxed: !!r.boxed }));
+          return Object.assign(base, { type: 'deriv', rows: rows.length ? rows : [newRow()] });
+        }
+        return Object.assign(base, { type: x.type === 'text' ? 'text' : 'math', v: typeof x.v === 'string' ? x.v : '', result: !!x.result });
+      }),
       strokes: Array.isArray(p.strokes) ? p.strokes.filter((s) => s && Array.isArray(s.pts)) : [],
       minH: +p.minH || 0,
     }));
@@ -1338,7 +1382,11 @@ const ME = (() => {
     const bd = document.createElement('div');
     bd.className = 'blk-body';
     el.appendChild(bd);
-    if (b.type === 'text') {
+    if (b.type === 'deriv') {
+      el.classList.add('blk-deriv');
+      el.classList.remove('is-boxed');
+      buildDeriv(b, bd, false);
+    } else if (b.type === 'text') {
       const t = document.createElement('div');
       t.className = 'blk-text';
       t.contentEditable = 'true';
@@ -1372,6 +1420,237 @@ const ME = (() => {
     return el;
   }
 
+  /* ---------------- Desarrollo alineado por el = ---------------- */
+  let activeCell = null; // { id, row, col }
+  function buildDeriv(b, bd, ro) {
+    const g = document.createElement('div');
+    g.className = 'deriv';
+    g.setAttribute('role', 'group');
+    g.setAttribute('aria-label', 'Desarrollo alineado por el igual');
+    b.rows.forEach((row, i) => {
+      const rw = document.createElement('div');
+      rw.className = 'drow';
+      const cell = (cls) => { const c = document.createElement('div'); c.className = 'dcell ' + cls + (row.boxed ? ' boxed' : ''); c.dataset.row = i; return c; };
+      const L = cell('dl'), E = cell('deq'), R = cell('dr');
+      E.textContent = '=';
+      E.setAttribute('aria-hidden', 'true');
+      for (const [box, col] of [[L, 'l'], [R, 'r']]) {
+        if (mlReady) {
+          const mf = document.createElement('math-field');
+          mf.setAttribute('aria-label', (col === 'l' ? 'Lado izquierdo' : 'Lado derecho') + ' del paso ' + (i + 1));
+          if (ro) mf.setAttribute('read-only', '');
+          configureField(mf);
+          mf.dataset.row = i; mf.dataset.col = col;
+          box.appendChild(mf);
+          mf.value = row[col];
+          if (!ro) {
+            mf.addEventListener('input', () => { row[col] = mf.getValue('latex'); hidePio(); save(); });
+            mf.addEventListener('move-out', (e) => { if (derivMove(b, i, col, e.detail.direction)) e.preventDefault(); });
+          }
+        } else {
+          box.textContent = row[col];
+        }
+      }
+      const N = document.createElement('div');
+      N.className = 'dnote';
+      N.dataset.row = i; N.dataset.col = 'note';
+      N.textContent = row.note;
+      if (!ro) {
+        N.contentEditable = 'true';
+        N.setAttribute('role', 'textbox');
+        N.setAttribute('aria-label', 'Explicación del paso ' + (i + 1));
+        N.dataset.ph = i === 0 ? 'Planteamiento…' : 'Explica el paso…';
+        N.addEventListener('input', () => { row.note = N.innerText.replace(/\n$/, ''); save(); });
+      }
+      rw.append(L, E, R, N);
+      g.appendChild(rw);
+    });
+    bd.appendChild(g);
+  }
+  function rebuildDeriv(b) {
+    const bd = elById(b.id).querySelector('.blk-body');
+    bd.innerHTML = '';
+    buildDeriv(b, bd, false);
+    requestAnimationFrame(sizeCanvas);
+  }
+  const cellEl = (id, row, col) => { const el = elById(id); return el && el.querySelector('[data-row="' + row + '"][data-col="' + col + '"]'); };
+  function markRow(id, row) {
+    $$('.dcell.on,.dnote.on', blocksEl).forEach((c) => c.classList.remove('on'));
+    const el = elById(id);
+    if (el) $$('[data-row="' + row + '"]', el).forEach((c) => { if (c.classList.contains('dcell') || c.classList.contains('dnote')) c.classList.add('on'); });
+  }
+  function focusCell(id, row, col, where = 'end') {
+    const f = cellEl(id, row, col);
+    if (!f) return false;
+    setActive(id);
+    activeCell = { id, row, col };
+    markRow(id, row);
+    f.focus();
+    if (f.tagName === 'MATH-FIELD') {
+      try { f.position = where === 'start' ? 0 : f.lastOffset; } catch (e) { /* */ }
+    } else {
+      const r = document.createRange();
+      r.selectNodeContents(f);
+      r.collapse(where === 'start');
+      const sel = getSelection(); sel.removeAllRanges(); sel.addRange(r);
+    }
+    (f.closest('.dcell') || f).scrollIntoView({ block: 'nearest' });
+    return true;
+  }
+  function derivMove(b, i, col, dir) {
+    const last = b.rows.length - 1;
+    if (dir === 'forward') return col === 'l' ? focusCell(b.id, i, 'r', 'start') : focusCell(b.id, i, 'note', 'start');
+    if (dir === 'backward') {
+      if (col === 'r') return focusCell(b.id, i, 'l', 'end');
+      return i > 0 ? focusCell(b.id, i - 1, 'note', 'end') : focusSibling(b.id, -1, 'end');
+    }
+    if (dir === 'upward') return i > 0 ? focusCell(b.id, i - 1, col, 'end') : focusSibling(b.id, -1, 'end');
+    if (dir === 'downward') return i < last ? focusCell(b.id, i + 1, col, 'end') : focusSibling(b.id, 1, 'start');
+    return false;
+  }
+  function removeRow(b, i) {
+    if (b.rows.length === 1) { deleteBlock(b.id); return; }
+    b.rows.splice(i, 1);
+    rebuildDeriv(b);
+    save();
+    focusCell(b.id, Math.max(0, i - 1), 'r', 'end');
+  }
+  function addRow(b, i, row, col = 'r') {
+    b.rows.splice(i + 1, 0, row);
+    rebuildDeriv(b);
+    save();
+    focusCell(b.id, i + 1, col, 'end');
+  }
+  // Busca el primer = fuera de llaves y de entornos (matrices, sistemas…)
+  function splitTopEq(L) {
+    let d = 0, env = 0;
+    for (let i = 0; i < L.length; i++) {
+      const c = L[i];
+      if (c === '\\') {
+        if (L.startsWith('\\begin', i)) env++;
+        else if (L.startsWith('\\end', i)) env--;
+        i++;
+        continue;
+      }
+      if (c === '{') d++;
+      else if (c === '}') d--;
+      else if (c === '=' && d === 0 && env === 0) return [L.slice(0, i), L.slice(i + 1)];
+    }
+    return null;
+  }
+  function startDeriv() {
+    if (body.dataset.mode !== 'write') setMode('write');
+    const b = syncActive();
+    if (b && b.type === 'deriv') {
+      const i = activeCell && activeCell.id === b.id ? activeCell.row : b.rows.length - 1;
+      addRow(b, i, newRow(), 'l');
+      return;
+    }
+    if (b && b.type === 'math') {
+      const sp = b.v.trim() ? splitTopEq(b.v) : null;
+      if (!b.v.trim() || sp) {
+        b.type = 'deriv';
+        b.rows = [sp ? newRow(sp[0], sp[1]) : newRow()];
+        delete b.v; delete b.result;
+        b.boxed = false;
+        const old = elById(b.id);
+        old.replaceWith(makeBlockEl(b));
+        hidePio();
+        save();
+        focusCell(b.id, 0, sp ? 'r' : 'l', 'end');
+        return;
+      }
+    }
+    const nb = newDeriv();
+    addBlockAfter(b ? b.id : null, nb, false);
+    focusCell(nb.id, 0, 'l', 'start');
+  }
+  // Teclado propio de las filas del desarrollo. Devuelve true si consume la tecla.
+  function derivKey(e, b) {
+    const t = e.target;
+    const col = t.dataset && t.dataset.col;
+    if (!col) return false;
+    const i = +t.dataset.row;
+    const row = b.rows[i];
+    const mf = t.tagName === 'MATH-FIELD' ? t : null;
+    if (mf && mf.mode === 'latex') return false;
+    if (e.altKey && (e.key === 'Delete' || e.key === 'Backspace')) { removeRow(b, i); return true; }
+    if (e.key === 'Enter') {
+      if (mf && e.shiftKey) { mf.executeCommand('addRowAfter'); return true; }
+      if (mf && (e.ctrlKey || e.metaKey)) { mf.executeCommand('addColumnAfter'); return true; }
+      syncBlock(b);
+      if (!row.l.trim() && !row.r.trim() && !row.note.trim() && b.rows.length > 1) {
+        b.rows.splice(i, 1);
+        rebuildDeriv(b);
+        save();
+        addBlockAfter(b.id, newBlock());
+        return true;
+      }
+      addRow(b, i, e.altKey ? newRow() : newRow(row.l, row.r), e.altKey ? 'l' : 'r');
+      return true;
+    }
+    if (e.key === 'Escape' && !e.shiftKey) {
+      syncBlock(b);
+      const nxt = page().blocks[page().blocks.findIndex((x) => x.id === b.id) + 1];
+      if (nxt && nxt.type === 'math' && !nxt.v) focusBlock(nxt.id, 'start');
+      else addBlockAfter(b.id, newBlock());
+      return true;
+    }
+    // Tab salta entre huecos de una plantilla mientras queden; si no, pasa a la celda siguiente
+    if (mf && e.key === 'Tab' && !e.shiftKey && !/\\placeholder/.test(mf.getValue('latex'))) {
+      return col === 'l' ? focusCell(b.id, i, 'r', 'start') : focusCell(b.id, i, 'note', 'end');
+    }
+    if (mf && e.key === 'Tab' && e.shiftKey) {
+      if (col === 'r') return focusCell(b.id, i, 'l', 'end');
+      return i > 0 ? focusCell(b.id, i - 1, 'note', 'end') : true;
+    }
+    if (mf && col === 'l' && e.key === '=' && !e.ctrlKey && !e.altKey && !e.metaKey && mf.position === mf.lastOffset) {
+      focusCell(b.id, i, 'r', 'start');
+      return true;
+    }
+    if (e.key === 'Backspace') {
+      const empty = mf ? !mf.getValue('latex') : !t.textContent;
+      if (!empty) return false;
+      syncBlock(b);
+      if (!row.l && !row.r && !row.note) { removeRow(b, i); return true; }
+      if (col === 'r') return focusCell(b.id, i, 'l', 'end');
+      if (col === 'note') return focusCell(b.id, i, 'r', 'end');
+      return false;
+    }
+    if (!mf) {
+      const sel = getSelection();
+      const len = (t.textContent || '').length;
+      const off = sel.rangeCount ? (() => { const r = sel.getRangeAt(0).cloneRange(); r.selectNodeContents(t); r.setEnd(sel.getRangeAt(0).endContainer, sel.getRangeAt(0).endOffset); return r.toString().length; })() : 0;
+      if (e.key === 'Tab') {
+        if (e.shiftKey) return focusCell(b.id, i, 'r', 'end');
+        if (i < b.rows.length - 1) return focusCell(b.id, i + 1, 'l', 'end');
+        return focusSibling(b.id, 1, 'start') || true;
+      }
+      if (e.key === 'ArrowLeft' && off === 0) return focusCell(b.id, i, 'r', 'end');
+      if (e.key === 'ArrowUp' && off === 0) return derivMove(b, i, 'note', 'upward');
+      if (e.key === 'ArrowDown' && off === len) return derivMove(b, i, 'note', 'downward');
+    }
+    return false;
+  }
+  // Copia al modelo lo que hay en pantalla (por si algún cambio no ha disparado «input»)
+  function syncBlock(b) {
+    if (!b) return b;
+    const el = elById(b.id);
+    if (!el) return b;
+    if (b.type === 'deriv') {
+      $$('[data-col]', el).forEach((c) => {
+        const r = b.rows[+c.dataset.row];
+        if (!r) return;
+        r[c.dataset.col] = c.tagName === 'MATH-FIELD' ? c.getValue('latex') : c.innerText.replace(/\n$/, '');
+      });
+    } else if (b.type === 'math') {
+      const mf = fieldOf(el);
+      if (mf && mf.getValue) b.v = mf.getValue('latex');
+    }
+    save();
+    return b;
+  }
+
   function renderPage() {
     blocksEl.innerHTML = '';
     for (const b of page().blocks) blocksEl.appendChild(makeBlockEl(b));
@@ -1387,7 +1666,7 @@ const ME = (() => {
 
   function isPageEmpty() {
     const p = page();
-    return p.blocks.length === 1 && !p.blocks[0].v && !p.strokes.length;
+    return p.blocks.length === 1 && p.blocks[0].type === 'math' && !p.blocks[0].v && !p.strokes.length;
   }
   function maybePio() {
     hidePio();
@@ -1410,6 +1689,8 @@ const ME = (() => {
     }
   }
   function focusBlock(id, where = 'end') {
+    const db = blockById(id);
+    if (db && db.type === 'deriv') return where === 'start' ? focusCell(id, 0, 'l', 'start') : focusCell(id, db.rows.length - 1, 'r', 'end');
     const el = elById(id);
     const f = fieldOf(el);
     if (!f) return false;
@@ -1454,6 +1735,7 @@ const ME = (() => {
     if (bl.length === 1) {
       bl[0].v = '';
       bl[0].type = 'math'; bl[0].boxed = false; bl[0].result = false;
+      delete bl[0].rows;
       renderPage();
       save();
       focusBlock(bl[0].id);
@@ -1483,6 +1765,12 @@ const ME = (() => {
   // Devuelve el math-field activo; si la línea activa es texto o no hay ninguna, crea una línea de fórmula
   function activeField() {
     let b = activeBlock();
+    if (b && b.type === 'deriv') {
+      const mine = activeCell && activeCell.id === b.id;
+      const row = mine ? Math.min(activeCell.row, b.rows.length - 1) : b.rows.length - 1;
+      const col = mine && activeCell.col !== 'note' ? activeCell.col : 'r';
+      return cellEl(b.id, row, col);
+    }
     if (!b || b.type !== 'math') {
       b = addBlockAfter(b ? b.id : null, newBlock(), false);
       setActive(b.id);
@@ -1498,6 +1786,7 @@ const ME = (() => {
     const mf = e.target.tagName === 'MATH-FIELD' ? e.target : null;
     const isText = !mf && e.target.classList.contains('blk-text');
     if (e.altKey && (e.key === 'ArrowUp' || e.key === 'ArrowDown')) { e.preventDefault(); e.stopPropagation(); moveBlock(id, e.key === 'ArrowUp' ? -1 : 1); return; }
+    if (b && b.type === 'deriv') { if (derivKey(e, b)) { e.preventDefault(); e.stopPropagation(); } return; }
     if (e.altKey && (e.key === 'Delete' || e.key === 'Backspace')) { e.preventDefault(); e.stopPropagation(); deleteBlock(id); return; }
     if (e.key === 'Enter') {
       if (mf && mf.mode === 'latex') return;
@@ -1523,7 +1812,11 @@ const ME = (() => {
   }, true);
   blocksEl.addEventListener('focusin', (e) => {
     const el = e.target.closest && e.target.closest('.blk');
-    if (el) setActive(el.dataset.id);
+    if (!el) return;
+    setActive(el.dataset.id);
+    const c = e.target.dataset && e.target.dataset.col;
+    if (c) { activeCell = { id: el.dataset.id, row: +e.target.dataset.row, col: c }; markRow(el.dataset.id, +e.target.dataset.row); }
+    else { activeCell = null; markRow(null, -1); }
   });
 
   /* ---------------- Arrastrar líneas ---------------- */
@@ -1582,7 +1875,6 @@ const ME = (() => {
     sum: '\\sum_{#?}^{#?}#?', lim: '\\lim_{#?\\to#?}#?', int: '\\int_{#?}^{#?}#?\\,d#?',
     vec: '\\vec{#@}', norm: '\\left\\lVert#@\\right\\rVert', T: '#@^{T}', inv: '#@^{-1}', cdot: '\\cdot ',
     arrow: '\\xrightarrow{#?}', implies: '\\Rightarrow ', iff: '\\Leftrightarrow ', R: '\\mathbb{R}', lambda: '\\lambda ',
-    aligned: '\\begin{aligned}#?&=#?\\\\&=#?\\end{aligned}',
   };
   function insertLatex(latex) {
     if (body.dataset.mode !== 'write') setMode('write');
@@ -1590,8 +1882,7 @@ const ME = (() => {
     if (!mf || mf.tagName !== 'MATH-FIELD') { toast('El editor de fórmulas aún no está listo.', 'aviso'); return; }
     mf.focus();
     mf.insert(latex, { format: 'latex', selectionMode: 'placeholder', focus: true });
-    const b = activeBlock();
-    if (b) { b.v = mf.getValue('latex'); save(); }
+    syncBlock(activeBlock());
     hidePio();
   }
   const systemLatex = (n) => '\\begin{cases}' + Array(n).fill(ph).join('\\\\') + '\\end{cases}';
@@ -1669,7 +1960,7 @@ const ME = (() => {
     if (b.dataset.tpl) { insertLatex(TPL[b.dataset.tpl]); return; }
     if (b.dataset.cmd) {
       const mf = activeField();
-      if (mf && mf.executeCommand) { mf.focus(); mf.executeCommand(b.dataset.cmd); const ab = activeBlock(); if (ab) { ab.v = mf.getValue('latex'); save(); } }
+      if (mf && mf.executeCommand) { mf.focus(); mf.executeCommand(b.dataset.cmd); syncBlock(activeBlock()); }
       return;
     }
     if (b.dataset.color) { setColor(b.dataset.color); return; }
@@ -1682,12 +1973,11 @@ const ME = (() => {
     save();
     if (body.dataset.mode === 'write') {
       const b = activeBlock();
-      const mf = b && b.type === 'math' ? fieldOf(elById(b.id)) : null;
+      const mf = b && (b.type === 'math' || b.type === 'deriv') ? activeField() : null;
       if (mf && mf.applyStyle) {
         mf.focus();
         mf.applyStyle({ color: name === 'ink' ? 'none' : name });
-        b.v = mf.getValue('latex');
-        save();
+        syncBlock(b);
       }
     }
   }
@@ -1703,13 +1993,25 @@ const ME = (() => {
   $('#boxBtn').addEventListener('click', () => {
     const b = activeBlock();
     if (!b) return;
+    if (b.type === 'deriv') {
+      const i = activeCell && activeCell.id === b.id ? activeCell.row : b.rows.length - 1;
+      b.rows[i].boxed = !b.rows[i].boxed;
+      $$('.dcell[data-row="' + i + '"]', elById(b.id)).forEach((c) => c.classList.toggle('boxed', b.rows[i].boxed));
+      save();
+      return;
+    }
     b.boxed = !b.boxed;
     elById(b.id).classList.toggle('is-boxed', b.boxed);
     setActive(b.id);
     save();
   });
   $('#textBtn').addEventListener('click', () => { const b = activeBlock(); addBlockAfter(b ? b.id : null, newBlock('text')); });
-  $('#delBtn').addEventListener('click', () => { if (activeId) deleteBlock(activeId); });
+  $('#delBtn').addEventListener('click', () => {
+    const b = activeBlock();
+    if (b && b.type === 'deriv' && activeCell && activeCell.id === b.id) { removeRow(b, activeCell.row); return; }
+    if (activeId) deleteBlock(activeId);
+  });
+  $('#derivBtn').addEventListener('click', startDeriv);
   $('#kbdBtn').addEventListener('click', () => {
     const kb = window.mathVirtualKeyboard;
     if (!kb) return;
@@ -1719,16 +2021,31 @@ const ME = (() => {
   });
 
   /* ---------------- Calcular y Gauss ---------------- */
-  function otherDefs(exceptId) {
-    return ME.definitions(page().blocks.filter((b) => b.type === 'math' && b.id !== exceptId).map((b) => b.v));
+  function otherDefs(exceptId, exceptRow = -1) {
+    const lines = [];
+    for (const b of page().blocks) {
+      if (b.type === 'math' && b.id !== exceptId) lines.push(b.v);
+      if (b.type === 'deriv') b.rows.forEach((r, i) => { if (!(b.id === exceptId && i === exceptRow) && r.l.trim() && r.r.trim()) lines.push(r.l + '=' + r.r); });
+    }
+    return ME.definitions(lines);
   }
-  function syncActive() {
-    const b = activeBlock();
-    if (b && b.type === 'math') { const mf = fieldOf(elById(b.id)); if (mf && mf.getValue) b.v = mf.getValue('latex'); }
-    return b;
-  }
+  function syncActive() { return syncBlock(activeBlock()); }
+  function derivRowIndex(b) { return activeCell && activeCell.id === b.id ? activeCell.row : b.rows.length - 1; }
   function runCalc() {
     const b = syncActive();
+    if (b && b.type === 'deriv') {
+      const i = derivRowIndex(b), row = b.rows[i];
+      if (!row.r.trim()) { toast('Escribe en el lado derecho la operación que quieres calcular.'); return; }
+      try {
+        const r = ME.compute(row.r, otherDefs(b.id, i));
+        if (r.info) { toast(r.info); return; }
+        const res = ME.toLatex(r.value);
+        addRow(b, i, newRow(row.l, res));
+      } catch (e) {
+        toast(e instanceof ME.MErr ? e.message : 'No he podido calcular esta fila.', 'aviso');
+      }
+      return;
+    }
     if (!b || b.type !== 'math' || !b.v.trim()) { toast('Escribe una operación en una línea, por ejemplo A·B = o 3/4 + 1/6 =, y pulsa Calcular.'); return; }
     try {
       const r = ME.compute(b.v, otherDefs(b.id));
@@ -1744,9 +2061,10 @@ const ME = (() => {
   }
   function runGauss(jordan) {
     const b = syncActive();
-    if (!b || b.type !== 'math' || !b.v.trim()) { toast('Coloca el cursor en una línea con una matriz o un sistema y pulsa Gauss.'); return; }
+    const src = b && b.type === 'deriv' ? b.rows[derivRowIndex(b)].r : b && b.type === 'math' ? b.v : '';
+    if (!src.trim()) { toast('Coloca el cursor en una línea con una matriz o un sistema y pulsa Gauss.'); return; }
     try {
-      const lines = ME.gaussLines(b.v, otherDefs(b.id), jordan);
+      const lines = ME.gaussLines(src, b.type === 'deriv' ? otherDefs(b.id, derivRowIndex(b)) : otherDefs(b.id), jordan);
       let last = b.id;
       lines.forEach((L, i) => { last = addBlockAfter(last, newBlock('math', L, { align: b.align, result: true }), i === lines.length - 1).id; });
     } catch (e) {
@@ -1874,7 +2192,9 @@ const ME = (() => {
         el.dataset.align = b.align;
         const bd = document.createElement('div');
         bd.className = 'blk-body';
-        if (b.type === 'math' && mlReady) {
+        if (b.type === 'deriv') {
+          buildDeriv(b, bd, true);
+        } else if (b.type === 'math' && mlReady) {
           const mf = document.createElement('math-field');
           mf.setAttribute('read-only', '');
           configureField(mf);
@@ -2088,7 +2408,7 @@ const ME = (() => {
       if (code === 'KeyD') { e.preventDefault(); setMode(body.dataset.mode === 'draw' ? 'write' : 'draw'); return; }
       if (code === 'KeyM') { e.preventDefault(); insertLatex(matrixLatex(2, 2, 'pmatrix')); return; }
       if (code === 'KeyS') { e.preventDefault(); insertLatex(systemLatex(2)); return; }
-      if (code === 'KeyL') { e.preventDefault(); insertLatex(TPL.aligned); return; }
+      if (code === 'KeyL') { e.preventDefault(); startDeriv(); return; }
       if (code === 'KeyT') { e.preventDefault(); $('#textBtn').click(); return; }
       if (/^Digit[1-6]$/.test(code)) { e.preventDefault(); setColor(COLOR_NAMES[+code.slice(5) - 1]); return; }
       if (k === 'PageDown') { e.preventDefault(); goPage(board.cur + 1); return; }
