@@ -81,12 +81,12 @@ Pulsa **?** dentro de la pizarra para ver todos los atajos.
 - **Menús**: Matriz, Sistema, Desarrollo, Símbolos y Cálculo (derivadas, integrales y límites).
 - **Desarrollo** (Alt+L): pasos alineados por el «=» con explicación a la derecha. Intro copia la fila anterior para editar solo lo que cambia.
 - **Calcular** (Ctrl+=) actúa sobre la línea en la que escribes.
-- **Operaciones ▾**, **Gauss** y **Gauss-Jordan**: al elegirlos aparece la barra **«Elige la línea»**. Haz clic en la línea o en el paso del desarrollo al que quieres aplicar la operación (se resalta al pasar el ratón). **Intro** usa la línea activa y **Esc** cancela. Así, con varias ecuaciones en la misma página, decides cuál se resuelve.
+- **Operaciones ▾**: al elegir una operación aparece la barra **«Elige la línea»**. Haz clic en la línea o en el paso del desarrollo al que quieres aplicar la operación (se resalta al pasar el ratón). **Intro** usa la línea activa y **Esc** cancela. Así, con varias ecuaciones en la misma página, decides cuál se resuelve.
 - **Operaciones ▾**: todas paso a paso.
 
 | Grupo | Operaciones |
 | --- | --- |
-| Matrices | Inversa por Gauss-Jordan; determinante por 2×2/Sarrus, cofactores o Gauss; regla de Cramer; discusión de sistemas con un parámetro; producto desarrollado; autovalores, autovectores y diagonalización. |
+| Matrices y sistemas | Gauss y Gauss-Jordan paso a paso (matriz, ampliada o sistema, con su clasificación); inversa por Gauss-Jordan; determinante por 2×2/Sarrus, cofactores o Gauss; regla de Cramer; discusión de sistemas con un parámetro; producto desarrollado; autovalores, autovectores y diagonalización. |
 | Vectores | Producto escalar y vectorial, norma, ángulo y proyección. |
 | Ecuaciones | Resolver paso a paso (1.º y 2.º grado, polinómicas con raíces racionales), siguiente paso y comprobación. |
 | Aritmética | Simplificar y operar fracciones, m.c.d. y m.c.m. (factores primos y Euclides), descomposición en factores primos. |

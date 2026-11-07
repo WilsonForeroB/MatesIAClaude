@@ -436,8 +436,6 @@ body.picking .dcell.pick-hover,body.picking .dnote.pick-hover{background:var(--a
 
   <div class="grp grp-push only-write" aria-label="Calcular">
     <button type="button" class="mi-btn mi-btn--sm" data-pop="opsPop" aria-haspopup="true" title="Operaciones paso a paso: matrices, vectores, ecuaciones, fracciones, polinomios, combinatoria, lógica, conjuntos, derivadas y gráficas">Operaciones <span aria-hidden="true">▾</span></button>
-    <button type="button" class="mi-btn mi-btn--sm" id="gaussBtn" title="Escalonar por Gauss paso a paso (matriz o sistema)">Gauss</button>
-    <button type="button" class="mi-btn mi-btn--sm" id="gjBtn" title="Reducir por Gauss-Jordan paso a paso">Gauss-Jordan</button>
     <button type="button" class="mi-btn mi-btn--primary mi-btn--sm" id="calcBtn" title="Calcular la línea activa (Ctrl+=)">Calcular</button>
   </div>
 </div>
@@ -480,7 +478,7 @@ body.picking .dcell.pick-hover,body.picking .dnote.pick-hover{background:var(--a
     <button type="button" class="mi-btn mi-btn--sm" data-sys="3">3</button>
     <button type="button" class="mi-btn mi-btn--sm" data-sys="4">4</button>
   </div>
-  <p style="margin:0;font:400 13px/20px var(--font-sans);color:var(--ink-muted);max-width:240px">Escribe cada ecuación en su hueco, por ejemplo <kbd>2x+y=3</kbd>, y pulsa <b>Gauss</b> para resolverlo.</p>
+  <p style="margin:0;font:400 13px/20px var(--font-sans);color:var(--ink-muted);max-width:240px">Escribe cada ecuación en su hueco, por ejemplo <kbd>2x+y=3</kbd>, y elige <b>Operaciones ▾ → Gauss</b> para resolverlo.</p>
 </div>
 
 <div class="pop" id="viewPop" hidden role="dialog" aria-label="Vista">
@@ -610,7 +608,7 @@ body.picking .dcell.pick-hover,body.picking .dnote.pick-hover{background:var(--a
     <section>
       <h3>Operaciones ▾</h3>
       <table class="keys"><tbody>
-        <tr><td>Matrices</td><td>Inversa, determinante (Sarrus, cofactores, Gauss), Cramer, sistema con parámetro, producto desarrollado, autovalores</td></tr>
+        <tr><td>Matrices</td><td>Gauss, Gauss-Jordan, inversa, determinante (Sarrus, cofactores, Gauss), Cramer, sistema con parámetro, producto desarrollado, autovalores</td></tr>
         <tr><td>Vectores</td><td>Escalar, vectorial, norma, ángulo, proyección</td></tr>
         <tr><td>Ecuaciones</td><td>Resolver paso a paso, siguiente paso, comprobar</td></tr>
         <tr><td>Aritmética</td><td>Fracciones, m.c.d. y m.c.m., factores primos</td></tr>
@@ -624,8 +622,8 @@ body.picking .dcell.pick-hover,body.picking .dnote.pick-hover{background:var(--a
       <table class="keys"><tbody>
         <tr><td>A = (matriz)</td><td>Guarda la matriz A para usarla en otras líneas de la página</td></tr>
         <tr><td>Ctrl+=</td><td>Calcular: A+B, A·B, 2A, A^2, A^T, A^{-1}, det A, tr A, rg A, fracciones</td></tr>
-        <tr><td>Gauss</td><td>Escalona paso a paso una matriz, una ampliada (A|b) o un sistema y lo clasifica</td></tr>
-        <tr><td>Gauss-Jordan</td><td>Igual, hasta la forma reducida</td></tr>
+        <tr><td>Operaciones ▾ → Gauss</td><td>Escalona paso a paso una matriz, una ampliada (A|b) o un sistema y lo clasifica</td></tr>
+        <tr><td>Operaciones ▾ → Gauss-Jordan</td><td>Igual, hasta la forma reducida</td></tr>
       </tbody></table>
       <p style="font:400 13px/20px var(--font-sans);color:var(--ink-muted);margin:var(--space-2) 0 0">Los resultados son exactos: verás fracciones como 1/3 y no decimales.</p>
     </section>
@@ -1087,7 +1085,7 @@ const ME = (() => {
       }
       const MATS = ['pmatrix', 'bmatrix', 'Bmatrix', 'matrix', 'smallmatrix', 'vmatrix', 'Vmatrix', 'array', 'pmatrix*', 'bmatrix*'];
       if (!MATS.includes(name)) {
-        if (name === 'cases') throw new MErr('Para resolver un sistema usa el botón Gauss.');
+        if (name === 'cases') throw new MErr('Para resolver un sistema usa Operaciones ▾ → Gauss (o Cramer).');
         throw new MErr('No sé calcular con el entorno «' + name + '».');
       }
       const rows = [[]];
@@ -4064,7 +4062,7 @@ const OPS = ((ME) => {
   function runGauss(jordan) {
     const b = syncActive();
     const src = b && b.type === 'deriv' ? b.rows[derivRowIndex(b)].r : b && b.type === 'math' ? b.v : '';
-    if (!src.trim()) { toast('Coloca el cursor en una línea con una matriz o un sistema y pulsa Gauss.'); return; }
+    if (!src.trim()) { toast('Elige una línea con una matriz o un sistema para aplicar Gauss.'); return; }
     try {
       const lines = ME.gaussLines(src, b.type === 'deriv' ? otherDefs(b.id, derivRowIndex(b)) : otherDefs(b.id), jordan);
       let last = b.id;
@@ -4220,7 +4218,9 @@ const OPS = ((ME) => {
 
   /* ---------------- Operaciones paso a paso ---------------- */
   const OPS_MENU = [
-    ['Matrices', [
+    ['Matrices y sistemas', [
+      ['gauss', 'Gauss paso a paso', 'Una matriz, una matriz ampliada (A|b) o un sistema (Sistema ▾): escalona paso a paso y, si es un sistema, lo clasifica y lo resuelve.'],
+      ['gj', 'Gauss-Jordan paso a paso', 'Igual que Gauss, pero hasta la forma escalonada reducida.'],
       ['inv', 'Inversa paso a paso', 'Escribe la matriz o su nombre (A). Aplica Gauss-Jordan a (A | I).'],
       ['detS', 'Determinante: 2×2 y Sarrus', 'Matriz 2×2 o 3×3 (o su nombre). Con mayor tamaño usa cofactores.'],
       ['detC', 'Determinante por cofactores', 'Desarrolla por la fila o columna con más ceros.'],
@@ -4459,8 +4459,6 @@ const OPS = ((ME) => {
       toast(e instanceof ME.MErr ? e.message : 'No he podido hacer esta operación con lo que hay en la línea.', 'aviso');
     }
   }
-  $('#gaussBtn').addEventListener('click', () => startPick('gauss', 'Gauss'));
-  $('#gjBtn').addEventListener('click', () => startPick('gj', 'Gauss-Jordan'));
 
   /* ---------------- Modo, páginas y ajustes ---------------- */
   function setMode(m) {
