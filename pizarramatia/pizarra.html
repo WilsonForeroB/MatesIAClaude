@@ -309,19 +309,58 @@ body.picking .dcell.pick-hover,body.picking .dnote.pick-hover{background:var(--a
 .mtable.values td:first-child,.mtable.values th:first-child{font-style:italic}
 .mtable.values tr td{border:var(--border-width-thin) solid var(--border)}
 /* Gráficas */
+/* Panel de gráficos */
+.pop-graf{width:min(440px,calc(100vw - 16px));gap:var(--space-2)}
+.graf-opt{display:grid;grid-template-columns:44px 1fr;gap:var(--space-3);align-items:center;text-align:left;padding:var(--space-2) var(--space-3);border:var(--border-width-thin) solid var(--border-strong);border-radius:var(--radius-md);background:var(--surface-raised);color:var(--ink);cursor:pointer;
+  transition:background-color var(--duration-fast) var(--ease-standard),border-color var(--duration-fast) var(--ease-standard)}
+.graf-opt:hover{background:var(--accent-soft);border-color:var(--accent)}
+.graf-opt:focus-visible{outline:var(--border-width-medium) solid var(--focus-ring);outline-offset:2px}
+.graf-opt svg{width:40px;height:40px;color:var(--ink-muted)}
+.graf-opt b{display:block;font:600 15px/22px var(--font-sans)}
+.graf-opt small,.graf-sub small{display:block;font:400 13px/19px var(--font-sans);color:var(--ink-muted)}
+.graf-sub{display:flex;align-items:center;gap:var(--space-3);margin-left:56px;flex-wrap:wrap}
+.nn-field{display:flex;flex-direction:column;gap:4px;font:400 14px/20px var(--font-sans);color:var(--ink-muted)}
+.nn-field input{font:600 16px var(--font-mono);color:var(--ink);background:var(--surface-raised);border:var(--border-width-thin) solid var(--border-strong);border-radius:var(--radius-md);padding:8px 10px}
+.nn-field input:focus-visible{outline:var(--border-width-medium) solid var(--focus-ring);outline-offset:2px}
+.nn-checks{display:flex;flex-direction:column;gap:6px}
+.nn-prev{font:400 13px/20px var(--font-mono)!important;color:var(--ink-muted)!important}
+.nn-prev.err{color:var(--warning)!important}
+/* Gráfica 3D */
+.g3d{display:flex;flex-direction:column;gap:var(--space-2);width:min(100%,760px);outline:none}
+.g3d canvas{width:100%;height:420px;background:var(--surface-sunken);border:var(--border-width-thin) solid var(--border);border-radius:var(--radius-md);touch-action:none;cursor:grab}
+.g3d canvas:active{cursor:grabbing}
+.g3d .g-cap{font:400 14px/20px var(--font-serif);color:var(--ink)}
+/* Grafos */
+.net{display:flex;flex-direction:column;gap:var(--space-2);width:min(100%,760px);position:relative;outline:none}
+.net svg{width:100%;height:auto;background:var(--surface-sunken);border:var(--border-width-thin) solid var(--border);border-radius:var(--radius-md);touch-action:none;user-select:none}
+.net-bar{display:flex;flex-wrap:wrap;align-items:center;gap:var(--space-2)}
+.net-hint{margin:0;font:400 13px/20px var(--font-sans);color:var(--ink-muted)}
+.net-edge{stroke:var(--ink-muted);stroke-width:1.6}
+.net-hit{stroke:transparent;stroke-width:14;cursor:pointer}
+.net-w{fill:var(--ink);font:400 12px var(--font-mono);paint-order:stroke;stroke:var(--surface-sunken);stroke-width:4px}
+.net-node circle{fill:var(--surface-raised);stroke:var(--ink);stroke-width:2}
+.net-node.k-in circle{stroke:var(--data-2);fill:color-mix(in srgb,var(--data-2) 16%,var(--surface-raised))}
+.net-node.k-hid circle{stroke:var(--data-1);fill:color-mix(in srgb,var(--data-1) 16%,var(--surface-raised))}
+.net-node.k-out circle{stroke:var(--data-5);fill:color-mix(in srgb,var(--data-5) 16%,var(--surface-raised))}
+.net-node.k-bias circle{stroke-dasharray:4 3;stroke:var(--ink-muted)}
+.net-node text{fill:var(--ink);font:400 15px var(--font-serif);text-anchor:middle;dominant-baseline:central;pointer-events:none}
+.net-node.sel circle{stroke:var(--accent);stroke-width:3.5}
+.net-cap{fill:var(--ink-muted);font:600 12px var(--font-sans);text-anchor:middle}
+.net-tmp{stroke:var(--accent);stroke-width:2;stroke-dasharray:5 4}
+.net-edit{position:absolute;z-index:5;font:400 14px var(--font-sans);padding:2px 6px;border:var(--border-width-medium) solid var(--accent);border-radius:var(--radius-sm);background:var(--surface-raised);color:var(--ink);width:110px}
 .graph{display:flex;flex-direction:column;gap:var(--space-2);width:min(100%,760px);outline:none}
 .graph svg{width:100%;height:auto;background:var(--surface-sunken);border:var(--border-width-thin) solid var(--border);border-radius:var(--radius-md);touch-action:none}
 .graph .g-grid{stroke:var(--border);stroke-width:1}
 .graph .g-axis{stroke:var(--ink-muted);stroke-width:1.5}
 .graph .g-tick{fill:var(--ink-muted);font:400 11px var(--font-mono)}
 .graph .g-curve{fill:none;stroke-width:2.5;stroke-linejoin:round;stroke-linecap:round}
-.graph .g-ctrl{display:flex;flex-wrap:wrap;align-items:center;gap:var(--space-2) var(--space-3);font:400 13px/20px var(--font-sans);color:var(--ink-muted)}
-.graph .g-ctrl input{font:400 13px var(--font-mono);color:var(--ink);background:var(--surface-raised);border:var(--border-width-thin) solid var(--border-strong);border-radius:var(--radius-md);padding:4px 8px}
-.graph .g-ctrl input[type=number]{width:72px}
-.graph .g-ctrl input.g-fns{flex:1 1 220px;min-width:0}
+:is(.graph,.g3d) .g-ctrl{display:flex;flex-wrap:wrap;align-items:center;gap:var(--space-2) var(--space-3);font:400 13px/20px var(--font-sans);color:var(--ink-muted)}
+:is(.graph,.g3d) .g-ctrl input{font:400 13px var(--font-mono);color:var(--ink);background:var(--surface-raised);border:var(--border-width-thin) solid var(--border-strong);border-radius:var(--radius-md);padding:4px 8px}
+:is(.graph,.g3d) .g-ctrl input[type=number]{width:72px}
+:is(.graph,.g3d) .g-ctrl input.g-fns{flex:1 1 220px;min-width:0}
 .graph .g-legend{display:flex;flex-wrap:wrap;gap:4px 16px;font:400 14px/20px var(--font-serif);color:var(--ink)}
 .graph .g-legend span::before{content:"";display:inline-block;width:18px;height:3px;margin-right:6px;vertical-align:middle;background:var(--sw);border-radius:2px}
-.graph .g-err{color:var(--warning);font:400 13px/20px var(--font-sans)}
+:is(.graph,.g3d) .g-err{color:var(--warning);font:400 13px/20px var(--font-sans)}
 #print-root{display:none}
 @media print{
   @page{margin:14mm}
@@ -378,6 +417,7 @@ body.picking .dcell.pick-hover,body.picking .dnote.pick-hover{background:var(--a
   <div class="grp only-write" aria-label="Símbolos">
     <button type="button" class="tb-btn txt" data-pop="symPop" title="Todos los símbolos: potencias, fracciones, raíces, lógica, conjuntos, relaciones, flechas, griegas…">Símbolos <span class="caret">▾</span></button>
     <button type="button" class="tb-btn txt" data-pop="calcPop" title="Derivadas, integrales y límites">Cálculo <span class="caret">▾</span></button>
+    <button type="button" class="tb-btn txt" data-pop="grafPop" title="Gráficas 2D, superficies 3D y grafos (con asistente de red neuronal)">Gráficos <span class="caret">▾</span></button>
   </div>
 
   <div class="grp only-draw" aria-label="Herramienta de dibujo">
@@ -454,6 +494,34 @@ body.picking .dcell.pick-hover,body.picking .dnote.pick-hover{background:var(--a
 
 <div class="pop pop-sym" id="symPop" hidden role="dialog" aria-label="Símbolos"></div>
 <div class="pop pop-ops" id="opsPop" hidden role="dialog" aria-label="Operaciones paso a paso"></div>
+<div class="pop pop-graf" id="grafPop" hidden role="dialog" aria-label="Gráficos">
+  <button type="button" class="graf-opt" data-graf="2d"><svg viewBox="0 0 40 40" aria-hidden="true"><path d="M4 34H37M6 37V3" stroke="currentColor" stroke-width="2" fill="none"/><path d="M7 30C13 4 19 4 23 20S31 34 36 8" stroke="var(--data-1)" stroke-width="2.5" fill="none" stroke-linecap="round"/></svg><span><b>Gráfica 2D</b><small>Funciones y = f(x). Usa la función de la línea activa; puedes poner varias separadas por punto y coma.</small></span></button>
+  <button type="button" class="graf-opt" data-graf="3d"><svg viewBox="0 0 40 40" aria-hidden="true"><path d="M6 28L20 35L34 28L20 21Z" fill="var(--data-2)" opacity=".35" stroke="currentColor" stroke-width="1.5"/><path d="M6 28C10 14 15 10 20 15S30 18 34 28" stroke="var(--data-3)" stroke-width="2.5" fill="none"/><path d="M20 21V4" stroke="currentColor" stroke-width="1.5"/></svg><span><b>Gráfica 3D</b><small>Superficies z = f(x, y). Arrastra para girarla y usa la rueda para acercar.</small></span></button>
+  <button type="button" class="graf-opt" data-graf="net"><svg viewBox="0 0 40 40" aria-hidden="true"><g stroke="currentColor" stroke-width="1.4"><path d="M8 10L20 20M8 30L20 20M20 20L32 12M20 20L32 28M8 10L32 12"/></g><circle cx="8" cy="10" r="4" fill="var(--data-2)"/><circle cx="8" cy="30" r="4" fill="var(--data-2)"/><circle cx="20" cy="20" r="4" fill="var(--data-1)"/><circle cx="32" cy="12" r="4" fill="var(--data-5)"/><circle cx="32" cy="28" r="4" fill="var(--data-5)"/></svg><span><b>Grafo</b><small>Nodos y aristas: dirigido o no, con pesos y matriz de adyacencia.</small></span></button>
+  <div class="graf-sub"><button type="button" class="mi-btn mi-btn--sm" data-graf="nn">Asistente de red neuronal…</button><small>Monta un grafo por capas: entrada, ocultas y salida.</small></div>
+</div>
+
+<dialog id="nnDlg" class="ask" aria-labelledby="nnTitle">
+  <div class="ask-box">
+    <div class="ask-pio" id="nnPio"></div>
+    <div class="ask-main">
+      <span class="mi-label">Asistente</span>
+      <h2 id="nnTitle">Red neuronal</h2>
+      <label class="nn-field">Neuronas por capa, de la entrada a la salida
+        <input type="text" id="nnLayers" value="3, 4, 4, 2" inputmode="numeric" autocomplete="off">
+      </label>
+      <div class="nn-checks">
+        <label class="mi-check"><input type="checkbox" id="nnBias"> Neurona de sesgo (+1) en cada capa</label>
+        <label class="mi-check"><input type="checkbox" id="nnW"> Mostrar los pesos w en las conexiones</label>
+      </div>
+      <p class="nn-prev" id="nnPrev"></p>
+      <div class="ask-acts">
+        <button type="button" class="mi-btn mi-btn--ghost mi-btn--sm" id="nnCancel">Cancelar</button>
+        <button type="button" class="mi-btn mi-btn--primary mi-btn--sm" id="nnOk">Crear red</button>
+      </div>
+    </div>
+  </div>
+</dialog>
 <div class="pop pop-sym" id="calcPop" hidden role="dialog" aria-label="Derivadas, integrales y límites"></div>
 
 <div class="pop" id="sysPop" hidden role="dialog" aria-label="Insertar sistema">
@@ -3114,6 +3182,19 @@ const OPS = ((ME) => {
             vbar: Number.isInteger(x.vbar) ? x.vbar : null, hline: Number.isInteger(x.hline) ? x.hline : null, hlines: Array.isArray(x.hlines) ? x.hlines.filter(Number.isInteger) : null,
             mark: Array.isArray(x.mark) ? x.mark.slice(0, 2).map(Number) : null, caption: typeof x.caption === 'string' ? x.caption : '', kind: typeof x.kind === 'string' ? x.kind : '', lastBold: !!x.lastBold });
         }
+        if (x.type === 'graph3d') {
+          const num = (v, d) => (Number.isFinite(+v) ? +v : d);
+          return Object.assign(base, { type: 'graph3d', fn: typeof x.fn === 'string' ? x.fn : 'z=x^2-y^2', xmin: num(x.xmin, -3), xmax: num(x.xmax, 3), ymin: num(x.ymin, -3), ymax: num(x.ymax, 3), az: num(x.az, -0.8), el: num(x.el, 0.55), zoom: num(x.zoom, 1) });
+        }
+        if (x.type === 'net') {
+          const nodes = (Array.isArray(x.nodes) ? x.nodes : []).filter((n) => n && Number.isFinite(+n.x) && Number.isFinite(+n.y)).slice(0, 120)
+            .map((n) => ({ id: String(n.id || uid()), x: +n.x, y: +n.y, label: String(n.label == null ? '' : n.label).slice(0, 24), kind: ['in', 'hid', 'out', 'bias'].includes(n.kind) ? n.kind : '' }));
+          const ids = new Set(nodes.map((n) => n.id));
+          const edges = (Array.isArray(x.edges) ? x.edges : []).filter((e) => e && ids.has(String(e.a)) && ids.has(String(e.b))).slice(0, 600)
+            .map((e) => ({ a: String(e.a), b: String(e.b), w: e.w == null || e.w === '' ? null : String(e.w).slice(0, 16) }));
+          const caps = (Array.isArray(x.caps) ? x.caps : []).filter((c) => c && Number.isFinite(+c.x)).map((c) => ({ x: +c.x, text: String(c.text || '').slice(0, 40) }));
+          return Object.assign(base, { type: 'net', nodes, edges, caps, directed: !!x.directed, h: Math.min(1200, Math.max(260, +x.h || 420)) });
+        }
         if (x.type === 'graph') {
           const xmin = Number.isFinite(+x.xmin) ? +x.xmin : -5, xmax = Number.isFinite(+x.xmax) ? +x.xmax : 5;
           return Object.assign(base, { type: 'graph', fns: (Array.isArray(x.fns) ? x.fns : []).map(String).slice(0, 6), xmin: Math.min(xmin, xmax - 0.001), xmax });
@@ -3224,7 +3305,7 @@ const OPS = ((ME) => {
     x.type = 'button';
     x.className = 'x-del blk-del';
     x.textContent = '×';
-    const xl = b.type === 'deriv' ? 'Borrar todo el desarrollo' : b.type === 'table' ? 'Borrar la tabla' : b.type === 'graph' ? 'Borrar la gráfica' : 'Borrar esta línea';
+    const xl = b.type === 'deriv' ? 'Borrar todo el desarrollo' : b.type === 'table' ? 'Borrar la tabla' : b.type === 'graph' || b.type === 'graph3d' ? 'Borrar la gráfica' : b.type === 'net' ? 'Borrar el grafo' : 'Borrar esta línea';
     x.title = xl;
     x.setAttribute('aria-label', xl);
     x.addEventListener('mousedown', (e) => e.preventDefault());
@@ -3234,6 +3315,10 @@ const OPS = ((ME) => {
       buildTable(b, bd);
     } else if (b.type === 'graph') {
       buildGraph(b, bd, false);
+    } else if (b.type === 'graph3d') {
+      buildGraph3d(b, bd, false);
+    } else if (b.type === 'net') {
+      buildNet(b, bd, false);
     } else if (b.type === 'deriv') {
       el.classList.add('blk-deriv');
       el.classList.remove('is-boxed');
@@ -3614,7 +3699,7 @@ const OPS = ((ME) => {
     const empty = gone.type === 'math' || gone.type === 'text' ? !gone.v : gone.type === 'deriv' ? gone.rows.every((r) => !r.l && !r.r && !r.note) : false;
     if (!empty) {
       const pg = board.cur, only = bl.length === 1;
-      toast((gone.type === 'deriv' ? 'Desarrollo borrado.' : gone.type === 'table' ? 'Tabla borrada.' : gone.type === 'graph' ? 'Gráfica borrada.' : 'Línea borrada.'), 'nota', { label: 'Deshacer', fn: () => {
+      toast((gone.type === 'deriv' ? 'Desarrollo borrado.' : gone.type === 'table' ? 'Tabla borrada.' : gone.type === 'graph' || gone.type === 'graph3d' ? 'Gráfica borrada.' : gone.type === 'net' ? 'Grafo borrado.' : 'Línea borrada.'), 'nota', { label: 'Deshacer', fn: () => {
         if (board.cur !== pg) { board.cur = pg; }
         const blocks = page().blocks;
         gone.id = uid();
@@ -3673,6 +3758,7 @@ const OPS = ((ME) => {
 
   /* ---------------- Teclado dentro de las líneas ---------------- */
   blocksEl.addEventListener('keydown', (e) => {
+    if (e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT' || e.target.tagName === 'svg' || e.target.closest('.net,.g3d,.graph')) return;
     const el = e.target.closest && e.target.closest('.blk');
     if (!el) return;
     const id = el.dataset.id, b = blockById(id);
@@ -4208,6 +4294,388 @@ const OPS = ((ME) => {
     draw();
   }
 
+  /* ---------------- Gráfica 3D (superficies z = f(x, y)) ---------------- */
+  const redrawers = new Set();
+  function hexRGB(c) {
+    const m = /^#?([0-9a-f]{2})([0-9a-f]{2})([0-9a-f]{2})$/i.exec((c || '').trim());
+    return m ? [parseInt(m[1], 16), parseInt(m[2], 16), parseInt(m[3], 16)] : [120, 120, 120];
+  }
+  const mixRGB = (a, b, t) => a.map((v, i) => Math.round(v + (b[i] - v) * t));
+  function compile3d(src) {
+    let rhs = src;
+    const m = /^\s*(z|f\s*(\\left)?\(\s*x\s*,\s*y\s*(\\right)?\))\s*=/.exec(src);
+    if (m) rhs = src.slice(m[0].length);
+    const ast = OPS.parseExpr(rhs, { var: 'x' });
+    const vars = [...(function walk(a, set) { if (a.t === 'var') set.add(a.n); if (a.a) walk(a.a, set); if (a.b) walk(a.b, set); return set; })(ast, new Set())];
+    const bad = vars.filter((v) => v !== 'x' && v !== 'y');
+    if (bad.length) throw new ME.MErr('Solo puede depender de x e y (sobra ' + bad.join(', ') + ').');
+    return { f: (x, y) => { try { return OPS.evalNum(ast, { x, y }); } catch (e) { return NaN; } }, latex: OPS.L(ast) };
+  }
+  function buildGraph3d(b, bd, ro) {
+    const box = document.createElement('div');
+    box.className = 'g3d';
+    box.tabIndex = 0;
+    const cv3 = document.createElement('canvas');
+    cv3.setAttribute('role', 'img');
+    const cap = document.createElement('div');
+    cap.className = 'g-cap';
+    const err = document.createElement('div');
+    err.className = 'g-err';
+    box.append(cv3, cap, err);
+    let F3 = null;
+    function recompile() {
+      err.textContent = '';
+      try { F3 = compile3d(b.fn); } catch (e) { F3 = null; err.textContent = 'Aviso: ' + (e.message || 'no puedo dibujar esa función'); }
+    }
+    function draw() {
+      if (!box.isConnected && !ro) { redrawers.delete(draw); return; }
+      const W = Math.max(320, Math.round(cv3.clientWidth || 720)), H = 420, dpr = window.devicePixelRatio || 1;
+      cv3.width = W * dpr; cv3.height = H * dpr;
+      const c = cv3.getContext('2d');
+      c.setTransform(dpr, 0, 0, dpr, 0, 0);
+      c.clearRect(0, 0, W, H);
+      cv3.setAttribute('aria-label', 'Superficie z = ' + b.fn.replace(/^\s*z\s*=/, '') + ' para x entre ' + b.xmin + ' y ' + b.xmax + ', y entre ' + b.ymin + ' y ' + b.ymax);
+      cap.textContent = 'z = ' + (F3 ? F3.latex : b.fn).replace(/\\left|\\right|\\cdot/g, '').replace(/\\frac\{([^{}]+)\}\{([^{}]+)\}/g, '($1)/($2)').replace(/\\sqrt\{([^{}]+)\}/g, '√($1)').replace(/\\(sin|cos|tan|ln|log|exp)/g, '$1').replace(/\\pi/g, 'π').replace(/[{}\\]/g, '').replace(/\^2/g, '²') + '   ·   x ∈ [' + b.xmin + ', ' + b.xmax + '],  y ∈ [' + b.ymin + ', ' + b.ymax + ']';
+      if (!F3) return;
+      const N = 38;
+      const Z = [];
+      const zs = [];
+      for (let i = 0; i <= N; i++) { Z.push([]); for (let j = 0; j <= N; j++) { const x = b.xmin + (b.xmax - b.xmin) * i / N, y = b.ymin + (b.ymax - b.ymin) * j / N; const z = F3.f(x, y); Z[i].push(z); if (Number.isFinite(z)) zs.push(z); } }
+      if (!zs.length) { err.textContent = 'Aviso: la función no tiene valores reales en ese rango.'; return; }
+      zs.sort((p, q) => p - q);
+      let z0 = zs[Math.floor(zs.length * 0.01)], z1 = zs[Math.ceil(zs.length * 0.99) - 1];
+      if (z1 - z0 < 1e-9) { z0 -= 1; z1 += 1; }
+      const zc = (z0 + z1) / 2, zr = (z1 - z0) / 2;
+      const ca = Math.cos(b.az), sa = Math.sin(b.az), ce = Math.cos(b.el), se = Math.sin(b.el);
+      const sc = Math.min(W, H) * 0.25 * b.zoom, cx = W / 2, cy = H / 2 + 6;
+      const P = (X, Y, Zv) => { const x1 = X * ca - Y * sa, y1 = X * sa + Y * ca; return [cx + x1 * sc, cy - (y1 * se + Zv * ce) * sc, y1 * ce - Zv * se]; };
+      const nz = (z) => Math.max(-1.1, Math.min(1.1, (z - zc) / zr * 0.85));
+      const pt = (i, j) => P(-1 + 2 * i / N, -1 + 2 * j / N, nz(Z[i][j]));
+      const cLow = hexRGB(cssVar('data-2')), cMid = hexRGB(cssVar('data-1')), cHigh = hexRGB(cssVar('data-3')), ink = hexRGB(cssVar('ink'));
+      // caja y ejes
+      c.lineWidth = 1;
+      c.strokeStyle = 'rgba(' + ink.join(',') + ',0.25)';
+      const corners = [[-1, -1], [1, -1], [1, 1], [-1, 1]];
+      c.beginPath(); corners.forEach(([X, Y], k) => { const q = P(X, Y, -1); if (k) c.lineTo(q[0], q[1]); else c.moveTo(q[0], q[1]); }); c.closePath(); c.stroke();
+      corners.forEach(([X, Y]) => { const a = P(X, Y, -1), q = P(X, Y, 1); c.beginPath(); c.moveTo(a[0], a[1]); c.lineTo(q[0], q[1]); c.stroke(); });
+      const quads = [];
+      for (let i = 0; i < N; i++) for (let j = 0; j < N; j++) {
+        const zz = [Z[i][j], Z[i + 1][j], Z[i + 1][j + 1], Z[i][j + 1]];
+        if (!zz.every(Number.isFinite)) continue;
+        const q = [pt(i, j), pt(i + 1, j), pt(i + 1, j + 1), pt(i, j + 1)];
+        const d = (q[0][2] + q[1][2] + q[2][2] + q[3][2]) / 4;
+        const zm = (zz[0] + zz[1] + zz[2] + zz[3]) / 4;
+        // sombreado con la normal en pantalla
+        const ux = q[1][0] - q[0][0], uy = q[1][1] - q[0][1], vx = q[3][0] - q[0][0], vy = q[3][1] - q[0][1];
+        const shade = Math.min(1, Math.abs(ux * vy - uy * vx) / (sc * sc * 4 / (N * N)) * 0.9);
+        quads.push({ q, d, t: Math.max(0, Math.min(1, (zm - z0) / (z1 - z0))), shade });
+      }
+      quads.sort((p, q) => q.d - p.d);
+      for (const { q, t, shade } of quads) {
+        const col = t < 0.5 ? mixRGB(cLow, cMid, t * 2) : mixRGB(cMid, cHigh, (t - 0.5) * 2);
+        const k = 0.62 + 0.38 * shade;
+        c.fillStyle = 'rgb(' + col.map((v) => Math.round(v * k)).join(',') + ')';
+        c.strokeStyle = 'rgba(' + ink.join(',') + ',0.18)';
+        c.lineWidth = 0.6;
+        c.beginPath(); c.moveTo(q[0][0], q[0][1]); for (let n = 1; n < 4; n++) c.lineTo(q[n][0], q[n][1]); c.closePath(); c.fill(); c.stroke();
+      }
+      // rótulos de los ejes
+      c.fillStyle = 'rgb(' + ink.join(',') + ')';
+      c.font = '600 13px ' + (getComputedStyle(body).getPropertyValue('--font-sans') || 'sans-serif');
+      const lx = P(1.18, -1, -1), ly = P(-1, 1.18, -1), lz = P(-1, -1, 1.15);
+      c.fillText('x', lx[0], lx[1]); c.fillText('y', ly[0], ly[1]); c.fillText('z', lz[0], lz[1]);
+      c.font = '400 11px ' + (getComputedStyle(body).getPropertyValue('--font-mono') || 'monospace');
+      c.fillStyle = 'rgba(' + ink.join(',') + ',0.7)';
+      const zt = P(-1, -1, 1), zb = P(-1, -1, -1);
+      c.fillText(String(Math.round(z1 * 100) / 100).replace('.', ','), zt[0] - 34, zt[1]);
+      c.fillText(String(Math.round(z0 * 100) / 100).replace('.', ','), zb[0] - 34, zb[1]);
+    }
+    if (!ro) {
+      const ctrl = document.createElement('div');
+      ctrl.className = 'g-ctrl graph';
+      ctrl.style.width = '100%';
+      const inner = document.createElement('div');
+      inner.className = 'g-ctrl';
+      const fi = document.createElement('input');
+      fi.className = 'g-fns'; fi.value = b.fn; fi.setAttribute('aria-label', 'Función z = f(x, y)');
+      fi.title = 'Escribe z = f(x, y) en LaTeX, por ejemplo z=\\sin(x)\\cos(y) o z=x^2-y^2';
+      fi.addEventListener('change', () => { b.fn = fi.value.trim() || 'z=0'; save(); recompile(); draw(); });
+      const fl = document.createElement('label'); fl.textContent = 'z = f(x, y) '; fl.style.display = 'flex'; fl.style.flex = '1 1 260px'; fl.style.gap = '6px'; fl.style.alignItems = 'center'; fl.appendChild(fi);
+      const num = (label, key) => { const l = document.createElement('label'); l.textContent = label + ' '; const i = document.createElement('input'); i.type = 'number'; i.step = 'any'; i.value = b[key]; i.addEventListener('change', () => { const v = parseFloat(i.value); if (Number.isFinite(v)) { b[key] = v; if (b.xmax - b.xmin < 1e-6) b.xmax = b.xmin + 1; if (b.ymax - b.ymin < 1e-6) b.ymax = b.ymin + 1; save(); draw(); } }); l.appendChild(i); return l; };
+      const reset = document.createElement('button'); reset.type = 'button'; reset.className = 'mi-btn mi-btn--sm'; reset.textContent = 'Vista inicial';
+      reset.addEventListener('click', () => { b.az = -0.8; b.el = 0.55; b.zoom = 1; save(); draw(); });
+      inner.append(fl, num('x desde', 'xmin'), num('hasta', 'xmax'), num('y desde', 'ymin'), num('hasta', 'ymax'), reset);
+      box.appendChild(inner);
+      let drag = null;
+      cv3.addEventListener('pointerdown', (e) => { if (body.dataset.mode === 'draw' || e.pointerType === 'pen') return; e.stopPropagation(); drag = { x: e.clientX, y: e.clientY, az: b.az, el: b.el }; cv3.setPointerCapture(e.pointerId); });
+      cv3.addEventListener('pointermove', (e) => { if (!drag) return; b.az = drag.az + (e.clientX - drag.x) * 0.01; b.el = Math.max(-1.45, Math.min(1.45, drag.el + (e.clientY - drag.y) * 0.01)); requestAnimationFrame(draw); });
+      cv3.addEventListener('pointerup', () => { if (drag) { drag = null; save(); } });
+      cv3.addEventListener('wheel', (e) => { e.preventDefault(); b.zoom = Math.max(0.3, Math.min(4, b.zoom * (e.deltaY > 0 ? 0.9 : 1.1))); draw(); clearTimeout(cv3._t); cv3._t = setTimeout(save, 400); }, { passive: false });
+      new ResizeObserver(() => draw()).observe(cv3);
+      redrawers.add(draw);
+    }
+    bd.appendChild(box);
+    recompile();
+    requestAnimationFrame(draw);
+    if (ro) setTimeout(draw, 50);
+  }
+
+  /* ---------------- Grafos ---------------- */
+  const SUB = '₀₁₂₃₄₅₆₇₈₉', SUP = '⁰¹²³⁴⁵⁶⁷⁸⁹';
+  const sub = (n) => String(n).split('').map((d) => SUB[+d] || d).join('');
+  const sup = (n) => String(n).split('').map((d) => SUP[+d] || d).join('');
+  function nextLabel(b) {
+    const used = new Set(b.nodes.map((n) => n.label));
+    for (let i = 0; i < 400; i++) { const l = i < 26 ? String.fromCharCode(65 + i) : String.fromCharCode(65 + (i % 26)) + Math.floor(i / 26); if (!used.has(l)) return l; }
+    return '?';
+  }
+  function nnBuild(sizes, bias, showW) {
+    const W = 720, L = sizes.length;
+    const maxN = Math.max(...sizes) + (bias ? 1 : 0);
+    const H = Math.max(300, maxN * 62 + 90);
+    const nodes = [], edges = [], caps = [];
+    const layers = [];
+    sizes.forEach((n, l) => {
+      const x = L === 1 ? W / 2 : 70 + l * (W - 140) / (L - 1);
+      const isOut = l === L - 1, isIn = l === 0;
+      const total = n + (bias && !isOut ? 1 : 0);
+      const y0 = (H - 50) / 2 - (total - 1) * 31 + 6;
+      const ids = [];
+      let k = 0;
+      if (bias && !isOut) { const id = uid(); nodes.push({ id, x, y: y0, label: '+1', kind: 'bias' }); ids.push({ id, bias: true }); k++; }
+      for (let j = 0; j < n; j++, k++) {
+        const id = uid();
+        const label = isIn ? 'x' + sub(j + 1) : isOut ? 'ŷ' + sub(j + 1) : 'h' + sup(l) + sub(j + 1);
+        nodes.push({ id, x, y: y0 + k * 62, label, kind: isIn ? 'in' : isOut ? 'out' : 'hid' });
+        ids.push({ id, bias: false, j });
+      }
+      layers.push(ids);
+      caps.push({ x, text: isIn ? 'Entrada' : isOut ? 'Salida' : 'Oculta ' + l });
+    });
+    for (let l = 0; l < L - 1; l++) {
+      for (const a of layers[l]) for (const t of layers[l + 1]) {
+        if (t.bias) continue;
+        const ai = a.bias ? 0 : a.j + 1;
+        edges.push({ a: a.id, b: t.id, w: showW ? (a.bias ? 'b' + sup(l + 1) + sub(t.j + 1) : 'w' + sup(l + 1) + sub(t.j + 1) + sub(ai)) : null });
+      }
+    }
+    return { nodes, edges, caps, directed: true, h: H };
+  }
+  function buildNet(b, bd, ro) {
+    const box = document.createElement('div');
+    box.className = 'net';
+    box.tabIndex = 0;
+    const W = 720;
+    const svg = document.createElementNS(SVGNS, 'svg');
+    svg.setAttribute('role', 'img');
+    let mode = 'node', sel = null, tmp = null, drag = null, lastTap = { key: '', t: 0 };
+    const mk = (tag, attrs, cls, parent) => { const e = document.createElementNS(SVGNS, tag); for (const k in attrs) e.setAttribute(k, attrs[k]); if (cls) e.setAttribute('class', cls); (parent || svg).appendChild(e); return e; };
+    const byId = (id) => b.nodes.find((n) => n.id === id);
+    const R = 19;
+    function render() {
+      svg.setAttribute('viewBox', '0 0 ' + W + ' ' + b.h);
+      svg.textContent = '';
+      const mid = 'arr-' + b.id;
+      const defs = mk('defs', {});
+      const mkr = mk('marker', { id: mid, viewBox: '0 0 10 10', refX: '9', refY: '5', markerWidth: '7', markerHeight: '7', orient: 'auto-start-reverse' }, '', defs);
+      const ap = mk('path', { d: 'M0 0L10 5L0 10Z' }, '', mkr); ap.style.fill = 'var(--ink-muted)';
+      const many = b.edges.length > 60;
+      b.edges.forEach((e, i) => {
+        const A = byId(e.a), B = byId(e.b);
+        if (!A || !B) return;
+        const dx = B.x - A.x, dy = B.y - A.y, d = Math.hypot(dx, dy) || 1;
+        const x1 = A.x + dx / d * R, y1 = A.y + dy / d * R, x2 = B.x - dx / d * (R + (b.directed ? 2 : 0)), y2 = B.y - dy / d * (R + (b.directed ? 2 : 0));
+        const g = mk('g', { 'data-edge': i });
+        const ln = mk('line', { x1, y1, x2, y2 }, 'net-edge', g);
+        if (many) ln.style.strokeWidth = '1';
+        if (b.directed) ln.setAttribute('marker-end', 'url(#' + mid + ')');
+        if (!ro) mk('line', { x1, y1, x2, y2 }, 'net-hit', g);
+        if (e.w != null && e.w !== '') { const t = mk('text', { x: x1 + (x2 - x1) * 0.32, y: y1 + (y2 - y1) * 0.32 - 4, 'text-anchor': 'middle' }, 'net-w', g); t.textContent = e.w; }
+      });
+      for (const c of b.caps || []) { const t = mk('text', { x: c.x, y: b.h - 14 }, 'net-cap'); t.textContent = c.text; }
+      for (const n of b.nodes) {
+        const g = mk('g', { 'data-node': n.id, transform: 'translate(' + n.x + ' ' + n.y + ')' }, 'net-node' + (n.kind ? ' k-' + n.kind : '') + (sel === n.id ? ' sel' : ''));
+        mk('circle', { r: R }, '', g);
+        const t = mk('text', {}, '', g); t.textContent = n.label;
+      }
+      const deg = b.nodes.length;
+      svg.setAttribute('aria-label', 'Grafo ' + (b.directed ? 'dirigido' : 'no dirigido') + ' con ' + deg + ' nodos y ' + b.edges.length + ' aristas');
+    }
+    function pt(e) { const r = svg.getBoundingClientRect(); return { x: (e.clientX - r.left) / r.width * W, y: (e.clientY - r.top) / r.height * b.h }; }
+    const changed = () => { save(); render(); };
+    function editText(initial, at, done) {
+      const inp = document.createElement('input');
+      inp.className = 'net-edit';
+      inp.value = initial || '';
+      const r = svg.getBoundingClientRect(), br = box.getBoundingClientRect();
+      inp.style.left = (at.x / W * r.width + r.left - br.left - 55) + 'px';
+      inp.style.top = (at.y / b.h * r.height + r.top - br.top - 14) + 'px';
+      box.appendChild(inp);
+      inp.focus(); inp.select();
+      let ok = false;
+      const fin = (commit) => { if (ok) return; ok = true; if (commit) done(inp.value.trim()); inp.remove(); };
+      inp.addEventListener('keydown', (e) => { e.stopPropagation(); if (e.key === 'Enter') fin(true); if (e.key === 'Escape') fin(false); });
+      inp.addEventListener('blur', () => fin(true));
+    }
+    if (!ro) {
+      const bar = document.createElement('div');
+      bar.className = 'net-bar';
+      const seg = document.createElement('div');
+      seg.className = 'mi-seg'; seg.setAttribute('role', 'group'); seg.setAttribute('aria-label', 'Herramienta del grafo');
+      const MODES = [['move', 'Mover', 'Arrastra los nodos'], ['node', 'Nodo', 'Clic en un hueco: añade un nodo'], ['edge', 'Arista', 'Arrastra de un nodo a otro: crea una arista'], ['del', 'Borrar', 'Clic en un nodo o arista: lo borra']];
+      for (const [k, l, t] of MODES) { const bt = document.createElement('button'); bt.type = 'button'; bt.textContent = l; bt.title = t; bt.dataset.m = k; bt.setAttribute('aria-pressed', String(k === mode)); bt.addEventListener('click', () => { mode = k; $$('button', seg).forEach((x) => x.setAttribute('aria-pressed', String(x.dataset.m === mode))); hint.textContent = t + '. Doble clic en un nodo o arista para cambiar su nombre o peso.'; }); seg.appendChild(bt); }
+      const dir = document.createElement('label'); dir.className = 'mi-check'; dir.innerHTML = '<input type="checkbox"> Dirigido';
+      const dc = dir.querySelector('input'); dc.checked = b.directed; dc.addEventListener('change', () => { b.directed = dc.checked; changed(); });
+      const btn = (label, title, fn) => { const x = document.createElement('button'); x.type = 'button'; x.className = 'mi-btn mi-btn--sm'; x.textContent = label; x.title = title; x.addEventListener('click', fn); bar.appendChild(x); return x; };
+      bar.append(seg, dir);
+      btn('Red neuronal…', 'Asistente: crea una red por capas en este grafo', async () => {
+        const r = await openNN();
+        if (!r) return;
+        if (b.nodes.length) { const ok = await ask({ title: '¿Sustituir el grafo?', text: 'Los nodos y aristas actuales se cambian por la red neuronal.', pio: 'idea', buttons: [{ label: 'Cancelar', value: false, kind: 'ghost' }, { label: 'Sustituir', value: true, kind: 'primary', focus: true }] }); if (!ok) return; }
+        Object.assign(b, nnBuild(r.sizes, r.bias, r.showW)); dc.checked = b.directed; changed();
+      });
+      btn('Matriz de adyacencia', 'Añade debajo la matriz de adyacencia del grafo', () => {
+        if (!b.nodes.length) { toast('El grafo no tiene nodos.'); return; }
+        const n = b.nodes.length, idx = new Map(b.nodes.map((x, i) => [x.id, i]));
+        const M = Array.from({ length: n }, () => Array(n).fill('0'));
+        for (const e of b.edges) { const i = idx.get(e.a), j = idx.get(e.b); const v = e.w != null && /^-?\d+([.,]\d+)?$/.test(e.w) ? e.w.replace(',', '.') : '1'; M[i][j] = v; if (!b.directed) M[j][i] = v; }
+        const labels = b.nodes.map((x) => x.label.replace(/[₀-₉]/g, (c) => '_' + SUB.indexOf(c)).replace(/[⁰-⁹¹²³]/g, (c) => '^' + Math.max(0, SUP.indexOf(c))) || '?');
+        const degs = b.nodes.map((x) => b.edges.filter((e) => e.a === x.id || e.b === x.id).length);
+        insertSpecs(b.id, [
+          { type: 'math', v: 'M_{\\text{ady}}=\\begin{pmatrix}' + M.map((r) => r.join(' & ')).join('\\\\ ') + '\\end{pmatrix}' },
+          { type: 'math', v: '\\text{Orden de los nodos: }' + labels.map((l) => l.replace(/_(\d)/g, '_{$1}').replace(/\^(\d)/g, '^{$1}')).join(',\\ ') + (b.directed ? '' : '\\qquad \\text{Grados: }' + degs.join(',\\ ')) },
+        ], b);
+      });
+      btn('Vaciar', 'Quita todos los nodos y aristas', async () => {
+        if (!b.nodes.length) return;
+        const ok = await ask({ title: '¿Vaciar el grafo?', text: 'Se borran todos los nodos y aristas de este grafo.', pio: 'pizarra', warn: true, label: 'Aviso', buttons: [{ label: 'Cancelar', value: false, kind: 'ghost', focus: true }, { label: 'Vaciar', value: true, kind: 'danger' }] });
+        if (ok) { b.nodes = []; b.edges = []; b.caps = []; changed(); }
+      });
+      const hint = document.createElement('p');
+      hint.className = 'net-hint';
+      hint.textContent = 'Clic en un hueco: añade un nodo. Doble clic en un nodo o arista para cambiar su nombre o peso.';
+      box.append(bar, svg, hint);
+      svg.addEventListener('pointerdown', (e) => {
+        if (body.dataset.mode === 'draw' || e.pointerType === 'pen' || e.button > 0) return;
+        e.stopPropagation();
+        const p = pt(e);
+        const ng = e.target.closest('[data-node]'), eg = e.target.closest('[data-edge]');
+        // doble clic propio: el dibujo se rehace entre clics y el navegador no siempre lanza dblclick
+        const key = ng ? 'n' + ng.dataset.node : eg ? 'e' + eg.dataset.edge : '';
+        const now = Date.now();
+        if (key && lastTap.key === key && now - lastTap.t < 400 && mode !== 'del') {
+          lastTap = { key: '', t: 0 };
+          if (ng) { const n = byId(ng.dataset.node); editText(n.label, n, (v) => { n.label = v.slice(0, 24); changed(); }); }
+          else { const ed = b.edges[+eg.dataset.edge]; const A = byId(ed.a), B = byId(ed.b); editText(ed.w || '', { x: (A.x + B.x) / 2, y: (A.y + B.y) / 2 }, (v) => { ed.w = v ? v.slice(0, 16) : null; changed(); }); }
+          e.preventDefault();
+          return;
+        }
+        lastTap = { key, t: now };
+        if (mode === 'del') {
+          if (ng) { const id = ng.dataset.node; b.nodes = b.nodes.filter((n) => n.id !== id); b.edges = b.edges.filter((x) => x.a !== id && x.b !== id); changed(); }
+          else if (eg) { b.edges.splice(+eg.dataset.edge, 1); changed(); }
+          return;
+        }
+        if (ng && (mode === 'move' || mode === 'node')) { const n = byId(ng.dataset.node); drag = { n, dx: p.x - n.x, dy: p.y - n.y, moved: false }; sel = n.id; svg.setPointerCapture(e.pointerId); render(); return; }
+        if (ng && mode === 'edge') { const n = byId(ng.dataset.node); tmp = { from: n }; svg.setPointerCapture(e.pointerId); return; }
+        if (!ng && !eg && mode === 'node') {
+          const n = { id: uid(), x: Math.max(R + 2, Math.min(W - R - 2, p.x)), y: Math.max(R + 2, Math.min(b.h - R - 2, p.y)), label: nextLabel(b), kind: '' };
+          b.nodes.push(n); sel = n.id; changed();
+        }
+      });
+      svg.addEventListener('pointermove', (e) => {
+        const p = pt(e);
+        if (drag) { drag.n.x = Math.max(R + 2, Math.min(W - R - 2, p.x - drag.dx)); drag.n.y = Math.max(R + 2, Math.min(b.h - R - 2, p.y - drag.dy)); drag.moved = true; render(); }
+        else if (tmp) { render(); mk('line', { x1: tmp.from.x, y1: tmp.from.y, x2: p.x, y2: p.y }, 'net-tmp'); }
+      });
+      svg.addEventListener('pointerup', (e) => {
+        if (drag) { if (drag.moved) save(); drag = null; return; }
+        if (tmp) {
+          const hit = document.elementFromPoint(e.clientX, e.clientY);
+          const ng = hit && hit.closest && hit.closest('[data-node]');
+          if (ng && ng.dataset.node !== tmp.from.id) {
+            const a = tmp.from.id, c = ng.dataset.node;
+            const exists = b.edges.some((x) => (x.a === a && x.b === c) || (!b.directed && x.a === c && x.b === a));
+            if (!exists) b.edges.push({ a, b: c, w: null });
+          }
+          tmp = null; changed();
+        }
+      });
+      box.addEventListener('keydown', (e) => {
+        if (e.target !== box && e.target !== svg) return;
+        if ((e.key === 'Delete' || e.key === 'Backspace') && sel) { e.preventDefault(); b.nodes = b.nodes.filter((n) => n.id !== sel); b.edges = b.edges.filter((x) => x.a !== sel && x.b !== sel); sel = null; changed(); }
+      });
+    } else box.appendChild(svg);
+    bd.appendChild(box);
+    render();
+  }
+
+  /* ---------------- Asistente de red neuronal ---------------- */
+  const nnDlg = $('#nnDlg');
+  $('#nnPio').appendChild(pioBadge('idea', '', 'Pío con una idea'));
+  let nnResolve = null;
+  function nnParse() {
+    const sizes = $('#nnLayers').value.split(/[,;\s]+/).filter(Boolean).map((t) => parseInt(t, 10));
+    const prev = $('#nnPrev');
+    if (sizes.length < 2 || sizes.length > 7 || sizes.some((n) => !Number.isInteger(n) || n < 1 || n > 10)) {
+      prev.classList.add('err');
+      prev.textContent = 'Escribe entre 2 y 7 capas con 1 a 10 neuronas cada una, por ejemplo 3, 4, 4, 2.';
+      return null;
+    }
+    prev.classList.remove('err');
+    const bias = $('#nnBias').checked;
+    let conns = 0; for (let l = 0; l < sizes.length - 1; l++) conns += (sizes[l] + (bias ? 1 : 0)) * sizes[l + 1];
+    prev.textContent = sizes.map((n, l) => (l === 0 ? 'Entrada ' : l === sizes.length - 1 ? 'Salida ' : 'Oculta ') + n).join(' · ') + '  →  ' + conns + ' conexiones';
+    return { sizes, bias, showW: $('#nnW').checked };
+  }
+  ['input', 'change'].forEach((ev) => { $('#nnLayers').addEventListener(ev, nnParse); $('#nnBias').addEventListener(ev, nnParse); });
+  function openNN() {
+    if (nnResolve) nnResolve(null);
+    nnParse();
+    nnDlg.showModal();
+    $('#nnLayers').focus();
+    return new Promise((res) => { nnResolve = res; });
+  }
+  const nnDone = (v) => { const r = nnResolve; nnResolve = null; if (nnDlg.open) nnDlg.close(); if (r) r(v); };
+  $('#nnOk').addEventListener('click', () => { const v = nnParse(); if (v) nnDone(v); });
+  $('#nnCancel').addEventListener('click', () => nnDone(null));
+  $('#nnLayers').addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); $('#nnOk').click(); } });
+  nnDlg.addEventListener('close', () => nnDone(null));
+
+  /* ---------------- Panel «Gráficos» ---------------- */
+  $('#grafPop').addEventListener('mousedown', (e) => { if (e.target.closest('[data-graf]')) e.preventDefault(); });
+  $('#grafPop').addEventListener('click', async (e) => {
+    const bt = e.target.closest('[data-graf]');
+    if (!bt) return;
+    closePop();
+    const b = syncActive();
+    const src = b && b.type === 'math' ? b.v.trim() : b && b.type === 'deriv' ? (() => { const r = b.rows[derivRowIndex(b)]; return r.l && r.r ? r.l + '=' + r.r : r.r; })() : '';
+    const after = b ? b.id : null;
+    const k = bt.dataset.graf;
+    if (k === '2d') {
+      let fns = ['f(x)=x^2'];
+      if (src) { try { OPS.compileFn(src); fns = [src]; } catch (err) { /* la línea no es una función */ } }
+      insertSpecs(after, [{ type: 'graph', fns, xmin: -5, xmax: 5 }], b);
+      if (fns[0] === 'f(x)=x^2' && src !== 'f(x)=x^2') toast('Escribe tu función en el campo «Funciones» de la gráfica (varias separadas por ;).');
+    } else if (k === '3d') {
+      let fn = 'z=\\sin(x)\\cos(y)';
+      if (src) { try { compile3d(src); if (/y/.test(src)) fn = src; } catch (err) { /* no es f(x, y) */ } }
+      insertSpecs(after, [{ type: 'graph3d', fn, xmin: -3, xmax: 3, ymin: -3, ymax: 3, az: -0.8, el: 0.55, zoom: 1 }], b);
+      if (fn !== src) toast('Escribe tu superficie en el campo «z = f(x, y)» de la gráfica.');
+    } else if (k === 'net') {
+      const W = 720;
+      const nodes = [['A', 160, 120], ['B', 360, 80], ['C', 560, 140], ['D', 260, 300], ['E', 470, 310]].map(([label, x, y]) => ({ id: uid(), x, y, label, kind: '' }));
+      const E = [[0, 1], [1, 2], [0, 3], [3, 4], [1, 4]].map(([a, c]) => ({ a: nodes[a].id, b: nodes[c].id, w: null }));
+      void W;
+      insertSpecs(after, [{ type: 'net', nodes, edges: E, caps: [], directed: false, h: 420 }], b);
+      toast('Grafo de ejemplo: añade nodos con un clic y aristas con la herramienta «Arista». Doble clic para renombrar.');
+    } else if (k === 'nn') {
+      const r = await openNN();
+      if (!r) return;
+      insertSpecs(after, [Object.assign({ type: 'net' }, nnBuild(r.sizes, r.bias, r.showW))], b);
+    }
+  });
+
   /* ---------------- Operaciones paso a paso ---------------- */
   const OPS_MENU = [
     ['Matrices y sistemas', [
@@ -4477,6 +4945,7 @@ const OPS = ((ME) => {
     // Vuelve a pintar las fórmulas con colores y los trazos con los tonos del tema actual
     $$('math-field', blocksEl).forEach((mf) => { if (/\\textcolor|\\color/.test(mf.value)) { const v = mf.value; mf.value = ''; mf.value = v; } });
     redraw();
+    for (const f of redrawers) { try { f(); } catch (e) { /* bloque ya eliminado */ } }
   }
   function toggleFull() {
     if (document.fullscreenElement) document.exitFullscreen();
@@ -4859,6 +5328,10 @@ const OPS = ((ME) => {
           buildTable(b, bd);
         } else if (b.type === 'graph') {
           buildGraph(b, bd, true);
+        } else if (b.type === 'graph3d') {
+          buildGraph3d(b, bd, true);
+        } else if (b.type === 'net') {
+          buildNet(b, bd, true);
         } else if (b.type === 'math' && mlReady) {
           const mf = document.createElement('math-field');
           mf.setAttribute('read-only', '');
@@ -5068,7 +5541,7 @@ const OPS = ((ME) => {
   document.addEventListener('keydown', (e) => {
     const editing = e.target.closest && e.target.closest('math-field,[contenteditable="true"],input,select,textarea');
     const k = e.key;
-    if (askDlg.open) return;
+    if (askDlg.open || nnDlg.open) return;
     if (k === 'Escape' && openPop) { e.preventDefault(); e.stopPropagation(); closePop(); return; }
     if (e.altKey && !e.ctrlKey && !e.metaKey) {
       const code = e.code;

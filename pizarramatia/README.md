@@ -69,7 +69,9 @@ Tipos de bloque:
 | `text` | Línea de texto. |
 | `deriv` | Desarrollo alineado por el «=»: filas con lado izquierdo `l`, lado derecho `r` y explicación `note`. |
 | `table` | Tabla de Ruffini, de verdad o de valores. |
-| `graph` | Gráfica de una o varias funciones. |
+| `graph` | Gráfica 2D de una o varias funciones. |
+| `graph3d` | Superficie z = f(x, y) con su rango y su vista (`az`, `el`, `zoom`). |
+| `net` | Grafo: `nodes` (con `label`, `x`, `y` y tipo de capa), `edges` (con peso opcional `w`), `directed` y rótulos de capa `caps`. |
 
 `strokes` guarda el dibujo a mano alzada de cada página. Los archivos antiguos sin `app` ni `formato` también se abren.
 
@@ -95,6 +97,11 @@ Pulsa **?** dentro de la pizarra para ver todos los atajos.
 | Lógica y conjuntos | Tabla de verdad con su clasificación; unión, intersección, diferencia, complementario, partes y producto cartesiano. |
 | Cálculo | Derivada con las reglas aplicadas, gráfica de funciones (rueda para acercar, arrastrar para mover) y tabla de valores. |
 
+- **Gráficos ▾**:
+  - **Gráfica 2D**: funciones y = f(x); usa la función de la línea activa y admite varias separadas por `;`. Se acerca con la rueda y se mueve arrastrando.
+  - **Gráfica 3D**: superficies z = f(x, y), coloreadas de bajo a alto. Se gira arrastrando, se acerca con la rueda y se cambian la función y los rangos de x e y.
+  - **Grafo**: herramientas Mover, Nodo (clic en un hueco), Arista (arrastrar de un nodo a otro) y Borrar. Doble clic para renombrar un nodo o poner peso a una arista. Puede ser dirigido o no, y el botón **Matriz de adyacencia** añade la matriz y los grados debajo.
+  - **Asistente de red neuronal**: escribe las neuronas por capa (por ejemplo `3, 4, 4, 2`) y monta el grafo por capas: entradas x₁…, ocultas h¹₁… y salidas ŷ₁…, con sesgo (+1) y pesos w opcionales. También está en el grafo, con el botón «Red neuronal…».
 - **Dibujar** (Alt+D): lápiz, rotulador, flecha y goma. Un lápiz digital dibuja siempre, aunque estés en modo Escribir.
 - **Modo proyector**: pantalla completa (icono de la cabecera o tecla F), tamaño de letra, tema claro u oscuro y ocultar barras (H).
 - **Guardar** (botón verde de la cabecera o **Ctrl+S**): guarda la clase en el historial. Un punto blanco en el botón indica que hay cambios sin guardar. La primera vez pide la carpeta `historial`; después reescribe siempre el archivo de esa clase. En navegadores sin acceso a carpetas, descarga el JSON.
