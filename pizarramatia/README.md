@@ -69,8 +69,8 @@ Tipos de bloque:
 | `text` | Línea de texto. |
 | `deriv` | Desarrollo alineado por el «=»: filas con lado izquierdo `l`, lado derecho `r` y explicación `note`. |
 | `table` | Tabla de Ruffini, de verdad o de valores. |
-| `graph` | Gráfica 2D de una o varias funciones. |
-| `graph3d` | Superficie z = f(x, y) con su rango y su vista (`az`, `el`, `zoom`). |
+| `graph` | Gráfica 2D de una o varias funciones, con `marks` opcionales (máximos, mínimos, inflexión, absolutos). |
+| `graph3d` | Superficie z = f(x, y) con su rango, su vista (`az`, `el`, `zoom`) y `marks` opcionales (mínimos, máximos, puntos de silla). |
 | `net` | Grafo: `nodes` (con `label`, `x`, `y` y tipo de capa), `edges` (con peso opcional `w`), `directed` y rótulos de capa `caps`. |
 
 `strokes` guarda el dibujo a mano alzada de cada página. Los archivos antiguos sin `app` ni `formato` también se abren.
@@ -95,7 +95,7 @@ Pulsa **?** dentro de la pizarra para ver todos los atajos.
 | Polinomios | Desarrollar, Ruffini o división larga, raíces y factorización. |
 | Combinatoria | n!, combinaciones, variaciones y permutaciones; triángulo de Pascal. |
 | Lógica y conjuntos | Tabla de verdad con su clasificación; unión, intersección, diferencia, complementario, partes y producto cartesiano. |
-| Cálculo | Derivada con las reglas aplicadas, gráfica de funciones (rueda para acercar, arrastrar para mover) y tabla de valores. |
+| Cálculo | Derivada con las reglas aplicadas; **máximos y mínimos de f(x)** (puntos críticos, clasificación con f″ o con el signo de f′, puntos de inflexión, tabla de crecimiento, extremos absolutos en ±∞ o en un intervalo `x∈[a,b]` y gráfica con los puntos marcados); **extremos de f(x, y)** (gradiente, puntos críticos, hessiana y clasificación en mínimo, máximo o punto de silla, con la superficie 3D marcada); gráfica de funciones y tabla de valores. |
 
 - **Gráficos ▾**:
   - **Gráfica 2D**: funciones y = f(x); usa la función de la línea activa y admite varias separadas por `;`. Se acerca con la rueda y se mueve arrastrando.

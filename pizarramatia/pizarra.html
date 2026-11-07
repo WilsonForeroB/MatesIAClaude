@@ -349,6 +349,14 @@ body.picking .dcell.pick-hover,body.picking .dnote.pick-hover{background:var(--a
 .net-tmp{stroke:var(--accent);stroke-width:2;stroke-dasharray:5 4}
 .net-edit{position:absolute;z-index:5;font:400 14px var(--font-sans);padding:2px 6px;border:var(--border-width-medium) solid var(--accent);border-radius:var(--radius-sm);background:var(--surface-raised);color:var(--ink);width:110px}
 .graph{display:flex;flex-direction:column;gap:var(--space-2);width:min(100%,760px);outline:none}
+.mk-min{fill:var(--data-2)}.mk-max{fill:var(--data-5)}.mk-absmin{fill:var(--data-2)}.mk-absmax{fill:var(--data-5)}.mk-infl{fill:var(--data-3)}.mk-saddle{fill:var(--data-4)}.mk-deg{fill:var(--ink-muted)}
+.mk{stroke:var(--surface-raised);stroke-width:1.5}
+.mk-ring{fill:none;stroke-width:2}
+.mk-ring.mk-absmin{stroke:var(--data-2)}.mk-ring.mk-absmax{stroke:var(--data-5)}
+.mk-lab{fill:var(--ink);font:600 12px var(--font-sans);paint-order:stroke;stroke:var(--surface-sunken);stroke-width:4px}
+.mk-legend{display:flex;flex-wrap:wrap;gap:4px 14px;font:400 13px/20px var(--font-sans);color:var(--ink-muted)}
+.mk-legend i{font-style:normal;font-weight:700;margin-right:4px}
+.mk-legend .k-min i,.mk-legend .k-absmin i{color:var(--data-2)}.mk-legend .k-max i,.mk-legend .k-absmax i{color:var(--data-5)}.mk-legend .k-infl i{color:var(--data-3)}.mk-legend .k-saddle i{color:var(--data-4)}
 .graph svg{width:100%;height:auto;background:var(--surface-sunken);border:var(--border-width-thin) solid var(--border);border-radius:var(--radius-md);touch-action:none}
 .graph .g-grid{stroke:var(--border);stroke-width:1}
 .graph .g-axis{stroke:var(--ink-muted);stroke-width:1.5}
@@ -666,7 +674,8 @@ body.picking .dcell.pick-hover,body.picking .dnote.pick-hover{background:var(--a
         <tr><td>Ecuaciones</td><td>Resolver paso a paso, siguiente paso, comprobar</td></tr>
         <tr><td>Aritmética</td><td>Fracciones, m.c.d. y m.c.m., factores primos</td></tr>
         <tr><td>Polinomios</td><td>Desarrollar, Ruffini y división larga, raíces</td></tr>
-        <tr><td>Más</td><td>Combinatoria, Pascal, tabla de verdad, conjuntos, derivadas, gráficas y tabla de valores</td></tr>
+        <tr><td>Cálculo</td><td>Derivadas, máximos y mínimos de f(x) (también en un intervalo x∈[a,b]), extremos y puntos de silla de f(x,y), gráficas y tabla de valores</td></tr>
+        <tr><td>Más</td><td>Combinatoria, Pascal, tabla de verdad y conjuntos</td></tr>
       </tbody></table>
       <p style="font:400 13px/20px var(--font-sans);color:var(--ink-muted);margin:var(--space-2) 0 0">Todo se calcula en el navegador, sin conexión. Pon el cursor en la línea con los datos y elige la operación.</p>
     </section>
@@ -3099,7 +3108,270 @@ const OPS = ((ME) => {
     return [{ type: 'table', rows: [[F0.v.replace('\\', '')].concat(xs.map(String)), [nm].concat(vals)], vbar: 1, kind: 'values', caption: 'Tabla de valores de ' + nm + ' = ' + F0.latex.replace(/\\left|\\right|\\cdot/g, '').replace(/\\frac\{([^{}]+)\}\{([^{}]+)\}/g, '($1)/($2)').replace(/[{}\\]/g, '') }];
   }
 
+  /* ====================== 11. Máximos, mínimos y puntos de silla ====================== */
+  // número → LaTeX: exacto si es (casi) una fracción sencilla, si no con 4 decimales
+  function numL(v) {
+    if (!Number.isFinite(v)) return '\\text{—}';
+    for (let q = 1; q <= 12; q++) { const p0 = Math.round(v * q); if (Math.abs(p0 / q - v) < 1e-9) return fLatex(F(p0, q)); }
+    // múltiplos sencillos de π
+    for (let q = 1; q <= 12; q++) {
+      const p0 = Math.round(v / Math.PI * q);
+      if (p0 !== 0 && Math.abs(p0 * Math.PI / q - v) < 1e-9) {
+        const r = F(p0, q), n = abs(r.n), sg = r.n < 0n ? '-' : '';
+        return r.d === 1n ? sg + (n === 1n ? '' : n) + '\\pi ' : sg + '\\frac{' + (n === 1n ? '' : n) + '\\pi}{' + r.d + '}';
+      }
+    }
+    return (Math.round(v * 1e4) / 1e4).toString();
+  }
+  const isNice = (v) => { for (let q = 1; q <= 12; q++) { if (Math.abs(Math.round(v * q) / q - v) < 1e-9) return true; const p0 = Math.round(v / Math.PI * q); if (p0 !== 0 && Math.abs(p0 * Math.PI / q - v) < 1e-9) return true; } return false; };
+  const numT = (v) => latexText(numL(v)).replace(/pi\s*/g, 'π').replace('.', ',').replace(/^-/, '−');
+  function rootsNumeric(fn, a, b) {
+    const n = 4000, out = [];
+    let px = a, py = fn(a);
+    for (let i = 1; i <= n; i++) {
+      const x = a + (b - a) * i / n, y = fn(x);
+      if (Number.isFinite(py) && Number.isFinite(y)) {
+        if (py === 0) out.push(px);
+        else if (py * y < 0 && Math.abs(py) < 1e6 && Math.abs(y) < 1e6) {
+          let lo = px, hi = x, flo = py;
+          for (let k = 0; k < 80; k++) { const m = (lo + hi) / 2, fm = fn(m); if (!Number.isFinite(fm)) break; if (flo * fm <= 0) hi = m; else { lo = m; flo = fm; } }
+          out.push((lo + hi) / 2);
+        }
+      }
+      px = x; py = y;
+    }
+    const u = [];
+    for (const r of out) if (!u.some((t) => Math.abs(t - r) < 1e-7)) u.push(r);
+    return u;
+  }
+  // ceros de una expresión en una variable: exactos si es polinomio, numéricos si no
+  function zerosOf(ast, v, a, b) {
+    if (ast.t === 'div') {
+      const den = (x) => { try { return evalNum(ast.b, { [v]: x }); } catch (e) { return NaN; } };
+      const r = zerosOf(ast.a, v, a, b);
+      r.pts = r.pts.filter((c) => Math.abs(den(c.x)) > 1e-12);
+      return r;
+    }
+    if (ast.t === 'neg') return zerosOf(ast.a, v, a, b);
+    try {
+      const pp = toPoly(ast, v);
+      if (P.deg(pp) < 1) return { pts: [], exact: true, zeroPoly: P.isZero(pp) };
+      const { roots, rest } = rationalRoots(pp);
+      const pts = [];
+      const seen = new Set();
+      for (const r of roots) { const k = fText(r); if (seen.has(k)) continue; seen.add(k); pts.push({ x: fNum(r), latex: fLatex(r), exact: r }); }
+      if (P.deg(rest) === 2) {
+        const [c, bb, aa] = rest.map(fNum);
+        const D0 = bb * bb - 4 * aa * c;
+        if (D0 >= 0) {
+          const ls = quadRootsLatex(rest, v, false).map((t) => t.split('=').slice(1).join('='));
+          const xs = [(-bb + Math.sqrt(D0)) / (2 * aa), (-bb - Math.sqrt(D0)) / (2 * aa)];
+          xs.forEach((x, i) => { if (!pts.some((q) => Math.abs(q.x - x) < 1e-9)) pts.push({ x, latex: ls[i] || numL(x) }); });
+        }
+      } else if (P.deg(rest) > 2) {
+        const g = (x) => rest.reduceRight((s0, c0) => s0 * x + fNum(c0), 0);
+        rootsNumeric(g, a, b).forEach((x) => pts.push({ x, latex: numL(x), approx: !isNice(x) }));
+      }
+      return { pts: pts.sort((p1, p2) => p1.x - p2.x), exact: true };
+    } catch (e) {
+      const fn = (x) => { try { return evalNum(ast, { [v]: x }); } catch (err) { return NaN; } };
+      return { pts: rootsNumeric(fn, a, b).map((x) => ({ x, latex: numL(x), approx: !isNice(x) })), exact: false };
+    }
+  }
+  function parseInterval(latex) {
+    const m = /,?\s*(?:\\[,;: ]|\\quad|\s)*\s*([a-z])\s*\\in\s*(?:\\left)?\[\s*(.+?)\s*,\s*(.+?)\s*(?:\\right)?\]\s*$/.exec(latex);
+    if (!m) return { main: latex, iv: null };
+    const val = (t) => { const v = evalNum(parseExpr(t), {}); if (!Number.isFinite(v)) throw new MErr('Intervalo no válido.'); return v; };
+    const a = val(m[2]), b = val(m[3]);
+    if (!(b > a)) throw new MErr('En el intervalo [a, b] debe ser a < b.');
+    return { main: latex.slice(0, m.index), iv: [a, b], ivL: '\\left[' + m[2] + ',\\ ' + m[3] + '\\right]' };
+  }
+  function extrema1(latex) {
+    const { main, iv, ivL } = parseInterval(latex.replace(/=\s*$/, '').trim());
+    const { name, v, ast } = funcLine(main);
+    const others = [...varsOf(ast)].filter((x) => x !== v);
+    if (others.length) throw new MErr('La función tiene otras letras (' + others.join(', ') + '). Para f(x, y) usa «Extremos de f(x, y)».');
+    const nm = name && name !== 'y' ? name : 'f';
+    const f = (x) => { try { return evalNum(ast, { [v]: x }); } catch (e) { return NaN; } };
+    const d1 = simpAll(D(ast, v, new Set())), d2 = simpAll(D(d1, v, new Set()));
+    const f1 = (x) => { try { return evalNum(d1, { [v]: x }); } catch (e) { return NaN; } };
+    const f2 = (x) => { try { return evalNum(d2, { [v]: x }); } catch (e) { return NaN; } };
+    const A = iv ? iv[0] : -50, B = iv ? iv[1] : 50;
+    const inside = (x) => x >= A - 1e-12 && x <= B + 1e-12 && (!iv || (x > A + 1e-12 && x < B - 1e-12));
+    const crit = zerosOf(d1, v, A, B);
+    if (crit.zeroPoly) throw new MErr('La función es constante: todos sus puntos son a la vez máximos y mínimos.');
+    const cps = crit.pts.filter((c) => inside(c.x) && Number.isFinite(f(c.x)));
+    const yAt = (c) => { if (c.exact) { try { return { y: fNum(evalExact(ast, { [v]: c.exact })), latex: fLatex(evalExact(ast, { [v]: c.exact })) }; } catch (e) { /* no exacto */ } } const y = f(c.x); return { y, latex: (isNice(y) ? '' : '\\approx ') + numL(y) }; };
+    const fp = (lab) => nm + "'" + '\\left(' + lab + '\\right)', fpp = (lab) => nm + "''" + '\\left(' + lab + '\\right)';
+    const rows = [
+      { l: nm + '(' + v + ')', r: L(ast), note: 'Función' + (iv ? ' en el intervalo ' + latexText(ivL) : '') },
+      { l: nm + "'(" + v + ')', r: L(polish(d1, v)), note: 'Derivamos' },
+    ];
+    if (!cps.length) rows.push({ l: L(polish(d1, v)), r: '0', note: 'No tiene solución' + (iv ? ' dentro del intervalo' : '') + ': no hay puntos críticos' });
+    else {
+      rows.push({ l: L(polish(d1, v)), r: '0', note: 'Puntos críticos: anulamos la derivada' + (cps.some((c) => c.approx) ? ' (soluciones aproximadas)' : '') });
+      rows.push({ l: v, r: cps.map((c) => (c.approx ? '\\approx ' : '') + c.latex).join(',\\quad '), note: cps.length === 1 ? 'Un punto crítico' : cps.length + ' puntos críticos' });
+      rows.push({ l: nm + "''(" + v + ')', r: L(polish(d2, v)), note: 'Segunda derivada para clasificarlos' });
+    }
+    const marks = [];
+    const ext = [];
+    for (const c of cps) {
+      const s2 = f2(c.x);
+      const { y, latex: yL } = yAt(c);
+      const pL = '\\left(' + c.latex + ',\\ ' + yL.replace('\\approx ', '') + '\\right)';
+      let kind, note;
+      if (Number.isFinite(s2) && Math.abs(s2) > 1e-9) {
+        kind = s2 > 0 ? 'min' : 'max';
+        rows.push({ l: fpp(c.latex), r: numL(s2) + (s2 > 0 ? '>0' : '<0'), note: (kind === 'min' ? 'Mínimo relativo' : 'Máximo relativo') + ' en (' + (c.approx ? '≈' : '') + numT(c.x) + ', ' + (isNice(y) ? '' : '≈') + numT(y) + ')' });
+      } else {
+        const h = 1e-4 * Math.max(1, Math.abs(c.x)), a1 = f1(c.x - h), b1 = f1(c.x + h);
+        kind = a1 > 0 && b1 < 0 ? 'max' : a1 < 0 && b1 > 0 ? 'min' : 'flat';
+        rows.push({ l: fpp(c.latex), r: '0', note: 'f″ = 0: miramos el signo de f′ a los lados (' + (a1 > 0 ? '+' : '−') + ' | ' + (b1 > 0 ? '+' : '−') + '): ' + (kind === 'max' ? 'máximo relativo' : kind === 'min' ? 'mínimo relativo' : 'no es extremo (punto de inflexión con tangente horizontal)') });
+      }
+      ext.push({ x: c.x, y, kind, xL: c.latex, yL, pL });
+      marks.push({ x: c.x, y, kind: kind === 'flat' ? 'infl' : kind, label: (kind === 'max' ? 'máx' : kind === 'min' ? 'mín' : 'infl') + ' (' + numT(c.x) + ', ' + numT(y) + ')' });
+    }
+    // puntos de inflexión (cambio de concavidad)
+    const infl = zerosOf(d2, v, A, B).pts.filter((c) => inside(c.x) && Number.isFinite(f(c.x)) && !cps.some((q) => Math.abs(q.x - c.x) < 1e-7));
+    const realInfl = infl.filter((c) => { const h = 1e-4 * Math.max(1, Math.abs(c.x)); return f2(c.x - h) * f2(c.x + h) < 0; });
+    if (realInfl.length) {
+      rows.push({ l: nm + "''(" + v + ')', r: '0\\Rightarrow ' + realInfl.map((c) => v + (c.approx ? '\\approx ' : '=') + c.latex).join(',\\ '), note: 'Puntos de inflexión: f″ cambia de signo (cambia la concavidad)' });
+      for (const c of realInfl) { const { y } = yAt(c); marks.push({ x: c.x, y, kind: 'infl', label: 'infl (' + numT(c.x) + ', ' + numT(y) + ')' }); }
+    }
+    // extremos absolutos
+    if (iv) {
+      const cand = [{ x: A, y: f(A), xL: numL(A) }, { x: B, y: f(B), xL: numL(B) }].concat(ext.map((e) => ({ x: e.x, y: e.y, xL: e.xL })));
+      const ok = cand.filter((c) => Number.isFinite(c.y));
+      if (ok.length) {
+        const mx = ok.reduce((p0, q) => (q.y > p0.y ? q : p0)), mn = ok.reduce((p0, q) => (q.y < p0.y ? q : p0));
+        rows.push({ l: nm + '(' + numL(A) + '),\\ ' + nm + '(' + numL(B) + ')', r: numL(f(A)) + ',\\ ' + numL(f(B)), note: 'Valores en los extremos del intervalo' });
+        const tie = (t) => ok.filter((c) => Math.abs(c.y - t.y) < 1e-9 * Math.max(1, Math.abs(t.y)));
+        const mxs = tie(mx), mns = tie(mn);
+        rows.push({ l: '\\text{Máx. absoluto}', r: nm + '=' + numL(mx.y) + '\\ \\text{en}\\ ' + mxs.map((c) => v + '=' + c.xL).join(',\\ '), note: 'El mayor valor entre puntos críticos y extremos del intervalo' + (mxs.length > 1 ? ' (se alcanza en varios puntos)' : ''), boxed: true });
+        rows.push({ l: '\\text{Mín. absoluto}', r: nm + '=' + numL(mn.y) + '\\ \\text{en}\\ ' + mns.map((c) => v + '=' + c.xL).join(',\\ '), note: 'El menor valor' + (mns.length > 1 ? ' (se alcanza en varios puntos)' : ''), boxed: true });
+        mxs.forEach((c) => marks.push({ x: c.x, y: c.y, kind: 'absmax', label: 'máx abs' }));
+        mns.forEach((c) => marks.push({ x: c.x, y: c.y, kind: 'absmin', label: 'mín abs' }));
+      }
+    } else {
+      const lim = (sg) => { const a1 = f(sg * 1e3), a2 = f(sg * 1e4), a3 = f(sg * 1e5); if (![a1, a2, a3].every(Number.isFinite)) return Math.abs(a3) === Infinity ? a3 : NaN; if (Math.abs(a3) > 1e6 && Math.abs(a3) > Math.abs(a2)) return a3 > 0 ? Infinity : -Infinity; if (Math.abs(a3 - a2) < 1e-3 * Math.max(1, Math.abs(a3))) return a3; return NaN; };
+      const lp = lim(1), lm = lim(-1);
+      const limT = (L0) => (L0 === Infinity ? '+\\infty' : L0 === -Infinity ? '-\\infty' : Number.isNaN(L0) ? '\\nexists' : numL(L0));
+      rows.push({ l: '\\lim_{' + v + '\\to\\pm\\infty}' + nm + '(' + v + ')', r: limT(lm) + ',\\ ' + limT(lp), note: 'Comportamiento en ±∞ para decidir los extremos absolutos' });
+      const maxs = ext.filter((e) => e.kind === 'max'), mins = ext.filter((e) => e.kind === 'min');
+      const absL = [];
+      const decide = (list, better, infBad, word) => {
+        const res = decide0(list, better, infBad, word);
+        absL.push(res.ok ? '\\text{' + (word === 'máximo' ? 'máx' : 'mín') + ' abs.}\\ ' + res.ok : '\\nexists\\ \\text{' + (word === 'máximo' ? 'máx' : 'mín') + ' abs.}');
+        return res.t;
+      };
+      const decide0 = (list, better, infBad, word) => {
+        if (lp === infBad || lm === infBad) return { t: 'No tiene ' + word + ' absoluto: la función tiende a ' + (infBad > 0 ? '+∞' : '−∞') };
+        if (Number.isNaN(lp) || Number.isNaN(lm)) return { t: 'No se puede decidir el ' + word + ' absoluto (la función no tiene límite en el infinito)' };
+        if (!list.length) return { t: 'No tiene ' + word + ' absoluto (no hay ' + word + 's relativos)' };
+        const best = list.reduce((p0, q) => (better(q.y, p0.y) ? q : p0));
+        const limBest = [lp, lm].every((L0) => !better(L0, best.y) && L0 !== best.y) ? true : [lp, lm].every((L0) => !better(L0, best.y));
+        if (!limBest) return { t: 'No tiene ' + word + ' absoluto: la función se acerca a un valor mejor en el infinito' };
+        marks.push({ x: best.x, y: best.y, kind: word === 'máximo' ? 'absmax' : 'absmin', label: word === 'máximo' ? 'máx abs' : 'mín abs' });
+        return { t: word.charAt(0).toUpperCase() + word.slice(1) + ' absoluto en (' + numT(best.x) + ', ' + (isNice(best.y) ? '' : '≈') + numT(best.y) + ')', ok: '\\left(' + numL(best.x) + ',\\ ' + numL(best.y) + '\\right)' };
+      };
+      const nAbs = decide(maxs, (a1, b1) => a1 > b1, Infinity, 'máximo') + '. ' + decide(mins, (a1, b1) => a1 < b1, -Infinity, 'mínimo') + '.';
+      rows.push({ l: '\\text{Absolutos}', r: absL.join(',\\quad '), note: nAbs, boxed: absL.some((t) => !/nexists/.test(t)) });
+    }
+    // tabla de crecimiento
+    const cuts = cps.map((c) => c.x);
+    const lo = iv ? A : -Infinity, hi = iv ? B : Infinity;
+    const bounds = [lo].concat(cuts, [hi]);
+    const head = [v.replace('\\', '')], r1 = [nm + "′(" + v + ')'], r2 = [nm + '(' + v + ')'];
+    const fmtB = (x) => (x === -Infinity ? '−∞' : x === Infinity ? '+∞' : numT(x));
+    for (let i = 0; i < bounds.length - 1; i++) {
+      const a1 = bounds[i], b1 = bounds[i + 1];
+      const mid = a1 === -Infinity ? (b1 === Infinity ? 0 : b1 - 1) : b1 === Infinity ? a1 + 1 : (a1 + b1) / 2;
+      const s1 = f1(mid);
+      head.push((a1 === lo && iv ? '[' : '(') + fmtB(a1) + ', ' + fmtB(b1) + (b1 === hi && iv ? ']' : ')'));
+      r1.push(!Number.isFinite(s1) ? '∄' : s1 > 0 ? '+' : s1 < 0 ? '−' : '0');
+      r2.push(!Number.isFinite(s1) ? '—' : s1 > 0 ? '↗ crece' : s1 < 0 ? '↘ decrece' : '→');
+      if (i < cuts.length) { const e = ext[i]; head.push(fmtB(cuts[i])); r1.push('0'); r2.push(e.kind === 'max' ? 'máx' : e.kind === 'min' ? 'mín' : '—'); }
+    }
+    const table = { type: 'table', head, rows: [r1, r2], vbar: 1, kind: 'mono', caption: 'Crecimiento y decrecimiento de ' + nm + '(' + v + ')' };
+    // gráfica con los puntos marcados
+    const xsP = marks.map((m) => m.x);
+    let gx0 = -5, gx1 = 5;
+    if (iv) { const pad = (B - A) * 0.08; gx0 = A - pad; gx1 = B + pad; }
+    else if (xsP.length) { const a1 = Math.min(...xsP), b1 = Math.max(...xsP), span = Math.max(4, (b1 - a1) * 1.6); gx0 = (a1 + b1) / 2 - span / 2; gx1 = (a1 + b1) / 2 + span / 2; }
+    const graph = { type: 'graph', fns: [main.trim().replace(/\\left|\\right/g, '')], xmin: +gx0.toFixed(3), xmax: +gx1.toFixed(3), marks: marks.filter((m) => Number.isFinite(m.y)) };
+    return [derivBlock(rows), table, graph];
+  }
+
+  function extrema2(latex) {
+    let src = latex.replace(/=\s*$/, '').trim();
+    const m = /^\s*(z|f\s*(\\left)?\(\s*x\s*,\s*y\s*(\\right)?\))\s*=/.exec(src);
+    const rhs = m ? src.slice(m[0].length) : src;
+    const ast = parseExpr(rhs, { var: 'x' });
+    const vs = [...varsOf(ast)];
+    const bad = vs.filter((t) => t !== 'x' && t !== 'y');
+    if (bad.length) throw new MErr('Solo puede depender de x e y (sobra ' + bad.join(', ') + ').');
+    if (!vs.includes('y')) throw new MErr('La función no depende de y: usa «Máximos y mínimos de f(x)».');
+    const R0 = new Set();
+    const fx = simpAll(D(ast, 'x', R0)), fy = simpAll(D(ast, 'y', R0));
+    const fxx = simpAll(D(fx, 'x', R0)), fxy = simpAll(D(fx, 'y', R0)), fyy = simpAll(D(fy, 'y', R0));
+    const ev = (a, x, y) => { try { return evalNum(a, { x, y }); } catch (e) { return NaN; } };
+    // Newton desde una rejilla de puntos iniciales
+    const sols = [];
+    for (let i = -6; i <= 6; i += 1.5) for (let j = -6; j <= 6; j += 1.5) {
+      let x = i + 0.013, y = j - 0.017;
+      for (let k = 0; k < 60; k++) {
+        const gx = ev(fx, x, y), gy = ev(fy, x, y);
+        if (!Number.isFinite(gx) || !Number.isFinite(gy)) break;
+        if (Math.hypot(gx, gy) < 1e-12) break;
+        const a = ev(fxx, x, y), bq = ev(fxy, x, y), d = ev(fyy, x, y);
+        const det = a * d - bq * bq;
+        if (!Number.isFinite(det) || Math.abs(det) < 1e-14) { x -= 0.1 * gx; y -= 0.1 * gy; continue; }
+        x -= (d * gx - bq * gy) / det; y -= (-bq * gx + a * gy) / det;
+        if (Math.abs(x) > 1e4 || Math.abs(y) > 1e4) break;
+      }
+      const gx = ev(fx, x, y), gy = ev(fy, x, y);
+      if (Number.isFinite(gx) && Math.hypot(gx, gy) < 1e-8 && Math.abs(x) < 1e3 && Math.abs(y) < 1e3) {
+        // redondeo a valores sencillos si siguen siendo críticos
+        const snap = (t) => { for (let q = 1; q <= 12; q++) { const p0 = Math.round(t * q) / q; if (Math.abs(p0 - t) < 1e-6) return p0; } return t; };
+        const sx = snap(x), sy = snap(y);
+        if (Math.hypot(ev(fx, sx, sy), ev(fy, sx, sy)) < 1e-9) { x = sx; y = sy; }
+        if (!sols.some((q) => Math.hypot(q.x - x, q.y - y) < 1e-5)) sols.push({ x, y });
+      }
+    }
+    sols.sort((p1, p2) => p1.x - p2.x || p1.y - p2.y);
+    const approx = sols.some((q) => !isNice(q.x) || !isNice(q.y));
+    const rows = [
+      { l: 'f(x,y)', r: L(ast), note: 'Función de dos variables' },
+      { l: 'f_{x}', r: L(fx), note: 'Derivada parcial respecto de x' },
+      { l: 'f_{y}', r: L(fy), note: 'Derivada parcial respecto de y' },
+      { l: '\\nabla f', r: '0\\Rightarrow\\begin{cases}' + L(fx) + '=0\\\\ ' + L(fy) + '=0\\end{cases}', note: 'Puntos críticos: anulamos el gradiente' },
+    ];
+    if (!sols.length) rows.push({ l: '\\text{Puntos críticos}', r: '\\emptyset', note: 'No hay puntos críticos en la zona estudiada (|x|, |y| ≤ 6 como punto de partida)' });
+    else rows.push({ l: '\\text{Puntos críticos}', r: sols.map((q, i) => 'P_{' + (i + 1) + '}=' + (approx && (!isNice(q.x) || !isNice(q.y)) ? '\\approx ' : '') + '\\left(' + numL(q.x) + ',\\ ' + numL(q.y) + '\\right)').join(',\\quad '), note: approx ? 'Soluciones aproximadas (método de Newton)' : 'Soluciones del sistema' });
+    rows.push({ l: 'H(x,y)', r: '\\begin{pmatrix}' + L(fxx) + ' & ' + L(fxy) + '\\\\ ' + L(fxy) + ' & ' + L(fyy) + '\\end{pmatrix}', note: 'Matriz hessiana: f_xx, f_xy / f_yx, f_yy' });
+    const marks = [];
+    sols.forEach((q, i) => {
+      const a = ev(fxx, q.x, q.y), bq = ev(fxy, q.x, q.y), d = ev(fyy, q.x, q.y), det = a * d - bq * bq, z = ev(ast, q.x, q.y);
+      let kind, txt;
+      if (Math.abs(det) < 1e-9) { kind = 'deg'; txt = '|H| = 0: el criterio no decide (caso dudoso)'; }
+      else if (det < 0) { kind = 'saddle'; txt = '|H| < 0: punto de silla'; }
+      else if (a > 0) { kind = 'min'; txt = '|H| > 0 y f_xx > 0: mínimo relativo'; }
+      else { kind = 'max'; txt = '|H| > 0 y f_xx < 0: máximo relativo'; }
+      rows.push({ l: '|H(P_{' + (i + 1) + '})|', r: '\\begin{vmatrix}' + numL(a) + ' & ' + numL(bq) + '\\\\ ' + numL(bq) + ' & ' + numL(d) + '\\end{vmatrix}=' + numL(det), note: txt + '. f(P' + (i + 1) + ') = ' + numT(z), boxed: kind !== 'deg' });
+      marks.push({ x: q.x, y: q.y, z, kind, label: 'P' + (i + 1) + ' ' + (kind === 'min' ? 'mín' : kind === 'max' ? 'máx' : kind === 'saddle' ? 'silla' : '¿?') });
+    });
+    rows.push({ l: '\\text{Absolutos}', r: '\\text{en un recinto cerrado}', note: 'Los extremos absolutos de f(x, y) se estudian en un recinto cerrado y acotado: además de los puntos críticos interiores hay que mirar la frontera.' });
+    const xs = sols.map((q) => q.x), ys = sols.map((q) => q.y);
+    const span = (arr) => (arr.length ? [Math.min(...arr), Math.max(...arr)] : [0, 0]);
+    const [ax0, ax1] = span(xs), [ay0, ay1] = span(ys);
+    const hx = Math.max(2.5, (ax1 - ax0) * 0.8), hy = Math.max(2.5, (ay1 - ay0) * 0.8);
+    const cxm = (ax0 + ax1) / 2, cym = (ay0 + ay1) / 2;
+    const g3 = { type: 'graph3d', fn: 'z=' + rhs.trim().replace(/\\left|\\right/g, ''), xmin: +(cxm - hx).toFixed(3), xmax: +(cxm + hx).toFixed(3), ymin: +(cym - hy).toFixed(3), ymax: +(cym + hy).toFixed(3), az: -0.8, el: 0.55, zoom: 1, marks };
+    return [derivBlock(rows), g3];
+  }
+
   return {
+    extrema1, extrema2,
     P, parseExpr, L, simpAll, D, evalNum, compileFn, rationalRoots, sqrtSimp, splitEquation,
     inverseSteps, detSarrus, detCofactor, detGauss, cramer, productDeveloped, paramDiscussion, eigen,
     vecDot, vecCross, vecNorm, vecAngle, vecProj,
@@ -3154,6 +3426,11 @@ const OPS = ((ME) => {
       return sanitize(JSON.parse(raw));
     } catch (e) { return null; }
   }
+  const MARK_KINDS = ['min', 'max', 'absmin', 'absmax', 'infl', 'saddle', 'deg'];
+  function cleanMarks(ms, three) {
+    return (Array.isArray(ms) ? ms : []).filter((m) => m && Number.isFinite(+m.x) && Number.isFinite(+m.y) && (!three || Number.isFinite(+m.z)) && MARK_KINDS.includes(m.kind)).slice(0, 40)
+      .map((m) => Object.assign({ x: +m.x, y: +m.y, kind: m.kind, label: String(m.label || '').slice(0, 40) }, three ? { z: +m.z } : {}));
+  }
   function sanitize(b) {
     if (!b || !Array.isArray(b.pages) || !b.pages.length) return null;
     const d = defaults();
@@ -3184,7 +3461,7 @@ const OPS = ((ME) => {
         }
         if (x.type === 'graph3d') {
           const num = (v, d) => (Number.isFinite(+v) ? +v : d);
-          return Object.assign(base, { type: 'graph3d', fn: typeof x.fn === 'string' ? x.fn : 'z=x^2-y^2', xmin: num(x.xmin, -3), xmax: num(x.xmax, 3), ymin: num(x.ymin, -3), ymax: num(x.ymax, 3), az: num(x.az, -0.8), el: num(x.el, 0.55), zoom: num(x.zoom, 1) });
+          return Object.assign(base, { type: 'graph3d', marks: cleanMarks(x.marks, true), fn: typeof x.fn === 'string' ? x.fn : 'z=x^2-y^2', xmin: num(x.xmin, -3), xmax: num(x.xmax, 3), ymin: num(x.ymin, -3), ymax: num(x.ymax, 3), az: num(x.az, -0.8), el: num(x.el, 0.55), zoom: num(x.zoom, 1) });
         }
         if (x.type === 'net') {
           const nodes = (Array.isArray(x.nodes) ? x.nodes : []).filter((n) => n && Number.isFinite(+n.x) && Number.isFinite(+n.y)).slice(0, 120)
@@ -3197,7 +3474,7 @@ const OPS = ((ME) => {
         }
         if (x.type === 'graph') {
           const xmin = Number.isFinite(+x.xmin) ? +x.xmin : -5, xmax = Number.isFinite(+x.xmax) ? +x.xmax : 5;
-          return Object.assign(base, { type: 'graph', fns: (Array.isArray(x.fns) ? x.fns : []).map(String).slice(0, 6), xmin: Math.min(xmin, xmax - 0.001), xmax });
+          return Object.assign(base, { type: 'graph', marks: cleanMarks(x.marks, false), fns: (Array.isArray(x.fns) ? x.fns : []).map(String).slice(0, 6), xmin: Math.min(xmin, xmax - 0.001), xmax });
         }
         return Object.assign(base, { type: x.type === 'text' ? 'text' : 'math', v: typeof x.v === 'string' ? x.v : '', result: !!x.result });
       }),
@@ -4200,6 +4477,23 @@ const OPS = ((ME) => {
     bd.appendChild(w);
   }
 
+  /* Marcas de máximos, mínimos, inflexión y silla: forma + color + rótulo */
+  const MARK_TXT = { min: ['▼', 'mínimo relativo'], max: ['▲', 'máximo relativo'], absmin: ['◉', 'mínimo absoluto'], absmax: ['◉', 'máximo absoluto'], infl: ['◆', 'punto de inflexión'], saddle: ['✕', 'punto de silla'], deg: ['?', 'caso dudoso'] };
+  function markPath(kind, x, y, r) {
+    if (kind === 'max') return 'M' + x + ' ' + (y - r) + 'L' + (x + r) + ' ' + (y + r * 0.8) + 'L' + (x - r) + ' ' + (y + r * 0.8) + 'Z';
+    if (kind === 'min') return 'M' + x + ' ' + (y + r) + 'L' + (x + r) + ' ' + (y - r * 0.8) + 'L' + (x - r) + ' ' + (y - r * 0.8) + 'Z';
+    if (kind === 'infl') return 'M' + x + ' ' + (y - r) + 'L' + (x + r) + ' ' + y + 'L' + x + ' ' + (y + r) + 'L' + (x - r) + ' ' + y + 'Z';
+    if (kind === 'saddle') { const k = r * 0.75, w = r * 0.35; return 'M' + (x - k) + ' ' + (y - k + w) + 'L' + (x - k + w) + ' ' + (y - k) + 'L' + x + ' ' + (y - w) + 'L' + (x + k - w) + ' ' + (y - k) + 'L' + (x + k) + ' ' + (y - k + w) + 'L' + (x + w) + ' ' + y + 'L' + (x + k) + ' ' + (y + k - w) + 'L' + (x + k - w) + ' ' + (y + k) + 'L' + x + ' ' + (y + w) + 'L' + (x - k + w) + ' ' + (y + k) + 'L' + (x - k) + ' ' + (y + k - w) + 'L' + (x - w) + ' ' + y + 'Z'; }
+    return 'M' + (x - r) + ' ' + y + 'A' + r + ' ' + r + ' 0 1 0 ' + (x + r) + ' ' + y + 'A' + r + ' ' + r + ' 0 1 0 ' + (x - r) + ' ' + y + 'Z';
+  }
+  function markLegend(marks) {
+    const lg = document.createElement('div');
+    lg.className = 'mk-legend';
+    const kinds = [...new Set(marks.map((m) => m.kind))];
+    for (const k of kinds) { const sp = document.createElement('span'); sp.className = 'k-' + k; sp.innerHTML = '<i></i>'; sp.querySelector('i').textContent = MARK_TXT[k][0]; sp.appendChild(document.createTextNode(MARK_TXT[k][1])); lg.appendChild(sp); }
+    return lg;
+  }
+
   /* ---------------- Gráficas ---------------- */
   const SVGNS = 'http://www.w3.org/2000/svg';
   function niceStep(r) {
@@ -4228,6 +4522,7 @@ const OPS = ((ME) => {
       const x0 = b.xmin, x1 = b.xmax, n = 900;
       const samples = fs.map(({ F }) => { const pts = []; for (let i = 0; i <= n; i++) { const x = x0 + (x1 - x0) * i / n; pts.push([x, F.f(x)]); } return pts; });
       const ys = samples.flat().map((p) => p[1]).filter(Number.isFinite).sort((a, c) => a - c);
+      const mks = (b.marks || []).filter((m) => m.x >= x0 && m.x <= x1);
       let y0 = -5, y1 = 5;
       if (ys.length) {
         const q = (t) => ys[Math.min(ys.length - 1, Math.max(0, Math.floor(t * (ys.length - 1))))];
@@ -4236,6 +4531,7 @@ const OPS = ((ME) => {
         const m = (y1 - y0) * 0.12; y0 -= m; y1 += m;
         if (y0 > 0 && y0 < (y1 - y0) * 0.6) y0 = -(y1 - y0) * 0.05;
         if (y1 < 0 && -y1 < (y1 - y0) * 0.6) y1 = (y1 - y0) * 0.05;
+        for (const m of mks) { const mg = (y1 - y0) * 0.08; if (m.y - mg < y0) y0 = m.y - mg; if (m.y + mg > y1) y1 = m.y + mg; }
       }
       const sx = (x) => pad + (x - x0) / (x1 - x0) * (W - 2 * pad);
       const sy = (y) => H - pad - (y - y0) / (y1 - y0) * (H - 2 * pad);
@@ -4269,6 +4565,26 @@ const OPS = ((ME) => {
         lg.textContent = fs[i].src.replace(/\\left|\\right|\\cdot/g, '').replace(/\\frac\{([^{}]+)\}\{([^{}]+)\}/g, '($1)/($2)').replace(/\\sqrt\{([^{}]+)\}/g, '√($1)').replace(/\\(sin|cos|tan|ln|log|pi)/g, (m, f) => (f === 'pi' ? 'π' : f)).replace(/[{}\\]/g, '').replace(/\^2/g, '²').replace(/\^3/g, '³');
         legend.appendChild(lg);
       });
+      // puntos notables
+      const absSet = mks.filter((m) => m.kind === 'absmin' || m.kind === 'absmax');
+      for (const m of absSet) el('circle', { cx: sx(m.x), cy: sy(m.y), r: 13 }, 'mk-ring mk-' + m.kind);
+      const placed = [];
+      for (const m of mks.filter((q) => q.kind !== 'absmin' && q.kind !== 'absmax')) {
+        el('path', { d: markPath(m.kind, sx(m.x), sy(m.y), 8) }, 'mk mk-' + m.kind);
+        let ty = m.kind === 'min' ? sy(m.y) + 24 : sy(m.y) - 14;
+        while (placed.some((p) => Math.abs(p[0] - sx(m.x)) < 90 && Math.abs(p[1] - ty) < 14)) ty += m.kind === 'min' ? 14 : -14;
+        placed.push([sx(m.x), ty]);
+        const t = el('text', { x: sx(m.x), y: ty, 'text-anchor': 'middle' }, 'mk-lab');
+        const ab = absSet.find((q) => Math.abs(q.x - m.x) < 1e-9 && Math.abs(q.y - m.y) < 1e-9);
+        t.textContent = m.label + (ab ? ' · absoluto' : '');
+      }
+      for (const m of absSet) {
+        if (mks.some((q) => q.kind !== m.kind && q.kind !== 'absmin' && q.kind !== 'absmax' && Math.abs(q.x - m.x) < 1e-9)) continue;
+        el('path', { d: markPath(m.kind === 'absmax' ? 'max' : 'min', sx(m.x), sy(m.y), 7) }, 'mk mk-' + m.kind);
+        const t = el('text', { x: sx(m.x), y: m.kind === 'absmin' ? sy(m.y) + 26 : sy(m.y) - 16, 'text-anchor': 'middle' }, 'mk-lab'); t.textContent = m.label;
+      }
+      const old = box.querySelector('.mk-legend'); if (old) old.remove();
+      if (mks.length) legend.after(markLegend(mks));
     }
     if (!ro) {
       const ctrl = document.createElement('div');
@@ -4379,6 +4695,25 @@ const OPS = ((ME) => {
         c.lineWidth = 0.6;
         c.beginPath(); c.moveTo(q[0][0], q[0][1]); for (let n = 1; n < 4; n++) c.lineTo(q[n][0], q[n][1]); c.closePath(); c.fill(); c.stroke();
       }
+      // puntos notables (máximos, mínimos, sillas)
+      const mk3 = (b.marks || []).filter((m) => m.x >= b.xmin && m.x <= b.xmax && m.y >= b.ymin && m.y <= b.ymax);
+      const colOf = (k) => hexRGB(cssVar(k === 'min' || k === 'absmin' ? 'data-2' : k === 'max' || k === 'absmax' ? 'data-5' : k === 'saddle' ? 'data-4' : k === 'infl' ? 'data-3' : 'ink-muted'));
+      const surf = hexRGB(cssVar('surface-raised'));
+      for (const m of mk3) {
+        const X = -1 + 2 * (m.x - b.xmin) / (b.xmax - b.xmin), Y = -1 + 2 * (m.y - b.ymin) / (b.ymax - b.ymin);
+        const q = P(X, Y, nz(m.z));
+        const base = P(X, Y, -1);
+        c.setLineDash([3, 3]); c.strokeStyle = 'rgba(' + ink.join(',') + ',0.5)'; c.lineWidth = 1;
+        c.beginPath(); c.moveTo(base[0], base[1]); c.lineTo(q[0], q[1]); c.stroke(); c.setLineDash([]);
+        const p2 = new Path2D(markPath(m.kind, q[0], q[1], 9));
+        c.fillStyle = 'rgb(' + colOf(m.kind).join(',') + ')'; c.fill(p2);
+        c.strokeStyle = 'rgb(' + surf.join(',') + ')'; c.lineWidth = 2; c.stroke(p2);
+        c.font = '600 12px ' + (getComputedStyle(body).getPropertyValue('--font-sans') || 'sans-serif');
+        c.lineWidth = 4; c.strokeStyle = 'rgb(' + surf.join(',') + ')'; c.strokeText(m.label, q[0] + 12, q[1] - 10);
+        c.fillStyle = 'rgb(' + ink.join(',') + ')'; c.fillText(m.label, q[0] + 12, q[1] - 10);
+      }
+      const old3 = box.querySelector('.mk-legend'); if (old3) old3.remove();
+      if (mk3.length) cap.after(markLegend(mk3));
       // rótulos de los ejes
       c.fillStyle = 'rgb(' + ink.join(',') + ')';
       c.font = '600 13px ' + (getComputedStyle(body).getPropertyValue('--font-sans') || 'sans-serif');
@@ -4723,6 +5058,8 @@ const OPS = ((ME) => {
     ]],
     ['Cálculo', [
       ['deriv', 'Derivar paso a paso', 'f(x) = … o una expresión: indica las reglas aplicadas y simplifica.'],
+      ['extr1', 'Máximos y mínimos de f(x)', 'f(x) = … (y si quieres un intervalo: f(x)=x^3-3x, x∈[-3,2]). Puntos críticos, clasificación con f″, inflexión, crecimiento, absolutos y gráfica con los puntos marcados.'],
+      ['extr2', 'Extremos de f(x, y) y puntos de silla', 'z = f(x, y): gradiente, puntos críticos, hessiana y clasificación (mínimo, máximo, punto de silla) con la superficie 3D marcada.'],
       ['graph', 'Graficar función', 'f(x) = … (varias separadas por ;). Rueda para acercar, arrastra para moverte.'],
       ['values', 'Tabla de valores', 'f(x) = …: valores para x de −3 a 3.'],
     ]],
@@ -4877,6 +5214,8 @@ const OPS = ((ME) => {
         case 'truth': specs = OPS.truthTable(full); break;
         case 'sets': specs = OPS.setOperate(full, lines); break;
         case 'deriv': specs = OPS.derivative(full); break;
+        case 'extr1': specs = OPS.extrema1(full); break;
+        case 'extr2': specs = OPS.extrema2(full); break;
         case 'graph': specs = OPS.graphOf(full); break;
         case 'values': specs = OPS.valueTable(full); break;
         case 'solve': {
