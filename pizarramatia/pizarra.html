@@ -94,6 +94,7 @@
 
 /* ===== Pizarra ===== */
 *{box-sizing:border-box}
+[hidden]{display:none!important}
 html,body{height:100%;margin:0}
 body{background:var(--surface);color:var(--ink);font-family:var(--font-sans);display:flex;flex-direction:column;overflow:hidden}
 kbd,.keys td:first-child{font-variant-ligatures:none}
@@ -227,6 +228,25 @@ body.chrome-off .top,body.chrome-off .toolbar{display:none}
 body.chrome-off .show-chrome{display:inline-flex}
 
 dialog{border:var(--border-width-thin) solid var(--border-strong);border-radius:var(--radius-lg);background:var(--surface-raised);color:var(--ink);padding:0;max-width:min(860px,calc(100vw - 32px));max-height:calc(100vh - 48px);width:100%}
+.hist-body{padding:var(--space-4) var(--space-5) var(--space-5);display:flex;flex-direction:column;gap:var(--space-3)}
+.hist-row{display:flex;flex-wrap:wrap;align-items:center;gap:var(--space-2) var(--space-3)}
+.hist-status{font:600 13px/20px var(--font-mono);color:var(--ink);margin-right:auto}
+.hist-status.on{color:var(--brand)}
+.hist-help{margin:0;font:400 14px/22px var(--font-sans);color:var(--ink-muted);max-width:70ch}
+.hist-help code{font:400 .9em var(--font-mono);background:var(--surface-sunken);padding:1px 5px;border-radius:var(--radius-sm)}
+.hist-title{display:flex;align-items:center;gap:var(--space-2);flex:1 1 280px;font:400 13px/20px var(--font-sans);color:var(--ink-muted)}
+.hist-title input{flex:1 1 auto;min-width:0;font:400 14px var(--font-sans);color:var(--ink);background:var(--surface-raised);border:var(--border-width-thin) solid var(--border-strong);border-radius:var(--radius-md);padding:6px 10px}
+.hist-title input:focus-visible{outline:var(--border-width-medium) solid var(--focus-ring);outline-offset:2px}
+.mi-check{display:flex;gap:var(--space-2);align-items:center;font:400 14px/20px var(--font-sans);color:var(--ink)}
+.mi-check input{accent-color:var(--accent);width:16px;height:16px;margin:0}
+.hist-list{display:flex;flex-direction:column;border:var(--border-width-thin) solid var(--border);border-radius:var(--radius-md);max-height:46vh;overflow-y:auto}
+.hist-item{display:grid;grid-template-columns:1fr auto;gap:var(--space-1) var(--space-3);align-items:center;padding:var(--space-2) var(--space-3);border-bottom:var(--border-width-thin) solid var(--border)}
+.hist-item:last-child{border-bottom:0}
+.hist-item.cur{background:var(--accent-soft)}
+.hist-item b{font:600 15px/22px var(--font-sans);color:var(--ink);overflow-wrap:anywhere}
+.hist-item small{display:block;font:400 12px/18px var(--font-mono);color:var(--ink-muted)}
+.hist-item .acts{display:flex;gap:var(--space-1);flex-wrap:wrap;justify-content:flex-end}
+.hist-empty{padding:var(--space-4);font:400 14px/22px var(--font-sans);color:var(--ink-muted)}
 dialog::backdrop{background:color-mix(in srgb,var(--surface) 70%,transparent)}
 .dlg-head{display:flex;align-items:center;justify-content:space-between;padding:var(--space-4) var(--space-5);border-bottom:var(--border-width-thin) solid var(--border);position:sticky;top:0;background:var(--surface-raised)}
 .dlg-head h2{margin:0;font:600 20px/28px var(--font-sans)}
@@ -236,6 +256,39 @@ dialog::backdrop{background:color-mix(in srgb,var(--surface) 70%,transparent)}
 .keys td{padding:4px 0;border-bottom:var(--border-width-thin) solid var(--border);vertical-align:top}
 .keys td:first-child{white-space:nowrap;padding-right:var(--space-3);font-family:var(--font-mono);font-size:13px}
 
+/* Operaciones */
+.pop-ops{width:min(560px,calc(100vw - 16px));max-height:min(75vh,640px);overflow-y:auto;gap:var(--space-2)}
+.pop-ops .ops-hint{margin:0;font:400 13px/20px var(--font-sans);color:var(--ink-muted)}
+.ops-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:4px}
+.ops-grid .mi-btn{justify-content:flex-start;white-space:normal;text-align:left;height:auto;min-height:34px}
+/* Tablas (Ruffini, verdad, valores) */
+.mtable-wrap{display:flex;flex-direction:column;gap:var(--space-2);max-width:100%;overflow-x:auto;outline:none;padding:4px 2px}
+.mtable-cap{margin:0;font:600 calc(13px * var(--scale))/1.4 var(--font-sans);color:var(--ink-muted)}
+.mtable{border-collapse:collapse;font:400 calc(17px * var(--scale))/1.3 var(--font-serif);color:var(--ink)}
+.mtable th,.mtable td{padding:4px calc(10px * var(--scale));text-align:center;white-space:nowrap}
+.mtable th{font-weight:600;border-bottom:var(--border-width-medium) solid var(--ink)}
+.mtable td.vbar,.mtable th.vbar{border-right:var(--border-width-medium) solid var(--ink)}
+.mtable tr.hline td{border-top:var(--border-width-medium) solid var(--ink)}
+.mtable.ruffini td{text-align:right;font-family:var(--font-mono);font-size:calc(15px * var(--scale))}
+.mtable td.mark{border:var(--border-width-medium) solid var(--accent);color:var(--accent);font-weight:600}
+.mtable td.bold,.mtable th.bold{font-weight:600;background:var(--accent-soft)}
+.mtable.truth td.t{color:var(--data-1)}
+.mtable.values td:first-child,.mtable.values th:first-child{font-style:italic}
+.mtable.values tr td{border:var(--border-width-thin) solid var(--border)}
+/* Gráficas */
+.graph{display:flex;flex-direction:column;gap:var(--space-2);width:min(100%,760px);outline:none}
+.graph svg{width:100%;height:auto;background:var(--surface-sunken);border:var(--border-width-thin) solid var(--border);border-radius:var(--radius-md);touch-action:none}
+.graph .g-grid{stroke:var(--border);stroke-width:1}
+.graph .g-axis{stroke:var(--ink-muted);stroke-width:1.5}
+.graph .g-tick{fill:var(--ink-muted);font:400 11px var(--font-mono)}
+.graph .g-curve{fill:none;stroke-width:2.5;stroke-linejoin:round;stroke-linecap:round}
+.graph .g-ctrl{display:flex;flex-wrap:wrap;align-items:center;gap:var(--space-2) var(--space-3);font:400 13px/20px var(--font-sans);color:var(--ink-muted)}
+.graph .g-ctrl input{font:400 13px var(--font-mono);color:var(--ink);background:var(--surface-raised);border:var(--border-width-thin) solid var(--border-strong);border-radius:var(--radius-md);padding:4px 8px}
+.graph .g-ctrl input[type=number]{width:72px}
+.graph .g-ctrl input.g-fns{flex:1 1 220px;min-width:0}
+.graph .g-legend{display:flex;flex-wrap:wrap;gap:4px 16px;font:400 14px/20px var(--font-serif);color:var(--ink)}
+.graph .g-legend span::before{content:"";display:inline-block;width:18px;height:3px;margin-right:6px;vertical-align:middle;background:var(--sw);border-radius:2px}
+.graph .g-err{color:var(--warning);font:400 13px/20px var(--font-sans)}
 #print-root{display:none}
 @media print{
   @page{margin:14mm}
@@ -274,6 +327,7 @@ dialog::backdrop{background:color-mix(in srgb,var(--surface) 70%,transparent)}
   <label class="mi-field">Tamaño <output id="scaleOut">140 %</output><input type="range" id="scale" min="80" max="260" step="10" value="140" aria-label="Tamaño de la letra"></label>
   <button type="button" class="mi-btn mi-btn--sm" id="fsBtn" title="Pantalla completa (F)">Pantalla completa</button>
   <button type="button" class="mi-btn mi-btn--sm" id="viewBtn" aria-haspopup="true" aria-expanded="false">Vista <span aria-hidden="true">▾</span></button>
+  <button type="button" class="mi-btn mi-btn--sm" id="histBtn" title="Guardar y abrir clases de la carpeta historial">Historial</button>
   <button type="button" class="mi-btn mi-btn--sm" id="fileBtn" aria-haspopup="true" aria-expanded="false">Archivo <span aria-hidden="true">▾</span></button>
   <button type="button" class="mi-btn mi-btn--sm icon-btn" id="helpBtn" title="Atajos y ayuda (?)" aria-label="Atajos y ayuda">?</button>
 </header>
@@ -346,6 +400,7 @@ dialog::backdrop{background:color-mix(in srgb,var(--surface) 70%,transparent)}
   </div>
 
   <div class="grp grp-push only-write" aria-label="Calcular">
+    <button type="button" class="mi-btn mi-btn--sm" data-pop="opsPop" aria-haspopup="true" title="Operaciones paso a paso: matrices, vectores, ecuaciones, fracciones, polinomios, combinatoria, lógica, conjuntos, derivadas y gráficas">Operaciones <span aria-hidden="true">▾</span></button>
     <button type="button" class="mi-btn mi-btn--sm" id="gaussBtn" title="Escalonar por Gauss paso a paso (matriz o sistema)">Gauss</button>
     <button type="button" class="mi-btn mi-btn--sm" id="gjBtn" title="Reducir por Gauss-Jordan paso a paso">Gauss-Jordan</button>
     <button type="button" class="mi-btn mi-btn--primary mi-btn--sm" id="calcBtn" title="Calcular la línea activa (Ctrl+=)">Calcular</button>
@@ -380,6 +435,7 @@ dialog::backdrop{background:color-mix(in srgb,var(--surface) 70%,transparent)}
 </div>
 
 <div class="pop pop-sym" id="symPop" hidden role="dialog" aria-label="Símbolos"></div>
+<div class="pop pop-ops" id="opsPop" hidden role="dialog" aria-label="Operaciones paso a paso"></div>
 <div class="pop pop-sym" id="calcPop" hidden role="dialog" aria-label="Derivadas, integrales y límites"></div>
 
 <div class="pop" id="sysPop" hidden role="dialog" aria-label="Insertar sistema">
@@ -420,6 +476,26 @@ dialog::backdrop{background:color-mix(in srgb,var(--surface) 70%,transparent)}
   </div>
   <input type="file" id="fileIn" accept=".json,application/json" hidden>
 </div>
+
+<dialog id="hist" aria-labelledby="histTitle">
+  <div class="dlg-head"><h2 id="histTitle">Historial de clases</h2><button type="button" class="mi-btn mi-btn--sm" id="histClose">Cerrar</button></div>
+  <div class="hist-body">
+    <div class="hist-row">
+      <span class="hist-status" id="histStatus">Carpeta: sin conectar</span>
+      <button type="button" class="mi-btn mi-btn--sm" id="histConnect">Conectar carpeta</button>
+      <button type="button" class="mi-btn mi-btn--sm" id="histReconnect" hidden>Reconectar</button>
+      <button type="button" class="mi-btn mi-btn--sm" id="histPickRO" hidden>Elegir carpeta (solo lectura)</button>
+      <input type="file" id="histDirIn" webkitdirectory multiple hidden>
+    </div>
+    <p class="hist-help" id="histHelp">Elige la carpeta <b>historial</b> que está junto a <code>pizarra.html</code> (o la carpeta <b>pizarramatia</b>: se usará su subcarpeta historial). El navegador te pedirá permiso para leer y guardar en ella.</p>
+    <div class="hist-row">
+      <label class="hist-title">Título de la clase <input type="text" id="histName" maxlength="80" placeholder="por ejemplo: Sistemas por Gauss"></label>
+      <button type="button" class="mi-btn mi-btn--primary mi-btn--sm" id="histSave">Guardar en el historial</button>
+      <label class="mi-check"><input type="checkbox" id="histAuto"> Guardado automático</label>
+    </div>
+    <div class="hist-list" id="histList" role="list"></div>
+  </div>
+</dialog>
 
 <dialog id="help" aria-labelledby="helpTitle">
   <div class="dlg-head"><h2 id="helpTitle">Atajos de la pizarra</h2><button type="button" class="mi-btn mi-btn--sm" id="helpClose">Cerrar</button></div>
@@ -485,6 +561,18 @@ dialog::backdrop{background:color-mix(in srgb,var(--surface) 70%,transparent)}
       </tbody></table>
     </section>
     <section>
+      <h3>Operaciones ▾</h3>
+      <table class="keys"><tbody>
+        <tr><td>Matrices</td><td>Inversa, determinante (Sarrus, cofactores, Gauss), Cramer, sistema con parámetro, producto desarrollado, autovalores</td></tr>
+        <tr><td>Vectores</td><td>Escalar, vectorial, norma, ángulo, proyección</td></tr>
+        <tr><td>Ecuaciones</td><td>Resolver paso a paso, siguiente paso, comprobar</td></tr>
+        <tr><td>Aritmética</td><td>Fracciones, m.c.d. y m.c.m., factores primos</td></tr>
+        <tr><td>Polinomios</td><td>Desarrollar, Ruffini y división larga, raíces</td></tr>
+        <tr><td>Más</td><td>Combinatoria, Pascal, tabla de verdad, conjuntos, derivadas, gráficas y tabla de valores</td></tr>
+      </tbody></table>
+      <p style="font:400 13px/20px var(--font-sans);color:var(--ink-muted);margin:var(--space-2) 0 0">Todo se calcula en el navegador, sin conexión. Pon el cursor en la línea con los datos y elige la operación.</p>
+    </section>
+    <section>
       <h3>Calcular</h3>
       <table class="keys"><tbody>
         <tr><td>A = (matriz)</td><td>Guarda la matriz A para usarla en otras líneas de la página</td></tr>
@@ -504,7 +592,7 @@ dialog::backdrop{background:color-mix(in srgb,var(--surface) 70%,transparent)}
         <tr><td>Alt+RePág/AvPág</td><td>Página anterior / siguiente</td></tr>
         <tr><td>F  H</td><td>Pantalla completa; ocultar barras</td></tr>
       </tbody></table>
-      <p style="font:400 13px/20px var(--font-sans);color:var(--ink-muted);margin:var(--space-2) 0 0">La pizarra se guarda sola en este navegador. Para llevarla a otro ordenador usa Archivo → Guardar archivo.</p>
+      <p style="font:400 13px/20px var(--font-sans);color:var(--ink-muted);margin:var(--space-2) 0 0">La pizarra se guarda sola en este navegador. Con <b>Historial</b> guardas cada clase como JSON en la carpeta <code>pizarramatia/historial</code> y vuelves a abrirla cuando quieras.</p>
     </section>
   </div>
 </dialog>
@@ -1285,9 +1373,1645 @@ const ME = (() => {
     return lines;
   }
 
-  return { MErr, F, fLatex, tokenize, splitEq, evaluate, definitions, compute, gauss, gaussLines, parseSystem, solve, toLatex, matLatex, det, inv };
+  return { MErr, F, fLatex, tokenize, splitEq, evaluate, definitions, compute, gauss, gaussLines, parseSystem, solve, toLatex, matLatex, det, inv, rref, readName, isPureName, afterArrows, fr: { add, sub, mul, div, neg, isZ, isInt, gcd, abs, fromDec, ZERO, ONE }, M, S };
 })();
 /*ENGINE-END*/
+/*OPS-START*/
+/* Operaciones paso a paso que se calculan en el navegador, sin red.
+   Cada operación devuelve una lista de bloques: {type:'math', v}, {type:'deriv', rows}, {type:'table', ...} o {type:'graph', ...}. */
+const OPS = ((ME) => {
+  const { MErr, F, fLatex, tokenize } = ME;
+  const { add, sub, mul, div, neg, isZ, isInt, gcd, abs, fromDec, ZERO, ONE } = ME.fr;
+  const fr = (n, d = 1) => F(n, d);
+  const fText = (a) => (a.d === 1n ? a.n.toString() : a.n.toString() + '/' + a.d.toString());
+  const fNum = (a) => Number(a.n) / Number(a.d);
+  const isCmd = (t, v) => t && t.k === 'cmd' && (v === undefined || t.v === v);
+  const isOp = (t, v) => t && t.k === 'op' && t.v === v;
+  const fParen = (a) => (a.n < 0n ? '\\left(' + fLatex(a) + '\\right)' : fLatex(a));
+  const math = (v) => ({ type: 'math', v });
+  const derivBlock = (rows) => ({ type: 'deriv', rows: rows.map((r) => ({ l: r.l || '', r: r.r || '', note: r.note || '', boxed: !!r.boxed })) });
+  const fact = (n) => { let r = 1n; for (let i = 2n; i <= n; i++) r *= i; return r; };
+
+  /* ====================== Polinomios en una variable (coeficientes fracción) ====================== */
+  const P = {
+    norm(p) { const q = p.slice(); while (q.length > 1 && isZ(q[q.length - 1])) q.pop(); return q.length ? q : [ZERO]; },
+    c(v) { return [v]; },
+    x(k = 1) { const p = Array(k + 1).fill(ZERO); p[k] = ONE; return p; },
+    deg(p) { p = P.norm(p); return p.length === 1 && isZ(p[0]) ? -Infinity : p.length - 1; },
+    add(a, b) { const n = Math.max(a.length, b.length); const r = []; for (let i = 0; i < n; i++) r.push(add(a[i] || ZERO, b[i] || ZERO)); return P.norm(r); },
+    sub(a, b) { return P.add(a, P.scale(b, fr(-1))); },
+    scale(a, k) { return P.norm(a.map((v) => mul(v, k))); },
+    mul(a, b) { const r = Array(a.length + b.length - 1).fill(ZERO); a.forEach((x, i) => b.forEach((y, j) => { r[i + j] = add(r[i + j], mul(x, y)); })); return P.norm(r); },
+    pow(a, k) { let r = [ONE]; for (let i = 0; i < k; i++) r = P.mul(r, a); return r; },
+    eval(p, x) { let r = ZERO; for (let i = p.length - 1; i >= 0; i--) r = add(mul(r, x), p[i]); return r; },
+    isZero(p) { return P.deg(p) === -Infinity; },
+    divmod(a, b) {
+      a = P.norm(a); b = P.norm(b);
+      if (P.isZero(b)) throw new MErr('División entre el polinomio cero.');
+      let r = a.slice(); const q = Array(Math.max(1, a.length - b.length + 1)).fill(ZERO);
+      const db = P.deg(b), lb = b[db];
+      while (P.deg(r) >= db) {
+        const dr = P.deg(r), k = div(r[dr], lb), s = dr - db;
+        q[s] = k;
+        r = P.sub(r, P.mul(P.x(s).map((v, i) => (i === s ? k : ZERO)), b));
+      }
+      return { q: P.norm(q), r: P.norm(r) };
+    },
+    latex(p, v = 'x', paren = false) {
+      p = P.norm(p);
+      let s = '';
+      for (let i = p.length - 1; i >= 0; i--) {
+        const c = p[i];
+        if (isZ(c)) continue;
+        const sym = i === 0 ? '' : i === 1 ? v : v + '^{' + i + '}';
+        s += termL(c, sym, s === '');
+      }
+      if (!s) s = '0';
+      return paren && /[+-]/.test(s.slice(1)) ? '\\left(' + s + '\\right)' : s;
+    },
+  };
+  // coeficiente·símbolo con signo ("+2x", "-x", "+\frac{1}{2}x")
+  function termL(c, sym, first) {
+    if (isZ(c)) return '';
+    const sg = c.n < 0n ? '-' : first ? '' : '+';
+    const a = F(abs(c.n), c.d);
+    const one = a.n === 1n && a.d === 1n;
+    return sg + (one && sym ? '' : fLatex(a)) + sym;
+  }
+  // Raíces racionales (con multiplicidad) y el factor que queda
+  function rationalRoots(p) {
+    p = P.norm(p);
+    const roots = [];
+    // quitar denominadores
+    let L = 1n; p.forEach((c) => { L = L / gcd(L, c.d) * c.d; });
+    let q = p.map((c) => F(c.n * L / c.d));
+    while (P.deg(q) >= 1 && isZ(q[0])) { roots.push(ZERO); q = q.slice(1); }
+    const divisors = (n) => { n = abs(n); const r = []; for (let i = 1n; i * i <= n; i++) if (n % i === 0n) { r.push(i); if (i * i !== n) r.push(n / i); } return r.sort((a, b) => (a < b ? -1 : 1)); };
+    let changed = true;
+    while (changed && P.deg(q) >= 1) {
+      changed = false;
+      const a0 = q[0].n, an = q[q.length - 1].n;
+      if (a0 === 0n) break;
+      const cands = [];
+      for (const pp of divisors(a0)) for (const qq of divisors(an)) { cands.push(F(pp, qq)); cands.push(F(-pp, qq)); }
+      cands.sort((x, y) => fNum(abs(x.n) === 0n ? x : x) - fNum(y));
+      for (const r of cands) {
+        if (isZ(P.eval(q, r))) {
+          roots.push(r);
+          q = P.divmod(q, [neg(r), ONE]).q;
+          changed = true;
+          break;
+        }
+      }
+    }
+    return { roots, rest: q.map((c) => div(c, F(L))) };
+  }
+  const numParen = (s) => (/^-/.test(s) ? '\\left(' + s + '\\right)' : s);
+
+  /* ====================== Árbol de expresiones ====================== */
+  const FN = { sin: 'sin', cos: 'cos', tan: 'tan', tg: 'tan', cot: 'cot', sec: 'sec', csc: 'csc', arcsin: 'arcsin', arccos: 'arccos', arctan: 'arctan', ln: 'ln', log: 'log', exp: 'exp', sinh: 'sinh', cosh: 'cosh', tanh: 'tanh', sen: 'sin' };
+  const GREEK = new Set(['alpha', 'beta', 'gamma', 'delta', 'lambda', 'mu', 'theta', 'sigma', 'tau', 'phi', 'varphi', 'omega', 'rho', 'varepsilon', 'epsilon']);
+  const N = {
+    num: (v) => ({ t: 'num', v }), v: (n) => ({ t: 'var', n }), c: (n) => ({ t: 'c', n }),
+    add: (a, b) => ({ t: 'add', a, b }), sub: (a, b) => ({ t: 'sub', a, b }), mul: (a, b) => ({ t: 'mul', a, b }),
+    div: (a, b) => ({ t: 'div', a, b }), pow: (a, b) => ({ t: 'pow', a, b }), neg: (a) => ({ t: 'neg', a }), fn: (f, a) => ({ t: 'fn', f, a }),
+  };
+  const isNum = (n, v) => n.t === 'num' && (v === undefined || (n.v.d === 1n && n.v.n === BigInt(v)));
+
+  function parseExpr(src, opts = {}) {
+    const toks = Array.isArray(src) ? src : tokenize(src);
+    let pos = 0, absD = 0;
+    const peek = () => toks[pos], next = () => toks[pos++];
+    const startsPrimary = (t) => t && (t.k === 'num' || t.k === 'id' || t.k === '{' || isOp(t, '(') || isOp(t, '[') || (isOp(t, '|') && absD === 0) ||
+      (t.k === 'cmd' && (['frac', 'dfrac', 'tfrac', 'sqrt', 'pi', 'infty'].includes(t.v) || FN[t.v] || GREEK.has(t.v))));
+    function expr() {
+      let a = unary();
+      for (;;) {
+        if (isOp(peek(), '+')) { next(); a = N.add(a, term()); }
+        else if (isOp(peek(), '-')) { next(); a = N.sub(a, term()); }
+        else return a;
+      }
+    }
+    function unary() {
+      if (isOp(peek(), '-')) { next(); return N.neg(term()); }
+      if (isOp(peek(), '+')) { next(); return term(); }
+      return term();
+    }
+    function term() {
+      let a = power();
+      for (;;) {
+        const t = peek();
+        if (isCmd(t, 'cdot') || isCmd(t, 'times') || isOp(t, '*')) { next(); a = N.mul(a, power()); }
+        else if (isCmd(t, 'div') || isOp(t, '/') || isOp(t, ':')) { next(); a = N.div(a, power()); }
+        else if (startsPrimary(t)) a = N.mul(a, power());
+        else return a;
+      }
+    }
+    function group() {
+      if (!peek() || peek().k !== '{') return power();
+      next();
+      const a = expr();
+      if (!peek() || peek().k !== '}') throw new MErr('Expresión mal escrita.');
+      next();
+      return a;
+    }
+    function supArg() {
+      if (peek() && peek().k === '{') return group();
+      const t = next();
+      if (!t) throw new MErr('Falta el exponente.');
+      if (t.k === 'num') return N.num(fromDec(t.v));
+      if (t.k === 'id') return N.v(t.v);
+      throw new MErr('Exponente mal escrito.');
+    }
+    function power() {
+      let a = postfix();
+      if (isOp(peek(), '^')) {
+        next();
+        // x^{-1}, x^2
+        if (isOp(peek(), '-')) { next(); a = N.pow(a, N.neg(supArg())); }
+        else a = N.pow(a, supArg());
+      }
+      return a;
+    }
+    function postfix() {
+      let a = primary();
+      while (isOp(peek(), '!')) { next(); a = N.fn('fact', a); }
+      return a;
+    }
+    function primary() {
+      const t = peek();
+      if (!t) throw new MErr('Falta un operando.');
+      if (t.k === 'num') { next(); return N.num(fromDec(t.v)); }
+      if (t.k === '{') { next(); const a = expr(); if (!peek() || peek().k !== '}') throw new MErr('Falta cerrar una llave.'); next(); return a; }
+      if (isOp(t, '(') || isOp(t, '[')) {
+        next(); const a = expr(); const c = next();
+        if (!c || !(isOp(c, ')') || isOp(c, ']'))) throw new MErr('Falta cerrar un paréntesis.');
+        return a;
+      }
+      if (isOp(t, '|') && absD === 0) { next(); absD++; const a = expr(); absD--; if (!isOp(next(), '|')) throw new MErr('Falta cerrar | |.'); return N.fn('abs', a); }
+      if (t.k === 'cmd') {
+        if (t.v === 'frac' || t.v === 'dfrac' || t.v === 'tfrac') { next(); const a = group(); const b = group(); return N.div(a, b); }
+        if (t.v === 'sqrt') {
+          next();
+          if (isOp(peek(), '[')) { next(); const ix = expr(); if (!isOp(next(), ']')) throw new MErr('Raíz mal escrita.'); const a = group(); return N.pow(a, N.div(N.num(ONE), ix)); }
+          return N.pow(group(), N.num(F(1, 2)));
+        }
+        if (t.v === 'pi') { next(); return N.c('pi'); }
+        if (t.v === 'infty') throw new MErr('No puedo operar con ∞.');
+        if (FN[t.v]) {
+          next();
+          let pw = null;
+          if (isOp(peek(), '^')) { next(); pw = isOp(peek(), '-') ? (next(), N.neg(supArg())) : supArg(); }
+          let arg;
+          if (isOp(peek(), '(')) { next(); arg = expr(); if (!isOp(next(), ')')) throw new MErr('Falta cerrar un paréntesis.'); }
+          else arg = power();
+          if (FN[t.v] === 'log' && opts.logBase10 === false) { /* ln */ }
+          let a = N.fn(FN[t.v], arg);
+          if (pw) a = N.pow(a, pw);
+          return a;
+        }
+        if (GREEK.has(t.v)) { next(); return N.v('\\' + t.v); }
+      }
+      if (t.k === 'id') {
+        next();
+        let name = t.v;
+        if (isOp(peek(), '_')) {
+          next();
+          const s = peek();
+          if (s && s.k === '{') { next(); let sub = ''; while (peek() && peek().k !== '}') { const x = next(); sub += x.v || ''; } next(); name += '_{' + sub + '}'; }
+          else if (s) { next(); name += '_{' + (s.v || '') + '}'; }
+        }
+        if (name === 'e' && opts.var !== 'e') return N.c('e');
+        return N.v(name);
+      }
+      throw new MErr('No sé interpretar «' + (t.k === 'cmd' ? '\\' + t.v : t.v || t.k) + '».');
+    }
+    const a = expr();
+    if (pos < toks.length) { const t = toks[pos]; throw new MErr('No sé interpretar «' + (t.k === 'cmd' ? '\\' + t.v : t.v || t.k) + '».'); }
+    return a;
+  }
+  function varsOf(a, s = new Set()) {
+    if (a.t === 'var') s.add(a.n);
+    for (const k of ['a', 'b']) if (a[k]) varsOf(a[k], s);
+    return s;
+  }
+  function pickVar(a) {
+    const vs = [...varsOf(a)];
+    for (const v of ['x', 't', 'y', 'z', 'n']) if (vs.includes(v)) return v;
+    return vs[0] || 'x';
+  }
+
+  /* --- Simplificación --- */
+  function simp(a) {
+    if (!a || !a.t) return a;
+    const s = Object.assign({}, a);
+    if (s.a) s.a = simp(s.a);
+    if (s.b) s.b = simp(s.b);
+    const A = s.a, B = s.b;
+    switch (s.t) {
+      case 'neg':
+        if (A.t === 'num') return N.num(neg(A.v));
+        if (A.t === 'neg') return A.a;
+        return s;
+      case 'add':
+        if (isNum(A, 0)) return B;
+        if (isNum(B, 0)) return A;
+        if (A.t === 'num' && B.t === 'num') return N.num(add(A.v, B.v));
+        if (B.t === 'neg') return simp(N.sub(A, B.a));
+        if (B.t === 'num' && B.v.n < 0n) return N.sub(A, N.num(neg(B.v)));
+        if (B.t === 'mul' && B.a.t === 'num' && B.a.v.n < 0n) return N.sub(A, simp(N.mul(N.num(neg(B.a.v)), B.b)));
+        return s;
+      case 'sub':
+        if (isNum(B, 0)) return A;
+        if (isNum(A, 0)) return simp(N.neg(B));
+        if (A.t === 'num' && B.t === 'num') return N.num(sub(A.v, B.v));
+        if (B.t === 'neg') return simp(N.add(A, B.a));
+        if (B.t === 'num' && B.v.n < 0n) return N.add(A, N.num(neg(B.v)));
+        if (B.t === 'mul' && B.a.t === 'num' && B.a.v.n < 0n) return N.add(A, simp(N.mul(N.num(neg(B.a.v)), B.b)));
+        if (same(A, B)) return N.num(ZERO);
+        return s;
+      case 'mul': {
+        const fs = [];
+        const flat = (x) => { if (x.t === 'mul') { flat(x.a); flat(x.b); } else fs.push(x); };
+        flat(s);
+        let k = ONE; const ot = [];
+        for (const f of fs) {
+          if (f.t === 'num') k = mul(k, f.v);
+          else if (f.t === 'neg') { k = neg(k); ot.push(f.a); }
+          else if (f.t === 'div' && f.a.t === 'num') { k = mul(k, f.a.v); ot.push(N.pow(f.b, N.num(F(-1)))); }
+          else ot.push(f);
+        }
+        if (isZ(k)) return N.num(ZERO);
+        // agrupar potencias de la misma base
+        const grp = [];
+        for (const f of ot) {
+          const base = f.t === 'pow' && f.b.t === 'num' ? f.a : f, e = f.t === 'pow' && f.b.t === 'num' ? f.b.v : ONE;
+          const g = grp.find((x) => same(x.base, base));
+          if (g) g.e = add(g.e, e); else grp.push({ base, e });
+        }
+        const rank = (x) => (x.t === 'var' ? 0 : x.t === 'pow' && x.a.t === 'var' ? 0 : x.t === 'c' ? 1 : x.t === 'pow' && x.a.t === 'c' ? 2 : x.t === 'fn' ? 3 : 4);
+        const parts = grp.filter((g) => !isZ(g.e)).map((g) => (g.e.n === 1n && g.e.d === 1n ? g.base : N.pow(g.base, N.num(g.e)))).sort((x, y) => rank(x) - rank(y));
+        let r = parts.length ? parts.reduce((x, y) => ({ t: 'mul', a: x, b: y })) : null;
+        if (!r) return N.num(k);
+        if (k.n === 1n && k.d === 1n) return r;
+        if (k.n === -1n && k.d === 1n) return N.neg(r);
+        if (k.n < 0n) return N.neg({ t: 'mul', a: N.num(neg(k)), b: r });
+        return { t: 'mul', a: N.num(k), b: r };
+      }
+      case 'mul_old':
+        if (isNum(A, 0) || isNum(B, 0)) return N.num(ZERO);
+        if (isNum(A, 1)) return B;
+        if (isNum(B, 1)) return A;
+        if (isNum(A, -1)) return simp(N.neg(B));
+        if (isNum(B, -1)) return simp(N.neg(A));
+        if (A.t === 'num' && B.t === 'num') return N.num(mul(A.v, B.v));
+        if (B.t === 'num') return simp(N.mul(B, A));
+        if (A.t === 'num' && B.t === 'mul' && B.a.t === 'num') return simp(N.mul(N.num(mul(A.v, B.a.v)), B.b));
+        if (A.t === 'num' && B.t === 'neg') return simp(N.mul(N.num(neg(A.v)), B.a));
+        if (A.t === 'neg') return simp(N.neg(N.mul(A.a, B)));
+        if (B.t === 'neg') return simp(N.neg(N.mul(A, B.a)));
+        if (A.t === 'num' && B.t === 'div' && B.a.t === 'num') return simp(N.div(N.num(mul(A.v, B.a.v)), B.b));
+        if (same(A, B)) return simp(N.pow(A, N.num(F(2))));
+        if (A.t === 'pow' && same(A.a, B) && A.b.t === 'num') return simp(N.pow(B, N.num(add(A.b.v, ONE))));
+        if (B.t === 'pow' && same(B.a, A) && B.b.t === 'num') return simp(N.pow(A, N.num(add(B.b.v, ONE))));
+        if (A.t === 'pow' && B.t === 'pow' && same(A.a, B.a) && A.b.t === 'num' && B.b.t === 'num') return simp(N.pow(A.a, N.num(add(A.b.v, B.b.v))));
+        // número · (algo · x) → (número·algo)…
+        if (A.t !== 'num' && B.t === 'mul' && B.a.t === 'num') return simp(N.mul(B.a, N.mul(A, B.b)));
+        return s;
+      case 'div':
+        if (isNum(A, 0)) return N.num(ZERO);
+        if (isNum(B, 1)) return A;
+        if (A.t === 'num' && B.t === 'num' && !isZ(B.v)) return N.num(div(A.v, B.v));
+        if (same(A, B)) return N.num(ONE);
+        if (A.t === 'neg') return simp(N.neg(N.div(A.a, B)));
+        if (B.t === 'num' && !isZ(B.v) && A.t === 'mul' && A.a.t === 'num') return simp(N.mul(N.num(div(A.a.v, B.v)), A.b));
+        return s;
+      case 'pow':
+        if (isNum(B, 0)) return N.num(ONE);
+        if (isNum(B, 1)) return A;
+        if (A.t === 'num' && B.t === 'num' && isInt(B.v) && abs(B.v.n) < 64n) {
+          let r = ONE; const k = B.v.n;
+          for (let i = 0n; i < abs(k); i++) r = mul(r, A.v);
+          return N.num(k < 0n ? div(ONE, r) : r);
+        }
+        if (A.t === 'pow' && A.b.t === 'num' && B.t === 'num') return simp(N.pow(A.a, N.num(mul(A.b.v, B.v))));
+        return s;
+      case 'fn':
+        if (s.f === 'ln' && A.t === 'c' && A.n === 'e') return N.num(ONE);
+        if (s.f === 'ln' && isNum(A, 1)) return N.num(ZERO);
+        if ((s.f === 'sin' || s.f === 'tan') && isNum(A, 0)) return N.num(ZERO);
+        if (s.f === 'cos' && isNum(A, 0)) return N.num(ONE);
+        return s;
+      default: return s;
+    }
+  }
+  function same(a, b) { return JSON.stringify(a, (k, v) => (typeof v === 'bigint' ? v.toString() : v)) === JSON.stringify(b, (k, v) => (typeof v === 'bigint' ? v.toString() : v)); }
+  const simpAll = (a) => { let p = a, q = simp(a), i = 0; while (!same(p, q) && i++ < 12) { p = q; q = simp(q); } return q; };
+
+  /* --- Impresión en LaTeX --- */
+  const PREC = { add: 1, sub: 1, neg: 2, mul: 3, div: 4, pow: 5, fn: 6, num: 7, var: 7, c: 7 };
+  function prec(a) { if (a.t === 'num' && (a.v.n < 0n || a.v.d !== 1n)) return a.v.n < 0n ? 2 : 4; return PREC[a.t]; }
+  function L(a) {
+    switch (a.t) {
+      case 'num': return fLatex(a.v);
+      case 'var': return a.n;
+      case 'c': return a.n === 'pi' ? '\\pi ' : '\\mathrm{e}';
+      case 'add': return L(a.a) + (a.b.t === 'neg' ? '' : '+') + L(a.b);
+      case 'sub': return L(a.a) + '-' + (prec(a.b) <= 1 || a.b.t === 'neg' || (a.b.t === 'num' && a.b.v.n < 0n) ? '\\left(' + L(a.b) + '\\right)' : L(a.b));
+      case 'neg': return '-' + (prec(a.a) <= 2 ? '\\left(' + L(a.a) + '\\right)' : L(a.a));
+      case 'mul': {
+        const fs = []; const flat = (x) => { if (x.t === 'mul') { flat(x.a); flat(x.b); } else fs.push(x); }; flat(a);
+        const den = [], numf = [];
+        for (const f of fs) {
+          if (f.t === 'pow' && f.b.t === 'num' && f.b.v.n < 0n) den.push(f.b.v.n === -1n && f.b.v.d === 1n ? f.a : N.pow(f.a, N.num(neg(f.b.v))));
+          else if (f.t === 'div' && isNum(f.a, 1)) den.push(f.b);
+          else numf.push(f);
+        }
+        if (den.length) {
+          let sg = '';
+          if (numf.length && numf[0].t === 'num' && numf[0].v.n < 0n) { sg = '-'; numf[0] = N.num(neg(numf[0].v)); if (isNum(numf[0], 1)) numf.shift(); }
+          const top = numf.length ? numf.reduce((x, y) => ({ t: 'mul', a: x, b: y })) : N.num(ONE);
+          const bot = den.reduce((x, y) => ({ t: 'mul', a: x, b: y }));
+          return sg + '\\frac{' + L(top) + '}{' + L(bot) + '}';
+        }
+        return Lmul(a);
+      }
+      case 'mul2': {
+        const l = prec(a.a) < 3 ? '\\left(' + L(a.a) + '\\right)' : L(a.a);
+        let r = prec(a.b) < 3 || (a.b.t === 'num' && a.b.v.n < 0n) ? '\\left(' + L(a.b) + '\\right)' : L(a.b);
+        const implicit = (a.a.t === 'num' && a.b.t !== 'num' && !(a.b.t === 'div') && !(a.b.t === 'pow' && a.b.a.t === 'num')) ||
+          (a.a.t !== 'num' && (a.b.t === 'var' || a.b.t === 'fn' || a.b.t === 'c' || (a.b.t === 'pow' && a.b.a.t !== 'num'))) && a.a.t !== 'fn';
+        return l + (implicit ? (/^[a-zA-Z0-9]$/.test(l.slice(-1)) && /^[a-zA-Z0-9]/.test(r) ? ' ' : '') : '\\cdot ') + r;
+      }
+      case 'div': return '\\frac{' + L(a.a) + '}{' + L(a.b) + '}';
+      case 'pow': {
+        if (a.b.t === 'num' && a.b.v.n < 0n) return '\\frac{1}{' + L(N.pow(a.a, N.num(neg(a.b.v)))) + '}';
+        if (a.b.t === 'num' && a.b.v.n === 1n && a.b.v.d === 2n) return '\\sqrt{' + L(a.a) + '}';
+        if (a.b.t === 'num' && a.b.v.n === 1n && a.b.v.d > 2n) return '\\sqrt[' + a.b.v.d + ']{' + L(a.a) + '}';
+        if (a.b.t === 'div' && isNum(a.b.a, 1)) return '\\sqrt[' + L(a.b.b) + ']{' + L(a.a) + '}';
+        if (a.a.t === 'fn' && a.a.f !== 'abs' && a.a.f !== 'fact') return '\\' + fnName(a.a.f) + '^{' + L(a.b) + '}' + fnArg(a.a.a);
+        const base = prec(a.a) < 7 || (a.a.t === 'num' && a.a.v.n < 0n) ? '\\left(' + L(a.a) + '\\right)' : L(a.a);
+        return base + '^{' + L(a.b) + '}';
+      }
+      case 'fn':
+        if (a.f === 'abs') return '\\left|' + L(a.a) + '\\right|';
+        if (a.f === 'fact') return (prec(a.a) < 7 ? '\\left(' + L(a.a) + '\\right)' : L(a.a)) + '!';
+        return '\\' + fnName(a.f) + fnArg(a.a);
+      case 'raw': return a.s;
+      default: return '?';
+    }
+  }
+  function Lmul(a) {
+    const fs = []; const flat = (x) => { if (x.t === 'mul') { flat(x.a); flat(x.b); } else fs.push(x); }; flat(a);
+    let s = '', prev = null;
+    for (const f of fs) {
+      let t = prec(f) < 3 || (prev && f.t === 'num' && f.v.n < 0n) ? '\\left(' + L(f) + '\\right)' : L(f);
+      if (prev) {
+        const implicit = (prev.t === 'num' && f.t !== 'num' && !(f.t === 'pow' && f.a.t === 'num')) ||
+          (prev.t !== 'num' && prev.t !== 'fn' && (f.t === 'var' || f.t === 'fn' || f.t === 'c' || (f.t === 'pow' && f.a.t !== 'num')));
+        s += implicit ? (/[a-zA-Z0-9]$/.test(s) && /^[a-zA-Z0-9]/.test(t) ? '' : '') : '\\cdot ';
+      }
+      s += t;
+      prev = f;
+    }
+    return s;
+  }
+  const fnName = (f) => (f === 'sinh' || f === 'cosh' || f === 'tanh' ? f : { sin: 'sin', cos: 'cos', tan: 'tan', cot: 'cot', sec: 'sec', csc: 'csc', arcsin: 'arcsin', arccos: 'arccos', arctan: 'arctan', ln: 'ln', log: 'log', exp: 'exp' }[f]);
+  const fnArg = (x) => (x.t === 'var' || (x.t === 'num' && x.v.n >= 0n && x.v.d === 1n) ? ' ' + L(x) : '\\left(' + L(x) + '\\right)');
+
+  /* --- Evaluación numérica y exacta --- */
+  function evalNum(a, env) {
+    switch (a.t) {
+      case 'num': return fNum(a.v);
+      case 'var': if (a.n in env) return env[a.n]; throw new MErr('Falta el valor de ' + a.n + '.');
+      case 'c': return a.n === 'pi' ? Math.PI : Math.E;
+      case 'add': return evalNum(a.a, env) + evalNum(a.b, env);
+      case 'sub': return evalNum(a.a, env) - evalNum(a.b, env);
+      case 'mul': return evalNum(a.a, env) * evalNum(a.b, env);
+      case 'div': return evalNum(a.a, env) / evalNum(a.b, env);
+      case 'neg': return -evalNum(a.a, env);
+      case 'pow': {
+        const b = evalNum(a.a, env), e = evalNum(a.b, env);
+        if (b < 0 && a.b.t === 'num' && a.b.v.d !== 1n && a.b.v.d % 2n === 1n) return -Math.pow(-b, e);
+        return Math.pow(b, e);
+      }
+      case 'fn': {
+        const x = evalNum(a.a, env);
+        const f = { sin: Math.sin, cos: Math.cos, tan: Math.tan, cot: (v) => 1 / Math.tan(v), sec: (v) => 1 / Math.cos(v), csc: (v) => 1 / Math.sin(v), arcsin: Math.asin, arccos: Math.acos, arctan: Math.atan, ln: Math.log, log: Math.log10, exp: Math.exp, sinh: Math.sinh, cosh: Math.cosh, tanh: Math.tanh, abs: Math.abs, fact: (v) => { let r = 1; for (let i = 2; i <= v; i++) r *= i; return r; } }[a.f];
+        return f(x);
+      }
+      default: return NaN;
+    }
+  }
+  function evalExact(a, env) {
+    switch (a.t) {
+      case 'num': return a.v;
+      case 'var': if (a.n in env) return env[a.n]; throw new MErr('Falta el valor de ' + a.n + '.');
+      case 'add': return add(evalExact(a.a, env), evalExact(a.b, env));
+      case 'sub': return sub(evalExact(a.a, env), evalExact(a.b, env));
+      case 'mul': return mul(evalExact(a.a, env), evalExact(a.b, env));
+      case 'div': return div(evalExact(a.a, env), evalExact(a.b, env));
+      case 'neg': return neg(evalExact(a.a, env));
+      case 'pow': {
+        const b = evalExact(a.a, env), e = evalExact(a.b, env);
+        if (!isInt(e) || abs(e.n) > 200n) throw new MErr('no exacto');
+        let r = ONE;
+        for (let i = 0n; i < abs(e.n); i++) r = mul(r, b);
+        return e.n < 0n ? div(ONE, r) : r;
+      }
+      case 'fn':
+        if (a.f === 'abs') { const v = evalExact(a.a, env); return v.n < 0n ? neg(v) : v; }
+        if (a.f === 'fact') { const v = evalExact(a.a, env); if (!isInt(v) || v.n < 0n) throw new MErr('no exacto'); return F(fact(v.n)); }
+        throw new MErr('no exacto');
+      default: throw new MErr('no exacto');
+    }
+  }
+
+  /* --- Del árbol a polinomio (y a lista de términos sin agrupar) --- */
+  function toPoly(a, v) {
+    switch (a.t) {
+      case 'num': return [a.v];
+      case 'var': if (a.n === v) return P.x(1); throw new MErr('Hay otra letra (' + a.n + ') además de ' + v + '.');
+      case 'add': return P.add(toPoly(a.a, v), toPoly(a.b, v));
+      case 'sub': return P.sub(toPoly(a.a, v), toPoly(a.b, v));
+      case 'neg': return P.scale(toPoly(a.a, v), F(-1));
+      case 'mul': return P.mul(toPoly(a.a, v), toPoly(a.b, v));
+      case 'div': { const d = toPoly(a.b, v); if (P.deg(d) > 0) throw new MErr('Hay ' + v + ' en un denominador.'); if (isZ(d[0])) throw new MErr('División por cero.'); return P.scale(toPoly(a.a, v), div(ONE, d[0])); }
+      case 'pow': {
+        const e = a.b.t === 'num' ? a.b.v : (() => { try { return evalExact(a.b, {}); } catch (x) { return null; } })();
+        if (!e || !isInt(e) || e.n < 0n || e.n > 40n) throw new MErr('Solo trabajo con potencias enteras positivas de ' + v + '.');
+        return P.pow(toPoly(a.a, v), Number(e.n));
+      }
+      default: throw new MErr('La expresión no es un polinomio en ' + v + '.');
+    }
+  }
+  // Lista de términos {c, d} desarrollando productos pero sin agrupar
+  function terms(a, v) {
+    const T = (c, d) => [{ c, d }];
+    switch (a.t) {
+      case 'num': return T(a.v, 0);
+      case 'var': if (a.n === v) return T(ONE, 1); throw new MErr('Hay otra letra (' + a.n + ') además de ' + v + '.');
+      case 'add': return terms(a.a, v).concat(terms(a.b, v));
+      case 'sub': return terms(a.a, v).concat(terms(a.b, v).map((t) => ({ c: neg(t.c), d: t.d })));
+      case 'neg': return terms(a.a, v).map((t) => ({ c: neg(t.c), d: t.d }));
+      case 'mul': {
+        const A = terms(a.a, v), B = terms(a.b, v), r = [];
+        for (const x of A) for (const y of B) r.push({ c: mul(x.c, y.c), d: x.d + y.d });
+        return r;
+      }
+      case 'div': { const d = toPoly(a.b, v); if (P.deg(d) > 0) throw new MErr('Hay ' + v + ' en un denominador: todavía no sé resolver ecuaciones racionales.'); return terms(a.a, v).map((t) => ({ c: div(t.c, d[0]), d: t.d })); }
+      case 'pow': {
+        const p = toPoly(a, v);
+        return p.map((c, d) => ({ c, d })).filter((t) => !isZ(t.c)).reverse();
+      }
+      default: throw new MErr('La ecuación no es polinómica en ' + v + '.');
+    }
+  }
+  const termsLatex = (ts, v) => { let s = ''; for (const t of ts) s += termL(t.c, t.d === 0 ? '' : t.d === 1 ? v : v + '^{' + t.d + '}', s === ''); return s || '0'; };
+  const termText = (t, v) => { const a = F(abs(t.c.n), t.c.d); const one = a.n === 1n && a.d === 1n && t.d > 0; return (one ? '' : fText(a)) + (t.d === 0 ? '' : t.d === 1 ? v.replace('\\', '') : v.replace('\\', '') + '²'.repeat(t.d === 2 ? 1 : 0) + (t.d > 2 ? '^' + t.d : '')); };
+  const hasParenOrFrac = (latex) => /\\left\(|\(|\\frac/.test(latex);
+
+  /* ====================== Utilidades de entrada ====================== */
+  function splitTop(toks, isSep) {
+    const out = [[]];
+    let d = 0;
+    for (const t of toks) {
+      if (t.k === '{' || isCmd(t, 'begin') || isOp(t, '(') || isOp(t, '[')) d++;
+      if (t.k === '}' || isCmd(t, 'end') || isOp(t, ')') || isOp(t, ']')) d--;
+      if (d === 0 && isSep(t)) { out.push([]); continue; }
+      out[out.length - 1].push(t);
+    }
+    return out.filter((x) => x.length);
+  }
+  const lastSeg = (latex) => { const s = ME.splitEq(ME.afterArrows(tokenize(latex))).filter((x) => x.length); if (!s.length) throw new MErr('La línea está vacía.'); return s[s.length - 1]; };
+  function matrixOf(latex, env) {
+    const v = ME.evaluate(lastSeg(latex), env);
+    if (v.t !== 'm') throw new MErr('Necesito una matriz (o su nombre) en la línea.');
+    return v;
+  }
+  const squareOf = (m, what) => { if (m.r !== m.c) throw new MErr(what + ' solo existe para matrices cuadradas y esta es ' + m.r + '×' + m.c + '.'); return m; };
+  const vm = (a) => '\\begin{vmatrix}' + a.map((r) => r.map(fLatex).join(' & ')).join('\\\\ ') + '\\end{vmatrix}';
+  const pm = (a) => '\\begin{pmatrix}' + a.map((r) => r.map(fLatex).join(' & ')).join('\\\\ ') + '\\end{pmatrix}';
+  const prodTxt = (xs) => xs.map(fParen).join('\\cdot ');
+
+  /* ====================== 1. Matrices ====================== */
+  function inverseSteps(latex, env) {
+    const m = squareOf(matrixOf(latex, env), 'La inversa');
+    const n = m.r;
+    const I = Array.from({ length: n }, (_, i) => Array.from({ length: n }, (_, j) => (i === j ? ONE : ZERO)));
+    const aug = m.a.map((r, i) => r.concat(I[i]));
+    const g = ME.gauss(aug, { jordan: true, aug: n });
+    const out = [math('(A\\,|\\,I)=' + ME.matLatex(aug, n))];
+    for (const s of g.steps) out.push(math(arrow(s.ops) + ME.matLatex(s.a, n)));
+    if (g.rank < n) { out.push(math('\\operatorname{rg}(A)=' + g.rank + '<' + n + '\\Rightarrow\\text{ A no tiene inversa}')); return out; }
+    out.push(math('A^{-1}=' + pm(g.a.map((r) => r.slice(n)))));
+    return out;
+  }
+  const arrow = (ops) => (ops.length <= 1 ? '\\xrightarrow{' + ops.join('') + '}' : '\\xrightarrow[' + ops.slice(Math.ceil(ops.length / 2)).join(',\\ ') + ']{' + ops.slice(0, Math.ceil(ops.length / 2)).join(',\\ ') + '}');
+
+  function detValue(a) { return ME.det(ME.M(a)).v; }
+  function detSarrus(latex, env) {
+    const m = squareOf(matrixOf(latex, env), 'El determinante');
+    const a = m.a;
+    if (m.r === 1) return [math(vm(a) + '=' + fLatex(a[0][0]))];
+    if (m.r === 2) {
+      const p1 = mul(a[0][0], a[1][1]), p2 = mul(a[0][1], a[1][0]);
+      return [derivBlock([
+        { l: vm(a), r: prodTxt([a[0][0], a[1][1]]) + '-' + prodTxt([a[0][1], a[1][0]]), note: 'Diagonal principal menos diagonal secundaria' },
+        { r: fParen(p1) + '-' + fParen(p2) },
+        { r: fLatex(sub(p1, p2)), boxed: true },
+      ])];
+    }
+    if (m.r !== 3) return detCofactor(latex, env);
+    const pos = [[0, 0, 1, 1, 2, 2], [0, 1, 1, 2, 2, 0], [0, 2, 1, 0, 2, 1]];
+    const negs = [[0, 2, 1, 1, 2, 0], [0, 0, 1, 2, 2, 1], [0, 1, 1, 0, 2, 2]];
+    const pr = (q) => [a[q[0]][q[1]], a[q[2]][q[3]], a[q[4]][q[5]]];
+    const val = (q) => pr(q).reduce((s, x) => mul(s, x), ONE);
+    const P1 = pos.map(val), N1 = negs.map(val);
+    const sp = P1.reduce(add, ZERO), sn = N1.reduce(add, ZERO);
+    return [derivBlock([
+      { l: vm(a), r: pos.map((q) => prodTxt(pr(q))).join('+') + '-\\left(' + negs.map((q) => prodTxt(pr(q))).join('+') + '\\right)', note: 'Regla de Sarrus: diagonales hacia la derecha menos diagonales hacia la izquierda' },
+      { r: '\\left(' + P1.map(fParen).join('+') + '\\right)-\\left(' + N1.map(fParen).join('+') + '\\right)', note: 'Multiplicamos' },
+      { r: fParen(sp) + '-' + fParen(sn), note: 'Sumamos cada paréntesis' },
+      { r: fLatex(sub(sp, sn)), boxed: true },
+    ])];
+  }
+  function minor(a, i, j) { return a.filter((_, r) => r !== i).map((row) => row.filter((_, c) => c !== j)); }
+  function detCofactor(latex, env) {
+    const m = squareOf(matrixOf(latex, env), 'El determinante');
+    const a = m.a, n = m.r;
+    if (n <= 2) return detSarrus(latex, env);
+    // fila o columna con más ceros
+    let best = { row: true, k: 0, z: -1 };
+    for (let i = 0; i < n; i++) { const z = a[i].filter(isZ).length; if (z > best.z) best = { row: true, k: i, z }; }
+    for (let j = 0; j < n; j++) { const z = a.filter((r) => isZ(r[j])).length; if (z > best.z) best = { row: false, k: j, z }; }
+    const items = [];
+    for (let t = 0; t < n; t++) {
+      const i = best.row ? best.k : t, j = best.row ? t : best.k;
+      const v = a[i][j];
+      if (isZ(v)) continue;
+      const sg = (i + j) % 2 === 0 ? ONE : F(-1);
+      items.push({ c: mul(sg, v), M: minor(a, i, j), i, j });
+    }
+    const where = (best.row ? 'la fila ' : 'la columna ') + (best.k + 1);
+    if (!items.length) return [derivBlock([{ l: vm(a), r: '0', note: 'Desarrollando por ' + where + ': todos sus elementos son 0', boxed: true }])];
+    const r1 = items.map((it, k) => termL(it.c, '\\cdot ' + vm(it.M), k === 0).replace(/^(-?)\\cdot /, '$1')).join('');
+    const vals = items.map((it) => detValue(it.M));
+    const r2 = items.map((it, k) => termL(it.c, '\\cdot ' + fParen(vals[k]), k === 0).replace(/^(-?)\\cdot /, '$1')).join('');
+    const total = items.reduce((s, it, k) => add(s, mul(it.c, vals[k])), ZERO);
+    return [derivBlock([
+      { l: vm(a), r: r1, note: 'Desarrollamos por ' + where + ' (la que tiene más ceros); signo (−1)^(i+j)' },
+      { r: r2, note: 'Calculamos cada menor' },
+      { r: fLatex(total), boxed: true },
+    ])];
+  }
+  function detGauss(latex, env) {
+    const m = squareOf(matrixOf(latex, env), 'El determinante');
+    const a = m.a.map((r) => r.slice()), n = m.r;
+    const rows = [{ l: vm(a), r: '', note: 'Triangulamos con F_i − k·F_j (no cambia el determinante); cada intercambio cambia el signo' }];
+    let sign = 1;
+    const Fn = (i) => 'F_{' + (i + 1) + '}';
+    for (let c = 0; c < n; c++) {
+      let p = c;
+      while (p < n && isZ(a[p][c])) p++;
+      if (p === n) { rows.push({ r: '0', note: 'Columna ' + (c + 1) + ' sin pivote: el determinante es 0', boxed: true }); rows[0].r = rows[1] ? '' : ''; return [derivBlock(fixFirst(rows))]; }
+      if (p !== c) { [a[p], a[c]] = [a[c], a[p]]; sign = -sign; rows.push({ r: '-' + vm(a), note: Fn(c).replace(/[{}_]/g, '') + '↔' + Fn(p).replace(/[{}_]/g, '') + ': cambia el signo' }); }
+      const ops = [];
+      for (let i = c + 1; i < n; i++) {
+        if (isZ(a[i][c])) continue;
+        const k = div(a[i][c], a[c][c]);
+        a[i] = a[i].map((x, j) => sub(x, mul(k, a[c][j])));
+        ops.push('F' + (i + 1) + (k.n < 0n ? ' + ' : ' − ') + (k.n === k.d || -k.n === k.d ? '' : fText(F(abs(k.n), k.d))) + 'F' + (c + 1));
+      }
+      if (ops.length) rows.push({ r: (sign < 0 ? '-' : '') + vm(a), note: ops.join(', ') });
+    }
+    const diag = a.map((r, i) => r[i]);
+    const prod = diag.reduce(mul, ONE);
+    rows.push({ r: (sign < 0 ? '-' : '') + diag.map(fParen).join('\\cdot '), note: 'Matriz triangular: producto de la diagonal' });
+    rows.push({ r: fLatex(sign < 0 ? neg(prod) : prod), boxed: true });
+    return [derivBlock(fixFirst(rows))];
+  }
+  // En los desarrollos la primera fila lleva lado izquierdo y derecho
+  function fixFirst(rows) {
+    if (rows.length > 1 && !rows[0].r) { rows[1].l = rows[0].l; rows[1].note = rows[0].note + (rows[1].note ? '. ' + rows[1].note : ''); rows.shift(); }
+    return rows;
+  }
+  function cramer(latex) {
+    const s = ME.parseSystem(latex);
+    const n = s.vars.length;
+    if (s.a.length !== n) throw new MErr('Cramer necesita tantas ecuaciones como incógnitas (' + s.a.length + ' y ' + n + ').');
+    const A = s.a.map((r) => r.slice(0, n)), b = s.a.map((r) => r[n]);
+    const D = detValue(A);
+    const rows = [{ l: '\\Delta', r: vm(A) + '=' + fLatex(D), note: 'Determinante de la matriz de coeficientes' }];
+    if (isZ(D)) { rows.push({ l: '\\Delta', r: '0', note: 'Δ = 0: no se puede aplicar Cramer; usa Gauss para discutirlo', boxed: true }); return [derivBlock(rows)]; }
+    const sols = [];
+    s.vars.forEach((v, j) => {
+      const Aj = A.map((r, i) => r.map((x, k) => (k === j ? b[i] : x)));
+      const Dj = detValue(Aj);
+      rows.push({ l: '\\Delta_{' + v + '}', r: vm(Aj) + '=' + fLatex(Dj), note: 'Cambiamos la columna de ' + v.replace(/[\\{}_]/g, '') + ' por los términos independientes' });
+      sols.push({ v, Dj, val: div(Dj, D) });
+    });
+    for (const x of sols) rows.push({ l: x.v, r: '\\frac{\\Delta_{' + x.v + '}}{\\Delta}=\\frac{' + fLatex(x.Dj) + '}{' + fLatex(D) + '}=' + fLatex(x.val), boxed: true });
+    return [derivBlock(rows)];
+  }
+  function productDeveloped(latex, env) {
+    const seg = lastSeg(latex);
+    const ops = splitTop(seg, (t) => isCmd(t, 'cdot') || isCmd(t, 'times') || isOp(t, '*'));
+    if (ops.length !== 2) throw new MErr('Escribe el producto de dos matrices, por ejemplo A\\cdot B.');
+    const X = ME.evaluate(ops[0], env), Y = ME.evaluate(ops[1], env);
+    if (X.t !== 'm' || Y.t !== 'm') throw new MErr('Los dos factores deben ser matrices.');
+    if (X.c !== Y.r) throw new MErr('No se pueden multiplicar ' + X.r + '×' + X.c + ' · ' + Y.r + '×' + Y.c + '.');
+    const cells = [], vals = [];
+    for (let i = 0; i < X.r; i++) {
+      cells.push([]); vals.push([]);
+      for (let j = 0; j < Y.c; j++) {
+        let s = ZERO; const parts = [];
+        for (let k = 0; k < X.c; k++) { parts.push(fParen(X.a[i][k]) + '\\cdot ' + fParen(Y.a[k][j])); s = add(s, mul(X.a[i][k], Y.a[k][j])); }
+        cells[i].push(parts.join('+'));
+        vals[i].push(s);
+      }
+    }
+    const lhs = latex.replace(/=\s*$/, '');
+    return [derivBlock([
+      { l: lhs, r: '\\begin{pmatrix}' + cells.map((r) => r.join(' & ')).join('\\\\ ') + '\\end{pmatrix}', note: 'Cada elemento c_ij = fila i de la primera · columna j de la segunda' },
+      { r: pm(vals), boxed: true },
+    ])];
+  }
+
+  /* --- Matrices con un parámetro (polinomios) --- */
+  function detPoly(M) {
+    const n = M.length;
+    if (n === 1) return M[0][0];
+    if (n === 2) return P.sub(P.mul(M[0][0], M[1][1]), P.mul(M[0][1], M[1][0]));
+    let r = [ZERO];
+    for (let j = 0; j < n; j++) {
+      if (P.isZero(M[0][j])) continue;
+      const sub_ = M.slice(1).map((row) => row.filter((_, c) => c !== j));
+      const t = P.mul(M[0][j], detPoly(sub_));
+      r = j % 2 === 0 ? P.add(r, t) : P.sub(r, t);
+    }
+    return r;
+  }
+  const VARS = new Set(['x', 'y', 'z', 't', 'w', 'u', 'v']);
+  function isUnknown(n) { return VARS.has(n) || /^x_\{\d+\}$/.test(n); }
+  // términos {c: polinomio en el parámetro, v: incógnita | null}
+  function pterms(a, prm) {
+    const T = (c, v) => [{ c, v }];
+    switch (a.t) {
+      case 'num': return T([a.v], null);
+      case 'var': return a.n === prm ? T(P.x(1), null) : T([ONE], a.n);
+      case 'add': return pterms(a.a, prm).concat(pterms(a.b, prm));
+      case 'sub': return pterms(a.a, prm).concat(pterms(a.b, prm).map((t) => ({ c: P.scale(t.c, F(-1)), v: t.v })));
+      case 'neg': return pterms(a.a, prm).map((t) => ({ c: P.scale(t.c, F(-1)), v: t.v }));
+      case 'mul': {
+        const r = [];
+        for (const x of pterms(a.a, prm)) for (const y of pterms(a.b, prm)) {
+          if (x.v && y.v) throw new MErr('El sistema no es lineal.');
+          r.push({ c: P.mul(x.c, y.c), v: x.v || y.v });
+        }
+        return r;
+      }
+      case 'div': { const d = pterms(a.b, prm); if (d.length !== 1 || d[0].v || P.deg(d[0].c) > 0) throw new MErr('Solo admito denominadores numéricos.'); return pterms(a.a, prm).map((t) => ({ c: P.scale(t.c, div(ONE, d[0].c[0])), v: t.v })); }
+      case 'pow': {
+        const e = a.b.t === 'num' && isInt(a.b.v) ? Number(a.b.v.n) : -1;
+        if (e < 0) throw new MErr('Exponente no válido.');
+        let r = [{ c: [ONE], v: null }];
+        for (let i = 0; i < e; i++) { const nr = []; for (const x of r) for (const y of pterms(a.a, prm)) { if (x.v && y.v) throw new MErr('El sistema no es lineal.'); nr.push({ c: P.mul(x.c, y.c), v: x.v || y.v }); } r = nr; }
+        return r;
+      }
+      default: throw new MErr('No sé tratar esa expresión en un sistema con parámetro.');
+    }
+  }
+  function systemRows(latex) {
+    const toks = tokenize(latex);
+    const i = toks.findIndex((t) => isCmd(t, 'begin'));
+    let body = toks;
+    if (i >= 0) {
+      let j = i + 1; while (j < toks.length && toks[j].k !== '}') j++;
+      let d = 0, e = j + 1;
+      for (; e < toks.length; e++) { if (isCmd(toks[e], 'begin')) d++; if (isCmd(toks[e], 'end')) { if (d === 0) break; d--; } }
+      body = toks.slice(j + 1, e);
+    }
+    return splitTop(body.filter((t) => t.k !== 'amp'), (t) => t.k === 'row');
+  }
+  function paramDiscussion(latex) {
+    const rows = systemRows(latex);
+    const all = [];
+    const eqs = rows.map((r) => {
+      const s = ME.splitEq(r);
+      if (s.length !== 2) throw new MErr('Cada ecuación debe tener un signo =.');
+      return [parseExpr(s[0]), parseExpr(s[1])];
+    });
+    eqs.forEach(([l, r]) => { varsOf(l).forEach((v) => all.push(v)); varsOf(r).forEach((v) => all.push(v)); });
+    const params = [...new Set(all.filter((v) => !isUnknown(v)))];
+    if (params.length !== 1) throw new MErr(params.length ? 'Solo sé discutir sistemas con un parámetro (hay ' + params.join(', ') + ').' : 'No encuentro el parámetro: usa una letra como a, k o m.');
+    const prm = params[0];
+    const unk = [...new Set(all.filter(isUnknown))].sort((p, q) => 'xyzwtuv'.indexOf(p) - 'xyzwtuv'.indexOf(q) || p.localeCompare(q));
+    const A = [], b = [];
+    for (const [l, r] of eqs) {
+      const ts = pterms(l, prm).concat(pterms(r, prm).map((t) => ({ c: P.scale(t.c, F(-1)), v: t.v })));
+      A.push(unk.map((v) => ts.filter((t) => t.v === v).reduce((s, t) => P.add(s, t.c), [ZERO])));
+      b.push(P.scale(ts.filter((t) => !t.v).reduce((s, t) => P.add(s, t.c), [ZERO]), F(-1)));
+    }
+    const n = unk.length, m = A.length;
+    const cell = (p) => P.latex(p, prm);
+    const augL = '\\left(\\begin{matrix}' + A.map((r) => r.map(cell).join(' & ')).join('\\\\ ') + '\\end{matrix}\\,\\middle|\\,\\begin{matrix}' + b.map(cell).join('\\\\ ') + '\\end{matrix}\\right)';
+    const out = [math('(A\\,|\\,b)=' + augL)];
+    if (m !== n) throw new MErr('Por ahora discuto sistemas cuadrados (tantas ecuaciones como incógnitas).');
+    const D = detPoly(A);
+    const { roots, rest } = rationalRoots(D);
+    const uniq = []; roots.forEach((r) => { if (!uniq.some((u) => u.n === r.n && u.d === r.d)) uniq.push(r); });
+    out.push(math('|A|=' + '\\begin{vmatrix}' + A.map((r) => r.map(cell).join(' & ')).join('\\\\ ') + '\\end{vmatrix}=' + P.latex(D, prm)));
+    if (P.isZero(D)) out.push(math('|A|=0\\ \\text{para todo }' + prm + '\\Rightarrow\\operatorname{rg}(A)<' + n));
+    else if (uniq.length) out.push(math('|A|=0\\Leftrightarrow ' + uniq.map((r) => prm + '=' + fLatex(r)).join(',\\ ') + (P.deg(rest) >= 1 ? '\\ \\text{(y raíces no racionales de }' + P.latex(rest, prm) + '=0)' : '')));
+    else out.push(math('|A|\\neq 0\\ \\text{para todo }' + prm + (P.deg(rest) >= 1 ? '\\ \\text{racional}' : '')));
+    const conds = uniq.map((r) => prm + '\\neq ' + fLatex(r)).join(',\\ ');
+    if (!P.isZero(D)) out.push(math((conds ? conds : '\\forall ' + prm) + ':\\ \\operatorname{rg}(A)=\\operatorname{rg}(A|b)=' + n + '\\Rightarrow\\text{Compatible determinado}'));
+    const cases = P.isZero(D) ? [] : uniq;
+    for (const r of cases) {
+      const Ar = A.map((row, i) => row.map((p) => P.eval(p, r)).concat([P.eval(b[i], r)]));
+      const sol = ME.solve(Ar, unk);
+      const kind = sol.kind === 'SI' ? 'Incompatible' : sol.kind === 'SCI' ? 'Compatible indeterminado' : 'Compatible determinado';
+      out.push(math(prm + '=' + fLatex(r) + ':\\ ' + ME.matLatex(Ar, n) + '\\ \\operatorname{rg}(A)=' + sol.rA + ',\\ \\operatorname{rg}(A|b)=' + sol.rAb + '\\Rightarrow\\text{' + kind + '}'));
+    }
+    return out;
+  }
+  /* --- Autovalores y autovectores --- */
+  function eigen(latex, env) {
+    const m = squareOf(matrixOf(latex, env), 'Los autovalores');
+    const n = m.r;
+    const M = m.a.map((r, i) => r.map((x, j) => (i === j ? [x, F(-1)] : [x])));
+    const cp = detPoly(M);
+    const cell = (p) => P.latex(p, '\\lambda');
+    const out = [math('|A-\\lambda I|=\\begin{vmatrix}' + M.map((r) => r.map(cell).join(' & ')).join('\\\\ ') + '\\end{vmatrix}=' + P.latex(cp, '\\lambda'))];
+    const { roots, rest } = rationalRoots(cp);
+    const mult = new Map();
+    roots.forEach((r) => { const k = fText(r); mult.set(k, { r, m: (mult.get(k) || { m: 0 }).m + 1 }); });
+    const factors = [...mult.values()].map(({ r, m: k }) => (isZ(r) ? '\\lambda' : '\\left(\\lambda' + (r.n < 0n ? '+' + fLatex(neg(r)) : '-' + fLatex(r)) + '\\right)') + (k > 1 ? '^{' + k + '}' : ''));
+    const lead = cp[cp.length - 1];
+    let restL = '';
+    if (P.deg(rest) >= 1) restL = '\\left(' + P.latex(rest, '\\lambda') + '\\right)';
+    const leadL = P.deg(rest) >= 1 ? '1' : fLatex(rest[0]); void lead;
+    if (mult.size) out.push(math('|A-\\lambda I|=' + (leadL === '1' ? '' : leadL === '-1' ? '-' : leadL) + factors.join('') + restL + '=0'));
+    const lam = [...mult.values()];
+    let irr = [];
+    if (P.deg(rest) === 2) irr = quadRootsLatex(rest, '\\lambda');
+    out.push(math('\\text{Autovalores: }' + lam.map(({ r, m: k }) => '\\lambda=' + fLatex(r) + (k > 1 ? '\\ (\\text{doble})'.replace('doble', k === 2 ? 'doble' : 'multiplicidad ' + k) : '')).concat(irr).join(',\\quad ') || '\\text{no hay autovalores racionales}'));
+    if (P.deg(rest) > 2) out.push(math('\\text{Quedan raíces no racionales de }' + P.latex(rest, '\\lambda') + '=0'));
+    let dimSum = 0;
+    const vecs = [];
+    for (const { r, m: k } of lam) {
+      const B = m.a.map((row, i) => row.map((x, j) => (i === j ? sub(x, r) : x)));
+      const { a: R, piv } = ME.rref(B);
+      const free = [...Array(n).keys()].filter((j) => !piv.includes(j));
+      const basis = free.map((f) => {
+        const v = Array(n).fill(ZERO); v[f] = ONE;
+        piv.forEach((pc, ri) => { v[pc] = neg(R[ri][f]); });
+        let L = 1n; v.forEach((c) => { L = L / gcd(L, c.d) * c.d; });
+        return v.map((c) => mul(c, F(L)));
+      });
+      dimSum += basis.length;
+      vecs.push(...basis);
+      out.push(math('\\lambda=' + fLatex(r) + ':\\ (A' + (isZ(r) ? '' : (r.n < 0n ? '+' + coefI(neg(r)) : '-' + coefI(r)) + 'I') + ')\\,v=0\\Rightarrow V_{' + fLatex(r) + '}=\\left\\langle ' + basis.map((v) => '(' + v.map(fLatex).join(',') + ')').join(',\\ ') + '\\right\\rangle ,\\ \\dim=' + basis.length + (basis.length < k ? '<' + k : '')));
+    }
+    if (!irr.length && P.deg(rest) < 1) {
+      if (dimSum === n) {
+        const Pm = Array.from({ length: n }, (_, i) => vecs.map((v) => v[i]));
+        const Dg = lam.flatMap(({ r }) => Array(vecsFor(r)).fill(r));
+        function vecsFor(r) { return out.length ? 0 : 0; }
+        const diag = [];
+        for (const { r } of lam) { const B = m.a.map((row, i) => row.map((x, j) => (i === j ? sub(x, r) : x))); const k = n - ME.rref(B).piv.length; for (let t = 0; t < k; t++) diag.push(r); }
+        void Dg;
+        out.push(math('\\text{Diagonalizable: }P=' + pm(Pm) + ',\\ D=' + pm(diag.map((d, i) => diag.map((_, j) => (i === j ? d : ZERO)))) + ',\\ A=PDP^{-1}'));
+      } else out.push(math('\\text{No es diagonalizable: la suma de dimensiones es }' + dimSum + '<' + n));
+    }
+    return out;
+  }
+
+  const coefI = (r) => (r.n === 1n && r.d === 1n ? '' : fLatex(r));
+  /* ====================== 2. Vectores ====================== */
+  function vecsOf(latex, env, need) {
+    const seg = lastSeg(latex);
+    let parts = splitTop(seg, (t) => isOp(t, ','));
+    if (parts.length < need) parts = splitTop(seg, (t) => isCmd(t, 'cdot') || isCmd(t, 'times') || isOp(t, '*'));
+    if (parts.length < need) throw new MErr(need === 1 ? 'Escribe un vector en la línea.' : 'Escribe dos vectores separados por coma o por ·, por ejemplo u, v.');
+    return parts.slice(0, need).map((p) => {
+      // (1,2,3) escrito como tupla
+      const inner = p.length > 2 && isOp(p[0], '(') && isOp(p[p.length - 1], ')') ? splitTop(p.slice(1, -1), (t) => isOp(t, ',')) : null;
+      if (inner && inner.length > 1) return inner.map((q) => { const v = ME.evaluate(q, env); if (v.t !== 's') throw new MErr('Las coordenadas deben ser números.'); return v.v; });
+      const v = ME.evaluate(p, env);
+      if (v.t !== 'm' || (v.r !== 1 && v.c !== 1)) throw new MErr('Necesito vectores (una fila o una columna).');
+      return v.r === 1 ? v.a[0] : v.a.map((r) => r[0]);
+    });
+  }
+  const tup = (v) => '\\left(' + v.map(fLatex).join(',\\ ') + '\\right)';
+  function sqrtSimp(q) {
+    // √q = k·√m con q fracción ≥ 0
+    if (q.n < 0n) throw new MErr('Raíz de un número negativo.');
+    let num = q.n * q.d, den = q.d; // √(n/d) = √(n·d)/d
+    let k = 1n, mm = num;
+    for (let p = 2n; p * p <= mm; p++) while (mm % (p * p) === 0n) { mm /= p * p; k *= p; }
+    const out = F(k, den);
+    return { k: out, m: mm };
+  }
+  const sqrtLatex = (q) => { const { k, m } = sqrtSimp(q); if (m === 1n) return fLatex(k); return (k.n === 1n && k.d === 1n ? '' : k.d === 1n ? fLatex(k) : '\\frac{' + (k.n === 1n ? '' : k.n) + '\\sqrt{' + m + '}}{' + k.d + '}') + (k.d === 1n ? '\\sqrt{' + m + '}' : ''); };
+  function dot(u, v) { if (u.length !== v.length) throw new MErr('Los vectores tienen distinta dimensión.'); return u.reduce((s, x, i) => add(s, mul(x, v[i])), ZERO); }
+  function vecDot(latex, env) {
+    const [u, v] = vecsOf(latex, env, 2);
+    const d = dot(u, v);
+    return [derivBlock([
+      { l: 'u\\cdot v', r: u.map((x, i) => fParen(x) + '\\cdot ' + fParen(v[i])).join('+'), note: 'Multiplicamos coordenada a coordenada y sumamos' },
+      { r: u.map((x, i) => fParen(mul(x, v[i]))).join('+') },
+      { r: fLatex(d), boxed: true, note: isZ(d) ? 'Producto escalar 0: los vectores son perpendiculares' : '' },
+    ])];
+  }
+  function vecCross(latex, env) {
+    const [u, v] = vecsOf(latex, env, 2);
+    if (u.length !== 3 || v.length !== 3) throw new MErr('El producto vectorial es para vectores de ℝ³.');
+    const c1 = sub(mul(u[1], v[2]), mul(u[2], v[1])), c2 = sub(mul(u[0], v[2]), mul(u[2], v[0])), c3 = sub(mul(u[0], v[1]), mul(u[1], v[0]));
+    const m2 = (a, b, c, d) => '\\begin{vmatrix}' + fLatex(a) + ' & ' + fLatex(b) + '\\\\ ' + fLatex(c) + ' & ' + fLatex(d) + '\\end{vmatrix}';
+    return [derivBlock([
+      { l: 'u\\times v', r: '\\begin{vmatrix}\\vec{i} & \\vec{j} & \\vec{k}\\\\ ' + u.map(fLatex).join(' & ') + '\\\\ ' + v.map(fLatex).join(' & ') + '\\end{vmatrix}', note: 'Determinante simbólico con i, j, k en la primera fila' },
+      { r: m2(u[1], u[2], v[1], v[2]) + '\\vec{i}-' + m2(u[0], u[2], v[0], v[2]) + '\\vec{j}+' + m2(u[0], u[1], v[0], v[1]) + '\\vec{k}', note: 'Desarrollamos por la primera fila' },
+      { r: termL(c1, '\\vec{i}', true) + termL(neg(c2), '\\vec{j}', isZ(c1)) + termL(c3, '\\vec{k}', isZ(c1) && isZ(c2)) || '0' },
+      { r: tup([c1, neg(c2), c3]), boxed: true },
+    ])];
+  }
+  function vecNorm(latex, env) {
+    const [u] = vecsOf(latex, env, 1);
+    const s = dot(u, u);
+    return [derivBlock([
+      { l: '\\left\\lVert u\\right\\rVert', r: '\\sqrt{' + u.map((x) => fParen(x) + '^{2}').join('+') + '}', note: 'Raíz de la suma de los cuadrados' },
+      { r: '\\sqrt{' + fLatex(s) + '}' },
+      { r: sqrtLatex(s), boxed: true, note: sqrtSimp(s).m === 1n ? '' : '≈ ' + Math.sqrt(fNum(s)).toFixed(4).replace('.', ',') },
+    ].filter((r, i) => !(i === 2 && sqrtLatex(s) === '\\sqrt{' + fLatex(s) + '}'))) ];
+  }
+  function vecAngle(latex, env) {
+    const [u, v] = vecsOf(latex, env, 2);
+    const d = dot(u, v), nu = dot(u, u), nv = dot(v, v);
+    if (isZ(nu) || isZ(nv)) throw new MErr('Un vector nulo no forma ángulo.');
+    const prod = mul(nu, nv);
+    const cosv = fNum(d) / Math.sqrt(fNum(prod));
+    const deg = Math.acos(Math.max(-1, Math.min(1, cosv))) * 180 / Math.PI;
+    const { k, m } = sqrtSimp(prod);
+    const den = m === 1n ? fLatex(k) : sqrtLatex(prod);
+    const exact = m === 1n ? fLatex(div(d, k)) : '\\frac{' + fLatex(d) + '}{' + den + '}';
+    return [derivBlock([
+      { l: '\\cos\\alpha', r: '\\frac{u\\cdot v}{\\left\\lVert u\\right\\rVert\\,\\left\\lVert v\\right\\rVert}', note: 'Fórmula del ángulo entre dos vectores' },
+      { r: '\\frac{' + fLatex(d) + '}{\\sqrt{' + fLatex(nu) + '}\\cdot\\sqrt{' + fLatex(nv) + '}}', note: 'u·v = ' + fText(d) + ', ‖u‖² = ' + fText(nu) + ', ‖v‖² = ' + fText(nv) },
+      { r: exact + '\\approx ' + cosv.toFixed(4) },
+      { l: '\\alpha', r: '\\arccos\\left(' + exact + '\\right)\\approx ' + deg.toFixed(2) + '^{\\circ}', boxed: true },
+    ])];
+  }
+  function vecProj(latex, env) {
+    const [u, v] = vecsOf(latex, env, 2);
+    const d = dot(u, v), nv = dot(v, v);
+    if (isZ(nv)) throw new MErr('No se puede proyectar sobre el vector nulo.');
+    const k = div(d, nv);
+    return [derivBlock([
+      { l: '\\operatorname{proy}_{v}u', r: '\\frac{u\\cdot v}{\\left\\lVert v\\right\\rVert^{2}}\\,v', note: 'Proyección ortogonal de u sobre v' },
+      { r: '\\frac{' + fLatex(d) + '}{' + fLatex(nv) + '}' + tup(v) },
+      { r: tup(v.map((x) => mul(k, x))), boxed: true },
+    ])];
+  }
+
+  /* ====================== 3. Ecuaciones ====================== */
+  function sideTerms(latex, v) { return terms(parseExpr(latex, { var: v }), v); }
+  function eqVar(l, r) {
+    const vs = new Set([...varsOf(parseExpr(l || '0')), ...varsOf(parseExpr(r || '0'))]);
+    for (const c of ['x', 'y', 'z', 't']) if (vs.has(c)) return c;
+    if (vs.size === 1) return [...vs][0];
+    if (!vs.size) throw new MErr('No hay incógnita en la ecuación.');
+    throw new MErr('Hay varias letras (' + [...vs].join(', ') + '): de momento resuelvo ecuaciones con una incógnita.');
+  }
+  const combine = (ts) => { const m = new Map(); for (const t of ts) m.set(t.d, add(m.get(t.d) || ZERO, t.c)); return [...m.entries()].sort((a, b) => b[0] - a[0]).map(([d, c]) => ({ c, d })); };
+  const maxDeg = (ts) => ts.reduce((s, t) => (isZ(t.c) ? s : Math.max(s, t.d)), 0);
+  function moveNote(t, v, toRight) {
+    const s = termText(t, v);
+    return (t.c.n >= 0n ? 'El +' + s : 'El −' + s) + ' pasa ' + (t.c.n >= 0n ? 'restando' : 'sumando') + (toRight ? ' a la derecha' : ' a la izquierda');
+  }
+  // Un paso de una ecuación lineal; devuelve {l, r, note} o null si ya está resuelta
+  function linearStep(l, r, v) {
+    const L0 = sideTerms(l, v), R0 = sideTerms(r, v);
+    const raw = hasParenOrFrac(l) || hasParenOrFrac(r);
+    // forma ya despejada: x = número
+    if (L0.length === 1 && L0[0].d === 1 && L0[0].c.n === 1n && L0[0].c.d === 1n && R0.every((t) => t.d === 0)) {
+      const b = R0.reduce((s0, t) => add(s0, t.c), ZERO);
+      if (r.replace(/\s/g, '') === fLatex(b)) return null;
+      return { l: v, r: fLatex(b), note: R0.length > 1 ? 'Operamos' : 'Simplificamos' };
+    }
+    // 1) paréntesis o fracciones con la incógnita: desarrollar
+    const den = [...L0, ...R0].reduce((s, t) => s / gcd(s, t.c.d) * t.c.d, 1n);
+    if (den > 1n) {
+      const k = F(den);
+      return { l: termsLatex(L0.map((t) => ({ c: mul(t.c, k), d: t.d })), v), r: termsLatex(R0.map((t) => ({ c: mul(t.c, k), d: t.d })), v), note: 'Multiplicamos los dos lados por ' + den + ' (m.c.m. de los denominadores)' };
+    }
+    if (raw && (termsLatex(L0, v) !== l.replace(/\s/g, '') || termsLatex(R0, v) !== r.replace(/\s/g, ''))) {
+      return { l: termsLatex(L0, v), r: termsLatex(R0, v), note: 'Quitamos paréntesis' };
+    }
+    const Lv = L0.filter((t) => t.d > 0 && !isZ(t.c)), Lc = L0.filter((t) => t.d === 0 && !isZ(t.c));
+    const Rv = R0.filter((t) => t.d > 0 && !isZ(t.c)), Rc = R0.filter((t) => t.d === 0 && !isZ(t.c));
+    // 2) transponer: incógnitas a la izquierda y números a la derecha
+    if (Lc.length || Rv.length) {
+      if (!Lv.length && !Rv.length) return null;
+      const nl = Lv.concat(Rv.map((t) => ({ c: neg(t.c), d: t.d })));
+      const nr = Rc.concat(Lc.map((t) => ({ c: neg(t.c), d: t.d })));
+      const notes = Lc.map((t) => moveNote(t, v, true)).concat(Rv.map((t) => moveNote(t, v, false)));
+      return { l: termsLatex(nl.length ? nl : [{ c: ZERO, d: 0 }], v), r: termsLatex(nr.length ? nr : [{ c: ZERO, d: 0 }], v), note: notes.map((t, i) => (i ? t.replace(/^El /, 'el ') : t)).join('; ') };
+    }
+    // 3) agrupar
+    if (Lv.length > 1 || Rc.length > 1) {
+      return { l: termsLatex(combine(Lv).filter((t) => !isZ(t.c)).length ? combine(Lv) : [{ c: ZERO, d: 0 }], v), r: termsLatex(combine(Rc).length ? combine(Rc) : [{ c: ZERO, d: 0 }], v), note: 'Agrupamos términos semejantes' };
+    }
+    const a = Lv.length ? Lv[0].c : ZERO, b = Rc.length ? Rc[0].c : ZERO;
+    if (isZ(a)) return null;
+    // 4) despejar el coeficiente
+    if (!(a.n === 1n && a.d === 1n)) {
+      if (a.n === -1n && a.d === 1n) return { l: v, r: fLatex(neg(b)), note: 'Cambiamos de signo los dos lados' };
+      return { l: v, r: '\\frac{' + fLatex(b) + '}{' + fLatex(a) + '}', note: 'El ' + fText(a) + ' que multiplica a ' + v + ' pasa dividiendo' };
+    }
+    // 5) simplificar la fracción si hace falta
+    const rr = r.replace(/\s/g, '');
+    if (rr !== fLatex(b)) return { l: v, r: fLatex(b), note: 'Simplificamos' };
+    return null;
+  }
+  function eqSteps(l, r) {
+    const v = eqVar(l, r);
+    const all = sideTerms(l, v).concat(sideTerms(r, v));
+    const dg = maxDeg(all);
+    if (dg >= 2) return quadSteps(l, r, v);
+    const rows = [];
+    let cl = l, cr = r, guard = 0;
+    for (;;) {
+      if (guard++ > 12) break;
+      const st = linearStep(cl, cr, v);
+      if (!st) break;
+      rows.push(st);
+      cl = st.l; cr = st.r;
+    }
+    // casos especiales: 0 = b
+    const Lf = combine(sideTerms(cl, v)), Rf = combine(sideTerms(cr, v));
+    const a = (Lf.find((t) => t.d === 1) || { c: ZERO }).c;
+    if (isZ(a)) {
+      const b = sub((Rf.find((t) => t.d === 0) || { c: ZERO }).c, (Lf.find((t) => t.d === 0) || { c: ZERO }).c);
+      rows.push({ l: '0', r: fLatex(b), note: isZ(b) ? 'Se cumple siempre: infinitas soluciones' : 'Imposible: la ecuación no tiene solución' });
+    } else if (rows.length) rows[rows.length - 1].boxed = true;
+    return rows;
+  }
+  function quadRootsLatex(p, v, idx = true) {
+    const [c, b, a] = [p[0] || ZERO, p[1] || ZERO, p[2]];
+    const D = sub(mul(b, b), mul(F(4), mul(a, c)));
+    const two = mul(F(2), a);
+    if (D.n < 0n) return [v + '\\notin\\mathbb{R}\\ (\\Delta<0)'];
+    const { k, m } = sqrtSimp(D);
+    if (m === 1n) {
+      const x1 = div(add(neg(b), k), two), x2 = div(sub(neg(b), k), two);
+      return isZ(D) ? [v + '=' + fLatex(x1) + '\\ (\\text{doble})'] : [v + (idx ? '_{1}' : '') + '=' + fLatex(x1), v + (idx ? '_{2}' : '') + '=' + fLatex(x2)];
+    }
+    // -b/2a ± (k/2a)√m
+    const p0 = div(neg(b), two), q0 = div(k, two);
+    const qL = (q0.n === 1n && q0.d === 1n ? '' : q0.d === 1n ? fLatex(q0) : '\\frac{' + q0.n + '}{' + q0.d + '}') + '\\sqrt{' + m + '}';
+    const base = isZ(p0) ? '' : fLatex(p0);
+    return [v + (idx ? '_{1}' : '') + '=' + base + (base ? '+' : '') + qL, v + (idx ? '_{2}' : '') + '=' + base + '-' + qL];
+  }
+  function quadSteps(l, r, v) {
+    const rows = [];
+    const all = combine(sideTerms(l, v).concat(sideTerms(r, v).map((t) => ({ c: neg(t.c), d: t.d }))));
+    const dg = maxDeg(all);
+    const poly = []; all.forEach((t) => { poly[t.d] = t.c; });
+    for (let i = 0; i <= dg; i++) if (!poly[i]) poly[i] = ZERO;
+    const std = P.latex(poly, v);
+    const nz = (t) => t.replace(/\s/g, '').replace(/\^\{(\w)\}/g, '^$1');
+    if (!(nz(r) === '0' && nz(l) === nz(std))) rows.push({ l: std, r: '0', note: 'Pasamos todo al primer miembro y agrupamos' });
+    if (dg > 2) {
+      const { roots, rest } = rationalRoots(poly);
+      if (!roots.length) throw new MErr('No encuentro raíces racionales; esta ecuación de grado ' + dg + ' no la sé resolver paso a paso.');
+      const uniq = [...new Map(roots.map((x) => [fText(x), x])).values()];
+      rows.push({ l: polyFactorLatex(poly, roots, rest, v), r: '0', note: 'Factorizamos con Ruffini (raíces racionales: ' + uniq.map(fText).join(', ') + ')' });
+      const sols = uniq.map((x) => v + '=' + fLatex(x));
+      if (P.deg(rest) === 2) sols.push(...quadRootsLatex(rest, v, false).filter((s) => !/notin/.test(s)));
+      rows.push({ l: '', r: '', note: '' });
+      rows.pop();
+      rows.push({ l: v, r: sols.map((s) => s.replace(v + '=', '')).join(',\\ '), note: 'Cada factor igualado a 0', boxed: true });
+      return rows;
+    }
+    const a = poly[2], b = poly[1], c = poly[0];
+    rows.push({ l: '', r: '', note: '' }); rows.pop();
+    const D = sub(mul(b, b), mul(F(4), mul(a, c)));
+    rows.push({ l: '\\Delta', r: 'b^{2}-4ac=' + fParen(b) + '^{2}-4\\cdot ' + fParen(a) + '\\cdot ' + fParen(c) + '=' + fLatex(D), note: 'a = ' + fText(a) + ', b = ' + fText(b) + ', c = ' + fText(c) });
+    if (D.n < 0n) { rows.push({ l: '\\Delta', r: fLatex(D) + '<0', note: 'Discriminante negativo: no hay soluciones reales', boxed: true }); return rows; }
+    rows.push({ l: v, r: '\\frac{-b\\pm\\sqrt{\\Delta}}{2a}=\\frac{' + fLatex(neg(b)) + '\\pm\\sqrt{' + fLatex(D) + '}}{' + (a.n === 1n && a.d === 1n ? '2' : '2\\cdot ' + fParen(a)) + '}', note: isZ(D) ? 'Δ = 0: una solución doble' : 'Fórmula de la ecuación de segundo grado' });
+    const sols = quadRootsLatex(poly, v);
+    sols.forEach((s, i) => { const [ll, rr] = s.split('='); rows.push({ l: ll, r: rr, boxed: true, note: i === 0 && sqrtSimp(D).m !== 1n ? 'Simplificamos la raíz' : '' }); });
+    return rows;
+  }
+  function polyFactorLatex(poly, roots, rest, v) {
+    const lead = poly[poly.length - 1];
+    const cnt = new Map(); roots.forEach((r) => { const k = fText(r); cnt.set(k, { r, m: (cnt.get(k) || { m: 0 }).m + 1 }); });
+    let s = '';
+    for (const { r, m } of cnt.values()) s += (isZ(r) ? v : '\\left(' + v + (r.n < 0n ? '+' + fLatex(neg(r)) : '-' + fLatex(r)) + '\\right)') + (m > 1 ? '^{' + m + '}' : '');
+    let k = lead;
+    if (P.deg(rest) >= 1) { k = div(lead, rest[rest.length - 1]); s += '\\left(' + P.latex(rest, v) + '\\right)'; }
+    const kl = fLatex(k);
+    return (kl === '1' ? '' : kl === '-1' ? '-' : kl) + s;
+  }
+  // Ecuación a partir de una línea "l = r"
+  function splitEquation(latex) {
+    const segs = ME.splitEq(tokenize(latex));
+    if (segs.length !== 2) throw new MErr('Escribe una ecuación con un solo signo =, por ejemplo 2x+1=5.');
+    // reconstruir el texto de cada lado a partir del LaTeX original
+    const i = topEqIndex(latex);
+    return [latex.slice(0, i), latex.slice(i + 1)];
+  }
+  function topEqIndex(L) {
+    let d = 0, env = 0;
+    for (let i = 0; i < L.length; i++) {
+      const c = L[i];
+      if (c === '\\') { if (L.startsWith('\\begin', i)) env++; else if (L.startsWith('\\end', i)) env--; i++; continue; }
+      if (c === '{') d++; else if (c === '}') d--; else if (c === '=' && d === 0 && env === 0) return i;
+    }
+    return -1;
+  }
+  function solveEquation(latex) {
+    const [l, r] = splitEquation(latex);
+    const rows = eqSteps(l, r);
+    return [derivBlock([{ l, r, note: 'Ecuación' }].concat(rows))];
+  }
+  // Siguiente paso dentro de un desarrollo: rows existentes → nueva fila o null
+  function nextStep(rows) {
+    const first = rows[0];
+    if (!first || !first.l.trim() || !first.r.trim()) throw new MErr('La primera fila del desarrollo debe ser una ecuación (lado izquierdo = lado derecho).');
+    const all = eqSteps(first.l, first.r);
+    const k = rows.length - 1;
+    const norm = (s) => (s || '').replace(/\s/g, '');
+    const matches = rows.slice(1).every((row, i) => all[i] && norm(all[i].l) === norm(row.l || first.l) && norm(all[i].r) === norm(row.r));
+    if (matches) return all[k] || null;
+    const last = rows[rows.length - 1];
+    const v = eqVar(last.l || first.l, last.r);
+    return linearStep(last.l || first.l, last.r, v);
+  }
+  function checkSolution(rows) {
+    const first = rows[0];
+    if (!first || !first.l || !first.r) throw new MErr('La primera fila debe ser la ecuación.');
+    const v = eqVar(first.l, first.r);
+    const sols = [];
+    // solo la solución final: las últimas filas del tipo x = valor (x₁, x₂ en 2.º grado)
+    const isSolRow = (row) => (row.l || '').replace(/\s/g, '').replace(/_\{?\d\}?$/, '') === v && !/Comprobamos/.test(row.note || '');
+    const body = rows.slice(1).filter((row) => !/Comprobamos/.test(row.note || ''));
+    let k = body.length - 1;
+    while (k >= 0 && !isSolRow(body[k])) k--;
+    const indexed = (row) => /_\{?\d\}?\s*$/.test((row.l || '').trim());
+    const multi = k >= 0 && indexed(body[k]);
+    for (let first2 = true; k >= 0 && isSolRow(body[k]) && (first2 || (multi && indexed(body[k]))); k--, first2 = false) {
+      for (const part of body[k].r.split(/,\\ |,/)) {
+        try { const ast = parseExpr(part); if (varsOf(ast).size === 0) sols.unshift({ latex: part, ast }); } catch (e) { /* no es un valor */ }
+      }
+    }
+    if (!sols.length) throw new MErr('No encuentro la solución: necesito una fila del tipo ' + v + ' = número.');
+    const uniq = sols.filter((s, i) => sols.findIndex((t) => t.latex === s.latex) === i);
+    const Lst = parseExpr(first.l, { var: v }), Rst = parseExpr(first.r, { var: v });
+    const out = [];
+    for (const s of uniq) {
+      const subst = (lat) => lat.replace(new RegExp('(?<![a-zA-Z\\\\])' + v.replace('\\', '\\\\') + '(?![a-zA-Z])', 'g'), '\\left(' + s.latex + '\\right)');
+      let lv, rv, ok, txt;
+      try { lv = evalExact(Lst, { [v]: evalExact(s.ast, {}) }); rv = evalExact(Rst, { [v]: evalExact(s.ast, {}) }); ok = lv.n === rv.n && lv.d === rv.d; txt = fText(lv) + (ok ? ' = ' : ' ≠ ') + fText(rv); }
+      catch (e) { const x = evalNum(s.ast, {}); const a = evalNum(Lst, { [v]: x }), b = evalNum(Rst, { [v]: x }); ok = Math.abs(a - b) < 1e-9 * Math.max(1, Math.abs(a)); txt = a.toFixed(4) + (ok ? ' ≈ ' : ' ≠ ') + b.toFixed(4); }
+      out.push({ l: subst(first.l), r: subst(first.r), note: 'Comprobamos ' + v + ' = ' + latexText(s.latex) + ': ' + txt + (ok ? ' ✓ se cumple' : ' ✗ no se cumple') });
+    }
+    return out;
+  }
+
+  function latexText(t) {
+    return t.replace(/\\frac\{([^{}]+)\}\{([^{}]+)\}/g, '$1/$2').replace(/\\sqrt\{([^{}]+)\}/g, '√$1').replace(/\\left|\\right|\\cdot/g, '').replace(/[\\{}]/g, '');
+  }
+  /* ====================== 4. Aritmética ====================== */
+  function factorInt(n) {
+    n = abs(n);
+    const f = [];
+    for (let p = 2n; p * p <= n; p += p === 2n ? 1n : 2n) { let e = 0; while (n % p === 0n) { n /= p; e++; } if (e) f.push([p, e]); }
+    if (n > 1n) f.push([n, 1]);
+    return f;
+  }
+  const facLatex = (f) => f.map(([p, e]) => p + (e > 1 ? '^{' + e + '}' : '')).join('\\cdot ') || '1';
+  function primeFactor(latex) {
+    const v = ME.evaluate(lastSeg(latex), {});
+    if (v.t !== 's' || !isInt(v.v) || v.v.n < 2n) throw new MErr('Escribe un número entero mayor que 1.');
+    let n = abs(v.v.n);
+    if (n > 10n ** 15n) throw new MErr('El número es demasiado grande para factorizarlo aquí.');
+    const rows = [];
+    let m = n;
+    for (let p = 2n; p * p <= m; p += p === 2n ? 1n : 2n) while (m % p === 0n) { rows.push([m, p]); m /= p; }
+    if (m > 1n) rows.push([m, m]);
+    rows.push([1n, null]);
+    return [math('\\begin{array}{r|l}' + rows.map(([a, p]) => a + '&' + (p ? p : '')).join('\\\\') + '\\end{array}'), math(n + '=' + facLatex(factorInt(n)))];
+  }
+  function intsOf(latex) {
+    const toks = tokenize(latex).filter((t) => !(t.k === 'id') && !(isCmd(t)));
+    const nums = toks.filter((t) => t.k === 'num').map((t) => BigInt(t.v.split('.')[0]));
+    if (nums.length < 2) throw new MErr('Escribe al menos dos números enteros, por ejemplo 12, 18.');
+    return nums.map((x) => abs(x)).filter((x) => x > 0n);
+  }
+  function gcdLcm(latex) {
+    const ns = intsOf(latex);
+    const fs = ns.map(factorInt);
+    const primes = [...new Set(fs.flatMap((f) => f.map(([p]) => p)))].sort((a, b) => (a < b ? -1 : 1));
+    const minE = primes.map((p) => [p, Math.min(...fs.map((f) => (f.find(([q]) => q === p) || [p, 0])[1]))]).filter(([, e]) => e > 0);
+    const maxE = primes.map((p) => [p, Math.max(...fs.map((f) => (f.find(([q]) => q === p) || [p, 0])[1]))]);
+    const g = ns.reduce((a, b) => gcd(a, b));
+    const l = ns.reduce((a, b) => a / gcd(a, b) * b);
+    const rows = ns.map((n, i) => ({ l: String(n), r: facLatex(fs[i]), note: i === 0 ? 'Descomponemos en factores primos' : '' }));
+    rows.push({ l: '\\operatorname{m.c.d.}(' + ns.join(',') + ')', r: (minE.length ? facLatex(minE) + '=' : '') + g, note: 'Factores comunes con el menor exponente', boxed: true });
+    rows.push({ l: '\\operatorname{m.c.m.}(' + ns.join(',') + ')', r: facLatex(maxE) + '=' + l, note: 'Factores comunes y no comunes con el mayor exponente', boxed: true });
+    const out = [derivBlock(rows)];
+    if (ns.length === 2) {
+      let [a, b] = ns[0] >= ns[1] ? [ns[0], ns[1]] : [ns[1], ns[0]];
+      const er = [];
+      while (b > 0n) { er.push({ l: String(a), r: (a / b) + '\\cdot ' + b + '+' + (a % b), note: er.length ? '' : 'Algoritmo de Euclides: dividimos y seguimos con el resto' }); [a, b] = [b, a % b]; }
+      er.push({ l: '\\operatorname{m.c.d.}', r: String(a), note: 'El último resto distinto de 0', boxed: true });
+      out.push(derivBlock(er));
+    }
+    return out;
+  }
+  function fracOf(ast) {
+    if (ast.t === 'num') return ast.v;
+    if (ast.t === 'neg') return neg(fracOf(ast.a));
+    if (ast.t === 'div' && ast.a.t === 'num' && ast.b.t === 'num') return div(ast.a.v, ast.b.v);
+    if (ast.t === 'div') return div(fracOf(ast.a), fracOf(ast.b));
+    throw new MErr('Solo trabajo con fracciones de números enteros.');
+  }
+  function rawFrac(ast) { // numerador y denominador tal y como están escritos
+    if (ast.t === 'div' && ast.a.t === 'num' && ast.b.t === 'num' && isInt(ast.a.v) && isInt(ast.b.v)) return { n: ast.a.v.n, d: ast.b.v.n };
+    if (ast.t === 'neg') { const r = rawFrac(ast.a); return { n: -r.n, d: r.d }; }
+    if (ast.t === 'num' && isInt(ast.v)) return { n: ast.v.n, d: 1n };
+    throw new MErr('Solo trabajo con fracciones de números enteros.');
+  }
+  function simplifyFraction(latex) {
+    const seg = lastSeg(latex);
+    const ast = parseExpr(seg);
+    const { n, d } = rawFrac(ast);
+    if (d === 0n) throw new MErr('El denominador es 0.');
+    const g = gcd(n, d);
+    const lhs = '\\frac{' + n + '}{' + d + '}';
+    if (g === 1n) return [derivBlock([{ l: lhs, r: lhs, note: 'm.c.d.(' + abs(n) + ', ' + d + ') = 1: ya es irreducible', boxed: true }])];
+    const fn = factorInt(n), fd = factorInt(d);
+    return [derivBlock([
+      { l: lhs, r: '\\frac{' + (n < 0n ? '-' : '') + facLatex(fn) + '}{' + facLatex(fd) + '}', note: 'Descomponemos numerador y denominador' },
+      { r: '\\frac{' + n + ':' + g + '}{' + d + ':' + g + '}', note: 'Dividimos entre el m.c.d. = ' + g },
+      { r: fLatex(F(n, d)), boxed: true, note: 'Fracción irreducible' },
+    ])];
+  }
+  function fractionOps(latex) {
+    const seg = lastSeg(latex);
+    const ast = parseExpr(seg);
+    // suma/resta de fracciones
+    const flat = []; const walk = (a, sg) => { if (a.t === 'add') { walk(a.a, sg); walk(a.b, sg); } else if (a.t === 'sub') { walk(a.a, sg); walk(a.b, -sg); } else flat.push({ a, sg }); };
+    walk(ast, 1);
+    const lhs = latex.replace(/=\s*$/, '');
+    if (flat.length > 1) {
+      const fs = flat.map(({ a, sg }) => { const r = rawFrac(a); return { n: sg < 0 ? -r.n : r.n, d: r.d }; });
+      const l = fs.reduce((s, f) => s / gcd(s, f.d) * f.d, 1n);
+      const exp = fs.map((f) => ({ n: f.n * (l / f.d), d: l }));
+      const sum = exp.reduce((s, f) => s + f.n, 0n);
+      const rows = [
+        { l: lhs, r: exp.map((f, i) => (f.n < 0n ? '-' : i ? '+' : '') + '\\frac{' + abs(f.n) + '}{' + l + '}').join(''), note: 'm.c.m. de los denominadores = ' + l + '; ' + fs.map((f) => 'multiplicamos ' + abs(f.n) + '/' + f.d + ' arriba y abajo por ' + (l / f.d)).filter((s, i) => fs[i].d !== l).join('; ') },
+        { r: '\\frac{' + exp.map((f, i) => (f.n < 0n ? '-' : i ? '+' : '') + abs(f.n)).join('') + '}{' + l + '}', note: 'Mismo denominador: sumamos los numeradores' },
+        { r: '\\frac{' + sum + '}{' + l + '}' },
+      ];
+      const res = F(sum, l);
+      if (fLatex(res) !== '\\frac{' + sum + '}{' + l + '}') rows.push({ r: fLatex(res), note: 'Simplificamos (m.c.d. = ' + gcd(sum, l) + ')' });
+      rows[rows.length - 1].boxed = true;
+      return [derivBlock(rows)];
+    }
+    // producto / cociente
+    const fl = []; const walk2 = (a, inv) => { if (a.t === 'mul') { walk2(a.a, inv); walk2(a.b, inv); } else if (a.t === 'div' && !(a.a.t === 'num' && a.b.t === 'num')) { walk2(a.a, inv); walk2(a.b, !inv); } else fl.push({ a, inv }); };
+    walk2(ast, false);
+    if (fl.length < 2) return simplifyFraction(latex);
+    const parts = fl.map(({ a, inv }) => { const r = rawFrac(a); return inv ? { n: r.d, d: r.n, inv } : { n: r.n, d: r.d, inv }; });
+    const rows = [];
+    if (parts.some((p) => p.inv)) rows.push({ l: lhs, r: parts.map((p) => '\\frac{' + p.n + '}{' + p.d + '}').join('\\cdot '), note: 'Dividir es multiplicar por la inversa' });
+    const nn = parts.map((p) => p.n), dd = parts.map((p) => p.d);
+    rows.push({ l: rows.length ? '' : lhs, r: '\\frac{' + nn.map((x) => (x < 0n ? '\\left(' + x + '\\right)' : x)).join('\\cdot ') + '}{' + dd.map((x) => (x < 0n ? '\\left(' + x + '\\right)' : x)).join('\\cdot ') + '}', note: 'Numerador por numerador y denominador por denominador' });
+    const N1 = nn.reduce((a, b) => a * b, 1n), D1 = dd.reduce((a, b) => a * b, 1n);
+    rows.push({ r: '\\frac{' + N1 + '}{' + D1 + '}' });
+    const res = F(N1, D1);
+    if (fLatex(res) !== '\\frac{' + N1 + '}{' + D1 + '}') rows.push({ r: fLatex(res), note: 'Simplificamos (m.c.d. = ' + gcd(N1, D1) + ')' });
+    rows[rows.length - 1].boxed = true;
+    if (!rows[0].l) rows[0].l = lhs;
+    return [derivBlock(rows)];
+  }
+
+  /* ====================== 5. Polinomios ====================== */
+  function polyOf(latex, v) { return toPoly(parseExpr(latex, { var: v }), v); }
+  function polyVar(latex) { const vs = varsOf(parseExpr(latex)); for (const c of ['x', 't', 'y', 'z']) if (vs.has(c)) return c; return [...vs][0] || 'x'; }
+  function polyOperate(latex) {
+    const seg = latex.replace(/=\s*$/, '');
+    const i = topEqIndex(seg);
+    const expr = i >= 0 ? seg.slice(i + 1) : seg;
+    const v = polyVar(expr);
+    const p = polyOf(expr, v);
+    return [derivBlock([{ l: expr, r: P.latex(p, v), note: 'Desarrollamos y agrupamos términos semejantes', boxed: true }])];
+  }
+  function polyDivide(latex) {
+    const seg = latex.replace(/=\s*$/, '');
+    const toks = tokenize(seg);
+    let parts = splitTop(toks, (t) => isOp(t, ':') || isCmd(t, 'div'));
+    let A, B;
+    const v = polyVar(seg);
+    if (parts.length === 2) { A = toPoly(parseExpr(parts[0], { var: v }), v); B = toPoly(parseExpr(parts[1], { var: v }), v); }
+    else {
+      const ast = parseExpr(seg, { var: v });
+      if (ast.t !== 'div') throw new MErr('Escribe la división como P(x) : Q(x) o como fracción.');
+      A = toPoly(ast.a, v); B = toPoly(ast.b, v);
+    }
+    if (P.deg(B) < 1) throw new MErr('El divisor debe tener grado 1 o más.');
+    const { q, r } = P.divmod(A, B);
+    const out = [];
+    if (P.deg(B) === 1 && B[1].n === 1n && B[1].d === 1n) {
+      const a = neg(B[0]);
+      out.push(ruffiniTable(A, a, v));
+    } else {
+      // división larga, paso a paso
+      const rows = [];
+      let rem = A.slice();
+      const db = P.deg(B);
+      while (P.deg(rem) >= db) {
+        const dr = P.deg(rem);
+        const k = div(rem[dr], B[db]);
+        const mono = Array(dr - db + 1).fill(ZERO); mono[dr - db] = k;
+        const prod = P.mul(mono, B);
+        const nr = P.sub(rem, prod);
+        rows.push({ l: '\\frac{' + P.latex([...Array(dr).fill(ZERO), rem[dr]], v) + '}{' + P.latex([...Array(db).fill(ZERO), B[db]], v) + '}', r: P.latex(mono, v), note: 'Multiplicamos ' + P.latex(mono, v).replace(/\\frac\{(\d+)\}\{(\d+)\}/g, '$1/$2').replace(/[{}]/g, '') + ' por el divisor y lo restamos: queda ' + P.latex(nr, v).replace(/\\frac\{(\d+)\}\{(\d+)\}/g, '$1/$2').replace(/[{}]/g, '') });
+        rem = nr;
+      }
+      out.push(derivBlock(rows));
+    }
+    out.push(derivBlock([
+      { l: 'C(' + v + ')', r: P.latex(q, v), note: 'Cociente', boxed: true },
+      { l: 'R(' + v + ')', r: P.latex(r, v), note: 'Resto', boxed: true },
+      { l: P.latex(A, v), r: '\\left(' + P.latex(B, v) + '\\right)\\left(' + P.latex(q, v) + '\\right)' + (P.isZero(r) ? '' : '+' + P.latex(r, v, true)), note: 'Comprobación: D = d·C + R' },
+    ]));
+    return out;
+  }
+  function ruffiniRows(p, a) {
+    const c = P.norm(p).slice().reverse(); // de mayor a menor grado
+    const mid = [''], bot = [];
+    let acc = c[0]; bot.push(acc);
+    for (let i = 1; i < c.length; i++) { const t = mul(acc, a); mid.push(fText(t)); acc = add(c[i], t); bot.push(acc); }
+    return { top: c.map(fText), mid, bot: bot.map(fText), rest: acc, quot: P.norm(bot.slice(0, -1).reverse()) };
+  }
+  function ruffiniTable(p, a, v) {
+    const R = ruffiniRows(p, a);
+    return { type: 'table', caption: 'Ruffini: (' + P.latex(p, v).replace(/\\frac\{(-?\d+)\}\{(\d+)\}/g, '$1/$2').replace(/[{}^]/g, (m) => (m === '^' ? '^' : '')) + ') : (' + v + (a.n < 0n ? ' + ' + fText(neg(a)) : ' − ' + fText(a)) + ')',
+      rows: [[''].concat(R.top), [fText(a)].concat(R.mid), [''].concat(R.bot)], vbar: 1, hline: 2, mark: [2, R.bot.length], kind: 'ruffini' };
+  }
+  function polyRoots(latex) {
+    const seg = latex.replace(/=\s*0?\s*$/, '');
+    const i = topEqIndex(seg);
+    const expr = i >= 0 && /^[A-Z]\(/.test(seg) ? seg.slice(i + 1) : seg;
+    const v = polyVar(expr);
+    const p = polyOf(expr, v);
+    if (P.deg(p) < 1) throw new MErr('Necesito un polinomio de grado 1 o más.');
+    const { roots, rest } = rationalRoots(p);
+    const out = [];
+    // tabla de Ruffini encadenada
+    let cur = p;
+    const rows = [];
+    const nz = roots.filter((r) => !isZ(r));
+    const zeros = roots.length - nz.length;
+    if (zeros) { cur = P.norm(cur.slice(zeros)); }
+    for (const r of nz) {
+      const R = ruffiniRows(cur, r);
+      if (!rows.length) rows.push([''].concat(R.top));
+      rows.push([fText(r)].concat(R.mid));
+      rows.push([''].concat(R.bot));
+      cur = R.quot;
+    }
+    if (zeros && rows.length) out.push(math(P.latex(p, v) + '=' + (zeros > 1 ? v + '^{' + zeros + '}' : v) + '\\left(' + P.latex(P.norm(p.slice(zeros)), v) + '\\right)'));
+    if (rows.length) out.push({ type: 'table', caption: 'Ruffini con las raíces enteras/racionales (divisores del término independiente)', rows, vbar: 1, hlines: rows.map((_, k) => k).filter((k) => k > 0 && k % 2 === 0), kind: 'ruffini' });
+    const facts = polyFactorLatex(p, roots, rest, v);
+    out.push(math(P.latex(p, v) + '=' + facts));
+    const sols = [...new Map(roots.map((x) => [fText(x), x])).values()].map((x) => v + '=' + fLatex(x));
+    if (P.deg(rest) === 2) sols.push(...quadRootsLatex(rest, v, false));
+    else if (P.deg(rest) > 2) sols.push('\\text{el factor de grado }' + P.deg(rest) + '\\text{ no tiene raíces racionales}');
+    out.push(math('\\text{Raíces: }' + (sols.join(',\\quad ') || '\\text{no tiene raíces racionales}')));
+    return out;
+  }
+
+  /* ====================== 6. Combinatoria ====================== */
+  function combinatorics(latex) {
+    const L = latex.replace(/\s/g, '');
+    const num = (s) => { const v = ME.evaluate(tokenize(s), {}); if (v.t !== 's' || !isInt(v.v) || v.v.n < 0n) throw new MErr('Necesito números naturales.'); return v.v.n; };
+    const chain = (a, b) => { const xs = []; for (let i = a; i > b; i--) xs.push(i); return xs; };
+    let m;
+    const dots = (xs) => (xs.length > 8 ? xs.slice(0, 4).join('\\cdot ') + '\\cdots ' + xs.slice(-2).join('\\cdot ') : xs.join('\\cdot '));
+    if ((m = /\\binom\{([^{}]+)\}\{([^{}]+)\}/.exec(L)) || (m = /C_\{([^{},]+),([^{},]+)\}/.exec(L)) || (m = /C_\{([^{}]+)\}\^\{([^{}]+)\}/.exec(L))) {
+      const n = num(m[1]), k = num(m[2]);
+      if (k > n) throw new MErr('En C(n,k) debe ser k ≤ n.');
+      const kk = k < n - k ? k : n - k;
+      const top = chain(n, n - kk), bottom = chain(kk, 0n);
+      const val = fact(n) / (fact(k) * fact(n - k));
+      return [derivBlock([
+        { l: '\\binom{' + n + '}{' + k + '}', r: '\\frac{' + n + '!}{' + k + '!\\,' + (n - k) + '!}', note: 'Combinaciones: importa qué, no el orden' },
+        { r: kk === 0n ? '1' : '\\frac{' + dots(top) + '}{' + dots(bottom) + '}', note: 'Simplificamos ' + (n - kk) + '!' },
+        { r: String(val), boxed: true },
+      ])];
+    }
+    if ((m = /VR_\{([^{},]+),([^{},]+)\}/.exec(L)) || (m = /VR_\{([^{}]+)\}\^\{([^{}]+)\}/.exec(L))) {
+      const n = num(m[1]), k = num(m[2]);
+      return [derivBlock([{ l: 'VR_{' + n + ',' + k + '}', r: n + '^{' + k + '}', note: 'Variaciones con repetición: nᵏ' }, { r: String(n ** k), boxed: true }])];
+    }
+    if ((m = /V_\{([^{},]+),([^{},]+)\}/.exec(L)) || (m = /V_\{([^{}]+)\}\^\{([^{}]+)\}/.exec(L))) {
+      const n = num(m[1]), k = num(m[2]);
+      if (k > n) throw new MErr('En V(n,k) debe ser k ≤ n.');
+      return [derivBlock([
+        { l: 'V_{' + n + ',' + k + '}', r: '\\frac{' + n + '!}{' + (n - k) + '!}', note: 'Variaciones: importa el orden' },
+        { r: dots(chain(n, n - k)) || '1', note: k + ' factores desde ' + n },
+        { r: String(fact(n) / fact(n - k)), boxed: true },
+      ])];
+    }
+    if ((m = /P_\{?([0-9]+)\}?/.exec(L))) {
+      const n = num(m[1]);
+      return [derivBlock([{ l: 'P_{' + n + '}', r: n + '!', note: 'Permutaciones: ordenar ' + n + ' elementos' }, { r: dots(chain(n, 0n)) || '1' }, { r: String(fact(n)), boxed: true }])];
+    }
+    if ((m = /\{?([0-9]+)\}?!/.exec(L))) {
+      const n = num(m[1]);
+      if (n > 3000n) throw new MErr('Número demasiado grande.');
+      return [derivBlock([{ l: n + '!', r: dots(chain(n, 0n)) || '1', note: 'Factorial: producto de 1 a ' + n }, { r: String(fact(n)), boxed: true }])];
+    }
+    throw new MErr('Escribe n!, \\binom{n}{k}, C_{n,k}, V_{n,k}, VR_{n,k} o P_{n}.');
+  }
+  function pascal(latex) {
+    let n = 6;
+    try { const v = ME.evaluate(lastSeg(latex), {}); if (v.t === 's' && isInt(v.v) && v.v.n >= 0n && v.v.n <= 20n) n = Number(v.v.n); } catch (e) { /* por defecto 6 */ }
+    const rows = [];
+    let row = [1n];
+    for (let i = 0; i <= n; i++) {
+      rows.push(row.slice());
+      const nx = [1n]; for (let j = 1; j < row.length; j++) nx.push(row[j - 1] + row[j]); nx.push(1n);
+      row = nx;
+    }
+    return rows.map((r) => ({ type: 'math', v: r.join('\\quad '), align: 'center' }));
+  }
+
+  /* ====================== 7. Lógica: tabla de verdad ====================== */
+  function parseLogic(latex) {
+    const src = latex.replace(/\\left|\\right/g, '');
+    const toks = [];
+    const map = [['\\Leftrightarrow', 'iff'], ['\\leftrightarrow', 'iff'], ['\\iff', 'iff'], ['\\Longleftrightarrow', 'iff'], ['\\Rightarrow', 'imp'], ['\\rightarrow', 'imp'], ['\\to', 'imp'], ['\\implies', 'imp'], ['\\Longrightarrow', 'imp'],
+      ['\\land', 'and'], ['\\wedge', 'and'], ['\\lor', 'or'], ['\\vee', 'or'], ['\\veebar', 'xor'], ['\\oplus', 'xor'], ['\\neg', 'not'], ['\\lnot', 'not'], ['\\sim', 'not'], ['\\overline', 'over']];
+    let i = 0;
+    while (i < src.length) {
+      const c = src[i];
+      if (/\s/.test(c)) { i++; continue; }
+      const mm = map.find(([k]) => src.startsWith(k, i) && !/[a-zA-Z]/.test(src[i + k.length] || ''));
+      if (mm) { toks.push(mm[1]); i += mm[0].length; continue; }
+      if (c === '\\') { const w = /^\\[a-zA-Z]+|^\\./.exec(src.slice(i))[0]; if (['\\,', '\\;', '\\ ', '\\!', '\\quad'].includes(w)) { i += w.length; continue; } throw new MErr('No reconozco «' + w + '» en la fórmula lógica.'); }
+      if (c === '(' || c === ')' || c === '{' || c === '}') { toks.push(c === '{' ? '(' : c === '}' ? ')' : c); i++; continue; }
+      if (c === '¬' || c === '~' || c === '!') { toks.push('not'); i++; continue; }
+      if (/[a-zA-Z]/.test(c)) { toks.push('v:' + c); i++; continue; }
+      if (c === '0' || c === '1') { toks.push('k:' + c); i++; continue; }
+      throw new MErr('No reconozco «' + c + '» en la fórmula lógica.');
+    }
+    let pos = 0;
+    const peek = () => toks[pos], next = () => toks[pos++];
+    const bin = (lv, ops, nxt, right) => () => {
+      let a = nxt();
+      while (ops.includes(peek())) { const o = next(); const b = right ? bin(lv, ops, nxt, right)() : nxt(); a = { o, a, b }; if (right) return a; }
+      return a;
+    };
+    function un() {
+      const t = peek();
+      if (t === 'not') { next(); return { o: 'not', a: un() }; }
+      if (t === 'over') { next(); if (next() !== '(') throw new MErr('\\overline necesita llaves.'); const a = iff(); if (next() !== ')') throw new MErr('Falta cerrar.'); return { o: 'not', a }; }
+      if (t === '(') { next(); const a = iff(); if (next() !== ')') throw new MErr('Falta cerrar un paréntesis.'); return a; }
+      if (t && t.startsWith('v:')) { next(); return { o: 'var', n: t.slice(2) }; }
+      if (t && t.startsWith('k:')) { next(); return { o: 'k', v: t === 'k:1' }; }
+      throw new MErr('Fórmula lógica incompleta.');
+    }
+    const and = bin(0, ['and'], un), or = bin(0, ['or'], and), xor = bin(0, ['xor'], or), imp = bin(0, ['imp'], xor, true), iff = bin(0, ['iff'], imp);
+    const tree = iff();
+    if (pos < toks.length) throw new MErr('Sobra algo al final de la fórmula.');
+    return tree;
+  }
+  const LSYM = { and: ' ∧ ', or: ' ∨ ', xor: ' ⊻ ', imp: ' → ', iff: ' ↔ ' };
+  function ltext(t, top = true) {
+    if (t.o === 'var') return t.n;
+    if (t.o === 'k') return t.v ? '1' : '0';
+    if (t.o === 'not') return '¬' + ltext(t.a, false);
+    const s = ltext(t.a, false) + LSYM[t.o] + ltext(t.b, false);
+    return top ? s : '(' + s + ')';
+  }
+  function truthTable(latex) {
+    const seg = latex.replace(/=\s*$/, '');
+    const tree = parseLogic(seg);
+    const vars = []; const subs = [];
+    (function walk(t) { if (t.o === 'var') { if (!vars.includes(t.n)) vars.push(t.n); return; } if (t.o === 'k') return; if (t.a) walk(t.a); if (t.b) walk(t.b); const s = ltext(t); if (!subs.some((x) => x.s === s)) subs.push({ s, t }); })(tree);
+    if (vars.length > 5) throw new MErr('Como mucho 5 variables (32 filas).');
+    vars.sort();
+    const ev = (t, env) => { switch (t.o) { case 'var': return env[t.n]; case 'k': return t.v; case 'not': return !ev(t.a, env); case 'and': return ev(t.a, env) && ev(t.b, env); case 'or': return ev(t.a, env) || ev(t.b, env); case 'xor': return ev(t.a, env) !== ev(t.b, env); case 'imp': return !ev(t.a, env) || ev(t.b, env); case 'iff': return ev(t.a, env) === ev(t.b, env); default: return false; } };
+    const rows = [];
+    const n = vars.length;
+    let allT = true, allF = true;
+    for (let i = 0; i < 2 ** n; i++) {
+      const env = {}; vars.forEach((v, k) => { env[v] = !((i >> (n - 1 - k)) & 1); });
+      const vals = subs.map((s) => ev(s.t, env));
+      const last = vals[vals.length - 1];
+      allT = allT && last; allF = allF && !last;
+      rows.push(vars.map((v) => (env[v] ? 'V' : 'F')).concat(vals.map((x) => (x ? 'V' : 'F'))));
+    }
+    const kind = allT ? 'Tautología: siempre verdadera' : allF ? 'Contradicción: siempre falsa' : 'Contingencia: a veces verdadera y a veces falsa';
+    return [{ type: 'table', head: vars.concat(subs.map((s) => s.s)), rows, vbar: n, kind: 'truth', caption: kind, lastBold: true }];
+  }
+
+  /* ====================== 8. Conjuntos ====================== */
+  function setTokens(latex) {
+    let s = latex.replace(/\\left|\\right/g, '').replace(/\\lbrace|\\\{/g, '{').replace(/\\rbrace|\\\}/g, '}').replace(/\\emptyset|\\varnothing/g, '{}');
+    const toks = [];
+    let i = 0;
+    const ops = [['\\cup', 'cup'], ['\\cap', 'cap'], ['\\setminus', 'minus'], ['\\backslash', 'minus'], ['\\times', 'times'], ['\\triangle', 'sym'], ['\\Delta', 'sym'], ['\\mathcal{P}', 'P'], ['\\mathcal P', 'P'], ['\\wp', 'P']];
+    while (i < s.length) {
+      const c = s[i];
+      if (/\s/.test(c) || s.startsWith('\\,', i) || s.startsWith('\\ ', i)) { i += c === '\\' ? 2 : 1; continue; }
+      const o = ops.find(([k]) => s.startsWith(k, i));
+      if (o) { toks.push({ k: o[1] }); i += o[0].length; continue; }
+      if (s.startsWith('^{c}', i) || s.startsWith('^c', i) || s.startsWith("'", i)) { toks.push({ k: 'comp' }); i += s.startsWith('^{c}', i) ? 4 : s.startsWith('^c', i) ? 2 : 1; continue; }
+      if (c === '{' || c === '}' || c === '(' || c === ')' || c === ',' || c === '|' || c === '=') { toks.push({ k: c }); i++; continue; }
+      const m = /^-?\d+(\.\d+)?/.exec(s.slice(i)) || /^[a-zA-Z](_\{[^}]*\}|_[0-9a-z])?/.exec(s.slice(i));
+      if (m) { toks.push({ k: /^[A-Z]/.test(m[0]) ? 'name' : 'el', v: m[0] }); i += m[0].length; continue; }
+      throw new MErr('No reconozco «' + c + '» en la expresión de conjuntos.');
+    }
+    return toks;
+  }
+  const setKey = (x) => (Array.isArray(x) ? '(' + x.map(setKey).join(',') + ')' : x && x.set ? '{' + x.set.map(setKey).join(',') + '}' : String(x));
+  const mkSet = (els) => { const m = new Map(); els.forEach((e) => m.set(setKey(e), e)); const arr = [...m.values()]; arr.sort((a, b) => { const na = Number(a), nb = Number(b); return !isNaN(na) && !isNaN(nb) ? na - nb : setKey(a).localeCompare(setKey(b)); }); return { set: arr }; };
+  const setLatex = (s) => (s && s.set ? (s.set.length ? '\\left\\lbrace ' + s.set.map(setLatex).join(',\\ ') + '\\right\\rbrace ' : '\\emptyset ') : Array.isArray(s) ? '\\left(' + s.map(setLatex).join(',') + '\\right)' : String(s));
+  function setEval(toks, env) {
+    let pos = 0;
+    const peek = () => toks[pos], next = () => toks[pos++];
+    function expr() { let a = term(); while (peek() && ['cup', 'minus', 'sym'].includes(peek().k)) { const o = next().k; const b = term(); a = o === 'cup' ? mkSet(a.set.concat(b.set)) : o === 'minus' ? mkSet(a.set.filter((x) => !b.set.some((y) => setKey(y) === setKey(x)))) : mkSet(a.set.filter((x) => !b.set.some((y) => setKey(y) === setKey(x))).concat(b.set.filter((x) => !a.set.some((y) => setKey(y) === setKey(x))))); } return a; }
+    function term() { let a = post(); while (peek() && ['cap', 'times'].includes(peek().k)) { const o = next().k; const b = post(); a = o === 'cap' ? mkSet(a.set.filter((x) => b.set.some((y) => setKey(y) === setKey(x)))) : mkSet(a.set.flatMap((x) => b.set.map((y) => [x, y]))); } return a; }
+    function post() { let a = prim(); while (peek() && peek().k === 'comp') { next(); if (!env.U) throw new MErr('Para el complementario define el universal en otra línea: U = {…}.'); a = mkSet(env.U.set.filter((x) => !a.set.some((y) => setKey(y) === setKey(x)))); } return a; }
+    function prim() {
+      const t = next();
+      if (!t) throw new MErr('Expresión de conjuntos incompleta.');
+      if (t.k === '{') { const els = []; while (peek() && peek().k !== '}') { if (peek().k === ',') { next(); continue; } const e = peek(); if (e.k === '{') els.push(prim()); else { next(); els.push(e.v); } } next(); return mkSet(els); }
+      if (t.k === '(') { const a = expr(); if (!peek() || peek().k !== ')') throw new MErr('Falta cerrar un paréntesis.'); next(); return a; }
+      if (t.k === 'name') { if (!env[t.v]) throw new MErr('No conozco el conjunto ' + t.v + '. Defínelo en otra línea: ' + t.v + ' = {…}.'); return env[t.v]; }
+      if (t.k === 'P') { const a = prim(); if (a.set.length > 6) throw new MErr('𝒫(A) solo hasta 6 elementos (64 subconjuntos).'); const out = []; for (let i = 0; i < 2 ** a.set.length; i++) out.push({ set: a.set.filter((_, k) => (i >> k) & 1) }); out.sort((x, y) => x.set.length - y.set.length); return { set: out }; }
+      if (t.k === '|') { const a = expr(); next(); return { card: a.set.length }; }
+      throw new MErr('No esperaba «' + (t.v || t.k) + '».');
+    }
+    const r = expr();
+    return r;
+  }
+  function setDefs(lines) {
+    const env = {};
+    for (const L of lines) {
+      try { const tk = setTokens(L); if (tk.length > 2 && tk[0].k === 'name' && tk[1].k === '=') env[tk[0].v] = setEval(tk.slice(2), env); } catch (e) { /* no es un conjunto */ }
+    }
+    return env;
+  }
+  function setOperate(latex, lines) {
+    const env = setDefs(lines);
+    const seg = latex.replace(/=\s*$/, '');
+    let toks = setTokens(seg);
+    const eq = toks.findIndex((t) => t.k === '=');
+    if (eq >= 0) toks = toks.slice(eq + 1);
+    const r = setEval(toks, env);
+    if (r.card !== undefined) return [math(seg + '=' + r.card)];
+    return [math(seg + '=' + setLatex(r))];
+  }
+
+  /* ====================== 9. Derivadas ====================== */
+  function D(a, v, R) {
+    const c0 = N.num(ZERO);
+    const dep = (x) => varsOf(x).has(v);
+    switch (a.t) {
+      case 'num': case 'c': R.add('constante'); return c0;
+      case 'var': if (a.n === v) { R.add('potencia'); return N.num(ONE); } R.add('constante'); return c0;
+      case 'add': R.add('suma'); return N.add(D(a.a, v, R), D(a.b, v, R));
+      case 'sub': R.add('suma'); return N.sub(D(a.a, v, R), D(a.b, v, R));
+      case 'neg': return N.neg(D(a.a, v, R));
+      case 'mul':
+        if (!dep(a.a)) { R.add('constante por función'); return N.mul(a.a, D(a.b, v, R)); }
+        if (!dep(a.b)) { R.add('constante por función'); return N.mul(D(a.a, v, R), a.b); }
+        R.add('producto'); return N.add(N.mul(D(a.a, v, R), a.b), N.mul(a.a, D(a.b, v, R)));
+      case 'div':
+        if (!dep(a.b)) { R.add('constante por función'); return N.div(D(a.a, v, R), a.b); }
+        R.add('cociente'); return N.div(N.sub(N.mul(D(a.a, v, R), a.b), N.mul(a.a, D(a.b, v, R))), N.pow(a.b, N.num(F(2))));
+      case 'pow': {
+        if (!dep(a.b)) {
+          R.add('potencia'); const inner = D(a.a, v, R);
+          if (!(a.a.t === 'var' && a.a.n === v)) R.add('cadena');
+          return N.mul(N.mul(a.b, N.pow(a.a, simp(N.sub(a.b, N.num(ONE))))), inner);
+        }
+        if (!dep(a.a)) {
+          R.add('exponencial'); const inner = D(a.b, v, R);
+          if (!(a.b.t === 'var')) R.add('cadena');
+          const lnb = a.a.t === 'c' && a.a.n === 'e' ? N.num(ONE) : N.fn('ln', a.a);
+          return N.mul(N.mul(a, lnb), inner);
+        }
+        R.add('derivación logarítmica');
+        return N.mul(a, D(N.mul(a.b, N.fn('ln', a.a)), v, R));
+      }
+      case 'fn': {
+        const u = a.a, du = D(u, v, R);
+        if (!(u.t === 'var' && u.n === v)) R.add('cadena');
+        const two = N.num(F(2));
+        let d;
+        switch (a.f) {
+          case 'sin': R.add('trigonométricas'); d = N.fn('cos', u); break;
+          case 'cos': R.add('trigonométricas'); d = N.neg(N.fn('sin', u)); break;
+          case 'tan': R.add('trigonométricas'); d = N.div(N.num(ONE), N.pow(N.fn('cos', u), two)); break;
+          case 'cot': R.add('trigonométricas'); d = N.neg(N.div(N.num(ONE), N.pow(N.fn('sin', u), two))); break;
+          case 'sec': R.add('trigonométricas'); d = N.mul(N.fn('sec', u), N.fn('tan', u)); break;
+          case 'csc': R.add('trigonométricas'); d = N.neg(N.mul(N.fn('csc', u), N.fn('cot', u))); break;
+          case 'arcsin': R.add('trigonométricas inversas'); d = N.div(N.num(ONE), N.pow(N.sub(N.num(ONE), N.pow(u, two)), N.num(F(1, 2)))); break;
+          case 'arccos': R.add('trigonométricas inversas'); d = N.neg(N.div(N.num(ONE), N.pow(N.sub(N.num(ONE), N.pow(u, two)), N.num(F(1, 2))))); break;
+          case 'arctan': R.add('trigonométricas inversas'); d = N.div(N.num(ONE), N.add(N.num(ONE), N.pow(u, two))); break;
+          case 'ln': R.add('logaritmo'); d = N.div(N.num(ONE), u); break;
+          case 'log': R.add('logaritmo'); d = N.div(N.num(ONE), N.mul(u, N.fn('ln', N.num(F(10))))); break;
+          case 'exp': R.add('exponencial'); d = N.fn('exp', u); break;
+          case 'sinh': d = N.fn('cosh', u); break;
+          case 'cosh': d = N.fn('sinh', u); break;
+          case 'tanh': d = N.div(N.num(ONE), N.pow(N.fn('cosh', u), two)); break;
+          case 'abs': R.add('valor absoluto'); d = N.div(u, N.fn('abs', u)); break;
+          default: throw new MErr('No sé derivar esa función.');
+        }
+        return isNum(du, 1) ? d : N.mul(d, du);
+      }
+      default: throw new MErr('No sé derivar esta expresión.');
+    }
+  }
+  function funcLine(latex) {
+    // "f(x)=expr", "y=expr" o solo "expr"
+    const i = topEqIndex(latex);
+    let name = null, varName = null, expr = latex;
+    if (i >= 0) {
+      const lhs = latex.slice(0, i).replace(/\s/g, '');
+      const m = /^([a-zA-Z])(?:\\left)?\(([a-zA-Z])(?:\\right)?\)$/.exec(lhs);
+      if (m) { name = m[1]; varName = m[2]; expr = latex.slice(i + 1); }
+      else if (/^[a-zA-Z]$/.test(lhs)) { name = lhs; expr = latex.slice(i + 1); }
+    }
+    const ast = parseExpr(expr, { var: varName || 'x' });
+    const v = varName || pickVar(ast);
+    return { name, v, ast, expr };
+  }
+  function polish(a, v) {
+    try { const p = toPoly(a, v); return { t: 'raw', s: P.latex(p, v) }; } catch (e) { /* no es polinomio */ }
+    if (a.t === 'div') { try { const p = toPoly(a.a, v); return { t: 'raw', s: '\\frac{' + P.latex(p, v) + '}{' + L(a.b) + '}' }; } catch (e) { /* */ } }
+    return a;
+  }
+  const RULE_TXT = { constante: 'constante', potencia: 'potencia', suma: 'suma', 'constante por función': 'constante por función', producto: 'producto', cociente: 'cociente', cadena: 'cadena', exponencial: 'exponencial', logaritmo: 'logaritmo', 'trigonométricas': 'trigonométricas', 'trigonométricas inversas': 'trigonométricas inversas', 'derivación logarítmica': 'derivación logarítmica', 'valor absoluto': 'valor absoluto' };
+  function derivative(latex) {
+    const { name, v, ast } = funcLine(latex.replace(/=\s*$/, ''));
+    const R = new Set();
+    const raw = D(ast, v, R);
+    const half = simp(raw);
+    const full = polish(simpAll(raw), v);
+    const lhs = name && name.length === 1 && name !== 'y' ? name + "'(" + v + ')' : name === 'y' ? "y'" : '\\frac{d}{d' + v + '}\\left(' + L(ast) + '\\right)';
+    const rules = [...R].filter((r) => r !== 'constante' || R.size === 1).map((r) => RULE_TXT[r] || r);
+    const rows = [{ l: lhs, r: L(half), note: 'Reglas: ' + rules.join(', ') }];
+    if (L(full) !== L(half)) rows.push({ r: L(full), note: 'Simplificamos' });
+    rows[rows.length - 1].boxed = true;
+    if (name && name !== 'y') rows.unshift({ l: name + '(' + v + ')', r: L(ast), note: 'Función' });
+    return [derivBlock(rows)];
+  }
+
+  /* ====================== 10. Gráficas y tablas de valores ====================== */
+  function compileFn(latex) {
+    const { name, v, ast } = funcLine(latex);
+    const others = [...varsOf(ast)].filter((x) => x !== v);
+    if (others.length) throw new MErr('La función tiene otras letras (' + others.join(', ') + ').');
+    return { name: name || 'f', v, ast, latex: L(ast), f: (x) => { try { return evalNum(ast, { [v]: x }); } catch (e) { return NaN; } } };
+  }
+  function graphOf(latex) {
+    const parts = latex.split(/;|\\;/).map((s) => s.trim()).filter(Boolean);
+    const fns = parts.map((p) => { compileFn(p); return p; });
+    return [{ type: 'graph', fns, xmin: -5, xmax: 5 }];
+  }
+  function valueTable(latex) {
+    const F0 = compileFn(latex.replace(/=\s*$/, ''));
+    const xs = [-3, -2, -1, 0, 1, 2, 3];
+    const vals = xs.map((x) => {
+      try { const e = evalExact(F0.ast, { [F0.v]: F(x) }); return fText(e); }
+      catch (err) { const y = F0.f(x); return Number.isFinite(y) ? (Math.round(y * 1000) / 1000).toString().replace('.', ',') : '—'; }
+    });
+    const nm = F0.name === 'y' ? 'y' : F0.name + '(' + F0.v + ')';
+    return [{ type: 'table', rows: [[F0.v.replace('\\', '')].concat(xs.map(String)), [nm].concat(vals)], vbar: 1, kind: 'values', caption: 'Tabla de valores de ' + nm + ' = ' + F0.latex.replace(/\\left|\\right|\\cdot/g, '').replace(/\\frac\{([^{}]+)\}\{([^{}]+)\}/g, '($1)/($2)').replace(/[{}\\]/g, '') }];
+  }
+
+  return {
+    P, parseExpr, L, simpAll, D, evalNum, compileFn, rationalRoots, sqrtSimp, splitEquation,
+    inverseSteps, detSarrus, detCofactor, detGauss, cramer, productDeveloped, paramDiscussion, eigen,
+    vecDot, vecCross, vecNorm, vecAngle, vecProj,
+    solveEquation, nextStep, checkSolution, eqSteps,
+    simplifyFraction, fractionOps, gcdLcm, primeFactor,
+    polyOperate, polyDivide, polyRoots,
+    combinatorics, pascal, truthTable, setOperate, derivative, graphOf, valueTable,
+  };
+})(ME);
+/*OPS-END*/
 </script>
 <script>
 (() => {
@@ -1328,7 +3052,9 @@ const ME = (() => {
       scale: Math.min(260, Math.max(80, +b.scale || 140)),
       color: typeof b.color === 'string' && /^(ink|data-[1-6])$/.test(b.color) ? b.color : 'ink',
       tool: ['pen', 'hl', 'arrow', 'eraser'].includes(b.tool) ? b.tool : 'pen',
+      histAuto: !!b.histAuto,
       width: Math.min(12, Math.max(1, +b.width || 3)),
+      title: typeof b.title === 'string' ? b.title.slice(0, 120) : '',
     });
     out.pages = b.pages.map((p) => ({
       blocks: (Array.isArray(p.blocks) && p.blocks.length ? p.blocks : [newBlock()]).map((x) => {
@@ -1338,6 +3064,16 @@ const ME = (() => {
           const rows = (Array.isArray(x.rows) ? x.rows : []).filter((r) => r && typeof r === 'object')
             .map((r) => ({ l: str(r.l), r: str(r.r), note: str(r.note), boxed: !!r.boxed }));
           return Object.assign(base, { type: 'deriv', rows: rows.length ? rows : [newRow()] });
+        }
+        if (x.type === 'table') {
+          const strs = (a) => (Array.isArray(a) ? a.map((c) => String(c == null ? '' : c)) : []);
+          return Object.assign(base, { type: 'table', rows: (Array.isArray(x.rows) ? x.rows : []).map(strs), head: x.head ? strs(x.head) : null,
+            vbar: Number.isInteger(x.vbar) ? x.vbar : null, hline: Number.isInteger(x.hline) ? x.hline : null, hlines: Array.isArray(x.hlines) ? x.hlines.filter(Number.isInteger) : null,
+            mark: Array.isArray(x.mark) ? x.mark.slice(0, 2).map(Number) : null, caption: typeof x.caption === 'string' ? x.caption : '', kind: typeof x.kind === 'string' ? x.kind : '', lastBold: !!x.lastBold });
+        }
+        if (x.type === 'graph') {
+          const xmin = Number.isFinite(+x.xmin) ? +x.xmin : -5, xmax = Number.isFinite(+x.xmax) ? +x.xmax : 5;
+          return Object.assign(base, { type: 'graph', fns: (Array.isArray(x.fns) ? x.fns : []).map(String).slice(0, 6), xmin: Math.min(xmin, xmax - 0.001), xmax });
         }
         return Object.assign(base, { type: x.type === 'text' ? 'text' : 'math', v: typeof x.v === 'string' ? x.v : '', result: !!x.result });
       }),
@@ -1355,6 +3091,7 @@ const ME = (() => {
     clearTimeout(saveT);
     saveT = setTimeout(() => {
       try { localStorage.setItem(KEY, JSON.stringify(board)); } catch (e) { /* sin almacenamiento: la pizarra funciona igual */ }
+      if (window.__histAutoHook) window.__histAutoHook();
     }, 350);
   }
 
@@ -1442,13 +3179,17 @@ const ME = (() => {
     x.type = 'button';
     x.className = 'x-del blk-del';
     x.textContent = '×';
-    const xl = b.type === 'deriv' ? 'Borrar todo el desarrollo' : 'Borrar esta línea';
+    const xl = b.type === 'deriv' ? 'Borrar todo el desarrollo' : b.type === 'table' ? 'Borrar la tabla' : b.type === 'graph' ? 'Borrar la gráfica' : 'Borrar esta línea';
     x.title = xl;
     x.setAttribute('aria-label', xl);
     x.addEventListener('mousedown', (e) => e.preventDefault());
     x.addEventListener('click', () => deleteBlock(b.id));
     el.appendChild(x);
-    if (b.type === 'deriv') {
+    if (b.type === 'table') {
+      buildTable(b, bd);
+    } else if (b.type === 'graph') {
+      buildGraph(b, bd, false);
+    } else if (b.type === 'deriv') {
       el.classList.add('blk-deriv');
       el.classList.remove('is-boxed');
       buildDeriv(b, bd, false);
@@ -1825,10 +3566,10 @@ const ME = (() => {
     const i = bl.findIndex((b) => b.id === id);
     if (i < 0) return;
     const gone = JSON.parse(JSON.stringify(bl[i]));
-    const empty = gone.type === 'math' ? !gone.v : gone.type === 'text' ? !gone.v : gone.rows.every((r) => !r.l && !r.r && !r.note);
+    const empty = gone.type === 'math' || gone.type === 'text' ? !gone.v : gone.type === 'deriv' ? gone.rows.every((r) => !r.l && !r.r && !r.note) : false;
     if (!empty) {
       const pg = board.cur, only = bl.length === 1;
-      toast((gone.type === 'deriv' ? 'Desarrollo borrado.' : 'Línea borrada.'), 'nota', { label: 'Deshacer', fn: () => {
+      toast((gone.type === 'deriv' ? 'Desarrollo borrado.' : gone.type === 'table' ? 'Tabla borrada.' : gone.type === 'graph' ? 'Gráfica borrada.' : 'Línea borrada.'), 'nota', { label: 'Deshacer', fn: () => {
         if (board.cur !== pg) { board.cur = pg; }
         const blocks = page().blocks;
         gone.id = uid();
@@ -2271,6 +4012,317 @@ const ME = (() => {
     }
   }
   $('#calcBtn').addEventListener('click', runCalc);
+
+  /* ---------------- Tablas ---------------- */
+  function buildTable(b, bd) {
+    const w = document.createElement('div');
+    w.className = 'mtable-wrap';
+    w.tabIndex = 0;
+    w.setAttribute('role', 'group');
+    w.setAttribute('aria-label', b.caption || 'Tabla');
+    const t = document.createElement('table');
+    t.className = 'mtable ' + (b.kind || '');
+    const vb = b.vbar;
+    const ncols = Math.max(b.head ? b.head.length : 0, ...b.rows.map((r) => r.length));
+    if (b.head) {
+      const tr = t.createTHead().insertRow();
+      b.head.forEach((h, j) => {
+        const th = document.createElement('th');
+        th.textContent = h;
+        if (vb != null && j === vb - 1) th.className = 'vbar';
+        if (b.lastBold && j === ncols - 1) th.classList.add('bold');
+        tr.appendChild(th);
+      });
+    }
+    const tb = t.createTBody();
+    const hl = new Set([].concat(b.hline != null ? [b.hline] : [], b.hlines || []));
+    b.rows.forEach((r, i) => {
+      const tr = tb.insertRow();
+      if (hl.has(i)) tr.className = 'hline';
+      for (let j = 0; j < ncols; j++) {
+        const td = tr.insertCell();
+        td.textContent = r[j] == null ? '' : r[j];
+        if (vb != null && j === vb - 1) td.className = 'vbar';
+        if (b.lastBold && j === ncols - 1) td.classList.add('bold');
+        if (b.kind === 'truth' && r[j] === 'V') td.classList.add('t');
+        if (b.mark && b.mark[0] === i && b.mark[1] === j) td.classList.add('mark');
+      }
+    });
+    if (b.kind === 'ruffini' && !b.mark) {
+      // resto de cada división en Ruffini encadenado
+      $$('tr', tb).forEach((tr, i) => { if (i > 0 && i % 2 === 0) { const cells = $$('td', tr).filter((c) => c.textContent !== ''); const last = cells[cells.length - 1]; if (last) last.classList.add('mark'); } });
+    }
+    w.appendChild(t);
+    if (b.caption) {
+      const c = document.createElement('p');
+      c.className = 'mtable-cap';
+      c.textContent = b.caption;
+      w.appendChild(c);
+    }
+    bd.appendChild(w);
+  }
+
+  /* ---------------- Gráficas ---------------- */
+  const SVGNS = 'http://www.w3.org/2000/svg';
+  function niceStep(r) {
+    const raw = r / 8, p = Math.pow(10, Math.floor(Math.log10(raw))), m = raw / p;
+    return (m < 1.5 ? 1 : m < 3.5 ? 2 : m < 7.5 ? 5 : 10) * p;
+  }
+  const fmtNum = (v) => { const r = Math.round(v * 1000) / 1000; return String(r).replace('.', ',').replace('-', '−'); };
+  function buildGraph(b, bd, ro) {
+    const box = document.createElement('div');
+    box.className = 'graph';
+    box.tabIndex = 0;
+    const W = 720, H = 400, pad = 28;
+    const svg = document.createElementNS(SVGNS, 'svg');
+    svg.setAttribute('viewBox', '0 0 ' + W + ' ' + H);
+    svg.setAttribute('role', 'img');
+    const legend = document.createElement('div');
+    legend.className = 'g-legend';
+    const err = document.createElement('div');
+    err.className = 'g-err';
+    box.append(svg, legend, err);
+    function draw() {
+      svg.textContent = ''; legend.textContent = ''; err.textContent = '';
+      const fs = [];
+      b.fns.forEach((src, k) => { try { fs.push({ F: OPS.compileFn(src), k, src }); } catch (e) { err.textContent = 'Aviso: no puedo dibujar «' + src + '»: ' + e.message; } });
+      svg.setAttribute('aria-label', 'Gráfica de ' + (fs.map((f) => f.src).join('; ') || 'ninguna función') + ' entre x = ' + b.xmin + ' y x = ' + b.xmax);
+      const x0 = b.xmin, x1 = b.xmax, n = 900;
+      const samples = fs.map(({ F }) => { const pts = []; for (let i = 0; i <= n; i++) { const x = x0 + (x1 - x0) * i / n; pts.push([x, F.f(x)]); } return pts; });
+      const ys = samples.flat().map((p) => p[1]).filter(Number.isFinite).sort((a, c) => a - c);
+      let y0 = -5, y1 = 5;
+      if (ys.length) {
+        const q = (t) => ys[Math.min(ys.length - 1, Math.max(0, Math.floor(t * (ys.length - 1))))];
+        y0 = q(0.02); y1 = q(0.98);
+        if (y1 - y0 < 1e-9) { y0 -= 1; y1 += 1; }
+        const m = (y1 - y0) * 0.12; y0 -= m; y1 += m;
+        if (y0 > 0 && y0 < (y1 - y0) * 0.6) y0 = -(y1 - y0) * 0.05;
+        if (y1 < 0 && -y1 < (y1 - y0) * 0.6) y1 = (y1 - y0) * 0.05;
+      }
+      const sx = (x) => pad + (x - x0) / (x1 - x0) * (W - 2 * pad);
+      const sy = (y) => H - pad - (y - y0) / (y1 - y0) * (H - 2 * pad);
+      const el = (tag, attrs, cls) => { const e = document.createElementNS(SVGNS, tag); for (const k in attrs) e.setAttribute(k, attrs[k]); if (cls) e.setAttribute('class', cls); svg.appendChild(e); return e; };
+      const stx = niceStep(x1 - x0), sty = niceStep(y1 - y0);
+      for (let x = Math.ceil(x0 / stx) * stx; x <= x1 + 1e-9; x += stx) {
+        el('line', { x1: sx(x), y1: pad, x2: sx(x), y2: H - pad }, 'g-grid');
+        if (Math.abs(x) > stx / 2) { const t = el('text', { x: sx(x), y: Math.min(H - pad + 16, Math.max(pad + 12, sy(0) + 16)), 'text-anchor': 'middle' }, 'g-tick'); t.textContent = fmtNum(x); }
+      }
+      for (let y = Math.ceil(y0 / sty) * sty; y <= y1 + 1e-9; y += sty) {
+        el('line', { x1: pad, y1: sy(y), x2: W - pad, y2: sy(y) }, 'g-grid');
+        if (Math.abs(y) > sty / 2) { const t = el('text', { x: Math.min(W - pad - 4, Math.max(pad + 30, sx(0) - 6)), y: sy(y) + 4, 'text-anchor': 'end' }, 'g-tick'); t.textContent = fmtNum(y); }
+      }
+      if (y0 <= 0 && y1 >= 0) el('line', { x1: pad, y1: sy(0), x2: W - pad, y2: sy(0) }, 'g-axis');
+      if (x0 <= 0 && x1 >= 0) el('line', { x1: sx(0), y1: pad, x2: sx(0), y2: H - pad }, 'g-axis');
+      const o = el('text', { x: sx(0) - 6, y: sy(0) + 16, 'text-anchor': 'end' }, 'g-tick'); o.textContent = '0';
+      samples.forEach((pts, i) => {
+        const span = y1 - y0;
+        let d = '', pen = false, prev = null;
+        for (const [x, y] of pts) {
+          if (!Number.isFinite(y) || y < y0 - span * 3 || y > y1 + span * 3 || (prev !== null && Math.abs(y - prev) > span * 1.5)) { pen = false; prev = Number.isFinite(y) ? y : null; continue; }
+          d += (pen ? 'L' : 'M') + sx(x).toFixed(1) + ' ' + sy(Math.max(y0 - span, Math.min(y1 + span, y))).toFixed(1);
+          pen = true; prev = y;
+        }
+        const color = 'var(--data-' + ((fs[i].k % 6) + 1) + ')';
+        const path = el('path', { d }, 'g-curve');
+        path.style.stroke = color;
+        if (i > 0) path.style.strokeDasharray = ['', '8 5', '2 5', '10 4 2 4', '4 4', '12 6'][i % 6];
+        const lg = document.createElement('span');
+        lg.style.setProperty('--sw', color);
+        lg.textContent = fs[i].src.replace(/\\left|\\right|\\cdot/g, '').replace(/\\frac\{([^{}]+)\}\{([^{}]+)\}/g, '($1)/($2)').replace(/\\sqrt\{([^{}]+)\}/g, '√($1)').replace(/\\(sin|cos|tan|ln|log|pi)/g, (m, f) => (f === 'pi' ? 'π' : f)).replace(/[{}\\]/g, '').replace(/\^2/g, '²').replace(/\^3/g, '³');
+        legend.appendChild(lg);
+      });
+    }
+    if (!ro) {
+      const ctrl = document.createElement('div');
+      ctrl.className = 'g-ctrl';
+      const mk = (label, val, set) => { const l = document.createElement('label'); l.textContent = label + ' '; const i = document.createElement('input'); i.type = 'number'; i.step = 'any'; i.value = val; i.addEventListener('change', () => { const v = parseFloat(i.value); if (Number.isFinite(v)) { set(v); if (b.xmax - b.xmin < 1e-6) b.xmax = b.xmin + 1; save(); draw(); } }); l.appendChild(i); return l; };
+      const fi = document.createElement('input');
+      fi.className = 'g-fns';
+      fi.value = b.fns.join(' ; ');
+      fi.setAttribute('aria-label', 'Funciones separadas por punto y coma');
+      fi.title = 'Funciones separadas por ; (LaTeX), por ejemplo f(x)=x^2 ; g(x)=\\sin x';
+      fi.addEventListener('change', () => { b.fns = fi.value.split(';').map((t) => t.trim()).filter(Boolean).slice(0, 6); save(); draw(); });
+      const fl = document.createElement('label'); fl.textContent = 'Funciones '; fl.style.display = 'flex'; fl.style.flex = '1 1 260px'; fl.style.gap = '6px'; fl.style.alignItems = 'center'; fl.appendChild(fi);
+      ctrl.append(mk('x desde', b.xmin, (v) => { b.xmin = v; }), mk('hasta', b.xmax, (v) => { b.xmax = v; }), fl);
+      box.appendChild(ctrl);
+      // zoom con la rueda y arrastre para desplazar
+      svg.addEventListener('wheel', (e) => { e.preventDefault(); const k = e.deltaY > 0 ? 1.15 : 1 / 1.15; const c = (b.xmin + b.xmax) / 2, h = (b.xmax - b.xmin) / 2 * k; b.xmin = +(c - h).toFixed(4); b.xmax = +(c + h).toFixed(4); ctrl.querySelectorAll('input[type=number]')[0].value = b.xmin; ctrl.querySelectorAll('input[type=number]')[1].value = b.xmax; save(); draw(); }, { passive: false });
+      let drag = null;
+      svg.addEventListener('pointerdown', (e) => { if (body.dataset.mode === 'draw' || e.pointerType === 'pen') return; drag = { x: e.clientX, a: b.xmin, b: b.xmax, w: svg.getBoundingClientRect().width }; svg.setPointerCapture(e.pointerId); e.stopPropagation(); });
+      svg.addEventListener('pointermove', (e) => { if (!drag) return; const dx = (e.clientX - drag.x) / drag.w * (drag.b - drag.a) * (720 / 664); b.xmin = +(drag.a - dx).toFixed(4); b.xmax = +(drag.b - dx).toFixed(4); draw(); });
+      svg.addEventListener('pointerup', () => { if (drag) { drag = null; ctrl.querySelectorAll('input[type=number]')[0].value = b.xmin; ctrl.querySelectorAll('input[type=number]')[1].value = b.xmax; save(); } });
+    }
+    bd.appendChild(box);
+    draw();
+  }
+
+  /* ---------------- Operaciones paso a paso ---------------- */
+  const OPS_MENU = [
+    ['Matrices', [
+      ['inv', 'Inversa paso a paso', 'Escribe la matriz o su nombre (A). Aplica Gauss-Jordan a (A | I).'],
+      ['detS', 'Determinante: 2×2 y Sarrus', 'Matriz 2×2 o 3×3 (o su nombre). Con mayor tamaño usa cofactores.'],
+      ['detC', 'Determinante por cofactores', 'Desarrolla por la fila o columna con más ceros.'],
+      ['detG', 'Determinante por Gauss', 'Triangula la matriz y multiplica la diagonal.'],
+      ['cramer', 'Regla de Cramer', 'Un sistema (Sistema ▾) con tantas ecuaciones como incógnitas.'],
+      ['param', 'Discutir sistema con parámetro', 'Sistema con un parámetro: una letra como a, k o m (las incógnitas son x, y, z, t).'],
+      ['prod', 'Producto desarrollado', 'Escribe A·B con nombres o matrices: muestra cada fila·columna.'],
+      ['eigen', 'Autovalores y autovectores', 'Matriz cuadrada o su nombre: polinomio característico, autovalores, subespacios y si es diagonalizable.'],
+    ]],
+    ['Vectores', [
+      ['dot', 'Producto escalar', 'Escribe dos vectores: u, v o (1,2,3)·(4,5,6).'],
+      ['cross', 'Producto vectorial', 'Dos vectores de ℝ³: u × v.'],
+      ['norm', 'Norma', 'Un vector: u o (1,2,3).'],
+      ['angle', 'Ángulo entre vectores', 'Dos vectores: u, v.'],
+      ['proj', 'Proyección de u sobre v', 'Dos vectores: u, v (en ese orden).'],
+    ]],
+    ['Ecuaciones', [
+      ['solve', 'Resolver paso a paso', 'Una ecuación de una incógnita (1.º o 2.º grado, o polinómica con raíces racionales). Crea un desarrollo con la explicación de cada paso.'],
+      ['next', 'Siguiente paso', 'Dentro de un desarrollo: añade solo el paso siguiente.'],
+      ['check', 'Comprobar solución', 'Dentro de un desarrollo resuelto: sustituye la solución en la ecuación inicial.'],
+    ]],
+    ['Aritmética', [
+      ['fracS', 'Simplificar fracción', 'Una fracción de enteros, por ejemplo 84/126.'],
+      ['fracO', 'Operar fracciones', 'Sumas y restas (con m.c.m.) o productos y cocientes de fracciones.'],
+      ['mcd', 'm.c.d. y m.c.m.', 'Dos o más números separados por comas, por ejemplo 12, 18.'],
+      ['primes', 'Factores primos', 'Un número entero, por ejemplo 360.'],
+    ]],
+    ['Polinomios', [
+      ['polyOp', 'Desarrollar y operar', 'Sumas, productos y potencias de polinomios: (x+1)(x−2)+3x².'],
+      ['polyDiv', 'Dividir: Ruffini o división larga', 'P(x) : Q(x) o como fracción. Si el divisor es x − a usa Ruffini.'],
+      ['polyRoots', 'Raíces y factorización', 'Un polinomio: busca raíces racionales con Ruffini y lo factoriza.'],
+    ]],
+    ['Combinatoria', [
+      ['comb', 'n!, combinaciones, variaciones', 'Escribe 6!, \\binom{5}{2} (o C_{5,2}), V_{5,2}, VR_{3,4} o P_{5}.'],
+      ['pascal', 'Triángulo de Pascal', 'Escribe el número de filas (por defecto 6).'],
+    ]],
+    ['Lógica y conjuntos', [
+      ['truth', 'Tabla de verdad', 'Fórmula con ¬ ∧ ∨ ⊻ ⇒ ⇔ y letras p, q, r…: dice si es tautología, contradicción o contingencia.'],
+      ['sets', 'Operar conjuntos', 'Define A = {1,2,3}, B = {…} (y U para el complementario) en otras líneas y escribe A ∪ B, A ∩ B, A ∖ B, Aᶜ, 𝒫(A), A × B o |A|.'],
+    ]],
+    ['Cálculo', [
+      ['deriv', 'Derivar paso a paso', 'f(x) = … o una expresión: indica las reglas aplicadas y simplifica.'],
+      ['graph', 'Graficar función', 'f(x) = … (varias separadas por ;). Rueda para acercar, arrastra para moverte.'],
+      ['values', 'Tabla de valores', 'f(x) = …: valores para x de −3 a 3.'],
+    ]],
+  ];
+  (function buildOpsPop() {
+    const pop = $('#opsPop');
+    const hint = document.createElement('p');
+    hint.className = 'ops-hint';
+    hint.textContent = 'Coloca el cursor en la línea con los datos y elige la operación. Pasa el ratón por encima para ver qué escribir.';
+    pop.appendChild(hint);
+    for (const [title, items] of OPS_MENU) {
+      const h = document.createElement('h4');
+      h.textContent = title;
+      const g = document.createElement('div');
+      g.className = 'ops-grid';
+      for (const [key, label, help] of items) {
+        const bt = document.createElement('button');
+        bt.type = 'button';
+        bt.className = 'mi-btn mi-btn--sm';
+        bt.dataset.op = key;
+        bt.textContent = label;
+        bt.title = help;
+        g.appendChild(bt);
+      }
+      pop.append(h, g);
+    }
+    pop.addEventListener('mousedown', (e) => { if (e.target.closest('[data-op]')) e.preventDefault(); });
+    pop.addEventListener('click', (e) => { const bt = e.target.closest('[data-op]'); if (bt) { closePop(); runOp(bt.dataset.op); } });
+  })();
+  function specToBlock(spec, ref) {
+    if (spec.type === 'math') return newBlock('math', spec.v, { align: spec.align || (ref ? ref.align : 'left'), result: true });
+    if (spec.type === 'deriv') return newDeriv(spec.rows.map((r) => ({ l: r.l || '', r: r.r || '', note: r.note || '', boxed: !!r.boxed })));
+    return Object.assign({ id: uid(), align: 'left', boxed: false }, JSON.parse(JSON.stringify(spec)));
+  }
+  function insertSpecs(afterId, specs, ref) {
+    let last = afterId, lastB = null;
+    for (const sp of specs) { lastB = addBlockAfter(last, specToBlock(sp, ref), false); last = lastB.id; }
+    if (lastB) { const el = elById(lastB.id); if (el) el.scrollIntoView({ block: 'nearest' }); setActive(lastB.id); }
+  }
+  function runOp(key) {
+    if (body.dataset.mode !== 'write') setMode('write');
+    const b = syncActive();
+    if (!b || (b.type !== 'math' && b.type !== 'deriv')) { toast('Coloca el cursor en una línea con los datos y vuelve a elegir la operación.'); return; }
+    const isD = b.type === 'deriv';
+    const ri = isD ? derivRowIndex(b) : -1;
+    const row = isD ? b.rows[ri] : null;
+    const src = isD ? (row.r || row.l) : b.v;
+    const full = isD ? (row.l && row.r ? row.l + '=' + row.r : row.r || row.l) : b.v;
+    const env = isD ? otherDefs(b.id, ri) : otherDefs(b.id);
+    const lines = [];
+    for (const x of page().blocks) { if (x.type === 'math' && x.id !== b.id) lines.push(x.v); if (x.type === 'deriv') x.rows.forEach((r) => { if (r.l && r.r) lines.push(r.l + '=' + r.r); }); }
+    try {
+      if (!['next', 'check', 'pascal'].includes(key) && !String(src || '').trim()) throw new ME.MErr('La línea está vacía: escribe primero los datos.');
+      let specs = null;
+      switch (key) {
+        case 'inv': specs = OPS.inverseSteps(src, env); break;
+        case 'detS': specs = OPS.detSarrus(src, env); break;
+        case 'detC': specs = OPS.detCofactor(src, env); break;
+        case 'detG': specs = OPS.detGauss(src, env); break;
+        case 'cramer': specs = OPS.cramer(src); break;
+        case 'param': specs = OPS.paramDiscussion(src); break;
+        case 'prod': specs = OPS.productDeveloped(src, env); break;
+        case 'eigen': specs = OPS.eigen(src, env); break;
+        case 'dot': specs = OPS.vecDot(src, env); break;
+        case 'cross': specs = OPS.vecCross(src, env); break;
+        case 'norm': specs = OPS.vecNorm(src, env); break;
+        case 'angle': specs = OPS.vecAngle(src, env); break;
+        case 'proj': specs = OPS.vecProj(src, env); break;
+        case 'fracS': specs = OPS.simplifyFraction(src); break;
+        case 'fracO': specs = OPS.fractionOps(src); break;
+        case 'mcd': specs = OPS.gcdLcm(src); break;
+        case 'primes': specs = OPS.primeFactor(src); break;
+        case 'polyOp': specs = OPS.polyOperate(full); break;
+        case 'polyDiv': specs = OPS.polyDivide(full); break;
+        case 'polyRoots': specs = OPS.polyRoots(full); break;
+        case 'comb': specs = OPS.combinatorics(full); break;
+        case 'pascal': specs = OPS.pascal(src || ''); break;
+        case 'truth': specs = OPS.truthTable(full); break;
+        case 'sets': specs = OPS.setOperate(full, lines); break;
+        case 'deriv': specs = OPS.derivative(full); break;
+        case 'graph': specs = OPS.graphOf(full); break;
+        case 'values': specs = OPS.valueTable(full); break;
+        case 'solve': {
+          if (isD) {
+            const added = [];
+            for (let k = 0; k < 20; k++) { const st = OPS.nextStep(b.rows.concat(added)); if (!st) break; added.push(Object.assign({ boxed: false }, st)); }
+            if (!added.length) { toast('Este desarrollo ya está resuelto.'); return; }
+            b.rows.push(...added.map((r) => ({ l: r.l || '', r: r.r || '', note: r.note || '', boxed: !!r.boxed })));
+            rebuildDeriv(b); save(); focusCell(b.id, b.rows.length - 1, 'r', 'end');
+            return;
+          }
+          const res = OPS.solveEquation(b.v);
+          // la línea se convierte en el desarrollo resuelto
+          const blk = specToBlock(res[0]);
+          b.type = 'deriv'; b.rows = blk.rows; delete b.v; delete b.result; b.boxed = false;
+          elById(b.id).replaceWith(makeBlockEl(b));
+          save();
+          focusCell(b.id, b.rows.length - 1, 'r', 'end');
+          return;
+        }
+        case 'next': {
+          if (!isD) throw new ME.MErr('«Siguiente paso» funciona dentro de un desarrollo. Usa «Resolver paso a paso» o crea un desarrollo con Alt+L.');
+          const st = OPS.nextStep(b.rows.slice(0, ri + 1));
+          if (!st) { toast('No hay más pasos: la ecuación ya está resuelta.'); return; }
+          addRow(b, ri, { l: st.l || '', r: st.r || '', note: st.note || '', boxed: !!st.boxed });
+          return;
+        }
+        case 'check': {
+          if (!isD) throw new ME.MErr('«Comprobar solución» funciona dentro de un desarrollo resuelto.');
+          const rows = OPS.checkSolution(b.rows);
+          b.rows.push(...rows.map((r) => ({ l: r.l, r: r.r, note: r.note, boxed: false })));
+          rebuildDeriv(b); save(); focusCell(b.id, b.rows.length - 1, 'note', 'end');
+          return;
+        }
+        default: return;
+      }
+      if (specs && specs.length) insertSpecs(b.id, specs, b);
+    } catch (e) {
+      if (!(e instanceof ME.MErr)) console.error(e);
+      toast(e instanceof ME.MErr ? e.message : 'No he podido hacer esta operación con lo que hay en la línea.', 'aviso');
+    }
+  }
   $('#gaussBtn').addEventListener('click', () => runGauss(false));
   $('#gjBtn').addEventListener('click', () => runGauss(true));
 
@@ -2311,6 +4363,198 @@ const ME = (() => {
   $('#showChrome').addEventListener('click', toggleChrome);
   const help = $('#help');
   $('#helpBtn').addEventListener('click', () => help.showModal());
+
+  /* ---------------- Historial (carpeta pizarramatia/historial) ----------------
+     Chrome y Edge: acceso de lectura y escritura a la carpeta con el permiso de quien usa la pizarra.
+     Otros navegadores: lectura de la carpeta y guardado como descarga. */
+  const hist = $('#hist');
+  const FS_OK = typeof window.showDirectoryPicker === 'function';
+  let histDir = null, histRO = null, sessionFile = null, autoT = null, lastAutoJSON = '';
+  const IDB = {
+    db() { return new Promise((res, rej) => { try { const r = indexedDB.open('matia-pizarra', 1); r.onupgradeneeded = () => r.result.createObjectStore('kv'); r.onsuccess = () => res(r.result); r.onerror = () => rej(r.error); } catch (e) { rej(e); } }); },
+    async get(k) { try { const d = await IDB.db(); return await new Promise((res) => { const q = d.transaction('kv').objectStore('kv').get(k); q.onsuccess = () => res(q.result); q.onerror = () => res(null); }); } catch (e) { return null; } },
+    async set(k, v) { try { const d = await IDB.db(); await new Promise((res) => { const t = d.transaction('kv', 'readwrite'); t.objectStore('kv').put(v, k); t.oncomplete = res; t.onerror = res; }); } catch (e) { /* sin IndexedDB */ } },
+  };
+  const pad2 = (n) => String(n).padStart(2, '0');
+  const slug = (t) => t.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 50);
+  function stampName() {
+    const d = new Date();
+    const base = d.getFullYear() + '-' + pad2(d.getMonth() + 1) + '-' + pad2(d.getDate()) + '_' + pad2(d.getHours()) + '-' + pad2(d.getMinutes());
+    const t = slug(board.title || '');
+    return base + (t ? '_' + t : '') + '.json';
+  }
+  function boardJSON() {
+    return JSON.stringify(Object.assign({ app: 'MatIA Pizarra', formato: 1, guardado: new Date().toISOString() }, board), null, 1);
+  }
+  function setStatus() {
+    const st = $('#histStatus');
+    st.classList.toggle('on', !!(histDir || histRO));
+    st.textContent = histDir ? 'Carpeta: ' + histDir.name + ' (lectura y escritura)' : histRO ? 'Carpeta: ' + histRO.name + ' (solo lectura)' : 'Carpeta: sin conectar';
+    $('#histConnect').hidden = !FS_OK;
+    $('#histConnect').textContent = histDir ? 'Cambiar carpeta' : 'Conectar carpeta';
+    $('#histPickRO').hidden = FS_OK;
+    $('#histSave').textContent = histDir ? 'Guardar en el historial' : 'Descargar para el historial';
+    $('#histAuto').disabled = !histDir;
+    if (!FS_OK) $('#histHelp').innerHTML = 'Este navegador no permite que la página escriba en una carpeta. Puedes <b>elegir la carpeta historial</b> para ver y abrir lo guardado, y <b>descargar</b> cada clase: después mueve el archivo descargado a <code>pizarramatia/historial</code>. Con Chrome o Edge se guarda directamente.';
+  }
+  async function useDir(dir) {
+    // si eligen la carpeta pizarramatia, se usa (o crea) su subcarpeta historial
+    if (dir.name !== 'historial') {
+      try { dir = await dir.getDirectoryHandle('historial', { create: true }); } catch (e) { /* se usa la elegida */ }
+    }
+    histDir = dir; histRO = null;
+    await IDB.set('histDir', dir);
+    setStatus();
+    await listHist();
+  }
+  $('#histConnect').addEventListener('click', async () => {
+    try { const d = await window.showDirectoryPicker({ id: 'matia-historial', mode: 'readwrite' }); await useDir(d); }
+    catch (e) { if (e && e.name !== 'AbortError') toast('No se ha podido abrir la carpeta: ' + (e.message || e), 'aviso'); }
+  });
+  $('#histReconnect').addEventListener('click', async () => {
+    const d = await IDB.get('histDir');
+    if (!d) return;
+    try { if ((await d.requestPermission({ mode: 'readwrite' })) === 'granted') { $('#histReconnect').hidden = true; await useDir(d); } } catch (e) { toast('No se ha podido reconectar la carpeta.', 'aviso'); }
+  });
+  $('#histPickRO').addEventListener('click', () => $('#histDirIn').click());
+  $('#histDirIn').addEventListener('change', (e) => {
+    const files = [...(e.target.files || [])].filter((f) => /\.json$/i.test(f.name));
+    const first = e.target.files && e.target.files[0];
+    histRO = { name: first ? (first.webkitRelativePath || '').split('/')[0] || 'historial' : 'historial', files };
+    histDir = null;
+    setStatus();
+    listHist();
+    e.target.value = '';
+  });
+  async function readEntries() {
+    const out = [];
+    if (histDir) {
+      for await (const h of histDir.values()) {
+        if (h.kind !== 'file' || !/\.json$/i.test(h.name)) continue;
+        try { const f = await h.getFile(); out.push({ name: h.name, date: f.lastModified, size: f.size, get: () => f.text(), handle: h }); } catch (e) { /* ilegible */ }
+      }
+    } else if (histRO) {
+      for (const f of histRO.files) out.push({ name: f.name, date: f.lastModified, size: f.size, get: () => f.text() });
+    }
+    return out.sort((a, b) => b.name.localeCompare(a.name));
+  }
+  const fmtDate = (t) => { const d = new Date(t); return pad2(d.getDate()) + '/' + pad2(d.getMonth() + 1) + '/' + d.getFullYear() + ' ' + pad2(d.getHours()) + ':' + pad2(d.getMinutes()); };
+  async function listHist() {
+    const list = $('#histList');
+    list.textContent = '';
+    if (!histDir && !histRO) { list.innerHTML = '<div class="hist-empty">Conecta la carpeta para ver las clases guardadas.</div>'; return; }
+    let items;
+    try { items = await readEntries(); } catch (e) { list.innerHTML = '<div class="hist-empty">No se puede leer la carpeta. Pulsa «Reconectar» o vuelve a elegirla.</div>'; return; }
+    if (!items.length) { list.innerHTML = '<div class="hist-empty">Todavía no hay clases guardadas en esta carpeta.</div>'; return; }
+    for (const it of items) {
+      const row = document.createElement('div');
+      row.className = 'hist-item' + (it.name === sessionFile ? ' cur' : '');
+      row.setAttribute('role', 'listitem');
+      const info = document.createElement('div');
+      const nice = it.name.replace(/\.json$/i, '').replace(/^(\d{4})-(\d{2})-(\d{2})_(\d{2})-(\d{2})_?/, '').replace(/-/g, ' ');
+      info.innerHTML = '<b></b><small></small>';
+      info.querySelector('b').textContent = nice ? nice.charAt(0).toUpperCase() + nice.slice(1) : 'Clase sin título';
+      info.querySelector('small').textContent = it.name + ' · ' + fmtDate(it.date) + ' · ' + Math.max(1, Math.round(it.size / 1024)) + ' KB' + (it.name === sessionFile ? ' · clase actual' : '');
+      const acts = document.createElement('div');
+      acts.className = 'acts';
+      const mk = (label, fn, primary) => { const bt = document.createElement('button'); bt.type = 'button'; bt.className = 'mi-btn mi-btn--sm' + (primary ? ' mi-btn--primary' : ''); bt.textContent = label; bt.addEventListener('click', fn); acts.appendChild(bt); };
+      mk('Abrir', () => openHist(it, false), true);
+      mk('Añadir páginas', () => openHist(it, true));
+      if (it.handle && histDir) mk('Borrar', async () => {
+        if (!confirm('¿Borrar «' + it.name + '» del historial? No se puede deshacer.')) return;
+        try { await histDir.removeEntry(it.name); if (sessionFile === it.name) sessionFile = null; listHist(); } catch (e) { toast('No se ha podido borrar el archivo.', 'aviso'); }
+      });
+      row.append(info, acts);
+      list.appendChild(row);
+    }
+  }
+  async function openHist(it, append) {
+    let data;
+    try { data = sanitize(JSON.parse(await it.get())); } catch (e) { data = null; }
+    if (!data) { toast('«' + it.name + '» no es una pizarra válida.', 'aviso'); return; }
+    if (append) {
+      const from = board.pages.length;
+      board.pages.push(...data.pages);
+      board.cur = from;
+      toast('Añadidas ' + data.pages.length + (data.pages.length === 1 ? ' página' : ' páginas') + ' de «' + it.name + '».');
+    } else {
+      if (!confirm('¿Abrir «' + it.name + '»? La pizarra actual se sustituye (guárdala antes si la quieres conservar).')) return;
+      const keep = { theme: board.theme, accent: board.accent, scale: board.scale };
+      board = Object.assign(data, keep);
+      sessionFile = histDir ? it.name : null;
+      toast('Abierta «' + it.name + '».');
+    }
+    $('#histName').value = board.title || '';
+    applySettings();
+    renderPage();
+    save();
+    hist.close();
+  }
+  async function writeHist(name) {
+    const fh = await histDir.getFileHandle(name, { create: true });
+    const w = await fh.createWritable();
+    await w.write(boardJSON());
+    await w.close();
+  }
+  $('#histSave').addEventListener('click', async () => {
+    board.title = $('#histName').value.trim();
+    save();
+    if (!histDir) {
+      const blob = new Blob([boardJSON()], { type: 'application/json' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = stampName();
+      document.body.appendChild(a); a.click();
+      setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 1000);
+      toast('Descargado «' + a.download + '». Muévelo a la carpeta pizarramatia/historial.');
+      return;
+    }
+    try {
+      // dentro de la misma clase se reescribe el mismo archivo
+      if (!sessionFile) sessionFile = stampName();
+      await writeHist(sessionFile);
+      lastAutoJSON = JSON.stringify(board);
+      toast('Guardado en el historial: ' + sessionFile);
+      listHist();
+    } catch (e) { toast('No se ha podido guardar en la carpeta: ' + (e.message || e), 'aviso'); }
+  });
+  $('#histName').addEventListener('change', () => { board.title = $('#histName').value.trim(); save(); });
+  $('#histAuto').addEventListener('change', (e) => { board.histAuto = e.target.checked; save(); if (e.target.checked) autoSave(); });
+  async function autoSave() {
+    if (!histDir || !$('#histAuto').checked) return;
+    const now = JSON.stringify(board);
+    if (now === lastAutoJSON) return;
+    try {
+      if (!sessionFile) sessionFile = stampName();
+      await writeHist(sessionFile);
+      lastAutoJSON = now;
+    } catch (e) { /* se reintenta en el siguiente cambio */ }
+  }
+  window.__histAutoHook = () => { clearTimeout(autoT); autoT = setTimeout(autoSave, 4000); };
+  $('#histBtn').addEventListener('click', async () => {
+    $('#histName').value = board.title || '';
+    $('#histAuto').checked = !!board.histAuto;
+    setStatus();
+    hist.showModal();
+    if (!histDir && FS_OK) {
+      const d = await IDB.get('histDir');
+      if (d && d.queryPermission) {
+        try {
+          const p = await d.queryPermission({ mode: 'readwrite' });
+          if (p === 'granted') await useDir(d);
+          else { $('#histReconnect').hidden = false; $('#histStatus').textContent = 'Carpeta: ' + d.name + ' (pulsa Reconectar para dar permiso)'; }
+        } catch (e) { /* handle caducado */ }
+      }
+    }
+    listHist();
+  });
+  $('#histClose').addEventListener('click', () => hist.close());
+  // al arrancar, si la carpeta ya tiene permiso, el guardado automático sigue funcionando
+  (async () => {
+    if (!FS_OK || !board.histAuto) return;
+    const d = await IDB.get('histDir');
+    try { if (d && (await d.queryPermission({ mode: 'readwrite' })) === 'granted') { histDir = d.name === 'historial' ? d : d; $('#histAuto').checked = true; } } catch (e) { /* */ }
+  })();
   $('#helpClose').addEventListener('click', () => help.close());
   $('#fileBtn').addEventListener('click', (e) => { if (openPop && openPop.p.id === 'filePop') closePop(); else showPop('filePop', e.currentTarget); });
 
@@ -2393,6 +4637,10 @@ const ME = (() => {
         bd.className = 'blk-body';
         if (b.type === 'deriv') {
           buildDeriv(b, bd, true);
+        } else if (b.type === 'table') {
+          buildTable(b, bd);
+        } else if (b.type === 'graph') {
+          buildGraph(b, bd, true);
         } else if (b.type === 'math' && mlReady) {
           const mf = document.createElement('math-field');
           mf.setAttribute('read-only', '');
