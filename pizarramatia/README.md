@@ -46,6 +46,7 @@ Además, la pizarra se guarda sola en el propio navegador (`localStorage`) y, de
   "formato": 1,
   "guardado": "2026-11-07T09:48:00.000Z",
   "title": "Ecuaciones de primer grado",
+  "paper": "slide",
   "pages": [
     {
       "blocks": [
@@ -105,6 +106,8 @@ Pulsa **?** dentro de la pizarra para ver todos los atajos.
   - **Diagrama de Venn**: 2 o 3 conjuntos (A, B, C) dentro del universal U. Escribe la expresión (A ∩ B, A ∪ B, A ∖ B, Aᶜ, (A ∪ B)ᶜ, A Δ B…) con el teclado o con sus botones y se sombrea su zona, con color y rayado. Si en la página has definido `A = {…}`, `B = {…}`, `C = {…}` o `U = {…}`, cada elemento aparece en su zona y debajo sale el conjunto resultado. Con un clic en una zona la sombreas o la quitas a mano.
   - **Asistente de red neuronal**: escribe las neuronas por capa (por ejemplo `3, 4, 4, 2`) y monta el grafo por capas: entradas x₁…, ocultas h¹₁… y salidas ŷ₁…, con sesgo (+1) y pesos w opcionales. También está en el grafo, con el botón «Red neuronal…».
 - **Dibujar** (Alt+D): lápiz, rotulador, flecha y goma. Un lápiz digital dibuja siempre, aunque estés en modo Escribir.
+- **Tamaño de página** (Vista ▾): **Libre** (continua, como siempre), **A4 vertical**, **A4 horizontal**, **A3 horizontal** o **Diapositiva 16:9**. En los tamaños fijos se ve el borde de la hoja, la hoja se ajusta al ancho de la pantalla, se marca con una línea discontinua dónde termina la página si el contenido no cabe, y al imprimir o guardar en PDF cada página sale con ese tamaño.
+- **Presentar** (botón de la cabecera): pantalla completa con solo la página actual, escalada para que quepa entera, como una diapositiva. **→ / ← / espacio / RePág / AvPág** para pasar, **Inicio / Fin** para ir a la primera o la última, **D** para dibujar encima y **Esc** para salir. Abajo hay una barra que se oculta sola. Recomendado con «Diapositiva 16:9».
 - **Modo proyector**: pantalla completa (icono de la cabecera o tecla F), tamaño de letra, tema claro u oscuro y ocultar barras (H).
 - **Guardar** (botón verde de la cabecera o **Ctrl+S**): guarda la clase en el historial. Un punto blanco en el botón indica que hay cambios sin guardar. La primera vez pide la carpeta `historial`; después reescribe siempre el archivo de esa clase. En navegadores sin acceso a carpetas, descarga el JSON.
 - **Páginas**: «+ Página» añade una página detrás de la actual y «− Página» elimina la actual; si es la única, la vacía.
