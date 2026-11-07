@@ -100,7 +100,7 @@ body{background:var(--surface);color:var(--ink);font-family:var(--font-sans);dis
 kbd,.keys td:first-child{font-variant-ligatures:none}
 kbd{font:600 .85em var(--font-mono);background:var(--surface-sunken);border:var(--border-width-thin) solid var(--border);border-radius:var(--radius-sm);padding:0 5px}
 
-.top{display:flex;align-items:center;gap:var(--space-3);padding:var(--space-2) var(--space-4);border-bottom:var(--border-width-thin) solid var(--border);background:var(--surface-raised);flex:none;overflow-x:auto;scrollbar-width:thin}
+.top{display:flex;align-items:center;gap:var(--space-2);padding:var(--space-2) var(--space-4);border-bottom:var(--border-width-thin) solid var(--border);background:var(--surface-raised);flex:none;overflow-x:auto;scrollbar-width:thin}
 .brand{display:flex;align-items:center;gap:var(--space-2);flex:none;margin-right:var(--space-2)}
 .pio-badge{flex:none;display:grid;place-items:center;border-radius:50%;background:var(--pio-tile);border:var(--border-width-thin) solid var(--border);width:40px;height:40px}
 .pio-badge img{width:84%;height:84%;object-fit:contain;display:block}
@@ -112,7 +112,7 @@ kbd{font:600 .85em var(--font-mono);background:var(--surface-sunken);border:var(
 .pages{display:flex;align-items:center;gap:var(--space-1);flex:none}
 .pages output{font:600 13px var(--font-mono);color:var(--ink);min-width:52px;text-align:center}
 .spacer{flex:1 1 auto}
-.top .mi-field{width:150px;flex:none}
+.top .mi-field{width:118px;flex:none}
 .icon-btn{padding:6px 10px;min-width:36px}
 
 .toolbar{display:flex;flex-wrap:wrap;align-items:center;gap:var(--space-2);padding:var(--space-2) var(--space-4);border-bottom:var(--border-width-thin) solid var(--border);background:var(--surface);flex:none}
@@ -236,6 +236,20 @@ dialog{border:var(--border-width-thin) solid var(--border-strong);border-radius:
 .pio-title{display:flex;align-items:center;gap:var(--space-3)}
 .hist-empty{display:flex;align-items:center;gap:var(--space-3)}
 .ops-head{display:flex;align-items:center;gap:var(--space-3)}
+/* Diálogo de confirmación con Pío */
+dialog.ask{max-width:min(540px,calc(100vw - 32px));border-color:var(--accent);background:var(--accent-soft);animation:mi-rise var(--duration-base) var(--ease-out) both}
+dialog.ask.aviso{border-color:var(--warning);background:var(--surface-raised)}
+.ask-box{display:grid;grid-template-columns:auto 1fr;gap:var(--space-4);align-items:start;padding:var(--space-5)}
+.ask-pio .pio-badge{width:72px;height:72px;animation:mi-pop var(--duration-slow) var(--ease-out) both}
+.ask-main{display:flex;flex-direction:column;gap:var(--space-2);min-width:0}
+.ask-main .mi-label{font:600 12px/18px var(--font-sans);letter-spacing:.04em;text-transform:uppercase;color:var(--accent)}
+dialog.ask.aviso .ask-main .mi-label{color:var(--warning)}
+.ask-main h2{margin:0;font:600 20px/28px var(--font-sans);color:var(--ink)}
+.ask-main p{margin:0;font:400 16px/26px var(--font-serif);color:var(--ink)}
+.ask-acts{display:flex;flex-wrap:wrap;gap:var(--space-2);justify-content:flex-end;margin-top:var(--space-3)}
+.mi-btn--danger{background:var(--warning);border-color:var(--warning);color:var(--surface-raised)}
+.mi-btn--danger:hover{background:var(--warning);border-color:var(--warning);filter:brightness(1.1)}
+@media (max-width:520px){.ask-box{grid-template-columns:1fr}.ask-pio .pio-badge{width:56px;height:56px}}
 .hist-body{padding:var(--space-4) var(--space-5) var(--space-5);display:flex;flex-direction:column;gap:var(--space-3)}
 .hist-row{display:flex;flex-wrap:wrap;align-items:center;gap:var(--space-2) var(--space-3)}
 .hist-status{font:600 13px/20px var(--font-mono);color:var(--ink);margin-right:auto}
@@ -339,6 +353,7 @@ body.picking .dcell.pick-hover,body.picking .dnote.pick-hover{background:var(--a
     <output id="pgOut" aria-live="polite">1 / 1</output>
     <button type="button" class="mi-btn mi-btn--ghost icon-btn" id="pgNext" aria-label="Página siguiente" title="Página siguiente (Alt+AvPág)">▶</button>
     <button type="button" class="mi-btn mi-btn--sm" id="pgAdd" title="Añadir una página en blanco detrás de esta">+ Página</button>
+    <button type="button" class="mi-btn mi-btn--sm" id="pgDel" title="Eliminar esta página (si es la única, la vacía)">− Página</button>
   </div>
   <div class="spacer"></div>
   <label class="mi-field">Tamaño <output id="scaleOut">140 %</output><input type="range" id="scale" min="80" max="260" step="10" value="140" aria-label="Tamaño de la letra"></label>
@@ -493,6 +508,18 @@ body.picking .dcell.pick-hover,body.picking .dnote.pick-hover{background:var(--a
   </div>
   <input type="file" id="fileIn" accept=".json,application/json" hidden>
 </div>
+
+<dialog id="ask" class="ask" aria-labelledby="askTitle" aria-describedby="askText">
+  <div class="ask-box">
+    <div class="ask-pio" id="askPio"></div>
+    <div class="ask-main">
+      <span class="mi-label" id="askLabel">Pío pregunta</span>
+      <h2 id="askTitle"></h2>
+      <p id="askText"></p>
+      <div class="ask-acts" id="askActs"></div>
+    </div>
+  </div>
+</dialog>
 
 <dialog id="hist" aria-labelledby="histTitle">
   <div class="dlg-head"><h2 id="histTitle" data-pio="escribiendo" data-pio-alt="Pío escribiendo apuntes" class="pio-title">Historial de clases</h2><button type="button" class="mi-btn mi-btn--sm" id="histClose">Cerrar</button></div>
@@ -3135,6 +3162,7 @@ const OPS = ((ME) => {
     box.className = 'mi-callout mi-callout--' + kind;
     box.innerHTML = '<div><span class="mi-label">' + label + '</span><p></p></div>';
     box.querySelector('p').textContent = text;
+    if (typeof pioBadge === 'function') box.prepend(pioBadge(kind === 'aviso' ? 'lectura' : 'idea', 'pio-sm', ''));
     if (action) {
       const btn = document.createElement('button');
       btn.type = 'button';
@@ -4566,7 +4594,9 @@ const OPS = ((ME) => {
       mk('Abrir', () => openHist(it, false), true);
       mk('Añadir páginas', () => openHist(it, true));
       if (it.handle && histDir) mk('Borrar', async () => {
-        if (!confirm('¿Borrar «' + it.name + '» del historial? No se puede deshacer.')) return;
+        const ok = await ask({ title: '¿Borrar esta clase del historial?', text: '«' + it.name + '» se eliminará de la carpeta y no se puede deshacer.', pio: 'lectura', warn: true, label: 'Aviso',
+          buttons: [{ label: 'Cancelar', value: false, kind: 'ghost', focus: true }, { label: 'Borrar', value: true, kind: 'danger' }] });
+        if (!ok) return;
         try { await histDir.removeEntry(it.name); if (sessionFile === it.name) sessionFile = null; listHist(); } catch (e) { toast('No se ha podido borrar el archivo.', 'aviso'); }
       });
       row.append(info, acts);
@@ -4583,10 +4613,12 @@ const OPS = ((ME) => {
       board.cur = from;
       toast('Añadidas ' + data.pages.length + (data.pages.length === 1 ? ' página' : ' páginas') + ' de «' + it.name + '».');
     } else {
-      if (!confirm('¿Abrir «' + it.name + '»? La pizarra actual se sustituye (guárdala antes si la quieres conservar).')) return;
+      if (!(await guardUnsaved('abrir «' + it.name.replace(/\.json$/i, '') + '»'))) return;
       const keep = { theme: board.theme, accent: board.accent, scale: board.scale };
       board = Object.assign(data, keep);
       sessionFile = histDir ? it.name : null;
+      lastAutoJSON = JSON.stringify(board);
+      markSaved();
       toast('Abierta «' + it.name + '».');
     }
     $('#histName').value = board.title || '';
@@ -4604,10 +4636,13 @@ const OPS = ((ME) => {
   $('#histSave').addEventListener('click', async () => {
     board.title = $('#histName').value.trim();
     save();
+    await saveToHistory();
+  });
+  async function saveToHistory() {
     if (!histDir && FS_OK) {
       // primero se conecta la carpeta y luego se guarda
       try { await useDir(await window.showDirectoryPicker({ id: 'matia-historial', mode: 'readwrite' })); }
-      catch (e) { if (e && e.name !== 'AbortError') toast('No se ha podido abrir la carpeta: ' + (e.message || e), 'aviso'); return; }
+      catch (e) { if (e && e.name !== 'AbortError') toast('No se ha podido abrir la carpeta: ' + (e.message || e), 'aviso'); return false; }
     }
     if (!histDir) {
       const blob = new Blob([boardJSON()], { type: 'application/json' });
@@ -4617,17 +4652,20 @@ const OPS = ((ME) => {
       document.body.appendChild(a); a.click();
       setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 1000);
       toast('Descargado «' + a.download + '». Muévelo a la carpeta pizarramatia/historial.');
-      return;
+      markSaved();
+      return true;
     }
     try {
       // dentro de la misma clase se reescribe el mismo archivo
       if (!sessionFile) sessionFile = stampName();
       await writeHist(sessionFile);
       lastAutoJSON = JSON.stringify(board);
+      markSaved();
       toast('Guardado en el historial: ' + sessionFile);
       listHist();
-    } catch (e) { toast('No se ha podido guardar en la carpeta: ' + (e.message || e), 'aviso'); }
-  });
+      return true;
+    } catch (e) { toast('No se ha podido guardar en la carpeta: ' + (e.message || e), 'aviso'); return false; }
+  }
   $('#histName').addEventListener('change', () => { board.title = $('#histName').value.trim(); save(); });
   $('#histAuto').addEventListener('change', (e) => { board.histAuto = e.target.checked; save(); if (e.target.checked) autoSave(); });
   async function autoSave() {
@@ -4638,6 +4676,7 @@ const OPS = ((ME) => {
       if (!sessionFile) sessionFile = stampName();
       await writeHist(sessionFile);
       lastAutoJSON = now;
+      markSaved();
     } catch (e) { /* se reintenta en el siguiente cambio */ }
   }
   window.__histAutoHook = () => { clearTimeout(autoT); autoT = setTimeout(autoSave, 4000); };
@@ -4668,6 +4707,56 @@ const OPS = ((ME) => {
   $('#helpClose').addEventListener('click', () => help.close());
   $('#fileBtn').addEventListener('click', (e) => { if (openPop && openPop.p.id === 'filePop') closePop(); else showPop('filePop', e.currentTarget); });
 
+  /* ---------------- Preguntas con Pío (sustituyen a confirm del navegador) ---------------- */
+  const askDlg = $('#ask');
+  let askResolve = null;
+  // botones: [{ label, value, kind: 'primary' | 'danger' | 'ghost' }]; Esc o cerrar devuelve null
+  function ask({ title, text, label = 'Pío pregunta', pio = 'idea', warn = false, buttons }) {
+    if (askResolve) askResolve(null);
+    $('#askTitle').textContent = title;
+    $('#askText').textContent = text || '';
+    $('#askLabel').textContent = label;
+    askDlg.classList.toggle('aviso', !!warn);
+    const pp = $('#askPio'); pp.textContent = ''; pp.appendChild(pioBadge(pio, '', 'Pío'));
+    const acts = $('#askActs'); acts.textContent = '';
+    let focusBtn = null;
+    for (const bdef of buttons) {
+      const bt = document.createElement('button');
+      bt.type = 'button';
+      bt.className = 'mi-btn mi-btn--sm' + (bdef.kind === 'primary' ? ' mi-btn--primary' : bdef.kind === 'danger' ? ' mi-btn--danger' : bdef.kind === 'ghost' ? ' mi-btn--ghost' : '');
+      bt.textContent = bdef.label;
+      bt.addEventListener('click', () => { const r = askResolve; askResolve = null; askDlg.close(); if (r) r(bdef.value); });
+      acts.appendChild(bt);
+      if (bdef.focus) focusBtn = bt;
+    }
+    return new Promise((res) => {
+      askResolve = res;
+      askDlg.showModal();
+      (focusBtn || acts.lastElementChild).focus();
+    });
+  }
+  askDlg.addEventListener('cancel', () => { const r = askResolve; askResolve = null; if (r) r(null); });
+  askDlg.addEventListener('close', () => { const r = askResolve; askResolve = null; if (r) r(null); });
+
+  // ¿Hay cambios que no están guardados en el historial ni en un archivo?
+  let savedSnap = null;
+  const snap = () => JSON.stringify({ t: board.title || '', p: board.pages });
+  const boardEmpty = () => board.pages.every((p) => !p.strokes.length && p.blocks.every((x) => (x.type === 'math' || x.type === 'text' ? !x.v : x.type === 'deriv' ? x.rows.every((r) => !r.l && !r.r && !r.note) : false)));
+  const isDirty = () => !boardEmpty() && snap() !== savedSnap;
+  const markSaved = () => { savedSnap = snap(); };
+  // Antes de sustituir la pizarra: guardar, seguir sin guardar o cancelar
+  async function guardUnsaved(what) {
+    if (!isDirty()) return true;
+    const r = await ask({
+      title: 'Hay cambios sin guardar',
+      text: 'Antes de ' + what + ', ¿guardamos la clase actual' + (histDir ? ' en el historial' : '') + '? Si no la guardas, sus cambios se perderán.',
+      pio: 'escribiendo', warn: true, label: 'Aviso',
+      buttons: [{ label: 'Cancelar', value: null, kind: 'ghost' }, { label: 'Continuar sin guardar', value: 'skip', kind: 'danger' }, { label: 'Guardar y continuar', value: 'save', kind: 'primary', focus: true }],
+    });
+    if (r === 'save') return await saveToHistory();
+    return r === 'skip';
+  }
+
   /* ---------------- Archivo ---------------- */
   $('#saveFile').addEventListener('click', () => {
     closePop();
@@ -4678,9 +4767,10 @@ const OPS = ((ME) => {
     a.download = 'pizarra-' + d.toISOString().slice(0, 10) + '.json';
     document.body.appendChild(a);
     a.click();
+    markSaved();
     setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 1000);
   });
-  $('#openFile').addEventListener('click', () => { $('#fileIn').click(); });
+  $('#openFile').addEventListener('click', async () => { closePop(); if (await guardUnsaved('abrir otro archivo')) $('#fileIn').click(); });
   $('#fileIn').addEventListener('change', (e) => {
     const f = e.target.files && e.target.files[0];
     closePop();
@@ -4694,31 +4784,43 @@ const OPS = ((ME) => {
         applySettings();
         renderPage();
         save();
+        markSaved();
         toast('Pizarra abierta: ' + board.pages.length + (board.pages.length === 1 ? ' página.' : ' páginas.'));
       } catch (x) { toast('Ese archivo no es una pizarra válida.', 'aviso'); }
     };
     rd.readAsText(f);
     e.target.value = '';
   });
-  $('#clearPage').addEventListener('click', () => {
+  $('#clearPage').addEventListener('click', async () => {
     closePop();
-    if (!confirm('¿Vaciar esta página? Se borran sus líneas y su dibujo.')) return;
+    const ok = await ask({ title: '¿Vaciar esta página?', text: 'Se borran todas sus líneas y su dibujo. El resto de páginas no cambia.', pio: 'pizarra', warn: true, label: 'Aviso',
+      buttons: [{ label: 'Cancelar', value: false, kind: 'ghost', focus: true }, { label: 'Vaciar página', value: true, kind: 'danger' }] });
+    if (!ok) return;
     board.pages[board.cur] = newPage();
     renderPage();
     save();
   });
-  $('#delPage').addEventListener('click', () => {
+  $('#pgDel').addEventListener('click', () => $('#delPage').click());
+  $('#delPage').addEventListener('click', async () => {
     closePop();
-    if (board.pages.length === 1) { $('#clearPage').click(); return; }
-    if (!confirm('¿Eliminar la página ' + (board.cur + 1) + '?')) return;
+    if (board.pages.length === 1) { toast('Es la única página: en lugar de eliminarla, la vaciamos.'); $('#clearPage').click(); return; }
+    const ok = await ask({ title: '¿Eliminar la página ' + (board.cur + 1) + '?', text: 'La página ' + (board.cur + 1) + ' de ' + board.pages.length + ' desaparecerá con todo su contenido.', pio: 'pizarra', warn: true, label: 'Aviso',
+      buttons: [{ label: 'Cancelar', value: false, kind: 'ghost', focus: true }, { label: 'Eliminar página', value: true, kind: 'danger' }] });
+    if (!ok) return;
     board.pages.splice(board.cur, 1);
     board.cur = Math.min(board.cur, board.pages.length - 1);
     renderPage();
     save();
   });
-  $('#newBoard').addEventListener('click', () => {
+  $('#newBoard').addEventListener('click', async () => {
     closePop();
-    if (!confirm('¿Empezar una pizarra nueva? Guarda antes un archivo si quieres conservar la actual.')) return;
+    if (isDirty()) { if (!(await guardUnsaved('empezar una pizarra nueva'))) return; }
+    else {
+      const ok = await ask({ title: '¿Empezar una pizarra nueva?', text: 'La pizarra se quedará en blanco, con una sola página.', pio: 'idea',
+        buttons: [{ label: 'Cancelar', value: false, kind: 'ghost' }, { label: 'Pizarra nueva', value: true, kind: 'primary', focus: true }] });
+      if (!ok) return;
+    }
+    sessionFile = null;
     const keep = { theme: board.theme, accent: board.accent, scale: board.scale };
     board = Object.assign(defaults(), keep);
     applySettings();
@@ -4960,6 +5062,7 @@ const OPS = ((ME) => {
   document.addEventListener('keydown', (e) => {
     const editing = e.target.closest && e.target.closest('math-field,[contenteditable="true"],input,select,textarea');
     const k = e.key;
+    if (askDlg.open) return;
     if (k === 'Escape' && openPop) { e.preventDefault(); e.stopPropagation(); closePop(); return; }
     if (e.altKey && !e.ctrlKey && !e.metaKey) {
       const code = e.code;
