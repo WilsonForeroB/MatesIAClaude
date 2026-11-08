@@ -112,6 +112,7 @@ Pulsa **?** dentro de la pizarra para ver todos los atajos.
 - **Dibujar** (Alt+D): lápiz, rotulador, flecha y goma. Un lápiz digital dibuja siempre, aunque estés en modo Escribir.
 - **Tamaño de página** (Vista ▾): **Libre** (continua, como siempre), **A4 vertical**, **A4 horizontal**, **A3 horizontal** o **Diapositiva 16:9**. En los tamaños fijos se ve el borde de la hoja, la hoja se ajusta al ancho de la pantalla, se marca con una línea discontinua dónde termina la página si el contenido no cabe, y al imprimir o guardar en PDF cada página sale con ese tamaño.
 - **Presentar** (botón de la cabecera): pantalla completa con solo la página actual, escalada para que quepa entera, como una diapositiva. **→ / ← / espacio / RePág / AvPág** para pasar, **Inicio / Fin** para ir a la primera o la última, **D** para dibujar encima y **Esc** para salir. Abajo hay una barra que se oculta sola. Recomendado con «Diapositiva 16:9».
+- **Exportar gráficos**: cada gráfico (2D, 3D, grafo, red neuronal, Venn, barras, caja, normal, árbol) tiene un botón ⤓ junto a la ×. Permite **descargar PNG** a doble resolución, **descargar SVG** (vectorial; no disponible en la 3D) o **copiar la imagen** para pegarla con Ctrl+V. La imagen incluye el título, la leyenda y el resultado. Con «Fondo claro» sale en colores claros aunque uses el tema oscuro.
 - **Modo proyector**: pantalla completa (icono de la cabecera o tecla F), tamaño de letra, tema claro u oscuro y ocultar barras (H).
 - **Guardar** (botón verde de la cabecera o **Ctrl+S**): guarda la clase en el historial. Un punto blanco en el botón indica que hay cambios sin guardar. La primera vez pide la carpeta `historial`; después reescribe siempre el archivo de esa clase. En navegadores sin acceso a carpetas, descarga el JSON.
 - **Páginas**: «+ Página» añade una página detrás de la actual y «− Página» elimina la actual; si es la única, la vacía.
@@ -128,3 +129,13 @@ Pulsa **?** dentro de la pizarra para ver todos los atajos.
 
 - `pizarra.html` es autocontenido; las únicas dependencias externas son MathLive (CDN jsDelivr, versión fija) y Google Fonts (solución temporal según el sistema de diseño).
 - No guarda credenciales ni datos personales. El historial vive solo en la carpeta local de quien la usa.
+
+## Autoría y derechos
+
+**Pizarra MatIA**, creada por **Wilson Forero** ([github.com/WilsonForeroB](https://github.com/WilsonForeroB)) con asistencia de inteligencia artificial (Claude, de Anthropic).
+
+© 2026 Wilson Forero. **Todos los derechos reservados.** Uso exclusivamente educativo y no comercial. Queda prohibida cualquier reproducción, distribución, comunicación pública, transformación o explotación, total o parcial, con fines comerciales sin autorización expresa y por escrito del autor; su incumplimiento podrá ser objeto de acciones legales conforme a la legislación de propiedad intelectual aplicable. Ver también el `LICENSE` de la raíz del repositorio.
+
+Componentes de terceros, con sus propias licencias: MathLive (© Arno Gourdol, licencia MIT) y las fuentes IBM Plex Sans, JetBrains Mono y Source Serif 4 (SIL Open Font License 1.1).
+
+El aviso aparece también dentro de la pizarra: al pie de la ayuda (**?**), en **Archivo → Acerca de y derechos** y en los metadatos del HTML.
