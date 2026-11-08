@@ -72,6 +72,8 @@ Tipos de bloque:
 | `table` | Tabla de Ruffini, de verdad o de valores. |
 | `graph` | Gráfica 2D de una o varias funciones, con `marks` opcionales (máximos, mínimos, inflexión, absolutos). |
 | `graph3d` | Superficie z = f(x, y) con su rango, su vista (`az`, `el`, `zoom`) y `marks` opcionales (mínimos, máximos, puntos de silla). |
+| `chart` | Gráfico estadístico: `kind` = `bars` (barras, con `hi` resaltadas), `box` (diagrama de caja) o `normal` (campana con el área entre `a` y `b`). |
+| `ptree` | Árbol de probabilidad: causas con `p`, `l` = P(suceso \| causa) y los productos de cada camino. |
 | `venn` | Diagrama de Venn: `n` (2 o 3), `expr` (expresión sombreada) o `shade` (zonas elegidas a mano, como máscaras A = 1, B = 2, C = 4) y `showEls`. |
 | `net` | Grafo: `nodes` (con `label`, `x`, `y` y tipo de capa), `edges` (con peso opcional `w`), `directed` y rótulos de capa `caps`. |
 
@@ -95,6 +97,8 @@ Pulsa **?** dentro de la pizarra para ver todos los atajos.
 | Ecuaciones | Resolver paso a paso (1.º y 2.º grado, polinómicas con raíces racionales), siguiente paso y comprobación. |
 | Aritmética | Simplificar y operar fracciones, m.c.d. y m.c.m. (factores primos y Euclides), descomposición en factores primos. |
 | Polinomios | Desarrollar, Ruffini o división larga, raíces y factorización. |
+| Estadística | Medidas de una lista de datos: media, mediana, moda, rango, varianza y desviación típica (poblacional y muestral), cuartiles, RIC y coeficiente de variación, con diagrama de caja. Tabla de frecuencias (nᵢ, fᵢ, Nᵢ, Fᵢ, %) con diagrama de barras. Los datos se separan con comas, o con `;` si usas coma decimal. |
+| Probabilidad | Espacio muestral (moneda, dado, conjuntos como `{R,V,A}` o `moneda^3`) con regla de Laplace, y la tabla de sumas si son dos dados. Tabla de contingencia con marginales, conjuntas, condicionadas e independencia. **Asistente de árbol de probabilidad y Bayes**, con el árbol, la probabilidad total y las probabilidades a posteriori. Binomial `X\sim B(10, 0.3), P(X\le 3)` con diagrama de barras resaltado. Normal `X\sim N(100, 15), P(85\le X\le 115)` tipificando, con la campana y el área sombreada. |
 | Combinatoria | n!, combinaciones, variaciones y permutaciones; triángulo de Pascal. |
 | Lógica y conjuntos | Tabla de verdad con su clasificación; unión, intersección, diferencia, complementario, partes y producto cartesiano; **diagrama de Venn** de la expresión de la línea. |
 | Cálculo | Derivada con las reglas aplicadas; **máximos y mínimos de f(x)** (puntos críticos, clasificación con f″ o con el signo de f′, puntos de inflexión, tabla de crecimiento, extremos absolutos en ±∞ o en un intervalo `x∈[a,b]` y gráfica con los puntos marcados); **extremos de f(x, y)** (gradiente, puntos críticos, hessiana y clasificación en mínimo, máximo o punto de silla, con la superficie 3D marcada); gráfica de funciones y tabla de valores. |
