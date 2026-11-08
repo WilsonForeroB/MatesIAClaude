@@ -78,3 +78,9 @@ pip-delete-this-directory.txt
 htmlcov/
 .ipynb_checkpoints/
 *.log
+
+# ==============================
+# Pizarra MatIA: historial de clases (JSON locales, no se suben)
+# ==============================
+pizarramatia/historial/*
+!pizarramatia/historial/.gitkeep
