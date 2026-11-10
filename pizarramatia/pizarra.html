@@ -357,9 +357,11 @@ body.picking .dcell.pick-rhover,body.picking .dnote.pick-rhover{background:var(-
 body.picking .blk[data-pl].pick-active::after,body.picking .blk[data-pl].pick-hover::after{content:attr(data-pl);position:absolute;right:8px;top:-12px;z-index:5;padding:2px 10px;border-radius:var(--radius-pill);background:var(--accent);color:var(--surface-raised);font:700 12px/18px var(--font-sans);white-space:nowrap;pointer-events:none;animation:mi-pop var(--duration-fast) var(--ease-out) both}
 body.picking.pick-hovering .blk.pick-active:not(.pick-hover)::after{display:none}
 .blk.pick-done{animation:pick-flash .9s var(--ease-out) both}
+.pick-bar .pk-nudge{animation:pk-nudge .6s var(--ease-out)}
+@keyframes pk-nudge{0%{box-shadow:0 0 0 0 color-mix(in srgb,var(--accent) 60%,transparent);transform:scale(1)}40%{transform:scale(1.06)}100%{box-shadow:0 0 0 10px transparent;transform:scale(1)}}
 @keyframes pick-pulse{0%,100%{box-shadow:0 0 0 0 color-mix(in srgb,var(--accent) 0%,transparent)}50%{box-shadow:0 0 0 4px color-mix(in srgb,var(--accent) 25%,transparent)}}
 @keyframes pick-flash{0%{background:var(--accent-soft);box-shadow:0 0 0 6px color-mix(in srgb,var(--accent) 45%,transparent);border-color:var(--accent)}100%{box-shadow:0 0 0 0 transparent}}
-@media (prefers-reduced-motion:reduce){body.picking .blk.pick-ok,.blk.pick-done,body.picking .blk[data-pl]::after{animation:none}.blk.pick-done{background:var(--accent-soft);border-color:var(--accent)}}
+@media (prefers-reduced-motion:reduce){body.picking .blk.pick-ok,.blk.pick-done,body.picking .blk[data-pl]::after,.pick-bar .pk-nudge{animation:none}.blk.pick-done{background:var(--accent-soft);border-color:var(--accent)}}
 @media (max-width:640px){.pick-bar{grid-template-columns:auto 1fr;bottom:var(--space-4)}.pick-bar .pick-acts{grid-column:1/-1}}
 /* Operaciones */
 .pop-ops{width:min(560px,calc(100vw - 16px));max-height:min(75vh,640px);overflow-y:auto;gap:var(--space-2)}
@@ -922,7 +924,7 @@ body.picking.pick-hovering .blk.pick-active:not(.pick-hover)::after{display:none
         <tr><td>Geometría</td><td>Resolver triángulos con los teoremas del seno y del coseno (incluido el caso ambiguo), rectas: posición relativa, corte, ángulo, paralela y perpendicular por un punto, distancias; paralelas cortadas por una secante</td></tr>
         <tr><td>Más</td><td>Combinatoria, Pascal y tabla de verdad</td></tr>
       </tbody></table>
-      <p style="font:400 13px/20px var(--font-sans);color:var(--ink-muted);margin:var(--space-2) 0 0">Todo se calcula en el navegador, sin conexión. Pon el cursor en la línea con los datos y elige la operación.</p>
+      <p style="font:400 13px/20px var(--font-sans);color:var(--ink-muted);margin:var(--space-2) 0 0">Todo se calcula en el navegador, sin conexión. Elige la operación, haz clic en la línea con los datos para marcarla y pulsa <b>Aceptar</b> (o Intro): nada se aplica sin confirmar.</p>
     </section>
     <section>
       <h3>Calcular</h3>
@@ -7053,7 +7055,7 @@ const OPS = ((ME) => {
     const pop = $('#opsPop');
     const hint = document.createElement('p');
     hint.className = 'ops-hint';
-    hint.textContent = 'Elige la operación y después haz clic en la línea (o el paso) al que quieres aplicarla. Pasa el ratón por encima de cada botón para ver qué escribir.';
+    hint.textContent = 'Elige la operación, haz clic en la línea (o el paso) para marcarla y pulsa «Aceptar» para aplicarla. Pasa el ratón por encima de cada botón para ver qué escribir.';
     const oh = document.createElement('div');
     oh.className = 'ops-head';
     oh.append(pioBadge('idea', 'pio-sm', 'Pío con una idea'), hint);
@@ -7122,19 +7124,20 @@ const OPS = ((ME) => {
   function pickSay(t, hover) {
     const p = pickTxt.querySelector('p');
     const op = '«' + picking.label + '»';
-    if (t) {
-      p.innerHTML = '';
-      p.append('Vas a aplicar ' + op + ' a la ');
-      const s1 = document.createElement('b'); s1.textContent = pickLabel(t.id, t.row).replace('Línea', 'línea'); p.appendChild(s1);
-      p.append(hover === 'touch' ? '. Toca otra vez esa línea o pulsa «Aplicar» para confirmar; Esc cancela.' : hover ? '. Haz clic para confirmar o elige otra línea; Esc cancela.' : '. Pulsa «Aplicar» o Intro, o haz clic en otra línea; Esc cancela.');
-      const tg = picking.target;
-      pkUse.textContent = tg ? 'Aplicar a la ' + pickLabel(tg.id, tg.row).replace('Línea', 'línea') : 'Aplicar';
-      pkUse.disabled = !tg;
+    const tg = picking.target;
+    const lab = (x) => pickLabel(x.id, x.row).replace('Línea', 'línea');
+    const bold = (txt) => { const s1 = document.createElement('b'); s1.textContent = txt; return s1; };
+    p.innerHTML = '';
+    if (t && hover && !(tg && tg.id === t.id && tg.row === t.row)) {
+      p.append('Haz clic para marcar la ', bold(lab(t)), ' como destino de ' + op + '. No se aplica hasta que pulses «Aceptar».');
+    } else if (tg) {
+      p.append('¿Aplicar ' + op + ' a la ', bold(lab(tg)), '? Pulsa «Aceptar» (o Intro) para hacerlo, o haz clic en otra línea para cambiarla. Esc cancela.');
     } else {
-      p.textContent = op + ': haz clic en la línea o en el paso del desarrollo al que quieres aplicarla. Las líneas válidas parpadean; Esc cancela.';
-      pkUse.textContent = 'Aplicar';
-      pkUse.disabled = true;
+      p.textContent = op + ': haz clic en la línea o en el paso del desarrollo al que quieres aplicarla (las válidas parpadean) y después pulsa «Aceptar». Esc cancela.';
     }
+    pickTxt.querySelector('.mi-label').textContent = tg ? 'Confirma la línea' : 'Elige la línea';
+    pkUse.textContent = 'Aceptar';
+    pkUse.disabled = !tg;
   }
   function markTarget(t) {
     pickClear('pick-active'); pickClear('pick-arow');
@@ -7208,11 +7211,12 @@ const OPS = ((ME) => {
     e.preventDefault();
     e.stopPropagation();
     if (!pickable(t.b, picking.key)) { toast('Esa línea no sirve para «' + picking.label + '»: elige una fórmula o un paso de un desarrollo (las líneas que parpadean).'); return; }
-    const same = picking.target && picking.target.id === t.b.id && picking.target.row === t.row;
-    if (e.pointerType === 'mouse' || same) { pickAndRun(t.el, t.row); return; }
+    // solo marca la línea: la operación se lanza únicamente con «Aceptar» (o Intro)
     picking.target = { id: t.b.id, row: t.row };
     markTarget(picking.target);
-    pickSay(picking.target, 'touch');
+    pickSay(picking.target, false);
+    pkUse.classList.remove('pk-nudge'); void pkUse.offsetWidth; pkUse.classList.add('pk-nudge');
+    setTimeout(() => { try { pkUse.focus({ preventScroll: true }); } catch (x) { /* */ } }, 0);
   }, true);
   blocksEl.addEventListener('pointerover', (e) => {
     if (!picking || e.pointerType !== 'mouse') return;

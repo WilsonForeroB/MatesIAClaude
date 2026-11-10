@@ -94,10 +94,11 @@ Pulsa **?** dentro de la pizarra para ver todos los atajos.
 - **Operaciones ▾**: al elegir una operación aparece la barra **«Elige la línea»** y la pizarra lo muestra en color:
   - las líneas que sirven parpadean con un borde de color y las que no (gráficas, tablas…) se atenúan;
   - la línea activa queda resaltada con la etiqueta «↵ Línea N», y la barra dice «Vas a aplicar «…» a la línea N»;
-  - al pasar el ratón, la línea (o el paso del desarrollo) se resalta con «Línea N · paso M»; un clic la aplica;
-  - con **lápiz o dedo**, el primer toque marca la línea y el segundo (o el botón **«Aplicar a la línea N»**) la confirma;
+  - al pasar el ratón, la línea (o el paso del desarrollo) se resalta con «Línea N · paso M»;
+  - un clic (o toque con lápiz o dedo) **solo marca** la línea; la barra pasa a «Confirma la línea» y pregunta «¿Aplicar «…» a la línea N?»;
+  - la operación **solo se lanza al pulsar «Aceptar»** (o Intro); se puede marcar otra línea o pulsar **Cancelar** sin que pase nada;
   - al terminar, Pío avisa: «aplicado a la línea 3; el resultado empieza en la línea 4», y ambas líneas destellan.
-  **Intro** aplica a la línea marcada y **Esc** cancela. Así, con varias ecuaciones en la misma página, decides cuál se resuelve.
+  **Intro** equivale a «Aceptar» y **Esc** cancela. Así, con varias ecuaciones en la misma página, decides cuál se resuelve.
 - **Operaciones ▾**: todas paso a paso.
 
 | Grupo | Operaciones |
