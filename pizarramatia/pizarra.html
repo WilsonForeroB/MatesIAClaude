@@ -190,7 +190,7 @@ math-field::part(menu-toggle),math-field::part(virtual-keyboard-toggle){display:
 .blk-text{font:400 calc(19px * var(--scale))/1.5 var(--font-serif);color:var(--ink);min-width:6em;max-width:100%;outline:none;padding:4px 6px;white-space:pre-wrap;overflow-wrap:anywhere}
 .blk-text:empty::before{content:attr(data-ph);color:var(--ink-muted)}
 /* Desarrollo alineado por el = */
-.deriv{display:grid;grid-template-columns:max-content max-content max-content minmax(12em,1fr) auto;align-items:stretch;column-gap:0;row-gap:2px}
+.deriv{display:grid;grid-template-columns:max-content max-content max-content minmax(12em,1fr) auto auto;align-items:stretch;column-gap:0;row-gap:2px}
 .dcell math-field{display:inline-block;width:auto;min-width:1.2em}
 .drow{display:contents}
 .drow>*{grid-row:var(--gr)}
@@ -220,6 +220,25 @@ math-field::part(menu-toggle),math-field::part(virtual-keyboard-toggle){display:
 .blk-deriv>.blk-del{align-self:flex-start;margin-top:2px}
 .blk>.blk-exp{align-self:flex-start;margin-top:2px}
 .blk-exp:hover{color:var(--accent);border-color:var(--accent)}
+/* Duplicar: ⧉ por línea y por paso */
+.blk-deriv>.blk-dup,.blk>.blk-exp~.blk-dup{align-self:flex-start;margin-top:2px}
+.blk-dup,.drow-dup{font-size:16px}
+.x-del.blk-dup:hover,.x-del.drow-dup:hover{color:var(--accent);border-color:var(--accent)}
+.drow:hover>.drow-dup,.drow-dup.on{opacity:1}
+.drow-dup{grid-column:6}
+/* Números de línea (1, 2, 3… y 3.1, 3.2… en los pasos) */
+#blocks{counter-reset:ln}
+#blocks>.blk{counter-increment:ln;counter-reset:st}
+#blocks>.blk::before{content:counter(ln);flex:none;align-self:flex-start;min-width:1.6em;margin-top:calc(9px * var(--scale));text-align:right;font:600 12px/1 var(--font-mono);color:var(--ink-muted);opacity:.75;user-select:none;pointer-events:none}
+#blocks>.blk.is-active::before{color:var(--accent);opacity:1}
+#blocks .dcell.dl{position:relative;counter-increment:st}
+#blocks .dcell.dl::before{content:counter(ln) "." counter(st);position:absolute;left:2px;top:1px;font:500 10px/1 var(--font-mono);color:var(--ink-muted);opacity:.7;user-select:none;pointer-events:none}
+body.no-ln #blocks>.blk::before,body.no-ln #blocks .dcell.dl::before,body.presenting #blocks>.blk::before,body.presenting #blocks .dcell.dl::before{display:none}
+/* Botón «+ Nueva línea» al final de la página */
+.add-line{display:flex;align-items:center;gap:6px;margin:var(--space-3) 0 0 30px;padding:6px 14px;border:var(--border-width-thin) dashed var(--border-strong);border-radius:var(--radius-pill);background:transparent;color:var(--ink-muted);font:600 13px/20px var(--font-sans);cursor:pointer;position:relative;z-index:1}
+.add-line:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-soft)}
+.add-line:focus-visible{outline:var(--border-width-medium) solid var(--focus-ring);outline-offset:2px}
+body[data-mode="draw"] .add-line,body.presenting .add-line{display:none}
 .blk>.blk-exp+.blk-del{align-self:flex-start;margin-top:2px}
 @media (hover:none){.x-del{opacity:.7}}
 #toast .mi-callout{display:flex;align-items:center;gap:var(--space-4)}
@@ -229,6 +248,7 @@ math-field::part(menu-toggle),math-field::part(virtual-keyboard-toggle){display:
   .deriv .dcell,.deriv .drow-del{grid-row:var(--gm)}
   .deriv .dnote{grid-row:var(--gn);grid-column:2/5;margin:0 0 var(--space-2);padding-left:var(--space-3)}
   .deriv .drow-del{grid-column:1;margin:0}
+  .deriv .drow-dup{grid-row:var(--gn);grid-column:1;margin:0}
   .deriv .dl{grid-column:2}.deriv .deq{grid-column:3}.deriv .dr{grid-column:4}
 }
 .empty-pio{max-width:620px;margin:var(--space-5) 0 0 30px;animation:mi-rise var(--duration-base) var(--ease-out) both}
@@ -324,11 +344,22 @@ dialog::backdrop{background:color-mix(in srgb,var(--surface) 70%,transparent)}
 /* Elegir la línea */
 .pick-bar{position:fixed;left:0;right:0;bottom:var(--space-5);margin:0 auto;z-index:140;width:min(760px,calc(100vw - 32px));display:grid;grid-template-columns:auto 1fr auto;gap:var(--space-3);align-items:center;font-size:15px;line-height:23px;animation:mi-rise var(--duration-base) var(--ease-out) both}
 .pick-bar .pick-acts{display:flex;gap:var(--space-2);flex-wrap:wrap;justify-content:flex-end}
-body.picking .blk{cursor:pointer}
+body.picking .blk{position:relative}
+body.picking .blk.pick-ok{cursor:pointer;border:var(--border-width-medium) dashed color-mix(in srgb,var(--accent) 55%,transparent);animation:pick-pulse 1.6s var(--ease-standard) infinite}
+body.picking .blk.pick-no{opacity:.4;cursor:not-allowed;filter:grayscale(.6)}
 body.picking .blk math-field,body.picking .blk .blk-text,body.picking .blk .dnote{pointer-events:none}
-body.picking .blk.pick-hover{border-color:var(--accent);border-style:dashed;background:var(--accent-soft)}
-body.picking .dcell.pick-hover,body.picking .dnote.pick-hover{background:var(--accent-soft)}
-.blk.pick-done{border-color:var(--accent);border-width:var(--border-width-medium)}
+body.picking .blk.pick-active{border-style:solid;border-color:var(--accent);background:color-mix(in srgb,var(--accent-soft) 55%,transparent)}
+body.picking .blk-deriv.pick-active{background:transparent}
+body.picking .dcell.pick-arow,body.picking .dnote.pick-arow{background:color-mix(in srgb,var(--accent-soft) 70%,transparent)}
+body.picking .blk.pick-hover{border-style:solid;border-color:var(--accent);background:var(--accent-soft);animation:none;box-shadow:0 0 0 4px color-mix(in srgb,var(--accent) 22%,transparent)}
+body.picking .blk-deriv.pick-hover{background:transparent}
+body.picking .dcell.pick-rhover,body.picking .dnote.pick-rhover{background:var(--accent-soft);box-shadow:inset 0 -3px 0 var(--accent)}
+body.picking .blk[data-pl].pick-active::after,body.picking .blk[data-pl].pick-hover::after{content:attr(data-pl);position:absolute;right:8px;top:-12px;z-index:5;padding:2px 10px;border-radius:var(--radius-pill);background:var(--accent);color:var(--surface-raised);font:700 12px/18px var(--font-sans);white-space:nowrap;pointer-events:none;animation:mi-pop var(--duration-fast) var(--ease-out) both}
+body.picking.pick-hovering .blk.pick-active:not(.pick-hover)::after{display:none}
+.blk.pick-done{animation:pick-flash .9s var(--ease-out) both}
+@keyframes pick-pulse{0%,100%{box-shadow:0 0 0 0 color-mix(in srgb,var(--accent) 0%,transparent)}50%{box-shadow:0 0 0 4px color-mix(in srgb,var(--accent) 25%,transparent)}}
+@keyframes pick-flash{0%{background:var(--accent-soft);box-shadow:0 0 0 6px color-mix(in srgb,var(--accent) 45%,transparent);border-color:var(--accent)}100%{box-shadow:0 0 0 0 transparent}}
+@media (prefers-reduced-motion:reduce){body.picking .blk.pick-ok,.blk.pick-done,body.picking .blk[data-pl]::after{animation:none}.blk.pick-done{background:var(--accent-soft);border-color:var(--accent)}}
 @media (max-width:640px){.pick-bar{grid-template-columns:auto 1fr;bottom:var(--space-4)}.pick-bar .pick-acts{grid-column:1/-1}}
 /* Operaciones */
 .pop-ops{width:min(560px,calc(100vw - 16px));max-height:min(75vh,640px);overflow-y:auto;gap:var(--space-2)}
@@ -548,6 +579,7 @@ body.picking .dcell.pick-hover,body.picking .dnote.pick-hover{background:var(--a
   <div class="grp only-write">
     <button type="button" class="tb-btn txt" data-pop="matPop" title="Insertar matriz (Alt+M)">Matriz <span class="caret">▾</span></button>
     <button type="button" class="tb-btn txt" data-pop="sysPop" title="Insertar sistema de ecuaciones (Alt+S)">Sistema <span class="caret">▾</span></button>
+    <button type="button" class="tb-btn txt" id="newLineBtn" title="Nueva línea debajo de la activa (Intro al final de una línea)">+ Nueva línea</button>
     <button type="button" class="tb-btn txt" id="derivBtn" title="Desarrollo paso a paso alineado por el = con explicación a la derecha (Alt+L). Si la línea activa tiene un =, la convierte.">Desarrollo</button>
     <button type="button" class="tb-btn txt" data-cmd="addRowAfter" title="Añadir fila a la matriz o al sistema (Mayús+Intro)">+ Fila</button>
     <button type="button" class="tb-btn txt" data-cmd="addColumnAfter" title="Añadir columna a la matriz (Ctrl+Intro)">+ Columna</button>
@@ -588,6 +620,7 @@ body.picking .dcell.pick-hover,body.picking .dnote.pick-hover{background:var(--a
     <button type="button" class="tb-btn txt" id="boxBtn" title="Recuadrar la línea (resultado final)">Recuadrar</button>
     <button type="button" class="tb-btn txt" id="textBtn" title="Añadir una línea de texto normal (Alt+T)">Texto</button>
     <button type="button" class="tb-btn txt" id="kbdBtn" title="Mostrar u ocultar el teclado matemático en pantalla">Teclado</button>
+    <button type="button" class="tb-btn txt" id="dupBtn" title="Duplicar la línea o el paso activo (Ctrl+D)">Duplicar</button>
     <button type="button" class="tb-btn txt" id="delBtn" title="Borrar la línea o el paso activo (Alt+Supr)">Borrar línea</button>
     <button type="button" class="tb-btn txt" id="delDerivBtn" title="Borrar el desarrollo completo" hidden>Borrar desarrollo</button>
   </div>
@@ -607,6 +640,7 @@ body.picking .dcell.pick-hover,body.picking .dnote.pick-hover{background:var(--a
   <div class="sheet" id="sheet">
     <canvas id="ink" role="img" aria-label="Capa de dibujo a mano alzada de la página"></canvas>
     <div id="blocks"></div>
+    <button type="button" class="add-line" id="addLineEnd" title="Añadir una línea al final de la página">+ Nueva línea</button>
   </div>
 </main>
 
@@ -729,6 +763,11 @@ body.picking .dcell.pick-hover,body.picking .dnote.pick-hover{background:var(--a
     <button type="button" data-accent="" aria-pressed="true" title="Verde MatIA">Verde</button>
     <button type="button" data-accent="math" aria-pressed="false" title="Azul del módulo Mates para la IA">Azul</button>
   </div>
+  <h4>Líneas</h4>
+  <div class="mi-seg" role="group" aria-label="Números de línea" id="lnSeg">
+    <button type="button" data-ln="1" aria-pressed="true">Con números</button>
+    <button type="button" data-ln="0" aria-pressed="false">Sin números</button>
+  </div>
   <div class="menu-list">
     <button type="button" class="mi-btn mi-btn--sm" id="hideBtn" title="Ocultar las barras (H)">Ocultar barras</button>
   </div>
@@ -837,7 +876,8 @@ body.picking .dcell.pick-hover,body.picking .dnote.pick-hover{background:var(--a
     <section>
       <h3>Líneas y matrices</h3>
       <table class="keys"><tbody>
-        <tr><td>Intro</td><td>Nueva línea debajo</td></tr>
+        <tr><td>Intro</td><td>Nueva línea debajo (también «+ Nueva línea»)</td></tr>
+        <tr><td>Ctrl+D</td><td>Duplicar la línea activa (también ⧉ o «Duplicar»)</td></tr>
         <tr><td>↑ ↓</td><td>Cambiar de línea</td></tr>
         <tr><td>Retroceso</td><td>En una línea vacía, la borra</td></tr>
         <tr><td>Alt+↑ Alt+↓</td><td>Mover la línea (también arrastrando ⋮⋮)</td></tr>
@@ -860,6 +900,7 @@ body.picking .dcell.pick-hover,body.picking .dnote.pick-hover{background:var(--a
         <tr><td>↑ ↓</td><td>Fila anterior / siguiente</td></tr>
         <tr><td>Recuadrar</td><td>Recuadra la fila activa (resultado)</td></tr>
         <tr><td>× del paso</td><td>Borra ese paso (también Alt+Supr)</td></tr>
+        <tr><td>⧉ del paso</td><td>Duplica ese paso debajo (también Ctrl+D dentro del paso)</td></tr>
         <tr><td>× del recuadro</td><td>Borra el desarrollo completo</td></tr>
         <tr><td>Deshacer</td><td>Aparece unos segundos tras borrar y lo recupera</td></tr>
         <tr><td>Ctrl+=</td><td>Calcula el lado derecho y lo pone como paso nuevo</td></tr>
@@ -4554,6 +4595,7 @@ const OPS = ((ME) => {
       color: typeof b.color === 'string' && /^(ink|data-[1-6])$/.test(b.color) ? b.color : 'ink',
       tool: ['pen', 'hl', 'arrow', 'eraser'].includes(b.tool) ? b.tool : 'pen',
       histAuto: !!b.histAuto,
+      lineNums: b.lineNums !== false,
       paper: ['free', 'a4p', 'a4l', 'a3l', 'slide'].includes(b.paper) ? b.paper : 'free',
       width: Math.min(12, Math.max(1, +b.width || 3)),
       title: typeof b.title === 'string' ? b.title.slice(0, 120) : '',
@@ -4696,6 +4738,8 @@ const OPS = ((ME) => {
     $$('#toolSeg button').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.tool === board.tool)));
     $('#penWidth').value = board.width;
     $('#widthOut').textContent = board.width + ' px';
+    body.classList.toggle('no-ln', board.lineNums === false);
+    $$('#lnSeg button').forEach((b) => b.setAttribute('aria-pressed', String((b.dataset.ln === '1') === (board.lineNums !== false))));
   }
   const isDark = () => board.theme ? board.theme === 'dark' : matchMedia('(prefers-color-scheme: dark)').matches;
   const cssVar = (name) => getComputedStyle(body).getPropertyValue('--' + name).trim();
@@ -4760,6 +4804,15 @@ const OPS = ((ME) => {
       ex.addEventListener('click', (e) => { e.stopPropagation(); openExport(b, el, ex); });
       el.appendChild(ex);
     }
+    const du = document.createElement('button');
+    du.type = 'button';
+    du.className = 'x-del blk-del blk-dup';
+    du.textContent = '⧉';
+    du.title = 'Duplicar (Ctrl+D)';
+    du.setAttribute('aria-label', 'Duplicar la línea');
+    du.addEventListener('mousedown', (e) => e.preventDefault());
+    du.addEventListener('click', () => duplicateBlock(b.id));
+    el.appendChild(du);
     el.appendChild(x);
     if (b.type === 'table') {
       buildTable(b, bd);
@@ -4869,6 +4922,16 @@ const OPS = ((ME) => {
         X.addEventListener('mousedown', (e) => e.preventDefault());
         X.addEventListener('click', () => { syncBlock(b); removeRow(b, i); });
         rw.appendChild(X);
+        const D = document.createElement('button');
+        D.type = 'button';
+        D.className = 'x-del drow-dup';
+        D.dataset.row = i;
+        D.textContent = '⧉';
+        D.title = 'Duplicar este paso (Ctrl+D)';
+        D.setAttribute('aria-label', 'Duplicar el paso ' + (i + 1));
+        D.addEventListener('mousedown', (e) => e.preventDefault());
+        D.addEventListener('click', () => duplicateRow(b, i));
+        rw.appendChild(D);
       }
       for (const c of rw.children) { c.style.setProperty('--gr', String(i + 1)); c.style.setProperty('--gm', String(2 * i + 1)); c.style.setProperty('--gn', String(2 * i + 2)); }
       g.appendChild(rw);
@@ -4883,9 +4946,9 @@ const OPS = ((ME) => {
   }
   const cellEl = (id, row, col) => { const el = elById(id); return el && el.querySelector('[data-row="' + row + '"][data-col="' + col + '"]'); };
   function markRow(id, row) {
-    $$('.dcell.on,.dnote.on,.drow-del.on', blocksEl).forEach((c) => c.classList.remove('on'));
+    $$('.dcell.on,.dnote.on,.drow-del.on,.drow-dup.on', blocksEl).forEach((c) => c.classList.remove('on'));
     const el = elById(id);
-    if (el) $$('[data-row="' + row + '"]', el).forEach((c) => { if (c.classList.contains('dcell') || c.classList.contains('dnote') || c.classList.contains('drow-del')) c.classList.add('on'); });
+    if (el) $$('[data-row="' + row + '"]', el).forEach((c) => { if (c.classList.contains('dcell') || c.classList.contains('dnote') || c.classList.contains('drow-del') || c.classList.contains('drow-dup')) c.classList.add('on'); });
   }
   function focusCell(id, row, col, where = 'end') {
     const f = cellEl(id, row, col);
@@ -5566,6 +5629,43 @@ const OPS = ((ME) => {
     save();
   });
   $('#textBtn').addEventListener('click', () => { const b = activeBlock(); addBlockAfter(b ? b.id : null, newBlock('text')); });
+  const lineNo = (id) => page().blocks.findIndex((x) => x.id === id) + 1;
+  function duplicateBlock(id) {
+    const b = syncBlock(blockById(id));
+    if (!b) return;
+    const copy = JSON.parse(JSON.stringify(b));
+    copy.id = uid();
+    addBlockAfter(id, copy, false);
+    if (!focusBlock(copy.id)) setActive(copy.id);
+    const el = elById(copy.id);
+    if (el) { el.scrollIntoView({ block: 'nearest' }); flashBlock(el); }
+    toast('Línea ' + lineNo(id) + ' duplicada: la copia es la línea ' + lineNo(copy.id) + '.');
+  }
+  function duplicateRow(b, i) {
+    syncBlock(b);
+    const r = b.rows[i];
+    if (!r) return;
+    addRow(b, i, { l: r.l, r: r.r, note: r.note, boxed: !!r.boxed });
+  }
+  function duplicateActive() {
+    const b = activeBlock();
+    if (!b) { toast('Haz clic primero en la línea que quieres duplicar.'); return; }
+    if (b.type === 'deriv' && activeCell && activeCell.id === b.id) { duplicateRow(b, activeCell.row); return; }
+    duplicateBlock(b.id);
+  }
+  function newLine(atEnd) {
+    if (body.dataset.mode !== 'write') setMode('write');
+    const bl = page().blocks;
+    const after = atEnd ? (bl.length ? bl[bl.length - 1].id : null) : (activeId || (bl.length ? bl[bl.length - 1].id : null));
+    const nb = newBlock();
+    addBlockAfter(after, nb);
+    const el = elById(nb.id);
+    if (el) { el.scrollIntoView({ block: 'nearest' }); flashBlock(el); }
+  }
+  $('#newLineBtn').addEventListener('click', () => newLine(false));
+  $('#addLineEnd').addEventListener('click', () => newLine(true));
+  $('#dupBtn').addEventListener('click', duplicateActive);
+  $$('#lnSeg button').forEach((x) => x.addEventListener('click', () => { board.lineNums = x.dataset.ln === '1'; applySettings(); save(); }));
   $('#delBtn').addEventListener('click', () => {
     const b = activeBlock();
     if (b && b.type === 'deriv' && activeCell && activeCell.id === b.id) { removeRow(b, activeCell.row); return; }
@@ -7001,23 +7101,72 @@ const OPS = ((ME) => {
   pickBar.appendChild(pickTxt);
   const pickActs = document.createElement('div');
   pickActs.className = 'pick-acts';
-  const pkUse = document.createElement('button'); pkUse.type = 'button'; pkUse.className = 'mi-btn mi-btn--sm'; pkUse.textContent = 'Usar la línea activa';
+  const pkUse = document.createElement('button'); pkUse.type = 'button'; pkUse.className = 'mi-btn mi-btn--primary mi-btn--sm'; pkUse.textContent = 'Aplicar';
   const pkCancel = document.createElement('button'); pkCancel.type = 'button'; pkCancel.className = 'mi-btn mi-btn--ghost mi-btn--sm'; pkCancel.textContent = 'Cancelar';
   pickActs.append(pkUse, pkCancel);
   pickBar.appendChild(pickActs);
   document.body.appendChild(pickBar);
+  const TEXT_OPS = ['stats', 'freq', 'space'];
+  const pickable = (b, key) => !!b && (b.type === 'math' || b.type === 'deriv' || (b.type === 'text' && TEXT_OPS.includes(key)));
+  function pickLabel(id, row) {
+    const b = blockById(id);
+    return 'Línea ' + lineNo(id) + (b && b.type === 'deriv' && row != null ? ' · paso ' + (row + 1) : '');
+  }
+  function pickClear(cls) { $$('.' + cls, blocksEl).forEach((x) => x.classList.remove(cls)); }
+  function pickDefault() {
+    const a = activeBlock();
+    if (!a || !pickable(a, picking.key)) return null;
+    return { id: a.id, row: a.type === 'deriv' ? (activeCell && activeCell.id === a.id ? activeCell.row : a.rows.length - 1) : null };
+  }
+  // Muestra en la barra de Pío a qué línea se va a aplicar
+  function pickSay(t, hover) {
+    const p = pickTxt.querySelector('p');
+    const op = '«' + picking.label + '»';
+    if (t) {
+      p.innerHTML = '';
+      p.append('Vas a aplicar ' + op + ' a la ');
+      const s1 = document.createElement('b'); s1.textContent = pickLabel(t.id, t.row).replace('Línea', 'línea'); p.appendChild(s1);
+      p.append(hover === 'touch' ? '. Toca otra vez esa línea o pulsa «Aplicar» para confirmar; Esc cancela.' : hover ? '. Haz clic para confirmar o elige otra línea; Esc cancela.' : '. Pulsa «Aplicar» o Intro, o haz clic en otra línea; Esc cancela.');
+      const tg = picking.target;
+      pkUse.textContent = tg ? 'Aplicar a la ' + pickLabel(tg.id, tg.row).replace('Línea', 'línea') : 'Aplicar';
+      pkUse.disabled = !tg;
+    } else {
+      p.textContent = op + ': haz clic en la línea o en el paso del desarrollo al que quieres aplicarla. Las líneas válidas parpadean; Esc cancela.';
+      pkUse.textContent = 'Aplicar';
+      pkUse.disabled = true;
+    }
+  }
+  function markTarget(t) {
+    pickClear('pick-active'); pickClear('pick-arow');
+    $$('.blk[data-pl]', blocksEl).forEach((x) => x.removeAttribute('data-pl'));
+    if (!t) return;
+    const el = elById(t.id);
+    if (!el) return;
+    el.classList.add('pick-active');
+    el.dataset.pl = '↵ ' + pickLabel(t.id, t.row);
+    if (t.row != null) $$('[data-row="' + t.row + '"]', el).forEach((c) => { if (c.classList.contains('dcell') || c.classList.contains('dnote')) c.classList.add('pick-arow'); });
+  }
   function startPick(key, label) {
     if (body.dataset.mode !== 'write') setMode('write');
     if (NO_LINE.has(key)) { runOp(key); return; }
-    picking = { key, label: (label || '').trim() };
+    picking = { key, label: (label || '').trim(), target: null };
     body.classList.add('picking');
-    pickTxt.querySelector('p').textContent = '«' + picking.label + '»: haz clic en la línea o en el paso del desarrollo al que quieres aplicarla. Intro usa la línea activa y Esc cancela.';
+    $$('.blk', blocksEl).forEach((el) => { const ok = pickable(blockById(el.dataset.id), key); el.classList.toggle('pick-ok', ok); el.classList.toggle('pick-no', !ok); });
+    picking.target = pickDefault();
+    markTarget(picking.target);
+    pickSay(picking.target, false);
     pickBar.hidden = false;
-    pkUse.disabled = !activeBlock();
+    if (picking.target) { const el = elById(picking.target.id); if (el) el.scrollIntoView({ block: 'nearest' }); }
   }
-  function endPick() { picking = null; body.classList.remove('picking'); pickBar.hidden = true; $$('.pick-hover', blocksEl).forEach((x) => x.classList.remove('pick-hover')); }
+  function endPick() {
+    picking = null;
+    body.classList.remove('picking', 'pick-hovering');
+    pickBar.hidden = true;
+    for (const c of ['pick-hover', 'pick-rhover', 'pick-ok', 'pick-no', 'pick-active', 'pick-arow']) pickClear(c);
+    $$('.blk[data-pl]', blocksEl).forEach((x) => x.removeAttribute('data-pl'));
+  }
   function pickAndRun(blockEl, rowIdx) {
-    const key = picking.key;
+    const key = picking.key, label = picking.label;
     endPick();
     const id = blockEl.dataset.id;
     const b = blockById(id);
@@ -7026,30 +7175,62 @@ const OPS = ((ME) => {
     if (b.type === 'deriv') activeCell = { id, row: rowIdx != null ? rowIdx : b.rows.length - 1, col: 'r' };
     else activeCell = null;
     if (b.type === 'deriv') markRow(id, activeCell.row);
+    const where = pickLabel(id, b.type === 'deriv' ? activeCell.row : null);
     flashBlock(blockEl);
+    const before = new Set(page().blocks.map((x) => x.id));
+    const rowsBefore = b.type === 'deriv' ? b.rows.length : 0;
     runOp(key);
+    const fresh = page().blocks.find((x) => !before.has(x.id));
+    if (fresh) {
+      const fe = elById(fresh.id);
+      if (fe) setTimeout(() => flashBlock(fe), 250);
+      toast('«' + label + '» aplicado a la ' + where.replace('Línea', 'línea') + '. El resultado empieza en la línea ' + lineNo(fresh.id) + '.');
+    } else if (b.type === 'deriv' && b.rows.length > rowsBefore) {
+      toast('«' + label + '» aplicado a la ' + where.replace('Línea', 'línea') + '. El resultado es el paso ' + (activeCell && activeCell.id === b.id ? activeCell.row + 1 : b.rows.length) + '.');
+    }
   }
-  function flashBlock(el) { el.classList.add('pick-done'); setTimeout(() => el.classList.remove('pick-done'), 700); }
-  pkUse.addEventListener('click', () => { const b = activeBlock(); if (!b) return; pickAndRun(elById(b.id), activeCell && activeCell.id === b.id ? activeCell.row : null); });
+  function flashBlock(el) { el.classList.remove('pick-done'); void el.offsetWidth; el.classList.add('pick-done'); setTimeout(() => el.classList.remove('pick-done'), 950); }
+  pkUse.addEventListener('click', () => { if (!picking || !picking.target) return; const el = elById(picking.target.id); if (el) pickAndRun(el, picking.target.row); });
   pkCancel.addEventListener('click', endPick);
-  // clic sobre una línea mientras se elige: se aplica la operación y no se edita
+  function pickTargetOf(e) {
+    const el = e.target.closest('.blk');
+    if (!el) return null;
+    const b = blockById(el.dataset.id);
+    const r = e.target.closest('[data-row]');
+    return { el, b, row: b && b.type === 'deriv' ? (r ? +r.dataset.row : b.rows.length - 1) : null };
+  }
+  // clic sobre una línea mientras se elige: con ratón se aplica directamente;
+  // con lápiz o dedo, el primer toque la marca y el segundo (o «Aplicar») la confirma
   blocksEl.addEventListener('pointerdown', (e) => {
     if (!picking) return;
-    const el = e.target.closest('.blk');
-    if (!el || e.target.closest('.x-del,.blk-handle')) return;
+    const t = pickTargetOf(e);
+    if (!t || e.target.closest('.x-del,.blk-handle')) return;
     e.preventDefault();
     e.stopPropagation();
-    const r = e.target.closest('[data-row]');
-    pickAndRun(el, r ? +r.dataset.row : null);
+    if (!pickable(t.b, picking.key)) { toast('Esa línea no sirve para «' + picking.label + '»: elige una fórmula o un paso de un desarrollo (las líneas que parpadean).'); return; }
+    const same = picking.target && picking.target.id === t.b.id && picking.target.row === t.row;
+    if (e.pointerType === 'mouse' || same) { pickAndRun(t.el, t.row); return; }
+    picking.target = { id: t.b.id, row: t.row };
+    markTarget(picking.target);
+    pickSay(picking.target, 'touch');
   }, true);
   blocksEl.addEventListener('pointerover', (e) => {
+    if (!picking || e.pointerType !== 'mouse') return;
+    pickClear('pick-hover'); pickClear('pick-rhover');
+    const t = pickTargetOf(e);
+    if (!t || !pickable(t.b, picking.key)) { body.classList.remove('pick-hovering'); pickSay(picking.target, false); return; }
+    t.el.classList.add('pick-hover');
+    t.el.dataset.pl = pickLabel(t.b.id, t.row);
+    body.classList.add('pick-hovering');
+    if (t.row != null) $$('[data-row="' + t.row + '"]', t.el).forEach((c) => { if (c.classList.contains('dcell') || c.classList.contains('dnote')) c.classList.add('pick-rhover'); });
+    pickSay({ id: t.b.id, row: t.row }, true);
+  });
+  blocksEl.addEventListener('pointerleave', () => {
     if (!picking) return;
-    $$('.pick-hover', blocksEl).forEach((x) => x.classList.remove('pick-hover'));
-    const el = e.target.closest('.blk');
-    if (!el) return;
-    const r = e.target.closest('[data-row]');
-    if (r && el.classList.contains('blk-deriv')) $$('[data-row="' + r.dataset.row + '"]', el).forEach((c) => { if (c.classList.contains('dcell') || c.classList.contains('dnote')) c.classList.add('pick-hover'); });
-    else el.classList.add('pick-hover');
+    pickClear('pick-hover'); pickClear('pick-rhover');
+    body.classList.remove('pick-hovering');
+    markTarget(picking.target);
+    pickSay(picking.target, false);
   });
   window.addEventListener('keydown', (e) => {
     if (!picking) return;
@@ -7773,6 +7954,8 @@ const OPS = ((ME) => {
     const drawing = body.dataset.mode === 'draw' || e.pointerType === 'pen';
     if (!drawing || e.button > 0) return;
     if (e.target.closest('.blk-handle')) return;
+    // en modo Escribir, el lápiz sirve para elegir la línea de una operación y para pulsar botones
+    if (body.dataset.mode === 'write' && (picking || e.target.closest('button'))) return;
     e.preventDefault();
     e.stopPropagation();
     if (document.activeElement && document.activeElement.blur && body.dataset.mode === 'draw') document.activeElement.blur();
@@ -7865,6 +8048,7 @@ const OPS = ((ME) => {
       if (k === 'PageUp') { e.preventDefault(); goPage(board.cur - 1); return; }
     }
     if ((e.ctrlKey || e.metaKey) && !e.altKey && (k === 's' || k === 'S')) { e.preventDefault(); e.stopPropagation(); quickSave(); return; }
+    if ((e.ctrlKey || e.metaKey) && !e.altKey && !e.shiftKey && (k === 'd' || k === 'D') && body.dataset.mode === 'write') { e.preventDefault(); e.stopPropagation(); duplicateActive(); return; }
     if ((e.ctrlKey || e.metaKey) && (k === '=' || e.code === 'Equal') && !e.altKey) { e.preventDefault(); runCalc(); return; }
     if ((e.ctrlKey || e.metaKey) && k.toLowerCase() === 'z' && body.dataset.mode === 'draw' && !editing) { e.preventDefault(); undo(); return; }
     if (editing || e.ctrlKey || e.metaKey || e.altKey) return;
