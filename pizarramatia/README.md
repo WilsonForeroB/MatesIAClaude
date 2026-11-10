@@ -74,6 +74,7 @@ Tipos de bloque:
 | `graph3d` | Superficie z = f(x, y) con su rango, su vista (`az`, `el`, `zoom`) y `marks` opcionales (mínimos, máximos, puntos de silla). |
 | `chart` | Gráfico estadístico: `kind` = `bars` (barras, con `hi` resaltadas), `box` (diagrama de caja) o `normal` (campana con el área entre `a` y `b`). |
 | `ptree` | Árbol de probabilidad: causas con `p`, `l` = P(suceso \| causa) y los productos de cada camino. |
+| `geo` | Dibujo de trigonometría y geometría: `kind` (`unit` circunferencia goniométrica con `deg` y `label`, `unitAll` ángulos notables, `tri` triángulo con `a`, `b`, `c`, `A`, `B`, `C`, `lines` rectas `lines[{a,b,c,name,dash}]` (ax + by + c = 0) y puntos `points[{x,y,name,kind}]`, `transv` paralelas y secante con `deg`). |
 | `venn` | Diagrama de Venn: `n` (2 o 3), `expr` (expresión sombreada) o `shade` (zonas elegidas a mano, como máscaras A = 1, B = 2, C = 4) y `showEls`. |
 | `net` | Grafo: `nodes` (con `label`, `x`, `y` y tipo de capa), `edges` (con peso opcional `w`), `directed` y rótulos de capa `caps`. |
 
@@ -84,10 +85,20 @@ Tipos de bloque:
 Pulsa **?** dentro de la pizarra para ver todos los atajos.
 
 - **Escribir**: `x^2`, `1/2`, `sqrt`, `in` (∈), `EE` (∃), `AA` (∀), `RR` (ℝ)… Intro crea una línea nueva.
-- **Menús**: Matriz, Sistema, Desarrollo, **Símbolos ▾** (básicos —potencia, subíndice, fracción, raíz, paréntesis, traspuesta, inversa, flecha de paso—, lógica, conjuntos, números, relaciones, operaciones, flechas y griegas) y **Cálculo ▾** (derivadas, integrales y límites). Los símbolos van todos dentro de los desplegables para que la barra no ocupe espacio.
+- **Líneas numeradas**: cada línea lleva su número (1, 2, 3…) y los pasos de un desarrollo se numeran 3.1, 3.2… Así es fácil decir «vamos a la línea 3». Se pueden ocultar en **Vista ▾ → Líneas**; en presentación e impresión no aparecen.
+- **+ Nueva línea**: en la barra y al final de la página (útil con lápiz o pantalla táctil). Intro sigue funcionando igual.
+- **Duplicar** (⧉, botón «Duplicar» o **Ctrl+D**): copia la línea activa justo debajo (fórmulas, textos, tablas, gráficas, desarrollos…). Dentro de un desarrollo, ⧉ o Ctrl+D duplican solo ese paso.
+- **Menús**: Matriz, Sistema, Desarrollo, **Símbolos ▾** (básicos —potencia, subíndice, fracción, raíz, paréntesis, traspuesta, inversa, flecha de paso—, lógica, conjuntos, números, relaciones, operaciones, flechas, probabilidad, **trigonometría y geometría** —°, ′, ″, sen, tg, ∠, △, ∥, ⊥, Pitágoras, teoremas del seno y del coseno, Herón, fórmulas de suma y de ángulo doble, distancias— y griegas) y **Cálculo ▾** (derivadas, integrales y límites). Los símbolos van todos dentro de los desplegables para que la barra no ocupe espacio.
 - **Desarrollo** (Alt+L): pasos alineados por el «=» con explicación a la derecha. Intro copia la fila anterior para editar solo lo que cambia.
 - **Calcular** (Ctrl+=) actúa sobre la línea en la que escribes.
-- **Operaciones ▾**: al elegir una operación aparece la barra **«Elige la línea»**. Haz clic en la línea o en el paso del desarrollo al que quieres aplicar la operación (se resalta al pasar el ratón). **Intro** usa la línea activa y **Esc** cancela. Así, con varias ecuaciones en la misma página, decides cuál se resuelve.
+- **Operaciones ▾**: al elegir una operación aparece la barra **«Elige la línea»** y la pizarra lo muestra en color:
+  - las líneas que sirven parpadean con un borde de color y las que no (gráficas, tablas…) se atenúan;
+  - la línea activa queda resaltada con la etiqueta «↵ Línea N», y la barra dice «Vas a aplicar «…» a la línea N»;
+  - al pasar el ratón, la línea (o el paso del desarrollo) se resalta con «Línea N · paso M»;
+  - un clic (o toque con lápiz o dedo) **solo marca** la línea; la barra pasa a «Confirma la línea» y pregunta «¿Aplicar «…» a la línea N?»;
+  - la operación **solo se lanza al pulsar «Aceptar»** (o Intro); se puede marcar otra línea o pulsar **Cancelar** sin que pase nada;
+  - al terminar, Pío avisa: «aplicado a la línea 3; el resultado empieza en la línea 4», y ambas líneas destellan.
+  **Intro** equivale a «Aceptar» y **Esc** cancela. Así, con varias ecuaciones en la misma página, decides cuál se resuelve.
 - **Operaciones ▾**: todas paso a paso.
 
 | Grupo | Operaciones |
@@ -101,6 +112,8 @@ Pulsa **?** dentro de la pizarra para ver todos los atajos.
 | Probabilidad | Espacio muestral (moneda, dado, conjuntos como `{R,V,A}` o `moneda^3`) con regla de Laplace, y la tabla de sumas si son dos dados. Tabla de contingencia con marginales, conjuntas, condicionadas e independencia. **Asistente de árbol de probabilidad y Bayes**, con el árbol, la probabilidad total y las probabilidades a posteriori. Binomial `X\sim B(10, 0.3), P(X\le 3)` con diagrama de barras resaltado. Normal `X\sim N(100, 15), P(85\le X\le 115)` tipificando, con la campana y el área sombreada. |
 | Combinatoria | n!, combinaciones, variaciones y permutaciones; triángulo de Pascal. |
 | Lógica y conjuntos | Tabla de verdad con su clasificación; unión, intersección, diferencia, complementario, partes y producto cartesiano; **diagrama de Venn** de la expresión de la línea. |
+| Trigonometría | **Convertir ángulos**: `150°`, `35°20′15″`, `\frac{5\pi}{6}` o `2.5 rad` (varios separados por comas dan una tabla); grados ↔ radianes exactos con π, grados-minutos-segundos y ángulo coterminal. **Razones trigonométricas** de `\sin 150°`, `210°` o `\cos\frac{5\pi}{3}`: cuadrante, ángulo de referencia, valores exactos (múltiplos de 15°), tabla de las seis razones y circunferencia goniométrica con seno, coseno y tangente. **Tabla de ángulos notables** de 0° a 360° (no necesita línea). |
+| Geometría | **Resolver triángulos** `a=5, b=7, C=60°` con los teoremas del seno y del coseno: LLL, LAL, ALA/AAL y el caso ambiguo LLA (0, 1 o 2 triángulos), con área, perímetro, tipo y dibujo. **Rectas**: dos rectas (`2x+3y-6=0, y=2x+1`) dan la posición relativa (secantes, perpendiculares, paralelas o coincidentes), el punto de corte, el ángulo y la distancia entre paralelas; una recta y un punto (`3x+4y=10, P=(1,6)`) dan la distancia, la paralela y la perpendicular por el punto y el pie de la perpendicular; dos puntos (`A=(1,2), B=(4,6)`) dan la recta, la distancia y el punto medio. **Paralelas cortadas por una secante** `65°`: los 8 ángulos y sus relaciones. Todo con su dibujo. |
 | Cálculo | Derivada con las reglas aplicadas; **máximos y mínimos de f(x)** (puntos críticos, clasificación con f″ o con el signo de f′, puntos de inflexión, tabla de crecimiento, extremos absolutos en ±∞ o en un intervalo `x∈[a,b]` y gráfica con los puntos marcados); **extremos de f(x, y)** (gradiente, puntos críticos, hessiana y clasificación en mínimo, máximo o punto de silla, con la superficie 3D marcada); gráfica de funciones y tabla de valores. |
 
 - **Gráficos ▾**:
@@ -112,7 +125,7 @@ Pulsa **?** dentro de la pizarra para ver todos los atajos.
 - **Dibujar** (Alt+D): lápiz, rotulador, flecha y goma. Un lápiz digital dibuja siempre, aunque estés en modo Escribir.
 - **Tamaño de página** (Vista ▾): **Libre** (continua, como siempre), **A4 vertical**, **A4 horizontal**, **A3 horizontal** o **Diapositiva 16:9**. En los tamaños fijos se ve el borde de la hoja, la hoja se ajusta al ancho de la pantalla, se marca con una línea discontinua dónde termina la página si el contenido no cabe, y al imprimir o guardar en PDF cada página sale con ese tamaño.
 - **Presentar** (botón de la cabecera): pantalla completa con solo la página actual, escalada para que quepa entera, como una diapositiva. **→ / ← / espacio / RePág / AvPág** para pasar, **Inicio / Fin** para ir a la primera o la última, **D** para dibujar encima y **Esc** para salir. Abajo hay una barra que se oculta sola. Recomendado con «Diapositiva 16:9».
-- **Exportar gráficos**: cada gráfico (2D, 3D, grafo, red neuronal, Venn, barras, caja, normal, árbol) tiene un botón ⤓ junto a la ×. Permite **descargar PNG** a doble resolución, **descargar SVG** (vectorial; no disponible en la 3D) o **copiar la imagen** para pegarla con Ctrl+V. La imagen incluye el título, la leyenda y el resultado. Con «Fondo claro» sale en colores claros aunque uses el tema oscuro.
+- **Exportar gráficos**: cada gráfico (2D, 3D, grafo, red neuronal, Venn, barras, caja, normal, árbol, circunferencia, triángulo, rectas) tiene un botón ⤓ junto a la ×. Permite **descargar PNG** a doble resolución, **descargar SVG** (vectorial; no disponible en la 3D) o **copiar la imagen** para pegarla con Ctrl+V. La imagen incluye el título, la leyenda y el resultado. Con «Fondo claro» sale en colores claros aunque uses el tema oscuro.
 - **Modo proyector**: pantalla completa (icono de la cabecera o tecla F), tamaño de letra, tema claro u oscuro y ocultar barras (H).
 - **Guardar** (botón verde de la cabecera o **Ctrl+S**): guarda la clase en el historial. Un punto blanco en el botón indica que hay cambios sin guardar. La primera vez pide la carpeta `historial`; después reescribe siempre el archivo de esa clase. En navegadores sin acceso a carpetas, descarga el JSON.
 - **Páginas**: «+ Página» añade una página detrás de la actual y «− Página» elimina la actual; si es la única, la vacía.
@@ -122,6 +135,7 @@ Pulsa **?** dentro de la pizarra para ver todos los atajos.
 ## Límites conocidos
 
 - El cálculo es exacto con fracciones. Las raíces se simplifican, pero no hay un motor simbólico completo: las ecuaciones racionales o con varias incógnitas no se resuelven paso a paso.
+- Trigonometría: no resuelve todavía ecuaciones trigonométricas ni arcoseno o arcocoseno de un valor; la geometría es del plano (2D).
 - La discusión con parámetro admite un parámetro y sistemas cuadrados.
 - Los autovalores irracionales se dan con la fórmula exacta en el caso de grado 2. En grados mayores solo se buscan raíces racionales.
 
